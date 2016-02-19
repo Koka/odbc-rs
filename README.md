@@ -1,8 +1,7 @@
 
 #### Rust ODBC FFI binding ####
 
-```
-lang: rust
+```rust
 
 #[test]
 fn it_works() {
