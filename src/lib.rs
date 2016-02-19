@@ -1,12 +1,11 @@
 pub mod raw;
 
-use raw::sqlext::*;
-use raw::sqltypes::*;
-
-use std::ffi::{CStr, CString};
-
 #[test]
 fn it_works() {
+
+    use raw::*;
+    use std::ffi::{CStr, CString};
+
     unsafe {
         let mut env : SQLHENV = std::ptr::null_mut();
         SQLAllocEnv(&mut env);
@@ -20,12 +19,12 @@ fn it_works() {
         let mut desc_ret : SQLSMALLINT  = 0;
 
         println!("Driver list:");
-        while {ret = SQLDrivers(env, 1, name.as_mut_ptr(), name.len() as i16, &mut name_ret, desc.as_mut_ptr(), desc.len() as i16, &mut desc_ret); ret} & !1 == 0 {
+        while {ret = SQLDrivers(env, SQL_FETCH_NEXT, name.as_mut_ptr(), name.len() as i16, &mut name_ret, desc.as_mut_ptr(), desc.len() as i16, &mut desc_ret); ret} & !1 == 0 {
             println!("{:?} - {:?}", CStr::from_ptr(name.as_ptr() as *const i8), CStr::from_ptr(desc.as_ptr() as *const i8));
         }
 
         println!("DataSource list:");
-        while {ret = SQLDataSources(env, 1, name.as_mut_ptr(), name.len() as i16, &mut name_ret, desc.as_mut_ptr(), desc.len() as i16, &mut desc_ret); ret} & !1 == 0 {
+        while {ret = SQLDataSources(env, SQL_FETCH_NEXT, name.as_mut_ptr(), name.len() as i16, &mut name_ret, desc.as_mut_ptr(), desc.len() as i16, &mut desc_ret); ret} & !1 == 0 {
             println!("{:?} - {:?}", CStr::from_ptr(name.as_ptr() as *const i8), CStr::from_ptr(desc.as_ptr() as *const i8));
         }
 
@@ -38,7 +37,7 @@ fn it_works() {
 
         let dsn_ptr = dsn.into_raw();
 
-        ret = SQLDriverConnect(dbc, std::ptr::null_mut(), dsn_ptr as *mut u8, -3, name.as_mut_ptr(), name.len() as i16, &mut name_ret, 0);
+        ret = SQLDriverConnect(dbc, std::ptr::null_mut(), dsn_ptr as *mut u8, SQL_NTS, name.as_mut_ptr(), name.len() as i16, &mut name_ret, SQL_DRIVER_NOPROMPT);
 
         CString::from_raw(dsn_ptr);
 
@@ -53,7 +52,7 @@ fn it_works() {
             println!("EXECUTING SQL {:?}", sql);
 
             let sql_ptr = sql.into_raw();
-            ret = SQLExecDirect(stmt, sql_ptr as *mut u8, -3);
+            ret = SQLExecDirect(stmt, sql_ptr as *mut u8, SQL_NTSL);
             CString::from_raw(sql_ptr);
 
             if ret & !1 == 0 {
@@ -85,19 +84,19 @@ fn it_works() {
                 println!("FAILED:");
                 let mut i = 1;
                 let mut native : SQLINTEGER  = 0;
-                while {ret = SQLGetDiagRec(3, stmt, i, name.as_mut_ptr(), &mut native, desc.as_mut_ptr(), desc.len() as i16, &mut desc_ret); ret} & !1 == 0 {
+                while {ret = SQLGetDiagRec(SQL_HANDLE_STMT, stmt, i, name.as_mut_ptr(), &mut native, desc.as_mut_ptr(), desc.len() as i16, &mut desc_ret); ret} & !1 == 0 {
                     println!("\t{:?}:{}:{}:{:?}", CStr::from_ptr(name.as_ptr() as *const i8), i, native,  CStr::from_ptr(desc.as_ptr() as *const i8));
                     i += 1;
                 }
             }
 
-            SQLFreeStmt(stmt, 0);
+            SQLFreeHandle(SQL_HANDLE_STMT, stmt);
             SQLDisconnect(dbc);
         } else {
             println!("NOT CONNECTED: {:?}", CStr::from_ptr(name.as_ptr() as *const i8));
             let mut i = 1;
             let mut native : SQLINTEGER  = 0;
-            while {ret = SQLGetDiagRec(2, dbc, i, name.as_mut_ptr(), &mut native, desc.as_mut_ptr(), desc.len() as i16, &mut desc_ret); ret} & !1 == 0 {
+            while {ret = SQLGetDiagRec(SQL_HANDLE_DBC, dbc, i, name.as_mut_ptr(), &mut native, desc.as_mut_ptr(), desc.len() as i16, &mut desc_ret); ret} & !1 == 0 {
                 println!("\t{:?}:{}:{}:{:?}", CStr::from_ptr(name.as_ptr() as *const i8), i, native,  CStr::from_ptr(desc.as_ptr() as *const i8));
                 i += 1;
             }
