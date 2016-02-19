@@ -1,0 +1,6 @@
+[package]
+name = "odbc"
+version = "0.1.0"
+authors = ["Konstantin Salikhov <koka58@yandex.ru>"]
+
+[dependencies]
