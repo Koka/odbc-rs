@@ -68,7 +68,7 @@ fn it_works() {
                     for j in 1..columns {
                         let mut indicator : SQLLEN = 0;
                         let mut buf = [0; 512];
-                        ret = SQLGetData(stmt, j as u16, 1, buf.as_mut_ptr() as SQLPOINTER, buf.len() as i64, &mut indicator);
+                        ret = SQLGetData(stmt, j as u16, 1, buf.as_mut_ptr() as SQLPOINTER, buf.len() as SQLLEN, &mut indicator);
                         if ret & !1 == 0 {
                             if indicator == -1 {
                                 println!("Column {}: NULL", j);
