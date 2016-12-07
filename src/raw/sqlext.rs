@@ -61,7 +61,9 @@ impl ::std::default::Default for Union_Unnamed4 {
 }
 pub type ODBC_VS_ARGS = Struct_tagODBC_VS_ARGS;
 pub type PODBC_VS_ARGS = *mut Struct_tagODBC_VS_ARGS;
-#[link(name = "odbc")]
+
+#[cfg_attr(windows, link(name="odbc32"))]
+#[cfg_attr(not(windows), link(name="odbc"))]
 extern "C" {
     pub fn SQLAllocConnect(EnvironmentHandle: SQLHENV,
                            ConnectionHandle: *mut SQLHDBC) -> SQLRETURN;
