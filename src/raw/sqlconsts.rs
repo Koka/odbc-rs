@@ -1,13 +1,13 @@
-/*TODO: use proper types for all consants*/
+// TODO: use proper types for all consants
 
-/* sql.h constants*/
+// sql.h constants
 
 #[allow(non_camel_case_types)]
 
 pub const ODBCVER: u16 = 0x0351;
 pub const SQL_NULL_DATA: i16 = (-1);
 pub const SQL_DATA_AT_EXEC: i16 = (-2);
-pub const SQL_SUCCESS: u16 = 0;
+pub const SQL_SUCCESS: i16 = 0;
 pub const SQL_SUCCESS_WITH_INFO: u16 = 1;
 pub const SQL_NO_DATA: u16 = 100;
 pub const SQL_ERROR: i16 = (-1);
