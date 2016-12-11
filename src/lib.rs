@@ -1,30 +1,12 @@
 pub mod raw;
 
-/// RAII wrapper around ODBC
-pub struct Environment {
-    handle: raw::SQLHENV,
-}
+mod environment;
+pub use environment::Environment;
 
-impl Environment {
-    /// Allocates a new ODBC Environment
-    pub fn new() -> Environment {
-        unsafe {
-            let mut env = std::ptr::null_mut();
-            match raw::SQLAllocHandle(raw::SQL_HANDLE_ENV, std::ptr::null_mut(), &mut env) {
-                raw::SQL_SUCCESS => Environment { handle: env },
-                _ => panic!("Error during creation of ODBC Environment"),
-            }
-        }
-    }
-}
+/// Error types used by this librayr
+pub struct Error;
 
-impl Drop for Environment {
-    fn drop(&mut self) {
-        unsafe {
-            raw::SQLFreeEnv(self.handle);
-        }
-    }
-}
+pub type Result<T> = std::result::Result<T, Error>;
 
 #[cfg(test)]
 mod test {
@@ -34,6 +16,10 @@ mod test {
     #[test]
     fn allocate_environment() {
         let environment = Environment::new();
+        match environment {
+            Ok(_) => (),
+            Err(_) => assert!(false),
+        }
     }
 
     #[test]
