@@ -1,6 +1,6 @@
 pub mod raw;
 
-mod environment;
+pub mod environment;
 pub use environment::Environment;
 
 /// Error types used by this librayr
@@ -15,13 +15,15 @@ mod test {
     use super::Environment;
 
     #[test]
-    fn allocate_environment() {
+    fn list_drivers() {
         let environment = Environment::new();
-        let drivers = environment.unwrap().drivers();
-        for d in drivers {
-            println!("{:?}", d);
-        }
-        assert!(false);
+        let drivers = environment.expect("Environment can be created")
+            .drivers()
+            .expect("Drivers can be iterated over");
+        println!("{:?}", drivers);
+
+        let expected = ["PostgrSQL ANSI", "PostgrSQL Unicode", "SQLite", "SQLite3"];
+        assert!(drivers.iter().map(|d| d.description()).eq(expected.iter().cloned()));
     }
 
     #[test]
