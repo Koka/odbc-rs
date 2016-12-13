@@ -10,4 +10,4 @@ matrix:
 services:
   - postgresql
 before_install:
-  - sudo apt-get install -y unixodbc unixodbc-dev
+  - sudo apt-get install -y unixodbc unixodbc-dev odbc-postgresql libsqliteodbc
