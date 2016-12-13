@@ -22,8 +22,8 @@ mod test {
             .expect("Drivers can be iterated over");
         println!("{:?}", drivers);
 
-        let expected = ["PostgrSQL ANSI", "PostgrSQL Unicode", "SQLite", "SQLite3"];
-        assert!(drivers.iter().map(|d| d.description()).eq(expected.iter().cloned()));
+        let expected = ["PostgreSQL ANSI", "PostgreSQL Unicode", "SQLite", "SQLite3"];
+        assert!(drivers.iter().map(|d| d.description()).eq(expected.iter()));
     }
 
     #[test]
