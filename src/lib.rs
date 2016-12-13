@@ -2,10 +2,8 @@ pub mod raw;
 
 pub mod environment;
 pub use environment::Environment;
-
-/// Error types used by this librayr
-#[derive(Debug)]
-pub struct Error;
+pub mod error;
+pub use error::Error;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
