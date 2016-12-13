@@ -12,10 +12,16 @@ pub struct Environment {
 /// Struct holding information available on a driver.
 ///
 /// Can be obtained via `Environment::drivers`
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct DriverInfo {
-    description: String,
+    desc: String,
     attributes: String,
+}
+
+impl DriverInfo {
+    pub fn description(&self) -> &str {
+        self.desc.as_str()
+    }
 }
 
 impl Environment {
@@ -101,16 +107,17 @@ impl Environment {
                                          raw::SQL_FETCH_NEXT,
                                          &mut description_buffer[0] as *mut u8,
                                          max_desc + 1,
-                                         std::ptr::null_mut(),
+                                         &mut desc_length_out as *mut raw::SQLSMALLINT,
                                          &mut attribute_buffer[0] as *mut u8,
                                          max_attr + 1,
-                                         std::ptr::null_mut());
+                                         &mut attr_length_out as *mut raw::SQLSMALLINT);
             }
             match result {
                 raw::SQL_SUCCESS |
                 raw::SQL_SUCCESS_WITH_INFO => {
+                    description_buffer.resize(desc_length_out as usize, 0);
                     driver_list.push(DriverInfo {
-                        description: String::from_utf8(description_buffer).unwrap(),
+                        desc: String::from_utf8(description_buffer).unwrap(),
                         attributes: String::from_utf8(attribute_buffer).unwrap(),
                     })
                 }
