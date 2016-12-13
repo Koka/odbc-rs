@@ -1,11 +1,9 @@
 pub mod raw;
 
 mod environment;
-pub use environment::{Environment, DriverInfo};
-
-/// Error types used by this librayr
-#[derive(Debug)]
-pub struct Error;
+pub use environment::Environment;
+mod error;
+pub use error::Error;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
