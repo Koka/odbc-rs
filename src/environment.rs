@@ -19,8 +19,8 @@ pub struct DriverInfo {
 }
 
 impl DriverInfo {
-    pub fn description(&self) -> &str {
-        self.desc.as_str()
+    pub fn description(&self) -> &String {
+        &self.desc
     }
 }
 
