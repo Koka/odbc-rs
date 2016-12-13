@@ -4,6 +4,7 @@ mod environment;
 pub use environment::Environment;
 
 /// Error types used by this librayr
+#[derive(Debug)]
 pub struct Error;
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -16,10 +17,11 @@ mod test {
     #[test]
     fn allocate_environment() {
         let environment = Environment::new();
-        match environment {
-            Ok(_) => (),
-            Err(_) => assert!(false),
+        let drivers = environment.unwrap().drivers();
+        for d in drivers {
+            println!("{:?}", d);
         }
+        assert!(false);
     }
 
     #[test]
