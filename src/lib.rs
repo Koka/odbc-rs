@@ -23,7 +23,7 @@ mod test {
         println!("{:?}", drivers);
 
         let expected = ["PostgreSQL ANSI", "PostgreSQL Unicode", "SQLite", "SQLite3"];
-        assert!(drivers.iter().map(|d| d.description()).eq(expected.iter()));
+        assert!(drivers.iter().map(|d| &d.description).eq(expected.iter()));
     }
 
     #[test]

@@ -14,14 +14,8 @@ pub struct Environment {
 /// Can be obtained via `Environment::drivers`
 #[derive(Clone, Debug)]
 pub struct DriverInfo {
-    desc: String,
-    attributes: String,
-}
-
-impl DriverInfo {
-    pub fn description(&self) -> &String {
-        &self.desc
-    }
+    pub description: String,
+    pub attributes: Vec<(String, String)>,
 }
 
 impl Environment {
@@ -61,7 +55,7 @@ impl Environment {
         let mut count = 0;
         let mut result;
         unsafe {
-            // although the rather lengthy function call kind of blows the call, let's do the first
+            // Although the rather lengthy function call kind of blows the code, let's do the first
             // one using SQL_FETCH_FIRST, so we list all drivers independent from environment state
             result = raw::SQLDrivers(self.handle,
                                      raw::SQL_FETCH_FIRST,
@@ -117,8 +111,9 @@ impl Environment {
                 raw::SQL_SUCCESS_WITH_INFO => {
                     description_buffer.resize(desc_length_out as usize, 0);
                     driver_list.push(DriverInfo {
-                        desc: String::from_utf8(description_buffer).unwrap(),
-                        attributes: String::from_utf8(attribute_buffer).unwrap(),
+                        description: String::from_utf8(description_buffer)
+                            .expect("String returned by Driver Manager should be utf8 encoded"),
+                        attributes: Self::parse_attributes(attribute_buffer),
                     })
                 }
                 raw::SQL_ERROR => return Err(Error {}),
@@ -146,6 +141,23 @@ impl Environment {
             _ => Err(Error {}),
         }
     }
+
+    /// Called by drivers to pares list of attributes
+    ///
+    /// Key value pairs are seperated by `\0`. Key and value are seperated by `=`
+    fn parse_attributes(attribute_buffer: Vec<u8>) -> Vec<(String, String)> {
+        String::from_utf8(attribute_buffer)
+            .expect("String returned by Driver Manager should be utf8 encoded")
+            .split('\0')
+            .take_while(|kv_str| *kv_str != String::new())
+            .map(|kv_str| {
+                let mut iter = kv_str.split('=');
+                let key = iter.next().unwrap();
+                let value = iter.next().unwrap();
+                (key.to_string(), value.to_string())
+            })
+            .collect()
+    }
 }
 
 impl Drop for Environment {
@@ -153,5 +165,33 @@ impl Drop for Environment {
         unsafe {
             raw::SQLFreeEnv(self.handle);
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+
+    use super::*;
+
+    #[test]
+    fn parse_attributes() {
+        let buffer = "APILevel=2\0ConnectFunctions=YYY\0CPTimeout=60\0DriverODBCVer=03.\
+                      50\0FileUsage=0\0SQLLevel=1\0UsageCount=1\0\0"
+            .as_bytes()
+            .iter()
+            .cloned()
+            .collect();
+        let attributes = Environment::parse_attributes(buffer);
+        let expected: Vec<_> = [("APILevel", "2"),
+                                ("ConnectFunctions", "YYY"),
+                                ("CPTimeout", "60"),
+                                ("DriverODBCVer", "03.50"),
+                                ("FileUsage", "0"),
+                                ("SQLLevel", "1"),
+                                ("UsageCount", "1")]
+            .iter()
+            .map(|&(k, v)| (k.to_string(), v.to_string()))
+            .collect();
+        assert_eq!(expected, attributes);
     }
 }
