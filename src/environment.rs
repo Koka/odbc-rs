@@ -78,7 +78,10 @@ impl Environment {
                 }
                 raw::SQL_NO_DATA => break,
                 raw::SQL_ERROR => return Err(Error {}),
-                _ => unreachable!(),
+                /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
+                /// validity of this handle with our invariant. In save code the user should not be
+                /// able to reach this code path.
+                _ => panic!("Environment invariant violated"),
             }
             unsafe {
                 result = raw::SQLDrivers(self.handle,
