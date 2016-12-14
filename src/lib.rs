@@ -1,7 +1,7 @@
 pub mod raw;
 
-pub mod environment;
-pub use environment::Environment;
+mod environment;
+pub use environment::{Environment, DriverInfo};
 
 /// Error types used by this librayr
 #[derive(Debug)]
