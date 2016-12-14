@@ -1,9 +1,10 @@
 pub mod raw;
 
 mod environment;
-pub use environment::Environment;
+pub use environment::{Environment, DriverInfo};
 
 /// Error types used by this librayr
+#[derive(Debug)]
 pub struct Error;
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -14,12 +15,15 @@ mod test {
     use super::Environment;
 
     #[test]
-    fn allocate_environment() {
+    fn list_drivers() {
         let environment = Environment::new();
-        match environment {
-            Ok(_) => (),
-            Err(_) => assert!(false),
-        }
+        let drivers = environment.expect("Environment can be created")
+            .drivers()
+            .expect("Drivers can be iterated over");
+        println!("{:?}", drivers);
+
+        let expected = ["PostgreSQL ANSI", "PostgreSQL Unicode", "SQLite", "SQLite3"];
+        assert!(drivers.iter().map(|d| &d.description).eq(expected.iter()));
     }
 
     #[test]
