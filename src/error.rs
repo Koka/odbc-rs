@@ -15,7 +15,10 @@ pub struct DiagRec {
 
 impl DiagRec {
     /// Reads first diagnostic record from handle
-    pub unsafe fn create(handle_type: raw::SQLSMALLINT, handle: raw::SQLHANDLE) -> Option<DiagRec> {
+    ///
+    /// This function will panic if no Diagnostic record is available. Its primary use is to create
+    /// one after another ODBC function returned SQL_ERROR
+    pub unsafe fn create(handle_type: raw::SQLSMALLINT, handle: raw::SQLHANDLE) -> DiagRec {
         let mut state: [raw::SQLCHAR; 6] = [0; 6];
         let mut native_error_pointer = 0;
         let mut message_length = 0;
@@ -30,7 +33,6 @@ impl DiagRec {
                                  &mut message_length as *mut raw::SQLSMALLINT) {
             raw::SQL_SUCCESS => (),
             raw::SQL_SUCCESS_WITH_INFO => (),
-            raw::SQL_NO_DATA => return None,
             _ => panic!("Error retrieving diagnostic record"),
         };
         let mut message_buffer: Vec<_> = (0..(message_length + 1)).map(|_| 0).collect();
@@ -44,11 +46,11 @@ impl DiagRec {
                                  message_length,
                                  std::ptr::null_mut()) {
             raw::SQL_SUCCESS => {
-                Some(DiagRec {
+                DiagRec {
                     state: state,
                     native_error_pointer: native_error_pointer,
                     message: String::from_utf8_unchecked(message_buffer),
-                })
+                }
             }
             _ => panic!("Error retrieving diagnostic record"),
         }

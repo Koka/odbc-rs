@@ -79,8 +79,7 @@ impl Environment {
                 }
                 raw::SQL_NO_DATA => break,
                 raw::SQL_ERROR => unsafe {
-                    return Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)
-                        .expect("At least one diagnostic record available in case of error")));
+                    return Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)));
                 },
                 /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
                 /// validity of this handle with our invariant. In save code the user should not be
@@ -126,8 +125,7 @@ impl Environment {
                     })
                 }
                 raw::SQL_ERROR => unsafe {
-                    return Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)
-                        .expect("At least one diagnostic record available in case of error")));
+                    return Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)));
                 },
                 raw::SQL_NO_DATA => break,
                 /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
@@ -153,10 +151,7 @@ impl Environment {
         match raw::SQLSetEnvAttr(self.handle, attribute, value, length) {
             raw::SQL_SUCCESS => Ok(()),
             raw::SQL_SUCCESS_WITH_INFO => Ok(()),
-            _ => {
-                Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)
-                    .expect("At least one diagnostic record available in case of error")))
-            }
+            _ => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle))),
         }
     }
 
