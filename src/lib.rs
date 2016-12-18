@@ -1,7 +1,7 @@
 pub mod raw;
 
 mod error;
-pub use error::Error;
+pub use error::*;
 mod environment;
 pub use environment::*;
 
@@ -10,7 +10,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[cfg(test)]
 mod test {
 
-    use super::Environment;
+    use super::*;
 
     #[test]
     fn list_drivers() {
@@ -22,6 +22,19 @@ mod test {
 
         let expected = ["PostgreSQL ANSI", "PostgreSQL Unicode", "SQLite", "SQLite3"];
         assert!(drivers.iter().map(|d| &d.description).eq(expected.iter()));
+    }
+
+    #[test]
+    fn provoke_error() {
+        use std;
+        let mut environment = Environment::new().unwrap();
+        // let mut dbc: raw::SQLHDBC = 0;
+        let error;
+        unsafe {
+            raw::SQLAllocHandle(raw::SQL_HANDLE_DBC, environment.raw(), std::ptr::null_mut());
+            error = Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, environment.raw()));
+        }
+        assert_eq!(format!("{}", error), "Hi");
     }
 
     #[test]
