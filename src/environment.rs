@@ -1,7 +1,9 @@
 //! This module implements the ODBC Environment
-use super::{Error, Result, raw};
-use error::DiagRec;
+use super::{Result, raw};
+use error::{Error, DiagRec};
+use std::collections::HashMap;
 use std;
+
 
 /// Handle to an ODBC Environment
 ///
@@ -17,7 +19,7 @@ pub struct Environment {
 #[derive(Clone, Debug)]
 pub struct DriverInfo {
     pub description: String,
-    pub attributes: Vec<(String, String)>,
+    pub attributes: HashMap<String, String>,
 }
 
 impl Environment {
@@ -78,7 +80,10 @@ impl Environment {
                 }
                 raw::SQL_NO_DATA => break,
                 raw::SQL_ERROR => return Err(Error::SqlError(DiagRec {})),
-                _ => unreachable!(),
+                /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
+                /// validity of this handle with our invariant. In save code the user should not be
+                /// able to reach this code path.
+                _ => panic!("Environment invariant violated"),
             }
             unsafe {
                 result = raw::SQLDrivers(self.handle,
@@ -120,7 +125,10 @@ impl Environment {
                 }
                 raw::SQL_ERROR => return Err(Error::SqlError(DiagRec {})),
                 raw::SQL_NO_DATA => break,
-                _ => unreachable!(),
+                /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
+                /// validity of this handle with our invariant. In save code the user should not be
+                /// able to reach this code path.
+                _ => panic!("Environment invariant violated"),
             }
         }
         Ok(driver_list)
@@ -147,7 +155,7 @@ impl Environment {
     /// Called by drivers to pares list of attributes
     ///
     /// Key value pairs are seperated by `\0`. Key and value are seperated by `=`
-    fn parse_attributes(attribute_buffer: Vec<u8>) -> Vec<(String, String)> {
+    fn parse_attributes(attribute_buffer: Vec<u8>) -> HashMap<String, String> {
         String::from_utf8(attribute_buffer)
             .expect("String returned by Driver Manager should be utf8 encoded")
             .split('\0')
@@ -184,16 +192,12 @@ mod test {
             .cloned()
             .collect();
         let attributes = Environment::parse_attributes(buffer);
-        let expected: Vec<_> = [("APILevel", "2"),
-                                ("ConnectFunctions", "YYY"),
-                                ("CPTimeout", "60"),
-                                ("DriverODBCVer", "03.50"),
-                                ("FileUsage", "0"),
-                                ("SQLLevel", "1"),
-                                ("UsageCount", "1")]
-            .iter()
-            .map(|&(k, v)| (k.to_string(), v.to_string()))
-            .collect();
-        assert_eq!(expected, attributes);
+        assert_eq!(attributes["APILevel"], "2");
+        assert_eq!(attributes["ConnectFunctions"], "YYY");
+        assert_eq!(attributes["CPTimeout"], "60");
+        assert_eq!(attributes["DriverODBCVer"], "03.50");
+        assert_eq!(attributes["FileUsage"], "0");
+        assert_eq!(attributes["SQLLevel"], "1");
+        assert_eq!(attributes["UsageCount"], "1");
     }
 }
