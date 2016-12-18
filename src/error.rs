@@ -33,6 +33,7 @@ impl DiagRec {
                                  &mut message_length as *mut raw::SQLSMALLINT) {
             raw::SQL_SUCCESS => (),
             raw::SQL_SUCCESS_WITH_INFO => (),
+            raw::SQL_NO_DATA => panic!("No diagnostic record found"),
             _ => panic!("Error retrieving diagnostic record"),
         };
         let mut message_buffer: Vec<_> = (0..(message_length + 1)).map(|_| 0).collect();
@@ -43,9 +44,10 @@ impl DiagRec {
                                  &mut state[0] as *mut raw::SQLCHAR,
                                  &mut native_error_pointer as *mut raw::SQLINTEGER,
                                  &mut message_buffer[0] as *mut raw::SQLCHAR,
-                                 message_length,
+                                 message_length + 1,
                                  std::ptr::null_mut()) {
             raw::SQL_SUCCESS => {
+                message_buffer.pop(); //Drop terminating zero
                 DiagRec {
                     state: state,
                     native_error_pointer: native_error_pointer,
