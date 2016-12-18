@@ -47,6 +47,7 @@ impl DiagRec {
                                  message_length + 1,
                                  std::ptr::null_mut()) {
             raw::SQL_SUCCESS => {
+                message_buffer.pop(); //Drop terminating zero
                 DiagRec {
                     state: state,
                     native_error_pointer: native_error_pointer,
