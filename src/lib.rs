@@ -1,9 +1,9 @@
 pub mod raw;
 
-mod environment;
-pub use environment::Environment;
 mod error;
-pub use error::Error;
+pub use error::*;
+mod environment;
+pub use environment::*;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
