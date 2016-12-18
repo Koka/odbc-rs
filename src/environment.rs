@@ -4,7 +4,6 @@ use error::{Error, DiagRec};
 use std::collections::HashMap;
 use std;
 
-
 /// Handle to an ODBC Environment
 ///
 /// Creating an instance of this type is the first thing you do then using ODBC. The environment
@@ -79,7 +78,10 @@ impl Environment {
                     max_attr = std::cmp::max(max_attr, attr_length_out);
                 }
                 raw::SQL_NO_DATA => break,
-                raw::SQL_ERROR => return Err(Error::SqlError(DiagRec {})),
+                raw::SQL_ERROR => unsafe {
+                    return Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)
+                        .expect("At least one diagnostic record available in case of error")));
+                },
                 /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
                 /// validity of this handle with our invariant. In save code the user should not be
                 /// able to reach this code path.
@@ -123,7 +125,10 @@ impl Environment {
                         attributes: Self::parse_attributes(attribute_buffer),
                     })
                 }
-                raw::SQL_ERROR => return Err(Error::SqlError(DiagRec {})),
+                raw::SQL_ERROR => unsafe {
+                    return Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)
+                        .expect("At least one diagnostic record available in case of error")));
+                },
                 raw::SQL_NO_DATA => break,
                 /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
                 /// validity of this handle with our invariant. In save code the user should not be
@@ -148,7 +153,10 @@ impl Environment {
         match raw::SQLSetEnvAttr(self.handle, attribute, value, length) {
             raw::SQL_SUCCESS => Ok(()),
             raw::SQL_SUCCESS_WITH_INFO => Ok(()),
-            _ => Err(Error::SqlError(DiagRec {})),
+            _ => {
+                Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)
+                    .expect("At least one diagnostic record available in case of error")))
+            }
         }
     }
 

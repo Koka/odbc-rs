@@ -3,7 +3,7 @@ pub mod raw;
 mod error;
 pub use error::Error;
 mod environment;
-pub use environment::{Environment, DriverInfo};
+pub use environment::*;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
