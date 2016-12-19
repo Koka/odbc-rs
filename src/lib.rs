@@ -1,18 +1,16 @@
 pub mod raw;
 
+mod error;
+pub use error::*;
 mod environment;
-pub use environment::{Environment, DriverInfo};
-
-/// Error types used by this librayr
-#[derive(Debug)]
-pub struct Error;
+pub use environment::*;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[cfg(test)]
 mod test {
 
-    use super::Environment;
+    use super::*;
 
     #[test]
     fn list_drivers() {
@@ -24,6 +22,27 @@ mod test {
 
         let expected = ["PostgreSQL ANSI", "PostgreSQL Unicode", "SQLite", "SQLite3"];
         assert!(drivers.iter().map(|d| &d.description).eq(expected.iter()));
+    }
+
+    #[test]
+    fn provoke_error() {
+        use std;
+        let mut environment = Environment::new().unwrap();
+        // let mut dbc: raw::SQLHDBC = 0;
+        let error;
+        unsafe {
+            // We set the output pointer to zero. This is an error!
+            raw::SQLAllocHandle(raw::SQL_HANDLE_DBC, environment.raw(), std::ptr::null_mut());
+            // Let's create a diagnostic record describing that error
+            error = Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, environment.raw()));
+        }
+        if cfg!(target_os = "windows") {
+            assert_eq!(format!("{}", error),
+                       "[Microsoft][ODBC Driver Manager] Invalid argument value");
+        } else {
+            assert_eq!(format!("{}", error),
+                       "[unixODBC][Driver Manager]Invalid use of null pointer");
+        }
     }
 
     #[test]
