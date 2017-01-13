@@ -25,6 +25,19 @@ mod test {
     }
 
     #[test]
+    fn list_data_sources() {
+        let environment = Environment::new();
+        let sources = environment.expect("Environment can be created")
+            .data_sources()
+            .expect("Data sources can be iterated over");
+        println!("{:?}", sources);
+
+        let expected: [String; 0] = [];
+        assert!(sources.iter().map(|d| &d.server_name).eq(expected.iter()));
+        assert!(false);
+    }
+
+    #[test]
     fn provoke_error() {
         use std;
         let mut environment = Environment::new().unwrap();

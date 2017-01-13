@@ -11,14 +11,38 @@ pub struct Environment {
     handle: raw::SQLHENV,
 }
 
+/// Holds name and description of a datasource
+///
+/// Can be obtained via `Environment::data_sources`
+#[derive(Clone, Debug)]
+pub struct DataSourceInfo {
+    /// Name of the data source
+    pub server_name: String,
+    /// Description of the data source
+    pub description: String,
+}
+
 /// Struct holding information available on a driver.
 ///
 /// Can be obtained via `Environment::drivers`
 #[derive(Clone, Debug)]
 pub struct DriverInfo {
+    /// Name of the odbc driver
     pub description: String,
+    /// List of attributes of the odbc driver
     pub attributes: HashMap<String, String>,
 }
+
+/// Signature shared by `raw::SQLDrivers` and `raw::SQLDataSources`
+type SqlInfoFunction = unsafe extern "C" fn(raw::SQLHENV,
+                                            raw::SQLUSMALLINT,
+                                            *mut raw::SQLCHAR,
+                                            raw::SQLSMALLINT,
+                                            *mut raw::SQLSMALLINT,
+                                            *mut raw::SQLCHAR,
+                                            raw::SQLSMALLINT,
+                                            *mut raw::SQLSMALLINT)
+                                            -> raw::SQLRETURN;
 
 impl Environment {
     /// Allocates a new ODBC Environment
@@ -49,55 +73,14 @@ impl Environment {
     pub fn drivers(&self) -> Result<Vec<DriverInfo>> {
         // Iterate twice, once for reading the maximum required buffer lengths so we can read
         // everything without truncating and a second time for actually storing the values
-        let string_buf = std::ptr::null_mut();
         let mut desc_length_out: raw::SQLSMALLINT = 0;
         let mut attr_length_out: raw::SQLSMALLINT = 0;
-        let mut max_desc = 0;
-        let mut max_attr = 0;
-        let mut count = 0;
         let mut result;
-        unsafe {
-            // Although the rather lengthy function call kind of blows the code, let's do the first
-            // one using SQL_FETCH_FIRST, so we list all drivers independent from environment state
-            result = raw::SQLDrivers(self.handle,
-                                     raw::SQL_FETCH_FIRST,
-                                     string_buf,
-                                     0,
-                                     &mut desc_length_out as *mut raw::SQLSMALLINT,
-                                     string_buf,
-                                     0,
-                                     &mut attr_length_out as *mut raw::SQLSMALLINT);
-        }
-        loop {
-            match result {
-                raw::SQL_SUCCESS |
-                raw::SQL_SUCCESS_WITH_INFO => {
-                    count += 1;
-                    max_desc = std::cmp::max(max_desc, desc_length_out);
-                    max_attr = std::cmp::max(max_attr, attr_length_out);
-                }
-                raw::SQL_NO_DATA => break,
-                raw::SQL_ERROR => unsafe {
-                    return Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)));
-                },
-                /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
-                /// validity of this handle with our invariant. In save code the user should not be
-                /// able to reach this code path.
-                _ => panic!("Environment invariant violated"),
-            }
-            unsafe {
-                result = raw::SQLDrivers(self.handle,
-                                         raw::SQL_FETCH_NEXT,
-                                         string_buf,
-                                         0,
-                                         &mut desc_length_out as *mut raw::SQLSMALLINT,
-                                         string_buf,
-                                         0,
-                                         &mut attr_length_out as *mut raw::SQLSMALLINT);
-            }
-        }
 
-        let mut driver_list = Vec::with_capacity(count);
+        // alloc_info iterates ones over every driver to obtain the requiered buffer sizes
+        let (max_desc, max_attr, num_drivers) = self.alloc_info(raw::SQLDrivers)?;
+
+        let mut driver_list = Vec::with_capacity(num_drivers);
         loop {
             let mut description_buffer: Vec<_> = (0..(max_desc + 1)).map(|_| 0u8).collect();
             let mut attribute_buffer: Vec<_> = (0..(max_attr + 1)).map(|_| 0u8).collect();
@@ -136,6 +119,58 @@ impl Environment {
         Ok(driver_list)
     }
 
+    /// Stores all data source server names and descriptions in a Vec
+    pub fn data_sources(&self) -> Result<Vec<DataSourceInfo>> {
+        // Iterate twice, once for reading the maximum required buffer lengths so we can read
+        // everything without truncating and a second time for actually storing the values
+        let mut name_length_out: raw::SQLSMALLINT = 0;
+        let mut desc_length_out: raw::SQLSMALLINT = 0;
+        let mut result;
+
+        // alloc_info iterates ones over every datasource to obtain the requiered buffer sizes
+        let (max_name, max_desc, num_sources) = self.alloc_info(raw::SQLDataSources)?;
+
+        let mut source_list = Vec::with_capacity(num_sources);
+        loop {
+            let mut name_buffer: Vec<_> = (0..(max_name + 1)).map(|_| 0u8).collect();
+            let mut description_buffer: Vec<_> = (0..(max_desc + 1)).map(|_| 0u8).collect();
+            unsafe {
+                result = raw::SQLDataSources(self.handle,
+                                             // Its ok to use fetch next here, since we know
+                                             // last state has been SQL_NO_DATA
+                                             raw::SQL_FETCH_NEXT,
+                                             &mut name_buffer[0] as *mut u8,
+                                             max_name + 1,
+                                             &mut name_length_out as *mut raw::SQLSMALLINT,
+                                             &mut description_buffer[0] as *mut u8,
+                                             max_desc + 1,
+                                             &mut desc_length_out as *mut raw::SQLSMALLINT);
+            }
+            match result {
+                raw::SQL_SUCCESS |
+                raw::SQL_SUCCESS_WITH_INFO => {
+                    name_buffer.resize(name_length_out as usize, 0);
+                    description_buffer.resize(desc_length_out as usize, 0);
+                    source_list.push(DataSourceInfo {
+                        server_name: String::from_utf8(name_buffer)
+                            .expect("String returned by Driver Manager should be utf8 encoded"),
+                        description: String::from_utf8(description_buffer)
+                            .expect("String returned by Driver Manager should be utf8 encoded"),
+                    })
+                }
+                raw::SQL_ERROR => unsafe {
+                    return Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)));
+                },
+                raw::SQL_NO_DATA => break,
+                /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
+                /// validity of this handle with our invariant. In save code the user should not be
+                /// able to reach this code path.
+                _ => panic!("Environment invariant violated"),
+            }
+        }
+        Ok(source_list)
+    }
+
     /// Allows access to the raw ODBC handle
     pub unsafe fn raw(&mut self) -> raw::SQLHENV {
         self.handle
@@ -152,6 +187,59 @@ impl Environment {
             raw::SQL_SUCCESS_WITH_INFO => Ok(()),
             _ => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle))),
         }
+    }
+
+    fn alloc_info(&self,
+                  f: SqlInfoFunction)
+                  -> Result<(raw::SQLSMALLINT, raw::SQLSMALLINT, usize)> {
+        let string_buf = std::ptr::null_mut();
+        let mut buf1_length_out: raw::SQLSMALLINT = 0;
+        let mut buf2_length_out: raw::SQLSMALLINT = 0;
+        let mut max1 = 0;
+        let mut max2 = 0;
+        let mut count = 0;
+        let mut result = unsafe {
+            // Although the rather lengthy function call kind of blows the code, let's do the first
+            // one using SQL_FETCH_FIRST, so we list all drivers independent from environment state
+            f(self.handle,
+              raw::SQL_FETCH_FIRST,
+              string_buf,
+              0,
+              &mut buf1_length_out as *mut raw::SQLSMALLINT,
+              string_buf,
+              0,
+              &mut buf2_length_out as *mut raw::SQLSMALLINT)
+        };
+        loop {
+            match result {
+                raw::SQL_SUCCESS |
+                raw::SQL_SUCCESS_WITH_INFO => {
+                    count += 1;
+                    max1 = std::cmp::max(max1, buf1_length_out);
+                    max2 = std::cmp::max(max2, buf2_length_out);
+                }
+                raw::SQL_NO_DATA => break,
+                raw::SQL_ERROR => unsafe {
+                    return Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)));
+                },
+                /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
+                /// validity of this handle with our invariant. In save code the user should not be
+                /// able to reach this code path.
+                _ => panic!("Environment invariant violated"),
+            }
+            unsafe {
+                result = f(self.handle,
+                           raw::SQL_FETCH_NEXT,
+                           string_buf,
+                           0,
+                           &mut buf1_length_out as *mut raw::SQLSMALLINT,
+                           string_buf,
+                           0,
+                           &mut buf2_length_out as *mut raw::SQLSMALLINT);
+            }
+        }
+
+        Ok((max1, max2, count))
     }
 
     /// Called by drivers to pares list of attributes
