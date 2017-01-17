@@ -34,7 +34,30 @@ mod test {
 
         let expected: [String; 0] = [];
         assert!(sources.iter().map(|d| &d.server_name).eq(expected.iter()));
-        assert!(false);
+    }
+
+    #[test]
+    fn list_system_data_sources() {
+        let environment = Environment::new();
+        let sources = environment.expect("Environment can be created")
+            .system_data_sources()
+            .expect("Data sources can be iterated over");
+        println!("{:?}", sources);
+
+        let expected: [String; 0] = [];
+        assert!(sources.iter().map(|d| &d.server_name).eq(expected.iter()));
+    }
+
+    #[test]
+    fn list_user_data_sources() {
+        let environment = Environment::new();
+        let sources = environment.expect("Environment can be created")
+            .user_data_sources()
+            .expect("Data sources can be iterated over");
+        println!("{:?}", sources);
+
+        let expected: [String; 0] = [];
+        assert!(sources.iter().map(|d| &d.server_name).eq(expected.iter()));
     }
 
     #[test]
