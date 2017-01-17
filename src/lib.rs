@@ -32,8 +32,11 @@ mod test {
             .expect("Data sources can be iterated over");
         println!("{:?}", sources);
 
-        let expected: [String; 0] = [];
-        assert!(sources.iter().map(|d| &d.server_name).eq(expected.iter()));
+        let expected = [DataSourceInfo {
+                            server_name: "PostgreSQL".to_owned(),
+                            description: "PostgerSQL Unicode".to_owned(),
+                        }];
+        assert!(sources.iter().eq(expected.iter()));
     }
 
     #[test]
@@ -44,8 +47,11 @@ mod test {
             .expect("Data sources can be iterated over");
         println!("{:?}", sources);
 
-        let expected: [String; 0] = [];
-        assert!(sources.iter().map(|d| &d.server_name).eq(expected.iter()));
+        let expected = [DataSourceInfo {
+                            server_name: "PostgreSQL".to_owned(),
+                            description: "PostgerSQL Unicode".to_owned(),
+                        }];
+        assert!(sources.iter().eq(expected.iter()));
     }
 
     #[test]
@@ -56,8 +62,8 @@ mod test {
             .expect("Data sources can be iterated over");
         println!("{:?}", sources);
 
-        let expected: [String; 0] = [];
-        assert!(sources.iter().map(|d| &d.server_name).eq(expected.iter()));
+        let expected: [DataSourceInfo; 0] = [];
+        assert!(sources.iter().eq(expected.iter()));
     }
 
     #[test]

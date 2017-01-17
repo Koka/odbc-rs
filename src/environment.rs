@@ -14,7 +14,7 @@ pub struct Environment {
 /// Holds name and description of a datasource
 ///
 /// Can be obtained via `Environment::data_sources`
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DataSourceInfo {
     /// Name of the data source
     pub server_name: String,
@@ -25,7 +25,7 @@ pub struct DataSourceInfo {
 /// Struct holding information available on a driver.
 ///
 /// Can be obtained via `Environment::drivers`
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DriverInfo {
     /// Name of the odbc driver
     pub description: String,
