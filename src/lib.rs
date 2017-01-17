@@ -34,22 +34,7 @@ mod test {
 
         let expected = [DataSourceInfo {
                             server_name: "PostgreSQL".to_owned(),
-                            description: "PostgerSQL Unicode".to_owned(),
-                        }];
-        assert!(sources.iter().eq(expected.iter()));
-    }
-
-    #[test]
-    fn list_system_data_sources() {
-        let environment = Environment::new();
-        let sources = environment.expect("Environment can be created")
-            .system_data_sources()
-            .expect("Data sources can be iterated over");
-        println!("{:?}", sources);
-
-        let expected = [DataSourceInfo {
-                            server_name: "PostgreSQL".to_owned(),
-                            description: "PostgerSQL Unicode".to_owned(),
+                            description: "PostgreSQL Unicode".to_owned(),
                         }];
         assert!(sources.iter().eq(expected.iter()));
     }
@@ -59,6 +44,21 @@ mod test {
         let environment = Environment::new();
         let sources = environment.expect("Environment can be created")
             .user_data_sources()
+            .expect("Data sources can be iterated over");
+        println!("{:?}", sources);
+
+        let expected = [DataSourceInfo {
+                            server_name: "PostgreSQL".to_owned(),
+                            description: "PostgreSQL Unicode".to_owned(),
+                        }];
+        assert!(sources.iter().eq(expected.iter()));
+    }
+
+    #[test]
+    fn list_system_data_sources() {
+        let environment = Environment::new();
+        let sources = environment.expect("Environment can be created")
+            .system_data_sources()
             .expect("Data sources can be iterated over");
         println!("{:?}", sources);
 
