@@ -13,3 +13,4 @@ before_install:
   - sudo apt-get install -y unixodbc unixodbc-dev odbc-postgresql libsqliteodbc
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
+  - export ODBCINI=${PWD}/travis/odbc.ini
