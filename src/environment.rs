@@ -1,6 +1,7 @@
 //! This module implements the ODBC Environment
 use super::{Error, DiagRec, Result, raw};
 use std::collections::HashMap;
+use std::ffi::CStr;
 use std;
 
 /// Handle to an ODBC Environment
@@ -131,9 +132,10 @@ impl Environment {
         let (max_name, max_desc, num_sources) = self.alloc_info(raw::SQLDataSources)?;
 
         let mut source_list = Vec::with_capacity(num_sources);
+        let mut name_buffer: Vec<_> = (0..(max_name + 1)).map(|_| 0u8).collect();
+        let mut description_buffer: Vec<_> = (0..(max_desc + 1)).map(|_| 0u8).collect();
+
         loop {
-            let mut name_buffer: Vec<_> = (0..(max_name + 1)).map(|_| 0u8).collect();
-            let mut description_buffer: Vec<_> = (0..(max_desc + 1)).map(|_| 0u8).collect();
             unsafe {
                 result = raw::SQLDataSources(self.handle,
                                              // Its ok to use fetch next here, since we know
@@ -149,13 +151,19 @@ impl Environment {
             match result {
                 raw::SQL_SUCCESS |
                 raw::SQL_SUCCESS_WITH_INFO => {
-                    name_buffer.resize(name_length_out as usize, 0);
-                    description_buffer.resize(desc_length_out as usize, 0);
+                    let name = CStr::from_bytes_with_nul(name_buffer.as_slice())
+                        .unwrap()
+                        .to_str()
+                        .unwrap()
+                        .to_owned();
+                    let description = CStr::from_bytes_with_nul(description_buffer.as_slice())
+                        .unwrap()
+                        .to_str()
+                        .unwrap()
+                        .to_owned();
                     source_list.push(DataSourceInfo {
-                        server_name: String::from_utf8(name_buffer)
-                            .expect("String returned by Driver Manager should be utf8 encoded"),
-                        description: String::from_utf8(description_buffer)
-                            .expect("String returned by Driver Manager should be utf8 encoded"),
+                        server_name: name,
+                        description: description,
                     })
                 }
                 raw::SQL_ERROR => unsafe {
