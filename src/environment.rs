@@ -176,6 +176,8 @@ impl Environment {
         }
     }
 
+    /// Calls either SQLDrivers or SQLDataSources with the two given buffers and parses the result
+    /// into a `(&str,&str)`
     unsafe fn get_info<'a, 'b>(&self,
                                f: SqlInfoFunction,
                                direction: raw::SQLUSMALLINT,
