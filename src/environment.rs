@@ -80,21 +80,16 @@ impl Environment {
         let mut driver_list = Vec::with_capacity(num_drivers);
         let mut description_buffer: Vec<_> = (0..(max_desc + 1)).map(|_| 0u8).collect();
         let mut attribute_buffer: Vec<_> = (0..(max_attr + 1)).map(|_| 0u8).collect();
-
-        loop {
-            if let Some((desc, attr)) = unsafe {
-                self.get_info(raw::SQLDrivers,
-                              raw::SQL_FETCH_NEXT,
-                              &mut description_buffer,
-                              &mut attribute_buffer)
-            }? {
-                driver_list.push(DriverInfo {
-                    description: desc.to_owned(),
-                    attributes: Self::parse_attributes(attr),
-                })
-            } else {
-                break;
-            }
+        while let Some((desc, attr)) = unsafe {
+            self.get_info(raw::SQLDrivers,
+                          raw::SQL_FETCH_NEXT,
+                          &mut description_buffer,
+                          &mut attribute_buffer)
+        }? {
+            driver_list.push(DriverInfo {
+                description: desc.to_owned(),
+                attributes: Self::parse_attributes(attr),
+            })
         }
         Ok(driver_list)
     }
@@ -142,18 +137,14 @@ impl Environment {
             return Ok(source_list);
         }
 
-        loop {
-            if let Some((name, desc)) = self.get_info(raw::SQLDataSources,
-                          raw::SQL_FETCH_NEXT,
-                          &mut name_buffer,
-                          &mut description_buffer)? {
-                source_list.push(DataSourceInfo {
-                    server_name: name.to_owned(),
-                    description: desc.to_owned(),
-                })
-            } else {
-                break;
-            }
+        while let Some((name, desc)) = self.get_info(raw::SQLDataSources,
+                      raw::SQL_FETCH_NEXT,
+                      &mut name_buffer,
+                      &mut description_buffer)? {
+            source_list.push(DataSourceInfo {
+                server_name: name.to_owned(),
+                description: desc.to_owned(),
+            })
         }
         Ok(source_list)
     }
