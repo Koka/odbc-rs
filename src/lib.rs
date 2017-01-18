@@ -25,6 +25,48 @@ mod test {
     }
 
     #[test]
+    fn list_data_sources() {
+        let environment = Environment::new();
+        let sources = environment.expect("Environment can be created")
+            .data_sources()
+            .expect("Data sources can be iterated over");
+        println!("{:?}", sources);
+
+        let expected = [DataSourceInfo {
+                            server_name: "PostgreSQL".to_owned(),
+                            description: "PostgreSQL Unicode".to_owned(),
+                        }];
+        assert!(sources.iter().eq(expected.iter()));
+    }
+
+    #[test]
+    fn list_user_data_sources() {
+        let environment = Environment::new();
+        let sources = environment.expect("Environment can be created")
+            .user_data_sources()
+            .expect("Data sources can be iterated over");
+        println!("{:?}", sources);
+
+        let expected = [DataSourceInfo {
+                            server_name: "PostgreSQL".to_owned(),
+                            description: "PostgreSQL Unicode".to_owned(),
+                        }];
+        assert!(sources.iter().eq(expected.iter()));
+    }
+
+    #[test]
+    fn list_system_data_sources() {
+        let environment = Environment::new();
+        let sources = environment.expect("Environment can be created")
+            .system_data_sources()
+            .expect("Data sources can be iterated over");
+        println!("{:?}", sources);
+
+        let expected: [DataSourceInfo; 0] = [];
+        assert!(sources.iter().eq(expected.iter()));
+    }
+
+    #[test]
     fn provoke_error() {
         use std;
         let mut environment = Environment::new().unwrap();
