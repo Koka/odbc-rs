@@ -4,6 +4,8 @@ mod error;
 pub use error::*;
 mod environment;
 pub use environment::*;
+mod connection;
+pub use connection::*;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -11,6 +13,13 @@ pub type Result<T> = std::result::Result<T, Error>;
 mod test {
 
     use super::*;
+
+    #[test]
+    fn test_connection() {
+
+        let mut environment = Environment::new().expect("Environment can be created");
+        let conn = Connection::with_dsn(&mut environment).expect("Connected");
+    }
 
     #[test]
     fn list_drivers() {
