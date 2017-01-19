@@ -14,7 +14,13 @@ pub struct Connection<'a> {
 }
 
 impl<'a> Connection<'a> {
-    /// Allocates and connects an ODBC connection handle
+    /// Creates a new `Connection` to a data source
+    ///
+    /// # Arguments
+    /// * `env` - Environment used to allocate the connection handle.
+    /// * `dsn` - Data source name configured in the `odbc.ini` file!()
+    /// * `usr` - User identifier
+    /// * `pwd` - Authentication (usually password)
     pub fn with_dsn_and_credentials<'b>(env: &'b mut Environment,
                                         dsn: &str,
                                         usr: &str,
