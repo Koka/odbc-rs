@@ -18,7 +18,9 @@ mod test {
     fn test_connection() {
 
         let mut environment = Environment::new().expect("Environment can be created");
-        let conn = Connection::with_dsn(&mut environment).expect("Connected");
+        let conn =
+            Connection::with_dsn_and_credentials(&mut environment, "PostgreSQL", "postgres", "")
+                .expect("Could not connect");
     }
 
     #[test]

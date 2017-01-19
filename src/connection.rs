@@ -14,7 +14,30 @@ pub struct Connection<'a> {
 }
 
 impl<'a> Connection<'a> {
-    pub fn with_dsn(env: &mut Environment) -> Result<Connection> {
+    /// Allocates and connects an ODBC connection handle
+    pub fn with_dsn_and_credentials<'b>(env: &'b mut Environment,
+                                        dsn: &str,
+                                        usr: &str,
+                                        pwd: &str)
+                                        -> Result<Connection<'b>> {
+        let connection = Self::allocate(env)?;
+
+        unsafe {
+            match raw::SQLConnect(connection.handle,
+                                  dsn.as_ptr(),
+                                  dsn.as_bytes().len() as raw::SQLSMALLINT,
+                                  usr.as_ptr(),
+                                  usr.as_bytes().len() as raw::SQLSMALLINT,
+                                  pwd.as_ptr(),
+                                  pwd.as_bytes().len() as raw::SQLSMALLINT) {
+                raw::SQL_SUCCESS |
+                raw::SQL_SUCCESS_WITH_INFO => Ok(connection),
+                _ => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_DBC, connection.handle))),
+            }
+        }
+    }
+
+    fn allocate(env: &mut Environment) -> Result<Connection> {
         unsafe {
             let mut conn = std::ptr::null_mut();
             match raw::SQLAllocHandle(raw::SQL_HANDLE_DBC, env.raw(), &mut conn) {
