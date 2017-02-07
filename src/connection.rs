@@ -43,16 +43,41 @@ impl<'a> Connection<'a> {
         }
     }
 
+    /// `true` if the data source is set to READ ONLY mode, `false` otherwise.
+    ///
+    /// This characteristic pertains only to the data source itself; it is not characteristic of
+    /// the driver that enables access to the data source. A driver that is read/write can be used
+    /// with a data source that is read-only. If a driver is read-only, all of its data sources
+    /// must be read-only.
+    pub fn read_only(&self) -> Result<bool> {
+        let mut buffer: [u8; 2] = [0; 2];
+
+        unsafe {
+            match raw::SQLGetInfo(self.handle,
+                                  raw::SQL_DATA_SOURCE_READ_ONLY,
+                                  buffer.as_mut_ptr() as *mut std::os::raw::c_void,
+                                  buffer.len() as raw::SQLSMALLINT,
+                                  std::ptr::null_mut()) {
+                raw::SQL_SUCCESS |
+                raw::SQL_SUCCESS_WITH_INFO => Ok(buffer[0] == 89), //ASCII CODE `Y`
+                raw::SQL_ERROR => {
+                    Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_DBC, self.handle)))
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+
+    /// Allows access to the raw ODBC handle
+    pub unsafe fn raw(&mut self) -> raw::SQLHDBC {
+        self.handle
+    }
+
     fn allocate(env: &mut Environment) -> Result<Connection> {
         unsafe {
             let mut conn = std::ptr::null_mut();
             match raw::SQLAllocHandle(raw::SQL_HANDLE_DBC, env.raw(), &mut conn) {
-                raw::SQL_SUCCESS => {
-                    Ok(Connection {
-                        handle: conn,
-                        env: PhantomData,
-                    })
-                }
+                raw::SQL_SUCCESS |
                 raw::SQL_SUCCESS_WITH_INFO => {
                     Ok(Connection {
                         handle: conn,
@@ -66,11 +91,6 @@ impl<'a> Connection<'a> {
                 _ => unreachable!(),
             }
         }
-    }
-
-    /// Allows access to the raw ODBC handle
-    pub unsafe fn raw(&mut self) -> raw::SQLHDBC {
-        self.handle
     }
 }
 
