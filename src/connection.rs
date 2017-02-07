@@ -67,6 +67,11 @@ impl<'a> Connection<'a> {
             }
         }
     }
+
+    /// Allows access to the raw ODBC handle
+    pub unsafe fn raw(&mut self) -> raw::SQLHDBC {
+        self.handle
+    }
 }
 
 impl<'a> Drop for Connection<'a> {

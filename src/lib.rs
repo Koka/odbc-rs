@@ -18,9 +18,22 @@ mod test {
     fn test_connection() {
 
         let mut environment = Environment::new().expect("Environment can be created");
-        let conn =
+        let mut conn =
             Connection::with_dsn_and_credentials(&mut environment, "PostgreSQL", "postgres", "")
                 .expect("Could not connect");
+
+        let mut buffer: [u8; 1] = [0; 1];
+
+        unsafe {
+            raw::SQLGetInfo(conn.raw(),
+                            raw::SQL_DATA_SOURCE_READ_ONLY,
+                            buffer.as_mut_ptr() as *mut std::os::raw::c_void,
+                            1,
+                            std::ptr::null_mut());
+        }
+
+        println!("{:?}", buffer);
+        assert!(false);
     }
 
     #[test]
