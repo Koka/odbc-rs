@@ -3,21 +3,19 @@ use super::{raw, Environment, Result, DiagRec, Error};
 use std;
 use std::marker::PhantomData;
 
-/// Handle to an ODBC Connection
-///
-/// Connections are used to connect to data sources
-pub struct Connection<'a> {
+/// Represents a connection to an ODBC data source
+pub struct DataSource<'a> {
     handle: raw::SQLHDBC,
     // we use phantom data to tell the borrow checker that we need to keep the environment alive for
     // the lifetime of the connection
     env: PhantomData<&'a Environment>,
 }
 
-impl<'a> Connection<'a> {
-    /// Creates a new `Connection` to a data source
+impl<'a> DataSource<'a> {
+    /// Connects to an ODBC data source
     ///
     /// # Arguments
-    /// * `env` - Environment used to allocate the connection handle.
+    /// * `env` - Environment used to allocate the data source handle.
     /// * `dsn` - Data source name configured in the `odbc.ini` file!()
     /// * `usr` - User identifier
     /// * `pwd` - Authentication (usually password)
@@ -25,11 +23,11 @@ impl<'a> Connection<'a> {
                                         dsn: &str,
                                         usr: &str,
                                         pwd: &str)
-                                        -> Result<Connection<'b>> {
-        let connection = Self::allocate(env)?;
+                                        -> Result<DataSource<'b>> {
+        let data_source = Self::allocate(env)?;
 
         unsafe {
-            match raw::SQLConnect(connection.handle,
+            match raw::SQLConnect(data_source.handle,
                                   dsn.as_ptr(),
                                   dsn.as_bytes().len() as raw::SQLSMALLINT,
                                   usr.as_ptr(),
@@ -37,8 +35,8 @@ impl<'a> Connection<'a> {
                                   pwd.as_ptr(),
                                   pwd.as_bytes().len() as raw::SQLSMALLINT) {
                 raw::SQL_SUCCESS |
-                raw::SQL_SUCCESS_WITH_INFO => Ok(connection),
-                _ => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_DBC, connection.handle))),
+                raw::SQL_SUCCESS_WITH_INFO => Ok(data_source),
+                _ => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_DBC, data_source.handle))),
             }
         }
     }
@@ -73,13 +71,13 @@ impl<'a> Connection<'a> {
         self.handle
     }
 
-    fn allocate(env: &mut Environment) -> Result<Connection> {
+    fn allocate(env: &mut Environment) -> Result<DataSource> {
         unsafe {
             let mut conn = std::ptr::null_mut();
             match raw::SQLAllocHandle(raw::SQL_HANDLE_DBC, env.raw(), &mut conn) {
                 raw::SQL_SUCCESS |
                 raw::SQL_SUCCESS_WITH_INFO => {
-                    Ok(Connection {
+                    Ok(DataSource {
                         handle: conn,
                         env: PhantomData,
                     })
@@ -94,7 +92,7 @@ impl<'a> Connection<'a> {
     }
 }
 
-impl<'a> Drop for Connection<'a> {
+impl<'a> Drop for DataSource<'a> {
     fn drop(&mut self) {
         unsafe {
             raw::SQLFreeHandle(raw::SQL_HANDLE_DBC, self.handle);

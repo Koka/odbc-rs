@@ -4,8 +4,8 @@ mod error;
 pub use error::*;
 mod environment;
 pub use environment::*;
-mod connection;
-pub use connection::*;
+mod data_source;
+pub use data_source::*;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -19,7 +19,7 @@ mod test {
 
         let mut environment = Environment::new().expect("Environment can be created");
         let conn =
-            Connection::with_dsn_and_credentials(&mut environment, "PostgreSQL", "postgres", "")
+            DataSource::with_dsn_and_credentials(&mut environment, "PostgreSQL", "postgres", "")
                 .expect("Could not connect");
 
         assert!(!conn.read_only().unwrap());
