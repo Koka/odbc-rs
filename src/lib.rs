@@ -22,13 +22,13 @@ mod test {
             Connection::with_dsn_and_credentials(&mut environment, "PostgreSQL", "postgres", "")
                 .expect("Could not connect");
 
-        let mut buffer: [u8; 1] = [0; 1];
+        let mut buffer: [u8; 2] = [0; 2];
 
         unsafe {
             raw::SQLGetInfo(conn.raw(),
                             raw::SQL_DATA_SOURCE_READ_ONLY,
                             buffer.as_mut_ptr() as *mut std::os::raw::c_void,
-                            1,
+                            buffer.len() as raw::SQLSMALLINT,
                             std::ptr::null_mut());
         }
 
