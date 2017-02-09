@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
+    
 
     
     
@@ -42,12 +43,12 @@
     </nav>
 
     <section id='main' class="content fn">
-<h1 class='fqn'><span class='in-band'><a href='../index.html'>odbc</a>::<wbr><a href='index.html'>raw</a>::<wbr><a class='fn' href=''>SQLProceduresA</a></span><span class='out-of-band'><span id='render-detail'>
-            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                [<span class='inner'>&#x2212;</span>]
-            </a>
-        </span><a id='src-1269' class='srclink' href='../../src/odbc/raw/sqlext.rs.html#711-715' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub unsafe extern fn SQLProceduresA(hstmt: <a class='type' href='../../odbc/raw/type.SQLHSTMT.html' title='odbc::raw::SQLHSTMT'>SQLHSTMT</a>, szCatalogName: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut <a class='type' href='../../odbc/raw/type.SQLCHAR.html' title='odbc::raw::SQLCHAR'>SQLCHAR</a></a>, cbCatalogName: <a class='type' href='../../odbc/raw/type.SQLSMALLINT.html' title='odbc::raw::SQLSMALLINT'>SQLSMALLINT</a>, szSchemaName: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut <a class='type' href='../../odbc/raw/type.SQLCHAR.html' title='odbc::raw::SQLCHAR'>SQLCHAR</a></a>, cbSchemaName: <a class='type' href='../../odbc/raw/type.SQLSMALLINT.html' title='odbc::raw::SQLSMALLINT'>SQLSMALLINT</a>, szProcName: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut <a class='type' href='../../odbc/raw/type.SQLCHAR.html' title='odbc::raw::SQLCHAR'>SQLCHAR</a></a>, cbProcName: <a class='type' href='../../odbc/raw/type.SQLSMALLINT.html' title='odbc::raw::SQLSMALLINT'>SQLSMALLINT</a>) -&gt; <a class='type' href='../../odbc/raw/type.SQLRETURN.html' title='odbc::raw::SQLRETURN'>SQLRETURN</a></pre></section>
+<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>odbc</a>::<wbr><a href='index.html'>raw</a>::<wbr><a class='fn' href=''>SQLProceduresA</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a id='src-1284' class='srclink' href='../../src/odbc/src/raw/sqlext.rs.html#1044-1051' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub unsafe extern fn SQLProceduresA(hstmt: <a class='type' href='../../odbc/raw/type.SQLHSTMT.html' title='odbc::raw::SQLHSTMT'>SQLHSTMT</a>, szCatalogName: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut </a><a class='type' href='../../odbc/raw/type.SQLCHAR.html' title='odbc::raw::SQLCHAR'>SQLCHAR</a>, cbCatalogName: <a class='type' href='../../odbc/raw/type.SQLSMALLINT.html' title='odbc::raw::SQLSMALLINT'>SQLSMALLINT</a>, szSchemaName: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut </a><a class='type' href='../../odbc/raw/type.SQLCHAR.html' title='odbc::raw::SQLCHAR'>SQLCHAR</a>, cbSchemaName: <a class='type' href='../../odbc/raw/type.SQLSMALLINT.html' title='odbc::raw::SQLSMALLINT'>SQLSMALLINT</a>, szProcName: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut </a><a class='type' href='../../odbc/raw/type.SQLCHAR.html' title='odbc::raw::SQLCHAR'>SQLCHAR</a>, cbProcName: <a class='type' href='../../odbc/raw/type.SQLSMALLINT.html' title='odbc::raw::SQLSMALLINT'>SQLSMALLINT</a>) -&gt; <a class='type' href='../../odbc/raw/type.SQLRETURN.html' title='odbc::raw::SQLRETURN'>SQLRETURN</a></pre></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -70,6 +71,8 @@
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 
@@ -90,7 +93,7 @@
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

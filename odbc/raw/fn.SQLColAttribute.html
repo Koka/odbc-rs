@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
+    
 
     
     
@@ -42,12 +43,12 @@
     </nav>
 
     <section id='main' class="content fn">
-<h1 class='fqn'><span class='in-band'><a href='../index.html'>odbc</a>::<wbr><a href='index.html'>raw</a>::<wbr><a class='fn' href=''>SQLColAttribute</a></span><span class='out-of-band'><span id='render-detail'>
-            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                [<span class='inner'>&#x2212;</span>]
-            </a>
-        </span><a id='src-285' class='srclink' href='../../src/odbc/raw/sqlext.rs.html#85-91' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub unsafe extern fn SQLColAttribute(StatementHandle: <a class='type' href='../../odbc/raw/type.SQLHSTMT.html' title='odbc::raw::SQLHSTMT'>SQLHSTMT</a>, ColumnNumber: <a class='type' href='../../odbc/raw/type.SQLUSMALLINT.html' title='odbc::raw::SQLUSMALLINT'>SQLUSMALLINT</a>, FieldIdentifier: <a class='type' href='../../odbc/raw/type.SQLUSMALLINT.html' title='odbc::raw::SQLUSMALLINT'>SQLUSMALLINT</a>, CharacterAttribute: <a class='type' href='../../odbc/raw/type.SQLPOINTER.html' title='odbc::raw::SQLPOINTER'>SQLPOINTER</a>, BufferLength: <a class='type' href='../../odbc/raw/type.SQLSMALLINT.html' title='odbc::raw::SQLSMALLINT'>SQLSMALLINT</a>, StringLength: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut <a class='type' href='../../odbc/raw/type.SQLSMALLINT.html' title='odbc::raw::SQLSMALLINT'>SQLSMALLINT</a></a>, NumericAttribute: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut <a class='type' href='../../odbc/raw/type.SQLLEN.html' title='odbc::raw::SQLLEN'>SQLLEN</a></a>) -&gt; <a class='type' href='../../odbc/raw/type.SQLRETURN.html' title='odbc::raw::SQLRETURN'>SQLRETURN</a></pre></section>
+<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>odbc</a>::<wbr><a href='index.html'>raw</a>::<wbr><a class='fn' href=''>SQLColAttribute</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a id='src-300' class='srclink' href='../../src/odbc/src/raw/sqlext.rs.html#107-114' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub unsafe extern fn SQLColAttribute(StatementHandle: <a class='type' href='../../odbc/raw/type.SQLHSTMT.html' title='odbc::raw::SQLHSTMT'>SQLHSTMT</a>, ColumnNumber: <a class='type' href='../../odbc/raw/type.SQLUSMALLINT.html' title='odbc::raw::SQLUSMALLINT'>SQLUSMALLINT</a>, FieldIdentifier: <a class='type' href='../../odbc/raw/type.SQLUSMALLINT.html' title='odbc::raw::SQLUSMALLINT'>SQLUSMALLINT</a>, CharacterAttribute: <a class='type' href='../../odbc/raw/type.SQLPOINTER.html' title='odbc::raw::SQLPOINTER'>SQLPOINTER</a>, BufferLength: <a class='type' href='../../odbc/raw/type.SQLSMALLINT.html' title='odbc::raw::SQLSMALLINT'>SQLSMALLINT</a>, StringLength: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut </a><a class='type' href='../../odbc/raw/type.SQLSMALLINT.html' title='odbc::raw::SQLSMALLINT'>SQLSMALLINT</a>, NumericAttribute: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut </a><a class='type' href='../../odbc/raw/type.SQLLEN.html' title='odbc::raw::SQLLEN'>SQLLEN</a>) -&gt; <a class='type' href='../../odbc/raw/type.SQLRETURN.html' title='odbc::raw::SQLRETURN'>SQLRETURN</a></pre></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -70,6 +71,8 @@
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 
@@ -90,7 +93,7 @@
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>

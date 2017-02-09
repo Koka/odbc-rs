@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["raw",""]]});
+initSidebarItems({"enum":[["Error","An ODBC Error"]],"mod":[["raw",""]],"struct":[["DataSource","Represents a connection to an ODBC data source"],["DataSourceInfo","Holds name and description of a datasource"],["DiagRec","ODBC Diagnostic Record"],["DriverInfo","Struct holding information available on a driver."],["Environment","Handle to an ODBC Environment"]],"type":[["Result",""]]});
