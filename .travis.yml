@@ -1,16 +1,33 @@
+sudo: false
 language: rust
 rust:
-  - stable
-  - beta
-  - nightly
+ - stable
+ - beta
+ - nightly
 matrix:
   allow_failures:
-    - rust: nightly
-
+   - rust: nightly
+addons:
+  apt:
+    packages:
+     - libcurl4-openssl-dev
+     - libelf-dev
+     - libdw-dev
+     - binutils-dev
+     - unixodbc
+     - unixodbc-dev
+     - odbc-postgresql
+     - libsqliteodbc
 services:
-  - postgresql
-before_install:
-  - sudo apt-get install -y unixodbc unixodbc-dev odbc-postgresql libsqliteodbc
+ - postgresql
 before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
-  - export ODBCINI=${PWD}/travis/odbc.ini
+ - psql -c 'create database travis_ci_test;' -U postgres
+ - export ODBCINI=${PWD}/travis/odbc.ini
+ - pip install 'travis-cargo<0.2' --user
+ - export PATH=$HOME/.local/bin:$PATH
+after_success:
+ - travis-cargo coveralls --no-sudo --verify --exclude-pattern .cargo --kcov-options="--coveralls-id=$COVERALLS_ID"
+ - ./kcov/build/src/kcov --verify --coveralls-id=$COVERALLS_ID --exclude-pattern=/.cargo target/odbc target/debug/odbc-*
+env:
+  global:
+    secure: EXKLfHHQEtxEhLNvYQE/6fe9khop07ODbVdlbv+mxr7AidMw6YHpekaFwUV8bOMPYqAiVbnDTPX18dB4gIud0YaxRqUg+qveQMVXMUVwuTSp7SdLsZU0Nt4tbefWv4BN+eerjyaUSJU0cU5AxL1vKnXgnMtVLhivAAylsNtFD3hJn0fyxtCEiQq34RpE9kfTtJG7Q1HQQMQi+dlzQZrahNHN0JcFVBQDddNkMMzumW3g2EvVxlA2wyRNmndw6bW+rThpQ8vRILqE8gN3ftuM7ufMdA8eZ7PSYgmvYfRrOwApbE/wDtfcv0TiXEUdTB690T6BMOcJvaa8KIgwiRlVNOlTgrFUTJtG2d+Fb1dQTUCnzHvxu2Nl+TPmFpxFy1J9zPJ7dMzNHJLBN4C2qzNKfk7p6Jffhgxqph4d1oHdcSqdCxk74alzqz7ts8bn7sLnykzt/q1iqvkgZmUyMhNMERRDkvRq+/5OnS4IE/5g3AaEbZgA3slvB95rYqhIpOGoK9XxQ13ZVTM5oxOGZiqchTtWtQ2KDyuaWozB+KIB5fs4SOfdlCHxdOIuwnWsng2zVqdyZZpQF9F2l47rR9m9RLnQTIbbAgOEr9auXf9zNmBJ0w/G4PR74qbw/069goTCulx7oUnMIMv3jFrCEHE+r+xvjBL4N102cIzkgoVhzdE=
