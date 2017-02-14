@@ -2,6 +2,7 @@
 //! allows for an error handling which his idomatic to rust
 
 use super::raw;
+use raw::SQLRETURN::*;
 use std::fmt::{Display, Formatter};
 use std;
 
@@ -31,9 +32,9 @@ impl DiagRec {
                                  std::ptr::null_mut(),
                                  0,
                                  &mut message_length as *mut raw::SQLSMALLINT) {
-            raw::SQL_SUCCESS => (),
-            raw::SQL_SUCCESS_WITH_INFO => (),
-            raw::SQL_NO_DATA => panic!("No diagnostic record found"),
+            SQL_SUCCESS => (),
+            SQL_SUCCESS_WITH_INFO => (),
+            SQL_NO_DATA => panic!("No diagnostic record found"),
             _ => panic!("Error retrieving diagnostic record"),
         };
         let mut message_buffer: Vec<_> = (0..(message_length + 1)).map(|_| 0).collect();
@@ -46,7 +47,7 @@ impl DiagRec {
                                  &mut message_buffer[0] as *mut raw::SQLCHAR,
                                  message_length + 1,
                                  std::ptr::null_mut()) {
-            raw::SQL_SUCCESS => {
+            SQL_SUCCESS => {
                 message_buffer.pop(); //Drop terminating zero
                 DiagRec {
                     state: state,
