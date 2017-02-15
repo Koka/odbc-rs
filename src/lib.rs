@@ -24,7 +24,7 @@ mod test {
         let mut ds = DataSource::with_dsn_and_credentials(&mut env, "PostgreSQL", "postgres", "")
             .unwrap();
         let statement = Statement::with_tables(&mut ds).unwrap();
-        assert_eq!(statement.num_result_cols().unwrap(), 4);
+        assert_eq!(statement.num_result_cols().unwrap(), 5);
     }
 
     #[test]
