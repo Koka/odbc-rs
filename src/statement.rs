@@ -40,7 +40,7 @@ impl<'a> Statement<'a> {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(stmt),
                 SQL_ERROR => {
-                    Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_DBC, stmt.handle)))
+                    Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_STMT, stmt.handle)))
                 }
                 SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
                 _ => unreachable!(),
@@ -63,6 +63,25 @@ impl<'a> Statement<'a> {
                 SQL_ERROR => {
                     Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_DBC, parent.raw())))
                 }
+                _ => unreachable!(),
+            }
+        }
+    }
+
+    /// The number of columns in a result set
+    ///
+    /// Can be called successfully only when the statement is in the prepared, executed, or
+    /// positioned state. If the statement does not return columns the result will be 0.
+    pub fn num_result_cols(&self) -> Result<i16> {
+        let mut num_cols: raw::SQLSMALLINT = 0;
+        unsafe {
+            match raw::SQLNumResultCols(self.handle, &mut num_cols as *mut raw::SQLSMALLINT) {
+                SQL_SUCCESS |
+                SQL_SUCCESS_WITH_INFO => Ok(num_cols),
+                SQL_ERROR => {
+                    Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_STMT, self.handle)))
+                }
+                SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
                 _ => unreachable!(),
             }
         }
