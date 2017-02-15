@@ -58,7 +58,16 @@ impl<'a> DataSource<'a> {
                                   buffer.len() as raw::SQLSMALLINT,
                                   std::ptr::null_mut()) {
                 SQL_SUCCESS |
-                SQL_SUCCESS_WITH_INFO => Ok(buffer[0] == 89), //ASCII CODE `Y`
+                SQL_SUCCESS_WITH_INFO => {
+                    Ok({
+                        assert!(buffer[1] == 0);
+                        match buffer[0] as char {
+                            'N' => false,
+                            'Y' => true,
+                            _ => panic!(r#"Driver may only return "N" or "Y""#),
+                        }
+                    })
+                }
                 SQL_ERROR => {
                     Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_DBC, self.handle)))
                 }
