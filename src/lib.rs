@@ -6,6 +6,8 @@ mod environment;
 pub use environment::*;
 mod data_source;
 pub use data_source::*;
+mod statement;
+pub use statement::*;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -13,6 +15,16 @@ pub type Result<T> = std::result::Result<T, Error>;
 mod test {
 
     use super::*;
+
+    #[test]
+    fn list_tables() {
+        use super::raw;
+
+        let mut env = Environment::new().unwrap();
+        let mut ds = DataSource::with_dsn_and_credentials(&mut env, "PostgreSQL", "postgres", "")
+            .unwrap();
+        let statement = Statement::with_tables(&mut ds).unwrap();
+    }
 
     #[test]
     fn test_connection() {

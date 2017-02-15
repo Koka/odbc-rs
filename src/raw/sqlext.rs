@@ -349,13 +349,13 @@ extern "C" {
                          Reserved: SQLUSMALLINT)
                          -> SQLRETURN;
     pub fn SQLTables(StatementHandle: SQLHSTMT,
-                     CatalogName: *mut SQLCHAR,
+                     CatalogName: *const SQLCHAR,
                      NameLength1: SQLSMALLINT,
-                     SchemaName: *mut SQLCHAR,
+                     SchemaName: *const SQLCHAR,
                      NameLength2: SQLSMALLINT,
-                     TableName: *mut SQLCHAR,
+                     TableName: *const SQLCHAR,
                      NameLength3: SQLSMALLINT,
-                     TableType: *mut SQLCHAR,
+                     TableType: *const SQLCHAR,
                      NameLength4: SQLSMALLINT)
                      -> SQLRETURN;
     pub fn SQLTransact(EnvironmentHandle: SQLHENV,
