@@ -1,5 +1,6 @@
 pub mod raw;
 
+mod safe;
 mod error;
 pub use error::*;
 mod environment;
