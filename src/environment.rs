@@ -1,5 +1,6 @@
 //! This module implements the ODBC Environment
 use super::{Error, DiagRec, Result, raw};
+use super::raw::SQLRETURN::*;
 use std::collections::HashMap;
 use std;
 
@@ -53,10 +54,10 @@ impl Environment {
             let mut env = std::ptr::null_mut();
             let mut result =
                 match raw::SQLAllocHandle(raw::SQL_HANDLE_ENV, std::ptr::null_mut(), &mut env) {
-                    raw::SQL_SUCCESS => Environment { handle: env },
-                    raw::SQL_SUCCESS_WITH_INFO => Environment { handle: env },
+                    SQL_SUCCESS => Environment { handle: env },
+                    SQL_SUCCESS_WITH_INFO => Environment { handle: env },
                     // Driver Manager failed to allocate environment
-                    raw::SQL_ERROR => return Err(Error::EnvAllocFailure),
+                    SQL_ERROR => return Err(Error::EnvAllocFailure),
                     _ => unreachable!(),
                 };
             // no leak if we return an error here, env handle is already wrapped and would be
@@ -161,8 +162,8 @@ impl Environment {
                                 length: raw::SQLINTEGER)
                                 -> Result<()> {
         match raw::SQLSetEnvAttr(self.handle, attribute, value, length) {
-            raw::SQL_SUCCESS => Ok(()),
-            raw::SQL_SUCCESS_WITH_INFO => Ok(()),
+            SQL_SUCCESS => Ok(()),
+            SQL_SUCCESS_WITH_INFO => Ok(()),
             _ => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle))),
         }
     }
@@ -189,15 +190,13 @@ impl Environment {
                        buf2.len() as raw::SQLSMALLINT,
                        &mut len2 as *mut raw::SQLSMALLINT);
         match result {
-            raw::SQL_SUCCESS |
-            raw::SQL_SUCCESS_WITH_INFO => {
+            SQL_SUCCESS |
+            SQL_SUCCESS_WITH_INFO => {
                 Ok(Some((std::str::from_utf8(&buf1[0..(len1 as usize)]).unwrap(),
                          std::str::from_utf8(&buf2[0..(len2 as usize)]).unwrap())))
             }
-            raw::SQL_ERROR => {
-                Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)))
-            }
-            raw::SQL_NO_DATA => Ok(None),
+            SQL_ERROR => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle))),
+            SQL_NO_DATA => Ok(None),
             /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
             /// validity of this handle with our invariant. In save code the user should not be
             /// able to reach this code path.
@@ -226,14 +225,14 @@ impl Environment {
                            &mut buf2_length_out as *mut raw::SQLSMALLINT);
         loop {
             match result {
-                raw::SQL_SUCCESS |
-                raw::SQL_SUCCESS_WITH_INFO => {
+                SQL_SUCCESS |
+                SQL_SUCCESS_WITH_INFO => {
                     count += 1;
                     max1 = std::cmp::max(max1, buf1_length_out);
                     max2 = std::cmp::max(max2, buf2_length_out);
                 }
-                raw::SQL_NO_DATA => break,
-                raw::SQL_ERROR => {
+                SQL_NO_DATA => break,
+                SQL_ERROR => {
                     return Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)));
                 }
                 /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the

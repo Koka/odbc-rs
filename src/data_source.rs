@@ -1,5 +1,6 @@
 //! Holds implementation of odbc connection
 use super::{raw, Environment, Result, DiagRec, Error};
+use super::raw::SQLRETURN::*;
 use std;
 use std::marker::PhantomData;
 
@@ -34,8 +35,8 @@ impl<'a> DataSource<'a> {
                                   usr.as_bytes().len() as raw::SQLSMALLINT,
                                   pwd.as_ptr(),
                                   pwd.as_bytes().len() as raw::SQLSMALLINT) {
-                raw::SQL_SUCCESS |
-                raw::SQL_SUCCESS_WITH_INFO => Ok(data_source),
+                SQL_SUCCESS |
+                SQL_SUCCESS_WITH_INFO => Ok(data_source),
                 _ => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_DBC, data_source.handle))),
             }
         }
@@ -56,9 +57,18 @@ impl<'a> DataSource<'a> {
                                   buffer.as_mut_ptr() as *mut std::os::raw::c_void,
                                   buffer.len() as raw::SQLSMALLINT,
                                   std::ptr::null_mut()) {
-                raw::SQL_SUCCESS |
-                raw::SQL_SUCCESS_WITH_INFO => Ok(buffer[0] == 89), //ASCII CODE `Y`
-                raw::SQL_ERROR => {
+                SQL_SUCCESS |
+                SQL_SUCCESS_WITH_INFO => {
+                    Ok({
+                        assert!(buffer[1] == 0);
+                        match buffer[0] as char {
+                            'N' => false,
+                            'Y' => true,
+                            _ => panic!(r#"Driver may only return "N" or "Y""#),
+                        }
+                    })
+                }
+                SQL_ERROR => {
                     Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_DBC, self.handle)))
                 }
                 _ => unreachable!(),
@@ -75,17 +85,15 @@ impl<'a> DataSource<'a> {
         unsafe {
             let mut conn = std::ptr::null_mut();
             match raw::SQLAllocHandle(raw::SQL_HANDLE_DBC, env.raw(), &mut conn) {
-                raw::SQL_SUCCESS |
-                raw::SQL_SUCCESS_WITH_INFO => {
+                SQL_SUCCESS |
+                SQL_SUCCESS_WITH_INFO => {
                     Ok(DataSource {
                         handle: conn,
                         env: PhantomData,
                     })
                 }
                 // Driver Manager failed to allocate environment
-                raw::SQL_ERROR => {
-                    Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, env.raw())))
-                }
+                SQL_ERROR => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, env.raw()))),
                 _ => unreachable!(),
             }
         }

@@ -6,6 +6,8 @@ mod environment;
 pub use environment::*;
 mod data_source;
 pub use data_source::*;
+mod statement;
+pub use statement::*;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -13,6 +15,16 @@ pub type Result<T> = std::result::Result<T, Error>;
 mod test {
 
     use super::*;
+
+    #[test]
+    fn list_tables() {
+
+        let mut env = Environment::new().unwrap();
+        let mut ds = DataSource::with_dsn_and_credentials(&mut env, "PostgreSQL", "postgres", "")
+            .unwrap();
+        let statement = Statement::with_tables(&mut ds).unwrap();
+        assert_eq!(statement.num_result_cols().unwrap(), 5);
+    }
 
     #[test]
     fn test_connection() {
@@ -104,8 +116,16 @@ mod test {
     fn it_works() {
 
         use raw::*;
+        use raw::SQLRETURN::*;
         use std::ffi::{CStr, CString};
-        use std;
+
+        let is_success = |ret| {
+            match ret {
+                SQL_SUCCESS |
+                SQL_SUCCESS_WITH_INFO => true,
+                _ => false,
+            }
+        };
 
         unsafe {
             let mut env: SQLHENV = std::ptr::null_mut();
@@ -120,34 +140,28 @@ mod test {
             let mut desc_ret: SQLSMALLINT = 0;
 
             println!("Driver list:");
-            while {
-                ret = SQLDrivers(env,
-                                 SQL_FETCH_NEXT,
-                                 name.as_mut_ptr(),
-                                 name.len() as i16,
-                                 &mut name_ret,
-                                 desc.as_mut_ptr(),
-                                 desc.len() as i16,
-                                 &mut desc_ret);
-                ret
-            } & !1 == 0 {
+            while is_success(SQLDrivers(env,
+                                        SQL_FETCH_NEXT,
+                                        name.as_mut_ptr(),
+                                        name.len() as i16,
+                                        &mut name_ret,
+                                        desc.as_mut_ptr(),
+                                        desc.len() as i16,
+                                        &mut desc_ret)) {
                 println!("{:?} - {:?}",
                          CStr::from_ptr(name.as_ptr() as *const i8),
                          CStr::from_ptr(desc.as_ptr() as *const i8));
             }
 
             println!("DataSource list:");
-            while {
-                ret = SQLDataSources(env,
-                                     SQL_FETCH_NEXT,
-                                     name.as_mut_ptr(),
-                                     name.len() as i16,
-                                     &mut name_ret,
-                                     desc.as_mut_ptr(),
-                                     desc.len() as i16,
-                                     &mut desc_ret);
-                ret
-            } & !1 == 0 {
+            while is_success(SQLDataSources(env,
+                                            SQL_FETCH_NEXT,
+                                            name.as_mut_ptr(),
+                                            name.len() as i16,
+                                            &mut name_ret,
+                                            desc.as_mut_ptr(),
+                                            desc.len() as i16,
+                                            &mut desc_ret)) {
                 println!("{:?} - {:?}",
                          CStr::from_ptr(name.as_ptr() as *const i8),
                          CStr::from_ptr(desc.as_ptr() as *const i8));
@@ -174,7 +188,7 @@ mod test {
 
             CString::from_raw(dsn_ptr);
 
-            if ret & !1 == 0 {
+            if is_success(ret) {
                 println!("CONNECTED: {:?}",
                          CStr::from_ptr(name.as_ptr() as *const i8));
 
@@ -189,17 +203,14 @@ mod test {
                 ret = SQLExecDirect(stmt, sql_ptr as *mut u8, SQL_NTSL);
                 CString::from_raw(sql_ptr);
 
-                if ret & !1 == 0 {
+                if is_success(ret) {
                     let mut columns: SQLSMALLINT = 0;
                     SQLNumResultCols(stmt, &mut columns);
 
                     println!("SUCCESSFUL:");
 
                     let mut i = 1;
-                    while {
-                        ret = SQLFetch(stmt);
-                        ret
-                    } & !1 == 0 {
+                    while is_success(SQLFetch(stmt)) {
                         println!("\tROW: {}", i);
 
                         for j in 1..columns {
@@ -211,7 +222,7 @@ mod test {
                                              buf.as_mut_ptr() as SQLPOINTER,
                                              buf.len() as SQLLEN,
                                              &mut indicator);
-                            if ret & !1 == 0 {
+                            if is_success(ret) {
                                 if indicator == -1 {
                                     println!("Column {}: NULL", j);
                                 } else {
@@ -228,17 +239,14 @@ mod test {
                     println!("FAILED:");
                     let mut i = 1;
                     let mut native: SQLINTEGER = 0;
-                    while {
-                        ret = SQLGetDiagRec(SQL_HANDLE_STMT,
-                                            stmt,
-                                            i,
-                                            name.as_mut_ptr(),
-                                            &mut native,
-                                            desc.as_mut_ptr(),
-                                            desc.len() as i16,
-                                            &mut desc_ret);
-                        ret
-                    } & !1 == 0 {
+                    while is_success(SQLGetDiagRec(SQL_HANDLE_STMT,
+                                                   stmt,
+                                                   i,
+                                                   name.as_mut_ptr(),
+                                                   &mut native,
+                                                   desc.as_mut_ptr(),
+                                                   desc.len() as i16,
+                                                   &mut desc_ret)) {
                         println!("\t{:?}:{}:{}:{:?}",
                                  CStr::from_ptr(name.as_ptr() as *const i8),
                                  i,
@@ -255,17 +263,14 @@ mod test {
                          CStr::from_ptr(name.as_ptr() as *const i8));
                 let mut i = 1;
                 let mut native: SQLINTEGER = 0;
-                while {
-                    ret = SQLGetDiagRec(SQL_HANDLE_DBC,
-                                        dbc,
-                                        i,
-                                        name.as_mut_ptr(),
-                                        &mut native,
-                                        desc.as_mut_ptr(),
-                                        desc.len() as i16,
-                                        &mut desc_ret);
-                    ret
-                } & !1 == 0 {
+                while is_success(SQLGetDiagRec(SQL_HANDLE_DBC,
+                                               dbc,
+                                               i,
+                                               name.as_mut_ptr(),
+                                               &mut native,
+                                               desc.as_mut_ptr(),
+                                               desc.len() as i16,
+                                               &mut desc_ret)) {
                     println!("\t{:?}:{}:{}:{:?}",
                              CStr::from_ptr(name.as_ptr() as *const i8),
                              i,
@@ -280,6 +285,5 @@ mod test {
         }
 
         println!("BYE!");
-
     }
 }

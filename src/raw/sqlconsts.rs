@@ -7,13 +7,6 @@
 pub const ODBCVER: u16 = 0x0351;
 pub const SQL_NULL_DATA: i16 = (-1);
 pub const SQL_DATA_AT_EXEC: i16 = (-2);
-pub const SQL_SUCCESS: i16 = 0;
-pub const SQL_SUCCESS_WITH_INFO: i16 = 1;
-pub const SQL_NO_DATA: i16 = 100;
-pub const SQL_ERROR: i16 = (-1);
-pub const SQL_INVALID_HANDLE: i16 = (-2);
-pub const SQL_STILL_EXECUTING: u16 = 2;
-pub const SQL_NEED_DATA: u16 = 99;
 pub const SQL_NTS: i16 = (-3);
 pub const SQL_NTSL: i32 = (-3);
 pub const SQL_MAX_MESSAGE_LENGTH: u16 = 512;
