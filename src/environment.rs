@@ -51,19 +51,16 @@ impl Environment {
     ///
     /// Declares the Application's ODBC Version to be 3
     pub fn new() -> Result<Environment> {
+
+        use safe::EnvAllocResult;
+
+        let mut result = match safe::Environment::new() {
+            EnvAllocResult::Success(env) => Environment { handle: env },
+            EnvAllocResult::SuccessWithInfo(env) => Environment { handle: env },
+            EnvAllocResult::Error => return Err(Error::EnvAllocFailure),
+        };
+
         unsafe {
-            let mut env = std::ptr::null_mut();
-            let mut result = match raw::SQLAllocHandle(raw::SQL_HANDLE_ENV,
-                                                       std::ptr::null_mut(),
-                                                       &mut env) {
-                SQL_SUCCESS |
-                SQL_SUCCESS_WITH_INFO => Environment { handle: safe::Environment { handle: env } },
-                // Driver Manager failed to allocate environment
-                SQL_ERROR => return Err(Error::EnvAllocFailure),
-                _ => unreachable!(),
-            };
-            // no leak if we return an error here, env handle is already wrapped and would be
-            // dropped
             result.set_attribute(raw::SQL_ATTR_ODBC_VERSION,
                                raw::SQL_OV_ODBC3 as *mut std::os::raw::c_void,
                                0)?;
