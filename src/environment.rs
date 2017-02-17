@@ -52,7 +52,7 @@ impl Environment {
     /// Declares the Application's ODBC Version to be 3
     pub fn new() -> Result<Environment> {
 
-        use safe::EnvAllocResult;
+        use safe::{EnvAllocResult, SetEnvAttrResult};
 
         let mut result = match safe::Environment::new() {
             EnvAllocResult::Success(env) => Environment { handle: env },
@@ -60,12 +60,12 @@ impl Environment {
             EnvAllocResult::Error => return Err(Error::EnvAllocFailure),
         };
 
-        unsafe {
-            result.set_attribute(raw::SQL_ATTR_ODBC_VERSION,
-                               raw::SQL_OV_ODBC3 as *mut std::os::raw::c_void,
-                               0)?;
-
-            Ok(result)
+        match result.handle.set_odbc_version() {
+            SetEnvAttrResult::Success => Ok(result),
+            SetEnvAttrResult::SuccessWithInfo => Ok(result),
+            SetEnvAttrResult::Error => unsafe {
+                Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, result.handle.handle)))
+            },
         }
     }
 
@@ -152,19 +152,6 @@ impl Environment {
     /// Allows access to the raw ODBC handle
     pub unsafe fn raw(&mut self) -> raw::SQLHENV {
         self.handle.handle
-    }
-
-    /// Allows setting attributes to Environment
-    pub unsafe fn set_attribute(&mut self,
-                                attribute: raw::SQLINTEGER,
-                                value: raw::SQLPOINTER,
-                                length: raw::SQLINTEGER)
-                                -> Result<()> {
-        match raw::SQLSetEnvAttr(self.handle.handle, attribute, value, length) {
-            SQL_SUCCESS => Ok(()),
-            SQL_SUCCESS_WITH_INFO => Ok(()),
-            _ => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle.handle))),
-        }
     }
 
     /// Calls either SQLDrivers or SQLDataSources with the two given buffers and parses the result
