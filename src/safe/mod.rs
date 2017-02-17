@@ -40,7 +40,7 @@ impl Environment {
         }
     }
 
-    pub fn set_odbc_version(&mut self) -> SetEnvAttrResult {
+    pub fn set_odbc_version_3(&mut self) -> SetEnvAttrResult {
         unsafe {
             use self::SetEnvAttrResult::*;
 

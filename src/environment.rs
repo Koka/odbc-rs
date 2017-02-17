@@ -60,7 +60,7 @@ impl Environment {
             EnvAllocResult::Error => return Err(Error::EnvAllocFailure),
         };
 
-        match result.handle.set_odbc_version() {
+        match result.handle.set_odbc_version_3() {
             SetEnvAttrResult::Success => Ok(result),
             SetEnvAttrResult::SuccessWithInfo => Ok(result),
             SetEnvAttrResult::Error => unsafe {
