@@ -275,14 +275,6 @@ impl Environment {
     }
 }
 
-impl Drop for Environment {
-    fn drop(&mut self) {
-        unsafe {
-            raw::SQLFreeHandle(raw::SQL_HANDLE_ENV, self.handle.handle);
-        }
-    }
-}
-
 #[cfg(test)]
 mod test {
 
