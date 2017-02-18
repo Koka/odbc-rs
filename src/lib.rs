@@ -95,15 +95,14 @@ mod test {
     #[test]
     fn provoke_error() {
         use std;
-        use safe;
+        use safe::GetDiagRec;
         let mut environment = Environment::new().unwrap();
-        // let mut dbc: raw::SQLHDBC = 0;
         let error;
         unsafe {
             // We set the output pointer to zero. This is an error!
             raw::SQLAllocHandle(raw::SQL_HANDLE_DBC, environment.raw(), std::ptr::null_mut());
             // Let's create a diagnostic record describing that error
-            error = Error::SqlError(safe::get_diag_rec(&environment.handle, 1).unwrap());
+            error = Error::SqlError(environment.get_diag_rec(1).unwrap());
         }
         if cfg!(target_os = "windows") {
             assert_eq!(format!("{}", error),

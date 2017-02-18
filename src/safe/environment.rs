@@ -6,7 +6,7 @@ use std::os::raw::c_void;
 
 /// Safe wrapper around ODBC Environment handle
 pub struct Environment {
-    pub handle: SQLHENV,
+    handle: SQLHENV,
 }
 
 impl Drop for Environment {

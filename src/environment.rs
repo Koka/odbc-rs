@@ -2,6 +2,7 @@
 use super::{Error, Result, raw};
 use super::raw::SQLRETURN::*;
 use super::safe;
+use safe::{Handle, GetDiagRec};
 use std::collections::HashMap;
 use std;
 
@@ -10,7 +11,13 @@ use std;
 /// Creating an instance of this type is the first thing you do then using ODBC. The environment
 /// must outlive all connections created with it
 pub struct Environment {
-    pub handle: safe::Environment,
+    handle: safe::Environment,
+}
+
+impl safe::GetDiagRec for Environment {
+    fn get_diag_rec(&self, record_number: i16) -> Option<safe::DiagRec> {
+        self.handle.get_diag_rec(record_number)
+    }
 }
 
 /// Holds name and description of a datasource
@@ -63,9 +70,7 @@ impl Environment {
         match result.handle.set_odbc_version_3() {
             SetEnvAttrResult::Success => Ok(result),
             SetEnvAttrResult::SuccessWithInfo => Ok(result),
-            SetEnvAttrResult::Error => {
-                Err(Error::SqlError(safe::get_diag_rec(&mut result.handle, 1).unwrap()))
-            }
+            SetEnvAttrResult::Error => Err(Error::SqlError(result.handle.get_diag_rec(1).unwrap())),
         }
     }
 
@@ -151,7 +156,7 @@ impl Environment {
 
     /// Allows access to the raw ODBC handle
     pub unsafe fn raw(&mut self) -> raw::SQLHENV {
-        self.handle.handle
+        self.handle.handle()
     }
 
     /// Calls either SQLDrivers or SQLDataSources with the two given buffers and parses the result
@@ -165,7 +170,7 @@ impl Environment {
         let mut len1: raw::SQLSMALLINT = 0;
         let mut len2: raw::SQLSMALLINT = 0;
 
-        let result = f(self.handle.handle,
+        let result = f(self.handle.handle(),
                        // Its ok to use fetch next here, since we know
                        // last state has been SQL_NO_DATA
                        direction,
@@ -181,7 +186,7 @@ impl Environment {
                 Ok(Some((std::str::from_utf8(&buf1[0..(len1 as usize)]).unwrap(),
                          std::str::from_utf8(&buf2[0..(len2 as usize)]).unwrap())))
             }
-            SQL_ERROR => Err(Error::SqlError(safe::get_diag_rec(&self.handle, 1).unwrap())),
+            SQL_ERROR => Err(Error::SqlError(self.handle.get_diag_rec(1).unwrap())),
             SQL_NO_DATA => Ok(None),
             /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
             /// validity of this handle with our invariant. In save code the user should not be
@@ -201,7 +206,7 @@ impl Environment {
         let mut max1 = 0;
         let mut max2 = 0;
         let mut count = 0;
-        let mut result = f(self.handle.handle,
+        let mut result = f(self.handle.handle(),
                            direction,
                            string_buf,
                            0,
@@ -219,7 +224,7 @@ impl Environment {
                 }
                 SQL_NO_DATA => break,
                 SQL_ERROR => {
-                    return Err(Error::SqlError(safe::get_diag_rec(&self.handle, 1).unwrap()));
+                    return Err(Error::SqlError(self.handle.get_diag_rec(1).unwrap()));
                 }
                 /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
                 /// validity of this handle with our invariant. In save code the user should not be
@@ -227,7 +232,7 @@ impl Environment {
                 _ => panic!("Environment invariant violated"),
             }
 
-            result = f(self.handle.handle,
+            result = f(self.handle.handle(),
                        raw::SQL_FETCH_NEXT,
                        string_buf,
                        0,
