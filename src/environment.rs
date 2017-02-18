@@ -1,5 +1,5 @@
 //! This module implements the ODBC Environment
-use super::{Error, DiagRec, Result, raw};
+use super::{Error, Result, raw};
 use super::raw::SQLRETURN::*;
 use super::safe;
 use std::collections::HashMap;
@@ -10,7 +10,7 @@ use std;
 /// Creating an instance of this type is the first thing you do then using ODBC. The environment
 /// must outlive all connections created with it
 pub struct Environment {
-    handle: safe::Environment,
+    pub handle: safe::Environment,
 }
 
 /// Holds name and description of a datasource
@@ -63,9 +63,9 @@ impl Environment {
         match result.handle.set_odbc_version_3() {
             SetEnvAttrResult::Success => Ok(result),
             SetEnvAttrResult::SuccessWithInfo => Ok(result),
-            SetEnvAttrResult::Error => unsafe {
-                Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, result.handle.handle)))
-            },
+            SetEnvAttrResult::Error => {
+                Err(Error::SqlError(safe::get_diag_rec(&mut result.handle, 1).unwrap()))
+            }
         }
     }
 
@@ -181,9 +181,7 @@ impl Environment {
                 Ok(Some((std::str::from_utf8(&buf1[0..(len1 as usize)]).unwrap(),
                          std::str::from_utf8(&buf2[0..(len2 as usize)]).unwrap())))
             }
-            SQL_ERROR => {
-                Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle.handle)))
-            }
+            SQL_ERROR => Err(Error::SqlError(safe::get_diag_rec(&self.handle, 1).unwrap())),
             SQL_NO_DATA => Ok(None),
             /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
             /// validity of this handle with our invariant. In save code the user should not be
@@ -221,8 +219,7 @@ impl Environment {
                 }
                 SQL_NO_DATA => break,
                 SQL_ERROR => {
-                    return Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV,
-                                                               self.handle.handle)));
+                    return Err(Error::SqlError(safe::get_diag_rec(&self.handle, 1).unwrap()));
                 }
                 /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
                 /// validity of this handle with our invariant. In save code the user should not be

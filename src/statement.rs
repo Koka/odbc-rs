@@ -1,5 +1,6 @@
 
-use super::{raw, DataSource, Error, DiagRec, Result};
+use super::{raw, DataSource, Error, Result};
+use safe::{Handle, get_diag_rec};
 use super::raw::SQLRETURN::*;
 use std::marker::PhantomData;
 use std::ptr::null_mut;
@@ -17,6 +18,16 @@ impl<'a> Drop for Statement<'a> {
         unsafe {
             raw::SQLFreeHandle(raw::SQL_HANDLE_STMT, self.handle);
         }
+    }
+}
+
+unsafe impl<'a> Handle for Statement<'a> {
+    fn handle(&self) -> raw::SQLHANDLE {
+        self.handle
+    }
+
+    fn handle_type() -> raw::SQLSMALLINT {
+        raw::SQL_HANDLE_STMT
     }
 }
 
@@ -39,9 +50,7 @@ impl<'a> Statement<'a> {
                                  table_type.as_bytes().len() as raw::SQLSMALLINT) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(stmt),
-                SQL_ERROR => {
-                    Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_STMT, stmt.handle)))
-                }
+                SQL_ERROR => Err(Error::SqlError(get_diag_rec(&stmt, 1).unwrap())),
                 SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
                 _ => unreachable!(),
             }
@@ -60,9 +69,7 @@ impl<'a> Statement<'a> {
                     })
                 }
                 // Driver Manager failed to allocate statement
-                SQL_ERROR => {
-                    Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_DBC, parent.raw())))
-                }
+                SQL_ERROR => Err(Error::SqlError(get_diag_rec(parent, 1).unwrap())),
                 _ => unreachable!(),
             }
         }
@@ -78,9 +85,7 @@ impl<'a> Statement<'a> {
             match raw::SQLNumResultCols(self.handle, &mut num_cols as *mut raw::SQLSMALLINT) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(num_cols),
-                SQL_ERROR => {
-                    Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_STMT, self.handle)))
-                }
+                SQL_ERROR => Err(Error::SqlError(get_diag_rec(self, 1).unwrap())),
                 SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
                 _ => unreachable!(),
             }
