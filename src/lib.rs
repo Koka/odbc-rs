@@ -93,27 +93,6 @@ mod test {
     }
 
     #[test]
-    fn provoke_error() {
-        use std;
-        use safe::GetDiagRec;
-        let mut environment = Environment::new().unwrap();
-        let error;
-        unsafe {
-            // We set the output pointer to zero. This is an error!
-            raw::SQLAllocHandle(raw::SQL_HANDLE_DBC, environment.raw(), std::ptr::null_mut());
-            // Let's create a diagnostic record describing that error
-            error = Error::SqlError(environment.get_diag_rec(1).unwrap());
-        }
-        if cfg!(target_os = "windows") {
-            assert_eq!(format!("{}", error),
-                       "[Microsoft][ODBC Driver Manager] Invalid argument value");
-        } else {
-            assert_eq!(format!("{}", error),
-                       "[unixODBC][Driver Manager]Invalid use of null pointer");
-        }
-    }
-
-    #[test]
     fn it_works() {
 
         use raw::*;

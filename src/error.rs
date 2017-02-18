@@ -31,3 +31,21 @@ impl std::error::Error for Error {
         None
     }
 }
+
+#[cfg(test)]
+mod test {
+
+    use super::*;
+
+    #[test]
+    fn format_error() {
+
+        let error = Error::SqlError(DiagRec {
+            state: [72, 89, 48, 48, 57, 0],
+            native_error_pointer: 0,
+            message: "[Microsoft][ODBC Driver Manager] Invalid argument value".to_owned(),
+        });
+        assert_eq!(format!("{}", error),
+                   "[Microsoft][ODBC Driver Manager] Invalid argument value");
+    }
+}

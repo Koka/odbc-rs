@@ -11,11 +11,15 @@ pub struct DiagRec {
 }
 
 pub trait GetDiagRec {
-    fn get_diag_rec(&self, record_numdber: i16) -> Option<DiagRec>;
+    /// Retrieves a diagnostic record
+    ///
+    /// `record_number` - Record numbers start at one. If you pass an number < 1 the function will
+    /// panic. If no record is available for the number specified none is returned.
+    fn get_diagnostic_record(&self, record_number: i16) -> Option<DiagRec>;
 }
 
 impl<T: Handle> GetDiagRec for T {
-    fn get_diag_rec(&self, record_number: i16) -> Option<DiagRec> {
+    fn get_diagnostic_record(&self, record_number: i16) -> Option<DiagRec> {
         // Call SQLGetDiagRec two times. First time to get the message text length, the second
         // to fill the result with diagnostic information
         let mut text_length: SQLSMALLINT = 0;
@@ -68,5 +72,35 @@ impl<T: Handle> GetDiagRec for T {
             SQLRETURN::SQL_NO_DATA => None,
             _ => panic!("SQLGetDiagRec returned an unexpected result"),
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+
+    use super::*;
+
+    #[test]
+    fn provoke_error() {
+        use raw::{SQL_HANDLE_DBC, SQLAllocHandle};
+        use safe::{Environment, EnvAllocResult};
+
+        let environment = match Environment::new() {
+            EnvAllocResult::Success(env) => env,
+            _ => panic!("unexpected behaviour allocating environment"),
+        };
+        let error = unsafe {
+            // We set the output pointer to zero. This is an error!
+            SQLAllocHandle(SQL_HANDLE_DBC, environment.handle(), null_mut());
+            // Let's create a diagnostic record describing that error
+            environment.get_diagnostic_record(1).unwrap()
+        };
+        let expected = if cfg!(target_os = "windows") {
+            "[Microsoft][ODBC Driver Manager] Invalid argument value"
+        } else {
+            "[unixODBC][Driver Manager]Invalid use of null pointer"
+        };
+        assert_eq!(error.message, expected);
+        assert!(environment.get_diagnostic_record(2).is_none());
     }
 }

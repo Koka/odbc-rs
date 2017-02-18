@@ -15,8 +15,8 @@ pub struct Environment {
 }
 
 impl safe::GetDiagRec for Environment {
-    fn get_diag_rec(&self, record_number: i16) -> Option<safe::DiagRec> {
-        self.handle.get_diag_rec(record_number)
+    fn get_diagnostic_record(&self, record_number: i16) -> Option<safe::DiagRec> {
+        self.handle.get_diagnostic_record(record_number)
     }
 }
 
@@ -70,7 +70,9 @@ impl Environment {
         match result.handle.set_odbc_version_3() {
             SetEnvAttrResult::Success => Ok(result),
             SetEnvAttrResult::SuccessWithInfo => Ok(result),
-            SetEnvAttrResult::Error => Err(Error::SqlError(result.handle.get_diag_rec(1).unwrap())),
+            SetEnvAttrResult::Error => {
+                Err(Error::SqlError(result.handle.get_diagnostic_record(1).unwrap()))
+            }
         }
     }
 
@@ -186,7 +188,7 @@ impl Environment {
                 Ok(Some((std::str::from_utf8(&buf1[0..(len1 as usize)]).unwrap(),
                          std::str::from_utf8(&buf2[0..(len2 as usize)]).unwrap())))
             }
-            SQL_ERROR => Err(Error::SqlError(self.handle.get_diag_rec(1).unwrap())),
+            SQL_ERROR => Err(Error::SqlError(self.handle.get_diagnostic_record(1).unwrap())),
             SQL_NO_DATA => Ok(None),
             /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
             /// validity of this handle with our invariant. In save code the user should not be
@@ -224,7 +226,7 @@ impl Environment {
                 }
                 SQL_NO_DATA => break,
                 SQL_ERROR => {
-                    return Err(Error::SqlError(self.handle.get_diag_rec(1).unwrap()));
+                    return Err(Error::SqlError(self.handle.get_diagnostic_record(1).unwrap()));
                 }
                 /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
                 /// validity of this handle with our invariant. In save code the user should not be
