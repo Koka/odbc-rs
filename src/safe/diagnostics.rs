@@ -36,32 +36,7 @@ impl<T: Handle> GetDiagRec for T {
                           &mut text_length as *mut SQLSMALLINT)
         } {
             SQLRETURN::SQL_SUCCESS |
-            SQLRETURN::SQL_SUCCESS_WITH_INFO => {
-                let mut message = vec![0; (text_length + 1) as usize];
-                let mut result = DiagRec {
-                    state: [0; 6],
-                    native_error_pointer: 0,
-                    message: String::new(), // +1 for terminating zero
-                };
-
-                match unsafe {
-                    SQLGetDiagRec(T::handle_type(),
-                                  self.handle(),
-                                  record_number,
-                                  result.state.as_mut_ptr(),
-                                  result.native_error_pointer as *mut SQLINTEGER,
-                                  message.as_mut_ptr(),
-                                  text_length + 1,
-                                  null_mut())
-                } {
-                    SQLRETURN::SQL_SUCCESS => {
-                        message.pop(); //Drop terminating zero
-                        result.message = String::from_utf8(message).expect("invalid UTF8 encoding");
-                        Some(result)
-                    }
-                    _ => panic!("SQLGetDiagRec returned an unexpected result"),
-                }
-            }
+            SQLRETURN::SQL_SUCCESS_WITH_INFO => (),
             SQLRETURN::SQL_ERROR => {
                 if record_number > 0 {
                     panic!("SQLGetDiagRec returned an unexpected result")
@@ -69,7 +44,32 @@ impl<T: Handle> GetDiagRec for T {
                     panic!("record number start at 1 has been {}", record_number)
                 }
             }
-            SQLRETURN::SQL_NO_DATA => None,
+            SQLRETURN::SQL_NO_DATA => return None,
+            _ => panic!("SQLGetDiagRec returned an unexpected result"),
+        }
+
+        let mut message = vec![0; (text_length + 1) as usize];
+        let mut result = DiagRec {
+            state: [0; 6],
+            native_error_pointer: 0,
+            message: String::new(), // +1 for terminating zero
+        };
+
+        match unsafe {
+            SQLGetDiagRec(T::handle_type(),
+                          self.handle(),
+                          record_number,
+                          result.state.as_mut_ptr(),
+                          result.native_error_pointer as *mut SQLINTEGER,
+                          message.as_mut_ptr(),
+                          text_length + 1,
+                          null_mut())
+        } {
+            SQLRETURN::SQL_SUCCESS => {
+                message.pop(); //Drop terminating zero
+                result.message = String::from_utf8(message).expect("invalid UTF8 encoding");
+                Some(result)
+            }
             _ => panic!("SQLGetDiagRec returned an unexpected result"),
         }
     }
