@@ -1,4 +1,4 @@
-use super::{as_buffer_length, Handle};
+use super::{as_buffer_length, as_out_buffer, Handle};
 use raw::{SQLAllocHandle, SQLFreeHandle, SQLSetEnvAttr, SQLDataSources, SQLDrivers, SQLRETURN,
           SQLHENV, SQLHANDLE, SQLSMALLINT, SQLUSMALLINT, SQLCHAR, SQL_HANDLE_ENV,
           SQL_ATTR_ODBC_VERSION, SQL_OV_ODBC3};
@@ -97,10 +97,10 @@ impl Environment {
         match unsafe {
             c_function(self.handle,
                        direction,
-                       server_name.as_mut_ptr(),
+                       as_out_buffer(server_name),
                        as_buffer_length(server_name.len()),
                        &mut server_name_length as *mut i16,
-                       description.as_mut_ptr(),
+                       as_out_buffer(description),
                        as_buffer_length(description.len()),
                        &mut description_length as *mut i16)
         } {

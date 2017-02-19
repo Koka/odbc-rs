@@ -3,11 +3,21 @@
 //! enable the layers on top of it to be written in safe code.
 
 mod diagnostics;
-pub use self::diagnostics::*;
 mod environment;
+pub use self::diagnostics::*;
 pub use self::environment::*;
 
+use std;
+
 use raw::{SQLSMALLINT, SQLHANDLE};
+
+fn as_out_buffer(buffer: &mut [u8]) -> *mut u8 {
+    if buffer.len() == 0 {
+        std::ptr::null_mut()
+    } else {
+        buffer.as_mut_ptr()
+    }
+}
 
 fn as_buffer_length(n: usize) -> SQLSMALLINT {
     use std;
