@@ -18,7 +18,7 @@ impl<'a> DataSource<'a> {
     ///
     /// # Arguments
     /// * `env` - Environment used to allocate the data source handle.
-    /// * `dsn` - Data source name configured in the `odbc.ini` file!()
+    /// * `dsn` - Data source name configured in the `odbc.ini` file
     /// * `usr` - User identifier
     /// * `pwd` - Authentication (usually password)
     pub fn with_dsn_and_credentials<'b>(env: &'b mut Environment,
