@@ -1,5 +1,6 @@
 //! Holds implementation of odbc connection
-use super::{raw, Environment, Result, DiagRec, Error};
+use super::{raw, Environment, Result, Error};
+use safe::{Handle, GetDiagRec};
 use super::raw::SQLRETURN::*;
 use std;
 use std::marker::PhantomData;
@@ -17,7 +18,7 @@ impl<'a> DataSource<'a> {
     ///
     /// # Arguments
     /// * `env` - Environment used to allocate the data source handle.
-    /// * `dsn` - Data source name configured in the `odbc.ini` file!()
+    /// * `dsn` - Data source name configured in the `odbc.ini` file
     /// * `usr` - User identifier
     /// * `pwd` - Authentication (usually password)
     pub fn with_dsn_and_credentials<'b>(env: &'b mut Environment,
@@ -37,7 +38,7 @@ impl<'a> DataSource<'a> {
                                   pwd.as_bytes().len() as raw::SQLSMALLINT) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(data_source),
-                _ => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_DBC, data_source.handle))),
+                _ => Err(Error::SqlError(data_source.get_diagnostic_record(1).unwrap())),
             }
         }
     }
@@ -68,9 +69,7 @@ impl<'a> DataSource<'a> {
                         }
                     })
                 }
-                SQL_ERROR => {
-                    Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_DBC, self.handle)))
-                }
+                SQL_ERROR => Err(Error::SqlError(self.get_diagnostic_record(1).unwrap())),
                 _ => unreachable!(),
             }
         }
@@ -93,10 +92,20 @@ impl<'a> DataSource<'a> {
                     })
                 }
                 // Driver Manager failed to allocate environment
-                SQL_ERROR => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, env.raw()))),
+                SQL_ERROR => Err(Error::SqlError(env.get_diagnostic_record(1).unwrap())),
                 _ => unreachable!(),
             }
         }
+    }
+}
+
+unsafe impl<'a> Handle for DataSource<'a> {
+    fn handle(&self) -> raw::SQLHANDLE {
+        self.handle
+    }
+
+    fn handle_type() -> raw::SQLSMALLINT {
+        raw::SQL_HANDLE_DBC
     }
 }
 

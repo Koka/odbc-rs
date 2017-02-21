@@ -1,15 +1,22 @@
 //! This module implements the ODBC Environment
-use super::{Error, DiagRec, Result, raw};
-use super::raw::SQLRETURN::*;
+use super::{Error, Result, raw};
+use super::safe;
+use safe::{Handle, GetDiagRec};
 use std::collections::HashMap;
+use std::cell::RefCell;
 use std;
-
 /// Handle to an ODBC Environment
 ///
 /// Creating an instance of this type is the first thing you do then using ODBC. The environment
 /// must outlive all connections created with it
 pub struct Environment {
-    handle: raw::SQLHENV,
+    handle: RefCell<safe::Environment>,
+}
+
+impl safe::GetDiagRec for Environment {
+    fn get_diagnostic_record(&self, record_number: i16) -> Option<safe::DiagRec> {
+        self.handle.borrow().get_diagnostic_record(record_number)
+    }
 }
 
 /// Holds name and description of a datasource
@@ -34,39 +41,29 @@ pub struct DriverInfo {
     pub attributes: HashMap<String, String>,
 }
 
-/// Signature shared by `raw::SQLDrivers` and `raw::SQLDataSources`
-type SqlInfoFunction = unsafe extern "C" fn(raw::SQLHENV,
-                                            raw::SQLUSMALLINT,
-                                            *mut raw::SQLCHAR,
-                                            raw::SQLSMALLINT,
-                                            *mut raw::SQLSMALLINT,
-                                            *mut raw::SQLCHAR,
-                                            raw::SQLSMALLINT,
-                                            *mut raw::SQLSMALLINT)
-                                            -> raw::SQLRETURN;
+type SqlInfoMethod = fn(&mut safe::Environment, u16, &mut [u8], &mut [u8])
+                        -> safe::IterationResult<(i16, i16)>;
 
 impl Environment {
     /// Allocates a new ODBC Environment
     ///
     /// Declares the Application's ODBC Version to be 3
     pub fn new() -> Result<Environment> {
-        unsafe {
-            let mut env = std::ptr::null_mut();
-            let mut result =
-                match raw::SQLAllocHandle(raw::SQL_HANDLE_ENV, std::ptr::null_mut(), &mut env) {
-                    SQL_SUCCESS => Environment { handle: env },
-                    SQL_SUCCESS_WITH_INFO => Environment { handle: env },
-                    // Driver Manager failed to allocate environment
-                    SQL_ERROR => return Err(Error::EnvAllocFailure),
-                    _ => unreachable!(),
-                };
-            // no leak if we return an error here, env handle is already wrapped and would be
-            // dropped
-            result.set_attribute(raw::SQL_ATTR_ODBC_VERSION,
-                               raw::SQL_OV_ODBC3 as *mut std::os::raw::c_void,
-                               0)?;
 
-            Ok(result)
+        use safe::{EnvAllocResult, SetEnvAttrResult};
+
+        let mut result = match safe::Environment::new() {
+            EnvAllocResult::Success(env) |
+            EnvAllocResult::SuccessWithInfo(env) => env,
+            EnvAllocResult::Error => return Err(Error::EnvAllocFailure),
+        };
+
+        match result.set_odbc_version_3() {
+            SetEnvAttrResult::Success |
+            SetEnvAttrResult::SuccessWithInfo => Ok(Environment { handle: RefCell::new(result) }),
+            SetEnvAttrResult::Error => {
+                Err(Error::SqlError(result.get_diagnostic_record(1).unwrap()))
+            }
         }
     }
 
@@ -76,17 +73,15 @@ impl Environment {
         // everything without truncating and a second time for actually storing the values
         // alloc_info iterates ones over every driver to obtain the requiered buffer sizes
         let (max_desc, max_attr, num_drivers) =
-            unsafe { self.alloc_info(raw::SQLDrivers, raw::SQL_FETCH_FIRST) }?;
+            self.alloc_info(safe::Environment::drivers, raw::SQL_FETCH_FIRST)?;
 
         let mut driver_list = Vec::with_capacity(num_drivers);
-        let mut description_buffer: Vec<_> = (0..(max_desc + 1)).map(|_| 0u8).collect();
-        let mut attribute_buffer: Vec<_> = (0..(max_attr + 1)).map(|_| 0u8).collect();
-        while let Some((desc, attr)) = unsafe {
-            self.get_info(raw::SQLDrivers,
-                          raw::SQL_FETCH_NEXT,
-                          &mut description_buffer,
-                          &mut attribute_buffer)
-        }? {
+        let mut description_buffer = vec![0; (max_desc + 1) as usize];
+        let mut attribute_buffer = vec![0; (max_attr + 1) as usize];
+        while let Some((desc, attr)) = self.get_info(safe::Environment::drivers,
+                      raw::SQL_FETCH_NEXT,
+                      &mut description_buffer,
+                      &mut attribute_buffer)? {
             driver_list.push(DriverInfo {
                 description: desc.to_owned(),
                 attributes: Self::parse_attributes(attr),
@@ -97,27 +92,26 @@ impl Environment {
 
     /// Stores all data source server names and descriptions in a Vec
     pub fn data_sources(&self) -> Result<Vec<DataSourceInfo>> {
-        unsafe { self.data_sources_impl(raw::SQL_FETCH_FIRST) }
+        self.data_sources_impl(raw::SQL_FETCH_FIRST)
     }
 
     /// Stores all sytem data source server names and descriptions in a Vec
     pub fn system_data_sources(&self) -> Result<Vec<DataSourceInfo>> {
-        unsafe { self.data_sources_impl(raw::SQL_FETCH_FIRST_SYSTEM) }
+        self.data_sources_impl(raw::SQL_FETCH_FIRST_SYSTEM)
     }
 
     /// Stores all user data source server names and descriptions in a Vec
     pub fn user_data_sources(&self) -> Result<Vec<DataSourceInfo>> {
-        unsafe { self.data_sources_impl(raw::SQL_FETCH_FIRST_USER) }
+        self.data_sources_impl(raw::SQL_FETCH_FIRST_USER)
     }
 
     /// Use SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or
     /// system data sources
-    unsafe fn data_sources_impl(&self,
-                                direction: raw::SQLUSMALLINT)
-                                -> Result<Vec<DataSourceInfo>> {
+    fn data_sources_impl(&self, direction: raw::SQLUSMALLINT) -> Result<Vec<DataSourceInfo>> {
 
         // alloc_info iterates ones over every datasource to obtain the requiered buffer sizes
-        let (max_name, max_desc, num_sources) = self.alloc_info(raw::SQLDataSources, direction)?;
+        let (max_name, max_desc, num_sources) =
+            self.alloc_info(safe::Environment::data_sources, direction)?;
 
         let mut source_list = Vec::with_capacity(num_sources);
         let mut name_buffer: Vec<_> = (0..(max_name + 1)).map(|_| 0u8).collect();
@@ -126,7 +120,7 @@ impl Environment {
         // Before we call SQLDataSources with SQL_FETCH_NEXT, we have to call it with either
         // SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or
         // system data sources
-        if let Some((name, desc)) = self.get_info(raw::SQLDataSources,
+        if let Some((name, desc)) = self.get_info(safe::Environment::data_sources,
                       direction,
                       &mut name_buffer,
                       &mut description_buffer)? {
@@ -138,7 +132,7 @@ impl Environment {
             return Ok(source_list);
         }
 
-        while let Some((name, desc)) = self.get_info(raw::SQLDataSources,
+        while let Some((name, desc)) = self.get_info(safe::Environment::data_sources,
                       raw::SQL_FETCH_NEXT,
                       &mut name_buffer,
                       &mut description_buffer)? {
@@ -152,103 +146,69 @@ impl Environment {
 
     /// Allows access to the raw ODBC handle
     pub unsafe fn raw(&mut self) -> raw::SQLHENV {
-        self.handle
-    }
-
-    /// Allows setting attributes to Environment
-    pub unsafe fn set_attribute(&mut self,
-                                attribute: raw::SQLINTEGER,
-                                value: raw::SQLPOINTER,
-                                length: raw::SQLINTEGER)
-                                -> Result<()> {
-        match raw::SQLSetEnvAttr(self.handle, attribute, value, length) {
-            SQL_SUCCESS => Ok(()),
-            SQL_SUCCESS_WITH_INFO => Ok(()),
-            _ => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle))),
-        }
+        self.handle.borrow().handle()
     }
 
     /// Calls either SQLDrivers or SQLDataSources with the two given buffers and parses the result
     /// into a `(&str,&str)`
-    unsafe fn get_info<'a, 'b>(&self,
-                               f: SqlInfoFunction,
-                               direction: raw::SQLUSMALLINT,
-                               buf1: &'a mut [u8],
-                               buf2: &'b mut [u8])
-                               -> Result<Option<(&'a str, &'b str)>> {
-        let mut len1: raw::SQLSMALLINT = 0;
-        let mut len2: raw::SQLSMALLINT = 0;
+    fn get_info<'a, 'b>(&self,
+                        f: SqlInfoMethod,
+                        direction: raw::SQLUSMALLINT,
+                        buf1: &'a mut [u8],
+                        buf2: &'b mut [u8])
+                        -> Result<Option<(&'a str, &'b str)>> {
 
-        let result = f(self.handle,
-                       // Its ok to use fetch next here, since we know
-                       // last state has been SQL_NO_DATA
-                       direction,
-                       &mut buf1[0] as *mut u8,
-                       buf1.len() as raw::SQLSMALLINT,
-                       &mut len1 as *mut raw::SQLSMALLINT,
-                       &mut buf2[0] as *mut u8,
-                       buf2.len() as raw::SQLSMALLINT,
-                       &mut len2 as *mut raw::SQLSMALLINT);
+        let result = f(&mut self.handle.borrow_mut(), direction, buf1, buf2);
         match result {
-            SQL_SUCCESS |
-            SQL_SUCCESS_WITH_INFO => {
+            safe::IterationResult::Success((len1, len2)) |
+            safe::IterationResult::SuccessWithInfo((len1, len2)) => {
                 Ok(Some((std::str::from_utf8(&buf1[0..(len1 as usize)]).unwrap(),
                          std::str::from_utf8(&buf2[0..(len2 as usize)]).unwrap())))
             }
-            SQL_ERROR => Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle))),
-            SQL_NO_DATA => Ok(None),
-            /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
-            /// validity of this handle with our invariant. In save code the user should not be
-            /// able to reach this code path.
-            _ => panic!("Environment invariant violated"),
+            safe::IterationResult::Error => {
+                Err(Error::SqlError(self.handle.borrow().get_diagnostic_record(1).unwrap()))
+            }
+            safe::IterationResult::NoData => Ok(None),
         }
     }
 
     /// Finds the maximum size required for description buffers
-    unsafe fn alloc_info(&self,
-                         f: SqlInfoFunction,
-                         direction: raw::SQLUSMALLINT)
-                         -> Result<(raw::SQLSMALLINT, raw::SQLSMALLINT, usize)> {
-        let string_buf = std::ptr::null_mut();
-        let mut buf1_length_out: raw::SQLSMALLINT = 0;
-        let mut buf2_length_out: raw::SQLSMALLINT = 0;
+    fn alloc_info(&self,
+                  f: SqlInfoMethod,
+                  direction: raw::SQLUSMALLINT)
+                  -> Result<(raw::SQLSMALLINT, raw::SQLSMALLINT, usize)> {
+        let mut string_buf1 = [0; 0];
+        let mut string_buf2 = [0; 0];
         let mut max1 = 0;
         let mut max2 = 0;
         let mut count = 0;
-        let mut result = f(self.handle,
+
+        let mut result = f(&mut self.handle.borrow_mut(),
                            direction,
-                           string_buf,
-                           0,
-                           &mut buf1_length_out as *mut raw::SQLSMALLINT,
-                           string_buf,
-                           0,
-                           &mut buf2_length_out as *mut raw::SQLSMALLINT);
+                           &mut string_buf1,
+                           &mut string_buf2);
+
         loop {
             match result {
-                SQL_SUCCESS |
-                SQL_SUCCESS_WITH_INFO => {
+                safe::IterationResult::Success((buf1_length_out, buf2_length_out)) |
+                safe::IterationResult::SuccessWithInfo((buf1_length_out, buf2_length_out)) => {
                     count += 1;
                     max1 = std::cmp::max(max1, buf1_length_out);
                     max2 = std::cmp::max(max2, buf2_length_out);
                 }
-                SQL_NO_DATA => break,
-                SQL_ERROR => {
-                    return Err(Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, self.handle)));
+                safe::IterationResult::NoData => break,
+                safe::IterationResult::Error => {
+                    return Err(Error::SqlError(self.handle
+                        .borrow()
+                        .get_diagnostic_record(1)
+                        .unwrap()));
                 }
-                /// The only other value allowed by ODBC here is SQL_INVALID_HANDLE. We protect the
-                /// validity of this handle with our invariant. In save code the user should not be
-                /// able to reach this code path.
-                _ => panic!("Environment invariant violated"),
             }
 
-            result = f(self.handle,
+            result = f(&mut self.handle.borrow_mut(),
                        raw::SQL_FETCH_NEXT,
-                       string_buf,
-                       0,
-                       &mut buf1_length_out as *mut raw::SQLSMALLINT,
-                       string_buf,
-                       0,
-                       &mut buf2_length_out as *mut raw::SQLSMALLINT);
+                       &mut string_buf1,
+                       &mut string_buf2)
         }
 
         Ok((max1, max2, count))
@@ -267,14 +227,6 @@ impl Environment {
                 (key.to_string(), value.to_string())
             })
             .collect()
-    }
-}
-
-impl Drop for Environment {
-    fn drop(&mut self) {
-        unsafe {
-            raw::SQLFreeHandle(raw::SQL_HANDLE_ENV, self.handle);
-        }
     }
 }
 

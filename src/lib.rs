@@ -1,5 +1,6 @@
 pub mod raw;
 
+mod safe;
 mod error;
 pub use error::*;
 mod environment;
@@ -89,27 +90,6 @@ mod test {
 
         let expected: [DataSourceInfo; 0] = [];
         assert!(sources.iter().eq(expected.iter()));
-    }
-
-    #[test]
-    fn provoke_error() {
-        use std;
-        let mut environment = Environment::new().unwrap();
-        // let mut dbc: raw::SQLHDBC = 0;
-        let error;
-        unsafe {
-            // We set the output pointer to zero. This is an error!
-            raw::SQLAllocHandle(raw::SQL_HANDLE_DBC, environment.raw(), std::ptr::null_mut());
-            // Let's create a diagnostic record describing that error
-            error = Error::SqlError(DiagRec::create(raw::SQL_HANDLE_ENV, environment.raw()));
-        }
-        if cfg!(target_os = "windows") {
-            assert_eq!(format!("{}", error),
-                       "[Microsoft][ODBC Driver Manager] Invalid argument value");
-        } else {
-            assert_eq!(format!("{}", error),
-                       "[unixODBC][Driver Manager]Invalid use of null pointer");
-        }
     }
 
     #[test]
