@@ -1,5 +1,5 @@
 use super::Handle;
-use raw::{SQLGetDiagRec, SQLSMALLINT, SQLRETURN, SQLINTEGER};
+use ffi::{SQLGetDiagRec, SQLSMALLINT, SQLRETURN, SQLINTEGER};
 use std::ptr::null_mut;
 
 /// ODBC Diagonstic record
@@ -26,15 +26,15 @@ impl<T: Handle> GetDiagRec for T {
 
         match unsafe {
 
-            SQLGetDiagRec(T::handle_type(),
-                          self.handle(),
-                          record_number,
-                          null_mut(),
-                          null_mut(),
-                          null_mut(),
-                          0,
-                          &mut text_length as *mut SQLSMALLINT)
-        } {
+                  SQLGetDiagRec(T::handle_type(),
+                                self.handle(),
+                                record_number,
+                                null_mut(),
+                                null_mut(),
+                                null_mut(),
+                                0,
+                                &mut text_length as *mut SQLSMALLINT)
+              } {
             SQLRETURN::SQL_SUCCESS |
             SQLRETURN::SQL_SUCCESS_WITH_INFO => (),
             SQLRETURN::SQL_ERROR => {
@@ -56,15 +56,15 @@ impl<T: Handle> GetDiagRec for T {
         };
 
         match unsafe {
-            SQLGetDiagRec(T::handle_type(),
-                          self.handle(),
-                          record_number,
-                          result.state.as_mut_ptr(),
-                          result.native_error_pointer as *mut SQLINTEGER,
-                          message.as_mut_ptr(),
-                          text_length + 1,
-                          null_mut())
-        } {
+                  SQLGetDiagRec(T::handle_type(),
+                                self.handle(),
+                                record_number,
+                                result.state.as_mut_ptr(),
+                                result.native_error_pointer as *mut SQLINTEGER,
+                                message.as_mut_ptr(),
+                                text_length + 1,
+                                null_mut())
+              } {
             SQLRETURN::SQL_SUCCESS => {
                 message.pop(); //Drop terminating zero
                 result.message = String::from_utf8(message).expect("invalid UTF8 encoding");
@@ -82,7 +82,7 @@ mod test {
 
     #[test]
     fn provoke_error() {
-        use raw::{SQL_HANDLE_DBC, SQLAllocHandle};
+        use ffi::{SQL_HANDLE_DBC, SQLAllocHandle};
         use safe::{Environment, EnvAllocResult};
 
         let environment = match Environment::new() {
@@ -104,3 +104,4 @@ mod test {
         assert!(environment.get_diagnostic_record(2).is_none());
     }
 }
+

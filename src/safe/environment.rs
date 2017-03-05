@@ -1,7 +1,7 @@
 use super::{as_buffer_length, as_out_buffer, Handle};
-use raw::{SQLAllocHandle, SQLFreeHandle, SQLSetEnvAttr, SQLDataSources, SQLDrivers, SQLRETURN,
-          SQLHENV, SQLHANDLE, SQLSMALLINT, SQLUSMALLINT, SQLCHAR, SQL_HANDLE_ENV,
-          SQL_ATTR_ODBC_VERSION, SQL_OV_ODBC3};
+use ffi::{SQLAllocHandle, SQLFreeHandle, SQLSetEnvAttr, SQLDataSources, SQLDrivers, HandleType,
+          SQLRETURN, SQLHENV, SQLHANDLE, SQLSMALLINT, SQLCHAR, SQL_HANDLE_ENV,
+          SQL_ATTR_ODBC_VERSION, SQL_OV_ODBC3, FetchOrientation};
 use std::ptr::null_mut;
 use std::os::raw::c_void;
 
@@ -13,17 +13,17 @@ pub struct Environment {
 impl Drop for Environment {
     fn drop(&mut self) {
         unsafe {
-            SQLFreeHandle(SQL_HANDLE_ENV, self.handle);
+            SQLFreeHandle(SQL_HANDLE_ENV, self.handle as SQLHANDLE);
         }
     }
 }
 
 unsafe impl Handle for Environment {
     fn handle(&self) -> SQLHANDLE {
-        self.handle
+        self.handle as SQLHANDLE
     }
 
-    fn handle_type() -> SQLSMALLINT {
+    fn handle_type() -> HandleType {
         SQL_HANDLE_ENV
     }
 }
@@ -35,8 +35,10 @@ impl Environment {
 
         let mut env = null_mut();
         match unsafe { SQLAllocHandle(SQL_HANDLE_ENV, null_mut(), &mut env) } {
-            SQLRETURN::SQL_SUCCESS => Success(Environment { handle: env }),
-            SQLRETURN::SQL_SUCCESS_WITH_INFO => SuccessWithInfo(Environment { handle: env }),
+            SQLRETURN::SQL_SUCCESS => Success(Environment { handle: env as SQLHENV }),
+            SQLRETURN::SQL_SUCCESS_WITH_INFO => {
+                SuccessWithInfo(Environment { handle: env as SQLHENV })
+            }
             SQLRETURN::SQL_ERROR => Error,
             _ => panic!("SQLAllocHandle returned an unexpected result"),
         }
@@ -47,11 +49,11 @@ impl Environment {
         use self::SetEnvAttrResult::*;
 
         match unsafe {
-            SQLSetEnvAttr(self.handle,
-                          SQL_ATTR_ODBC_VERSION,
-                          SQL_OV_ODBC3 as *mut c_void,
-                          0)
-        } {
+                  SQLSetEnvAttr(self.handle,
+                                SQL_ATTR_ODBC_VERSION,
+                                SQL_OV_ODBC3 as *mut c_void,
+                                0)
+              } {
             SQLRETURN::SQL_SUCCESS => Success,
             SQLRETURN::SQL_SUCCESS_WITH_INFO => SuccessWithInfo,
             SQLRETURN::SQL_ERROR => Error,
@@ -71,7 +73,7 @@ impl Environment {
     /// # Result
     /// The tuple contains the required length of the buffers minus null-termination character.
     pub fn data_sources(&mut self,
-                        direction: u16,
+                        direction: FetchOrientation,
                         server_name: &mut [u8],
                         description: &mut [u8])
                         -> IterationResult<(i16, i16)> {
@@ -79,7 +81,7 @@ impl Environment {
     }
 
     pub fn drivers(&mut self,
-                   direction: u16,
+                   direction: FetchOrientation,
                    description: &mut [u8],
                    attributes: &mut [u8])
                    -> IterationResult<(i16, i16)> {
@@ -89,21 +91,21 @@ impl Environment {
     // this private method uses the fact that SQLDataSources and SQLDrivers share the same signature
     fn impl_data_sources(&mut self,
                          c_function: SqlInfoFunction,
-                         direction: u16,
+                         direction: FetchOrientation,
                          server_name: &mut [u8],
                          description: &mut [u8])
                          -> IterationResult<(i16, i16)> {
         let (mut server_name_length, mut description_length): (i16, i16) = (0, 0);
         match unsafe {
-            c_function(self.handle,
-                       direction,
-                       as_out_buffer(server_name),
-                       as_buffer_length(server_name.len()),
-                       &mut server_name_length as *mut i16,
-                       as_out_buffer(description),
-                       as_buffer_length(description.len()),
-                       &mut description_length as *mut i16)
-        } {
+                  c_function(self.handle,
+                             direction,
+                             as_out_buffer(server_name),
+                             as_buffer_length(server_name.len()),
+                             &mut server_name_length as *mut i16,
+                             as_out_buffer(description),
+                             as_buffer_length(description.len()),
+                             &mut description_length as *mut i16)
+              } {
             SQLRETURN::SQL_SUCCESS => {
                 IterationResult::Success((server_name_length, description_length))
             }
@@ -117,9 +119,9 @@ impl Environment {
     }
 }
 
-/// Signature shared by `raw::SQLDrivers` and `raw::SQLDataSources`
+/// Signature shared by `raw::SQLDrivers` and `ffi::SQLDataSources`
 type SqlInfoFunction = unsafe extern "C" fn(SQLHENV,
-                                            SQLUSMALLINT,
+                                            FetchOrientation,
                                             *mut SQLCHAR,
                                             SQLSMALLINT,
                                             *mut SQLSMALLINT,
@@ -154,3 +156,4 @@ pub enum SetEnvAttrResult {
     SuccessWithInfo,
     Error,
 }
+

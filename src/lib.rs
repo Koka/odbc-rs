@@ -1,4 +1,4 @@
-pub mod raw;
+pub mod ffi;
 
 mod safe;
 mod error;
@@ -95,8 +95,7 @@ mod test {
     #[test]
     fn it_works() {
 
-        use raw::*;
-        use raw::SQLRETURN::*;
+        use ffi::*;
         use std::ffi::{CStr, CString};
 
         let is_success = |ret| {
@@ -108,8 +107,9 @@ mod test {
         };
 
         unsafe {
-            let mut env: SQLHENV = std::ptr::null_mut();
-            SQLAllocEnv(&mut env);
+            let mut env: SQLHANDLE = std::ptr::null_mut();
+            SQLAllocHandle(SQL_HANDLE_ENV, std::ptr::null_mut(), &mut env as * mut SQLHANDLE);
+            let mut env = env as SQLHENV;
 
             let mut ret: SQLRETURN;
 
@@ -147,8 +147,9 @@ mod test {
                          CStr::from_ptr(desc.as_ptr() as *const i8));
             }
 
-            let mut dbc: SQLHDBC = std::ptr::null_mut();
-            SQLAllocConnect(env, &mut dbc);
+            let mut dbc: SQLHANDLE = std::ptr::null_mut();
+            SQLAllocHandle(SQL_HANDLE_DBC, env as SQLHANDLE, &mut dbc as * mut SQLHANDLE);
+            let mut dbc = dbc as SQLHDBC;
 
             let dsn = CString::new("DSN=pglocal;Database=crm;Uid=postgres;Password=postgres")
                 .unwrap();
@@ -172,8 +173,9 @@ mod test {
                 println!("CONNECTED: {:?}",
                          CStr::from_ptr(name.as_ptr() as *const i8));
 
-                let mut stmt: SQLHSTMT = std::ptr::null_mut();
-                SQLAllocStmt(dbc, &mut stmt);
+                let mut stmt: SQLHANDLE = std::ptr::null_mut();
+                SQLAllocHandle(SQL_HANDLE_STMT, dbc as SQLHANDLE, &mut stmt as * mut SQLHANDLE);
+                let mut stmt = stmt as SQLHSTMT;
 
                 let sql = CString::new("select * from security.user").unwrap();
 
@@ -198,7 +200,7 @@ mod test {
                             let mut buf = [0; 512];
                             ret = SQLGetData(stmt,
                                              j as u16,
-                                             1,
+                                             SQL_C_CHAR,
                                              buf.as_mut_ptr() as SQLPOINTER,
                                              buf.len() as SQLLEN,
                                              &mut indicator);
@@ -220,7 +222,7 @@ mod test {
                     let mut i = 1;
                     let mut native: SQLINTEGER = 0;
                     while is_success(SQLGetDiagRec(SQL_HANDLE_STMT,
-                                                   stmt,
+                                                   stmt as SQLHANDLE,
                                                    i,
                                                    name.as_mut_ptr(),
                                                    &mut native,
@@ -236,7 +238,7 @@ mod test {
                     }
                 }
 
-                SQLFreeHandle(SQL_HANDLE_STMT, stmt);
+                SQLFreeHandle(SQL_HANDLE_STMT, stmt as SQLHANDLE);
                 SQLDisconnect(dbc);
             } else {
                 println!("NOT CONNECTED: {:?}",
@@ -244,7 +246,7 @@ mod test {
                 let mut i = 1;
                 let mut native: SQLINTEGER = 0;
                 while is_success(SQLGetDiagRec(SQL_HANDLE_DBC,
-                                               dbc,
+                                               dbc as SQLHANDLE,
                                                i,
                                                name.as_mut_ptr(),
                                                &mut native,
@@ -260,8 +262,8 @@ mod test {
                 }
             }
 
-            SQLFreeConnect(dbc);
-            SQLFreeEnv(env);
+            SQLFreeHandle(SQL_HANDLE_DBC, dbc as SQLHANDLE);
+            SQLFreeHandle(SQL_HANDLE_ENV, env as SQLHANDLE);
         }
 
         println!("BYE!");
