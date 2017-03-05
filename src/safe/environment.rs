@@ -1,7 +1,7 @@
 use super::{as_buffer_length, as_out_buffer, Handle};
 use ffi::{SQLAllocHandle, SQLFreeHandle, SQLSetEnvAttr, SQLDataSources, SQLDrivers, HandleType,
-          SQLRETURN, SQLHENV, SQLHANDLE, SQLSMALLINT, SQLUSMALLINT, SQLCHAR, SQL_HANDLE_ENV,
-          SQL_ATTR_ODBC_VERSION, SQL_OV_ODBC3};
+          SQLRETURN, SQLHENV, SQLHANDLE, SQLSMALLINT, SQLCHAR, SQL_HANDLE_ENV,
+          SQL_ATTR_ODBC_VERSION, SQL_OV_ODBC3, FetchOrientation};
 use std::ptr::null_mut;
 use std::os::raw::c_void;
 
@@ -73,7 +73,7 @@ impl Environment {
     /// # Result
     /// The tuple contains the required length of the buffers minus null-termination character.
     pub fn data_sources(&mut self,
-                        direction: u16,
+                        direction: FetchOrientation,
                         server_name: &mut [u8],
                         description: &mut [u8])
                         -> IterationResult<(i16, i16)> {
@@ -81,7 +81,7 @@ impl Environment {
     }
 
     pub fn drivers(&mut self,
-                   direction: u16,
+                   direction: FetchOrientation,
                    description: &mut [u8],
                    attributes: &mut [u8])
                    -> IterationResult<(i16, i16)> {
@@ -91,7 +91,7 @@ impl Environment {
     // this private method uses the fact that SQLDataSources and SQLDrivers share the same signature
     fn impl_data_sources(&mut self,
                          c_function: SqlInfoFunction,
-                         direction: u16,
+                         direction: FetchOrientation,
                          server_name: &mut [u8],
                          description: &mut [u8])
                          -> IterationResult<(i16, i16)> {
@@ -119,9 +119,9 @@ impl Environment {
     }
 }
 
-/// Signature shared by `raw::SQLDrivers` and `raw::SQLDataSources`
+/// Signature shared by `raw::SQLDrivers` and `ffi::SQLDataSources`
 type SqlInfoFunction = unsafe extern "C" fn(SQLHENV,
-                                            SQLUSMALLINT,
+                                            FetchOrientation,
                                             *mut SQLCHAR,
                                             SQLSMALLINT,
                                             *mut SQLSMALLINT,

@@ -41,7 +41,10 @@ pub struct DriverInfo {
     pub attributes: HashMap<String, String>,
 }
 
-type SqlInfoMethod = fn(&mut safe::Environment, u16, &mut [u8], &mut [u8])
+type SqlInfoMethod = fn(&mut safe::Environment,
+                        ffi::FetchOrientation,
+                        &mut [u8],
+                        &mut [u8])
                         -> safe::IterationResult<(i16, i16)>;
 
 impl Environment {
@@ -108,7 +111,7 @@ impl Environment {
 
     /// Use SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or
     /// system data sources
-    fn data_sources_impl(&self, direction: ffi::SQLUSMALLINT) -> Result<Vec<DataSourceInfo>> {
+    fn data_sources_impl(&self, direction: ffi::FetchOrientation) -> Result<Vec<DataSourceInfo>> {
 
         // alloc_info iterates ones over every datasource to obtain the requiered buffer sizes
         let (max_name, max_desc, num_sources) =
@@ -156,7 +159,7 @@ impl Environment {
     /// into a `(&str,&str)`
     fn get_info<'a, 'b>(&self,
                         f: SqlInfoMethod,
-                        direction: ffi::SQLUSMALLINT,
+                        direction: ffi::FetchOrientation,
                         buf1: &'a mut [u8],
                         buf2: &'b mut [u8])
                         -> Result<Option<(&'a str, &'b str)>> {
@@ -178,7 +181,7 @@ impl Environment {
     /// Finds the maximum size required for description buffers
     fn alloc_info(&self,
                   f: SqlInfoMethod,
-                  direction: ffi::SQLUSMALLINT)
+                  direction: ffi::FetchOrientation)
                   -> Result<(ffi::SQLSMALLINT, ffi::SQLSMALLINT, usize)> {
         let mut string_buf1 = [0; 0];
         let mut string_buf2 = [0; 0];
