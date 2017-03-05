@@ -1,5 +1,5 @@
 //! This module implements the ODBC Environment
-use super::{Error, Result, raw};
+use super::{Error, Result, ffi};
 use super::safe;
 use safe::{Handle, GetDiagRec};
 use std::collections::HashMap;
@@ -73,41 +73,42 @@ impl Environment {
         // everything without truncating and a second time for actually storing the values
         // alloc_info iterates ones over every driver to obtain the requiered buffer sizes
         let (max_desc, max_attr, num_drivers) =
-            self.alloc_info(safe::Environment::drivers, raw::SQL_FETCH_FIRST)?;
+            self.alloc_info(safe::Environment::drivers, ffi::SQL_FETCH_FIRST)?;
 
         let mut driver_list = Vec::with_capacity(num_drivers);
         let mut description_buffer = vec![0; (max_desc + 1) as usize];
         let mut attribute_buffer = vec![0; (max_attr + 1) as usize];
-        while let Some((desc, attr)) = self.get_info(safe::Environment::drivers,
-                      raw::SQL_FETCH_NEXT,
-                      &mut description_buffer,
-                      &mut attribute_buffer)? {
+        while let Some((desc, attr)) =
+            self.get_info(safe::Environment::drivers,
+                          ffi::SQL_FETCH_NEXT,
+                          &mut description_buffer,
+                          &mut attribute_buffer)? {
             driver_list.push(DriverInfo {
-                description: desc.to_owned(),
-                attributes: Self::parse_attributes(attr),
-            })
+                                 description: desc.to_owned(),
+                                 attributes: Self::parse_attributes(attr),
+                             })
         }
         Ok(driver_list)
     }
 
     /// Stores all data source server names and descriptions in a Vec
     pub fn data_sources(&self) -> Result<Vec<DataSourceInfo>> {
-        self.data_sources_impl(raw::SQL_FETCH_FIRST)
+        self.data_sources_impl(ffi::SQL_FETCH_FIRST)
     }
 
     /// Stores all sytem data source server names and descriptions in a Vec
     pub fn system_data_sources(&self) -> Result<Vec<DataSourceInfo>> {
-        self.data_sources_impl(raw::SQL_FETCH_FIRST_SYSTEM)
+        self.data_sources_impl(ffi::SQL_FETCH_FIRST_SYSTEM)
     }
 
     /// Stores all user data source server names and descriptions in a Vec
     pub fn user_data_sources(&self) -> Result<Vec<DataSourceInfo>> {
-        self.data_sources_impl(raw::SQL_FETCH_FIRST_USER)
+        self.data_sources_impl(ffi::SQL_FETCH_FIRST_USER)
     }
 
     /// Use SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or
     /// system data sources
-    fn data_sources_impl(&self, direction: raw::SQLUSMALLINT) -> Result<Vec<DataSourceInfo>> {
+    fn data_sources_impl(&self, direction: ffi::SQLUSMALLINT) -> Result<Vec<DataSourceInfo>> {
 
         // alloc_info iterates ones over every datasource to obtain the requiered buffer sizes
         let (max_name, max_desc, num_sources) =
@@ -120,40 +121,42 @@ impl Environment {
         // Before we call SQLDataSources with SQL_FETCH_NEXT, we have to call it with either
         // SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or
         // system data sources
-        if let Some((name, desc)) = self.get_info(safe::Environment::data_sources,
-                      direction,
-                      &mut name_buffer,
-                      &mut description_buffer)? {
+        if let Some((name, desc)) =
+            self.get_info(safe::Environment::data_sources,
+                          direction,
+                          &mut name_buffer,
+                          &mut description_buffer)? {
             source_list.push(DataSourceInfo {
-                server_name: name.to_owned(),
-                description: desc.to_owned(),
-            })
+                                 server_name: name.to_owned(),
+                                 description: desc.to_owned(),
+                             })
         } else {
             return Ok(source_list);
         }
 
-        while let Some((name, desc)) = self.get_info(safe::Environment::data_sources,
-                      raw::SQL_FETCH_NEXT,
-                      &mut name_buffer,
-                      &mut description_buffer)? {
+        while let Some((name, desc)) =
+            self.get_info(safe::Environment::data_sources,
+                          ffi::SQL_FETCH_NEXT,
+                          &mut name_buffer,
+                          &mut description_buffer)? {
             source_list.push(DataSourceInfo {
-                server_name: name.to_owned(),
-                description: desc.to_owned(),
-            })
+                                 server_name: name.to_owned(),
+                                 description: desc.to_owned(),
+                             })
         }
         Ok(source_list)
     }
 
     /// Allows access to the raw ODBC handle
-    pub unsafe fn raw(&mut self) -> raw::SQLHENV {
-        self.handle.borrow().handle()
+    pub unsafe fn raw(&mut self) -> ffi::SQLHENV {
+        self.handle.borrow().handle() as ffi::SQLHENV
     }
 
     /// Calls either SQLDrivers or SQLDataSources with the two given buffers and parses the result
     /// into a `(&str,&str)`
     fn get_info<'a, 'b>(&self,
                         f: SqlInfoMethod,
-                        direction: raw::SQLUSMALLINT,
+                        direction: ffi::SQLUSMALLINT,
                         buf1: &'a mut [u8],
                         buf2: &'b mut [u8])
                         -> Result<Option<(&'a str, &'b str)>> {
@@ -175,8 +178,8 @@ impl Environment {
     /// Finds the maximum size required for description buffers
     fn alloc_info(&self,
                   f: SqlInfoMethod,
-                  direction: raw::SQLUSMALLINT)
-                  -> Result<(raw::SQLSMALLINT, raw::SQLSMALLINT, usize)> {
+                  direction: ffi::SQLUSMALLINT)
+                  -> Result<(ffi::SQLSMALLINT, ffi::SQLSMALLINT, usize)> {
         let mut string_buf1 = [0; 0];
         let mut string_buf2 = [0; 0];
         let mut max1 = 0;
@@ -199,14 +202,14 @@ impl Environment {
                 safe::IterationResult::NoData => break,
                 safe::IterationResult::Error => {
                     return Err(Error::SqlError(self.handle
-                        .borrow()
-                        .get_diagnostic_record(1)
-                        .unwrap()));
+                                                   .borrow()
+                                                   .get_diagnostic_record(1)
+                                                   .unwrap()));
                 }
             }
 
             result = f(&mut self.handle.borrow_mut(),
-                       raw::SQL_FETCH_NEXT,
+                       ffi::SQL_FETCH_NEXT,
                        &mut string_buf1,
                        &mut string_buf2)
         }
@@ -221,11 +224,11 @@ impl Environment {
         attributes.split('\0')
             .take_while(|kv_str| *kv_str != String::new())
             .map(|kv_str| {
-                let mut iter = kv_str.split('=');
-                let key = iter.next().unwrap();
-                let value = iter.next().unwrap();
-                (key.to_string(), value.to_string())
-            })
+                     let mut iter = kv_str.split('=');
+                     let key = iter.next().unwrap();
+                     let value = iter.next().unwrap();
+                     (key.to_string(), value.to_string())
+                 })
             .collect()
     }
 }
@@ -249,3 +252,4 @@ mod test {
         assert_eq!(attributes["UsageCount"], "1");
     }
 }
+

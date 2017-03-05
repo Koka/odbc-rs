@@ -1,13 +1,13 @@
 //! Holds implementation of odbc connection
-use super::{raw, Environment, Result, Error};
+use super::{ffi, Environment, Result, Error};
 use safe::{Handle, GetDiagRec};
-use super::raw::SQLRETURN::*;
+use super::ffi::SQLRETURN::*;
 use std;
 use std::marker::PhantomData;
 
 /// Represents a connection to an ODBC data source
 pub struct DataSource<'a> {
-    handle: raw::SQLHDBC,
+    handle: ffi::SQLHDBC,
     // we use phantom data to tell the borrow checker that we need to keep the environment alive for
     // the lifetime of the connection
     env: PhantomData<&'a Environment>,
@@ -29,13 +29,13 @@ impl<'a> DataSource<'a> {
         let data_source = Self::allocate(env)?;
 
         unsafe {
-            match raw::SQLConnect(data_source.handle,
+            match ffi::SQLConnect(data_source.handle,
                                   dsn.as_ptr(),
-                                  dsn.as_bytes().len() as raw::SQLSMALLINT,
+                                  dsn.as_bytes().len() as ffi::SQLSMALLINT,
                                   usr.as_ptr(),
-                                  usr.as_bytes().len() as raw::SQLSMALLINT,
+                                  usr.as_bytes().len() as ffi::SQLSMALLINT,
                                   pwd.as_ptr(),
-                                  pwd.as_bytes().len() as raw::SQLSMALLINT) {
+                                  pwd.as_bytes().len() as ffi::SQLSMALLINT) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(data_source),
                 _ => Err(Error::SqlError(data_source.get_diagnostic_record(1).unwrap())),
@@ -53,21 +53,21 @@ impl<'a> DataSource<'a> {
         let mut buffer: [u8; 2] = [0; 2];
 
         unsafe {
-            match raw::SQLGetInfo(self.handle,
-                                  raw::SQL_DATA_SOURCE_READ_ONLY,
+            match ffi::SQLGetInfo(self.handle,
+                                  ffi::SQL_DATA_SOURCE_READ_ONLY,
                                   buffer.as_mut_ptr() as *mut std::os::raw::c_void,
-                                  buffer.len() as raw::SQLSMALLINT,
+                                  buffer.len() as ffi::SQLSMALLINT,
                                   std::ptr::null_mut()) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => {
                     Ok({
-                        assert!(buffer[1] == 0);
-                        match buffer[0] as char {
-                            'N' => false,
-                            'Y' => true,
-                            _ => panic!(r#"Driver may only return "N" or "Y""#),
-                        }
-                    })
+                           assert!(buffer[1] == 0);
+                           match buffer[0] as char {
+                               'N' => false,
+                               'Y' => true,
+                               _ => panic!(r#"Driver may only return "N" or "Y""#),
+                           }
+                       })
                 }
                 SQL_ERROR => Err(Error::SqlError(self.get_diagnostic_record(1).unwrap())),
                 _ => unreachable!(),
@@ -76,20 +76,20 @@ impl<'a> DataSource<'a> {
     }
 
     /// Allows access to the raw ODBC handle
-    pub unsafe fn raw(&mut self) -> raw::SQLHDBC {
+    pub unsafe fn raw(&mut self) -> ffi::SQLHDBC {
         self.handle
     }
 
     fn allocate(env: &mut Environment) -> Result<DataSource> {
         unsafe {
             let mut conn = std::ptr::null_mut();
-            match raw::SQLAllocHandle(raw::SQL_HANDLE_DBC, env.raw(), &mut conn) {
+            match ffi::SQLAllocHandle(ffi::SQL_HANDLE_DBC, env.raw() as ffi::SQLHANDLE, &mut conn) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => {
                     Ok(DataSource {
-                        handle: conn,
-                        env: PhantomData,
-                    })
+                           handle: conn as ffi::SQLHDBC,
+                           env: PhantomData,
+                       })
                 }
                 // Driver Manager failed to allocate environment
                 SQL_ERROR => Err(Error::SqlError(env.get_diagnostic_record(1).unwrap())),
@@ -100,19 +100,20 @@ impl<'a> DataSource<'a> {
 }
 
 unsafe impl<'a> Handle for DataSource<'a> {
-    fn handle(&self) -> raw::SQLHANDLE {
-        self.handle
+    fn handle(&self) -> ffi::SQLHANDLE {
+        self.handle as ffi::SQLHANDLE
     }
 
-    fn handle_type() -> raw::SQLSMALLINT {
-        raw::SQL_HANDLE_DBC
+    fn handle_type() -> ffi::HandleType {
+        ffi::SQL_HANDLE_DBC
     }
 }
 
 impl<'a> Drop for DataSource<'a> {
     fn drop(&mut self) {
         unsafe {
-            raw::SQLFreeHandle(raw::SQL_HANDLE_DBC, self.handle);
+            ffi::SQLFreeHandle(ffi::SQL_HANDLE_DBC, self.handle());
         }
     }
 }
+

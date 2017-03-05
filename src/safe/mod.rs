@@ -9,7 +9,7 @@ pub use self::environment::*;
 
 use std;
 
-use raw::{SQLSMALLINT, SQLHANDLE};
+use ffi::{SQLSMALLINT, SQLHANDLE, HandleType};
 
 fn as_out_buffer(buffer: &mut [u8]) -> *mut u8 {
     if buffer.len() == 0 {
@@ -30,5 +30,5 @@ fn as_buffer_length(n: usize) -> SQLSMALLINT {
 
 pub unsafe trait Handle {
     fn handle(&self) -> SQLHANDLE;
-    fn handle_type() -> SQLSMALLINT;
+    fn handle_type() -> HandleType;
 }
