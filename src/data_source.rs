@@ -1,6 +1,5 @@
 //! Holds implementation of odbc connection
-use super::{ffi, Environment, Result, Error, GetDiagRec};
-use safe::{Handle};
+use super::{ffi, Environment, Result, Error, GetDiagRec, Handle};
 use super::ffi::SQLRETURN::*;
 use std;
 use std::marker::PhantomData;
@@ -14,6 +13,7 @@ pub struct DataSource<'a> {
 }
 
 impl<'a> DataSource<'a> {
+
     /// Connects to an ODBC data source
     ///
     /// # Arguments
@@ -99,20 +99,17 @@ impl<'a> DataSource<'a> {
     }
 }
 
-unsafe impl<'a> Handle for DataSource<'a> {
-    fn handle(&self) -> ffi::SQLHANDLE {
-        self.handle as ffi::SQLHANDLE
-    }
-
-    fn handle_type() -> ffi::HandleType {
-        ffi::SQL_HANDLE_DBC
+impl<'a> Handle for DataSource<'a> {
+    type To = ffi::Dbc;
+    unsafe fn handle(&self) -> ffi::SQLHDBC {
+        self.handle
     }
 }
 
 impl<'a> Drop for DataSource<'a> {
     fn drop(&mut self) {
         unsafe {
-            ffi::SQLFreeHandle(ffi::SQL_HANDLE_DBC, self.handle());
+            ffi::SQLFreeHandle(ffi::SQL_HANDLE_DBC, self.handle() as ffi::SQLHANDLE);
         }
     }
 }

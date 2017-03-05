@@ -1,4 +1,4 @@
-use super::{ffi, OdbcObject, GetDiagRec, Return};
+use super::{ffi, OdbcObject, GetDiagRec, Return, Handle};
 use std::ptr::null_mut;
 
 /// Wrapper around handle types which ensures the wrapped value is always valid.
@@ -7,6 +7,23 @@ use std::ptr::null_mut;
 pub struct Raii<T: OdbcObject> {
     //Invariant: Should always point to a valid odbc Object
     handle: *mut T,
+}
+
+impl<T: OdbcObject> Handle for Raii<T> {
+    type To = T;
+    unsafe fn handle(&self) -> *mut T {
+        self.handle
+    }
+}
+
+impl<T: OdbcObject> Drop for Raii<T> {
+    fn drop(&mut self) {
+        match unsafe { ffi::SQLFreeHandle(T::handle_type(), self.handle() as ffi::SQLHANDLE) } {
+            ffi::SQL_SUCCESS => (),
+            ffi::SQL_ERROR => panic!("Error freeing handle: {}", self.get_diag_rec(1).unwrap()),
+            _ => panic!("Unexepected return value of SQLFreeHandle"),
+        }
+    }
 }
 
 impl<T: OdbcObject> Raii<T> {
@@ -27,10 +44,6 @@ impl<T: OdbcObject> Raii<T> {
     //         _ => panic!("SQLAllocHandle returned unexpected result"),
     //     }
     // }
-
-    pub unsafe fn handle(&self) -> *mut T {
-        self.handle
-    }
 }
 
 impl Raii<ffi::Env> {
@@ -45,16 +58,6 @@ impl Raii<ffi::Env> {
             }
             ffi::SQL_ERROR => Return::Error,
             _ => panic!("SQLAllocHandle returned unexpected result"),
-        }
-    }
-}
-
-impl<T: OdbcObject> Drop for Raii<T> {
-    fn drop(&mut self) {
-        match unsafe { ffi::SQLFreeHandle(T::handle_type(), self.handle() as ffi::SQLHANDLE) } {
-            ffi::SQL_SUCCESS => (),
-            ffi::SQL_ERROR => panic!("Error freeing handle: {}", self.get_diag_rec(1).unwrap()),
-            _ => panic!("Unexepected return value of SQLFreeHandle"),
         }
     }
 }

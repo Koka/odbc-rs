@@ -12,8 +12,15 @@ use raii::Raii;
 pub use diagnostics::{DiagnosticRecord, GetDiagRec};
 pub use error::*;
 pub use environment::*;
-pub use data_source::*;
+pub use data_source::DataSource;
 pub use statement::*;
+
+/// Reflects the ability of a type to expose a valid handle
+pub trait Handle{
+    type To;
+    /// Returns a valid handle to the odbc type.
+    unsafe fn handle(&self) -> * mut Self::To;
+}
 
 #[must_use]
 pub enum Return<T> {

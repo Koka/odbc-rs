@@ -1,18 +1,10 @@
-use super::{as_buffer_length, as_out_buffer, Handle};
-use super::super::{ffi, Raii};
-use ffi::{SQLAllocHandle, SQLFreeHandle, SQLSetEnvAttr, SQLDataSources, SQLDrivers, HandleType,
-          SQLRETURN, SQLHENV, SQLHANDLE, SQLSMALLINT, SQLCHAR, SQL_HANDLE_ENV,
+use super::{as_buffer_length, as_out_buffer};
+use super::super::{ffi, Raii, Handle};
+use ffi::{SQLSetEnvAttr, SQLDataSources, SQLDrivers, SQLRETURN, SQLHENV, SQLSMALLINT, SQLCHAR,
           SQL_ATTR_ODBC_VERSION, SQL_OV_ODBC3, FetchOrientation};
-use std::ptr::null_mut;
 use std::os::raw::c_void;
 
-/// Safe wrapper around ODBC Environment handle
-pub type Environment = Raii<ffi::Env>;
-// pub struct Environment {
-//     handle: SQLHENV,
-// }
-
-impl Environment {
+impl Raii<ffi::Env> {
     pub fn set_odbc_version_3(&mut self) -> SetEnvAttrResult {
 
         use self::SetEnvAttrResult::*;

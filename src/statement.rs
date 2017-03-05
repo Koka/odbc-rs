@@ -1,6 +1,5 @@
 
-use super::{ffi, DataSource, Error, Result, GetDiagRec};
-use safe::Handle;
+use super::{ffi, DataSource, Error, Result, GetDiagRec, Handle};
 use super::ffi::SQLRETURN::*;
 use std::marker::PhantomData;
 use std::ptr::null_mut;
@@ -21,13 +20,10 @@ impl<'a> Drop for Statement<'a> {
     }
 }
 
-unsafe impl<'a> Handle for Statement<'a> {
-    fn handle(&self) -> ffi::SQLHANDLE {
-        self.handle as ffi::SQLHANDLE
-    }
-
-    fn handle_type() -> ffi::HandleType {
-        ffi::SQL_HANDLE_STMT
+impl<'a> Handle for Statement<'a> {
+    type To = ffi::Stmt;
+    unsafe fn handle(&self) -> ffi::SQLHSTMT {
+        self.handle
     }
 }
 

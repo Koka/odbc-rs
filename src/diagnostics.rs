@@ -1,5 +1,5 @@
-use safe::Handle;
-use ffi::{SQLGetDiagRec, SQLSMALLINT, SQLRETURN, SQLINTEGER};
+use super::{Handle, OdbcObject};
+use ffi::{SQLGetDiagRec, SQLSMALLINT, SQLRETURN, SQLINTEGER, SQLHANDLE};
 use std::ptr::null_mut;
 use std::fmt;
 
@@ -25,16 +25,18 @@ pub trait GetDiagRec {
     fn get_diag_rec(&self, record_number: i16) -> Option<DiagnosticRecord>;
 }
 
-impl<T: Handle> GetDiagRec for T {
+impl<H> GetDiagRec for H
+    where H: Handle,
+          H::To: OdbcObject
+{
     fn get_diag_rec(&self, record_number: i16) -> Option<DiagnosticRecord> {
         // Call SQLGetDiagRec two times. First time to get the message text length, the second
         // to fill the result with diagnostic information
         let mut text_length: SQLSMALLINT = 0;
 
         match unsafe {
-
-                  SQLGetDiagRec(T::handle_type(),
-                                self.handle(),
+                  SQLGetDiagRec(H::To::handle_type(),
+                                self.handle() as SQLHANDLE,
                                 record_number,
                                 null_mut(),
                                 null_mut(),
@@ -63,8 +65,8 @@ impl<T: Handle> GetDiagRec for T {
         };
 
         match unsafe {
-                  SQLGetDiagRec(T::handle_type(),
-                                self.handle(),
+                  SQLGetDiagRec(H::To::handle_type(),
+                                self.handle() as SQLHANDLE,
                                 record_number,
                                 result.state.as_mut_ptr(),
                                 result.native_error_pointer as *mut SQLINTEGER,
@@ -86,6 +88,7 @@ impl<T: Handle> GetDiagRec for T {
 mod test {
 
     use super::*;
+    use super::super::Raii;
 
     #[test]
     fn provoke_error() {
@@ -97,9 +100,8 @@ mod test {
 
         use Return;
         use ffi::{SQL_HANDLE_DBC, SQLHANDLE, SQLAllocHandle};
-        use safe::Environment;
 
-        let environment = match unsafe { Environment::new() } {
+        let environment = match unsafe { Raii::new() } {
             Return::Success(env) => env,
             _ => panic!("unexpected behaviour allocating environment"),
         };

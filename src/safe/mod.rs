@@ -25,18 +25,3 @@ fn as_buffer_length(n: usize) -> SQLSMALLINT {
         n as i16
     }
 }
-
-pub unsafe trait Handle {
-    fn handle(&self) -> SQLHANDLE;
-    fn handle_type() -> HandleType;
-}
-
-unsafe impl<T : OdbcObject> Handle for Raii<T>{
-    fn handle(&self) -> SQLHANDLE{
-        unsafe {self.handle() as SQLHANDLE}
-    }
-
-    fn handle_type() -> HandleType{
-        T::handle_type()
-    }
-}
