@@ -1,14 +1,26 @@
 pub mod ffi;
-
+mod odbc_object;
+mod raii;
+mod diagnostics;
 mod safe;
 mod error;
-pub use error::*;
 mod environment;
-pub use environment::*;
 mod data_source;
-pub use data_source::*;
 mod statement;
+use odbc_object::OdbcObject;
+use raii::Raii;
+pub use diagnostics::{DiagnosticRecord, GetDiagRec};
+pub use error::*;
+pub use environment::*;
+pub use data_source::*;
 pub use statement::*;
+
+#[must_use]
+pub enum Return<T> {
+    Success(T),
+    SuccessWithInfo(T),
+    Error,
+}
 
 pub type Result<T> = std::result::Result<T, Error>;
 

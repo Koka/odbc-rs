@@ -1,6 +1,6 @@
 //! Holds implementation of odbc connection
-use super::{ffi, Environment, Result, Error};
-use safe::{Handle, GetDiagRec};
+use super::{ffi, Environment, Result, Error, GetDiagRec};
+use safe::{Handle};
 use super::ffi::SQLRETURN::*;
 use std;
 use std::marker::PhantomData;
@@ -38,7 +38,7 @@ impl<'a> DataSource<'a> {
                                   pwd.as_bytes().len() as ffi::SQLSMALLINT) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(data_source),
-                _ => Err(Error::SqlError(data_source.get_diagnostic_record(1).unwrap())),
+                _ => Err(Error::SqlError(data_source.get_diag_rec(1).unwrap())),
             }
         }
     }
@@ -69,7 +69,7 @@ impl<'a> DataSource<'a> {
                            }
                        })
                 }
-                SQL_ERROR => Err(Error::SqlError(self.get_diagnostic_record(1).unwrap())),
+                SQL_ERROR => Err(Error::SqlError(self.get_diag_rec(1).unwrap())),
                 _ => unreachable!(),
             }
         }
@@ -92,7 +92,7 @@ impl<'a> DataSource<'a> {
                        })
                 }
                 // Driver Manager failed to allocate environment
-                SQL_ERROR => Err(Error::SqlError(env.get_diagnostic_record(1).unwrap())),
+                SQL_ERROR => Err(Error::SqlError(env.get_diag_rec(1).unwrap())),
                 _ => unreachable!(),
             }
         }

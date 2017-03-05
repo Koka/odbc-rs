@@ -1,6 +1,6 @@
 
-use super::{ffi, DataSource, Error, Result};
-use safe::{Handle, GetDiagRec};
+use super::{ffi, DataSource, Error, Result, GetDiagRec};
+use safe::Handle;
 use super::ffi::SQLRETURN::*;
 use std::marker::PhantomData;
 use std::ptr::null_mut;
@@ -50,7 +50,7 @@ impl<'a> Statement<'a> {
                                  table_type.as_bytes().len() as ffi::SQLSMALLINT) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(stmt),
-                SQL_ERROR => Err(Error::SqlError(stmt.get_diagnostic_record(1).unwrap())),
+                SQL_ERROR => Err(Error::SqlError(stmt.get_diag_rec(1).unwrap())),
                 SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
                 _ => unreachable!(),
             }
@@ -71,7 +71,7 @@ impl<'a> Statement<'a> {
                        })
                 }
                 // Driver Manager failed to allocate statement
-                SQL_ERROR => Err(Error::SqlError(parent.get_diagnostic_record(1).unwrap())),
+                SQL_ERROR => Err(Error::SqlError(parent.get_diag_rec(1).unwrap())),
                 _ => unreachable!(),
             }
         }
@@ -87,7 +87,7 @@ impl<'a> Statement<'a> {
             match ffi::SQLNumResultCols(self.handle, &mut num_cols as *mut ffi::SQLSMALLINT) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(num_cols),
-                SQL_ERROR => Err(Error::SqlError(self.get_diagnostic_record(1).unwrap())),
+                SQL_ERROR => Err(Error::SqlError(self.get_diag_rec(1).unwrap())),
                 SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
                 _ => unreachable!(),
             }

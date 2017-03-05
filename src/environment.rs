@@ -1,7 +1,7 @@
 //! This module implements the ODBC Environment
-use super::{Error, Result, ffi};
+use super::{Error, Result, Return, ffi, GetDiagRec, DiagnosticRecord};
 use super::safe;
-use safe::{Handle, GetDiagRec};
+use safe::Handle;
 use std::collections::HashMap;
 use std::cell::RefCell;
 use std;
@@ -13,9 +13,9 @@ pub struct Environment {
     handle: RefCell<safe::Environment>,
 }
 
-impl safe::GetDiagRec for Environment {
-    fn get_diagnostic_record(&self, record_number: i16) -> Option<safe::DiagRec> {
-        self.handle.borrow().get_diagnostic_record(record_number)
+impl GetDiagRec for Environment {
+    fn get_diag_rec(&self, record_number: i16) -> Option<DiagnosticRecord> {
+        self.handle.borrow().get_diag_rec(record_number)
     }
 }
 
@@ -53,20 +53,18 @@ impl Environment {
     /// Declares the Application's ODBC Version to be 3
     pub fn new() -> Result<Environment> {
 
-        use safe::{EnvAllocResult, SetEnvAttrResult};
+        use safe::SetEnvAttrResult;
 
-        let mut result = match safe::Environment::new() {
-            EnvAllocResult::Success(env) |
-            EnvAllocResult::SuccessWithInfo(env) => env,
-            EnvAllocResult::Error => return Err(Error::EnvAllocFailure),
+        let mut result = match unsafe { safe::Environment::new() } {
+            Return::Success(env) |
+            Return::SuccessWithInfo(env) => env,
+            Return::Error => return Err(Error::EnvAllocFailure),
         };
 
         match result.set_odbc_version_3() {
             SetEnvAttrResult::Success |
             SetEnvAttrResult::SuccessWithInfo => Ok(Environment { handle: RefCell::new(result) }),
-            SetEnvAttrResult::Error => {
-                Err(Error::SqlError(result.get_diagnostic_record(1).unwrap()))
-            }
+            SetEnvAttrResult::Error => Err(Error::SqlError(result.get_diag_rec(1).unwrap())),
         }
     }
 
@@ -172,7 +170,7 @@ impl Environment {
                          std::str::from_utf8(&buf2[0..(len2 as usize)]).unwrap())))
             }
             safe::IterationResult::Error => {
-                Err(Error::SqlError(self.handle.borrow().get_diagnostic_record(1).unwrap()))
+                Err(Error::SqlError(self.handle.borrow().get_diag_rec(1).unwrap()))
             }
             safe::IterationResult::NoData => Ok(None),
         }
@@ -206,7 +204,7 @@ impl Environment {
                 safe::IterationResult::Error => {
                     return Err(Error::SqlError(self.handle
                                                    .borrow()
-                                                   .get_diagnostic_record(1)
+                                                   .get_diag_rec(1)
                                                    .unwrap()));
                 }
             }
