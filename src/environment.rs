@@ -147,11 +147,6 @@ impl Environment {
         Ok(source_list)
     }
 
-    /// Allows access to the raw ODBC handle
-    pub unsafe fn raw(&mut self) -> ffi::SQLHENV {
-        self.handle.borrow().handle()
-    }
-
     /// Calls either SQLDrivers or SQLDataSources with the two given buffers and parses the result
     /// into a `(&str,&str)`
     fn get_info<'a, 'b>(&self,

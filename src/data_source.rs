@@ -82,11 +82,6 @@ impl<'a> DataSource<'a> {
             }
         }
     }
-
-    /// Allows access to the raw ODBC handle
-    pub unsafe fn raw(&mut self) -> ffi::SQLHDBC {
-        self.raii.handle()
-    }
 }
 
 impl<'a> Handle for DataSource<'a> {
