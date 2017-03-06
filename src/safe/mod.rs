@@ -6,8 +6,7 @@ mod environment;
 pub use self::environment::*;
 
 use std;
-use ffi::{SQLSMALLINT, SQLHANDLE, HandleType};
-use super::{OdbcObject, Raii};
+use ffi::SQLSMALLINT;
 
 fn as_out_buffer(buffer: &mut [u8]) -> *mut u8 {
     if buffer.len() == 0 {

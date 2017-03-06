@@ -1,5 +1,5 @@
 //! This module implements the ODBC Environment
-use super::{Error, Result, Return, ffi, GetDiagRec, DiagnosticRecord, Raii, Handle};
+use super::{Error, Result, Return, ffi, GetDiagRec, Raii, Handle};
 use super::safe;
 use std::collections::HashMap;
 use std::cell::RefCell;
@@ -12,9 +12,10 @@ pub struct Environment {
     handle: RefCell<Raii<ffi::Env>>,
 }
 
-impl GetDiagRec for Environment {
-    fn get_diag_rec(&self, record_number: i16) -> Option<DiagnosticRecord> {
-        self.handle.borrow().get_diag_rec(record_number)
+impl Handle for Environment {
+    type To = ffi::Env;
+    unsafe fn handle(&self) -> ffi::SQLHENV {
+        self.handle.borrow().handle()
     }
 }
 
