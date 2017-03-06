@@ -54,11 +54,12 @@ mod test {
     fn test_connection() {
 
         let mut environment = Environment::new().expect("Environment can be created");
-        let conn =
+        let mut conn =
             DataSource::with_dsn_and_credentials(&mut environment, "PostgreSQL", "postgres", "")
                 .expect("Could not connect");
 
         assert!(!conn.read_only().unwrap());
+        conn.disconnect().unwrap();
     }
 
     #[test]
