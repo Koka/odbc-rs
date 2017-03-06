@@ -12,6 +12,13 @@ pub struct DataSource<'a> {
     parent: PhantomData<&'a Environment>,
 }
 
+impl<'a> Handle for DataSource<'a> {
+    type To = ffi::Dbc;
+    unsafe fn handle(&self) -> ffi::SQLHDBC {
+        self.raii.handle()
+    }
+}
+
 impl<'a> DataSource<'a> {
     /// Connects to an ODBC data source
     ///
@@ -82,12 +89,23 @@ impl<'a> DataSource<'a> {
             }
         }
     }
+
+    pub fn disconnect(&mut self) -> Result<()> {
+        match self.raii.disconnect() {
+            Return::Success(()) | Return::SuccessWithInfo(()) => Ok(()),
+            Return::Error => Err(Error::SqlError(self.get_diag_rec(1).unwrap())),
+        }
+    }
 }
 
-impl<'a> Handle for DataSource<'a> {
-    type To = ffi::Dbc;
-    unsafe fn handle(&self) -> ffi::SQLHDBC {
-        self.raii.handle()
+impl Raii<ffi::Dbc> {
+    fn disconnect(&mut self) -> Return<()> {
+        match unsafe { ffi::SQLDisconnect(self.handle()) } {
+            ffi::SQL_SUCCESS => Return::Success(()),
+            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
+            ffi::SQL_ERROR => Return::Error,
+            _ => panic!("SQLDisconnect returned unexpected result"),
+        }
     }
 }
 
