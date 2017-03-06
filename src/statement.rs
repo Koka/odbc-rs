@@ -1,45 +1,42 @@
 
-use super::{ffi, DataSource, Error, Result};
-use safe::{Handle, GetDiagRec};
+use super::{ffi, DataSource, Error, Return, Result, Raii, GetDiagRec, Handle};
 use super::ffi::SQLRETURN::*;
 use std::marker::PhantomData;
-use std::ptr::null_mut;
 
 /// RAII wrapper around ODBC statement
 pub struct Statement<'a> {
-    handle: ffi::SQLHSTMT,
+    raii: Raii<ffi::Stmt>,
     // we use phantom data to tell the borrow checker that we need to keep the data source alive
     // for the lifetime of the statement
     parent: PhantomData<&'a DataSource<'a>>,
 }
 
-impl<'a> Drop for Statement<'a> {
-    fn drop(&mut self) {
-        unsafe {
-            ffi::SQLFreeHandle(ffi::SQL_HANDLE_STMT, self.handle as ffi::SQLHANDLE);
-        }
-    }
-}
-
-unsafe impl<'a> Handle for Statement<'a> {
-    fn handle(&self) -> ffi::SQLHANDLE {
-        self.handle as ffi::SQLHANDLE
-    }
-
-    fn handle_type() -> ffi::HandleType {
-        ffi::SQL_HANDLE_STMT
+impl<'a> Handle for Statement<'a> {
+    type To = ffi::Stmt;
+    unsafe fn handle(&self) -> ffi::SQLHSTMT {
+        self.raii.handle()
     }
 }
 
 impl<'a> Statement<'a> {
     pub fn with_tables<'b>(ds: &'b mut DataSource) -> Result<Statement<'b>> {
-        let stmt = Statement::allocate(ds)?;
+        let raii = match Raii::with_parent(ds) {
+            Return::Success(s) => s,
+            Return::SuccessWithInfo(s) => s,
+            Return::Error => return Err(Error::SqlError(ds.get_diag_rec(1).unwrap())),
+        };
+
+        let stmt = Statement {
+            raii: raii,
+            parent: PhantomData,
+        };
+
         let catalog_name = "";
         let schema_name = "";
         let table_name = "";
         let table_type = "TABLE";
         unsafe {
-            match ffi::SQLTables(stmt.handle,
+            match ffi::SQLTables(stmt.raii.handle(),
                                  catalog_name.as_ptr(),
                                  catalog_name.as_bytes().len() as ffi::SQLSMALLINT,
                                  schema_name.as_ptr(),
@@ -50,28 +47,8 @@ impl<'a> Statement<'a> {
                                  table_type.as_bytes().len() as ffi::SQLSMALLINT) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(stmt),
-                SQL_ERROR => Err(Error::SqlError(stmt.get_diagnostic_record(1).unwrap())),
+                SQL_ERROR => Err(Error::SqlError(stmt.get_diag_rec(1).unwrap())),
                 SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
-                _ => unreachable!(),
-            }
-        }
-    }
-
-    fn allocate<'b>(parent: &'b mut DataSource) -> Result<Statement<'b>> {
-        unsafe {
-            let mut stmt = null_mut();
-            match ffi::SQLAllocHandle(ffi::SQL_HANDLE_STMT,
-                                      parent.raw() as ffi::SQLHANDLE,
-                                      &mut stmt) {
-                SQL_SUCCESS |
-                SQL_SUCCESS_WITH_INFO => {
-                    Ok(Statement {
-                           handle: stmt as ffi::SQLHSTMT,
-                           parent: PhantomData,
-                       })
-                }
-                // Driver Manager failed to allocate statement
-                SQL_ERROR => Err(Error::SqlError(parent.get_diagnostic_record(1).unwrap())),
                 _ => unreachable!(),
             }
         }
@@ -84,19 +61,15 @@ impl<'a> Statement<'a> {
     pub fn num_result_cols(&self) -> Result<i16> {
         let mut num_cols: ffi::SQLSMALLINT = 0;
         unsafe {
-            match ffi::SQLNumResultCols(self.handle, &mut num_cols as *mut ffi::SQLSMALLINT) {
+            match ffi::SQLNumResultCols(self.raii.handle(),
+                                        &mut num_cols as *mut ffi::SQLSMALLINT) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(num_cols),
-                SQL_ERROR => Err(Error::SqlError(self.get_diagnostic_record(1).unwrap())),
+                SQL_ERROR => Err(Error::SqlError(self.get_diag_rec(1).unwrap())),
                 SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
                 _ => unreachable!(),
             }
         }
-    }
-
-    /// Allows access to the raw ODBC handle
-    pub unsafe fn raw(&mut self) -> ffi::SQLHSTMT {
-        self.handle
     }
 }
 

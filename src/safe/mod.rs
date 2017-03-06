@@ -2,14 +2,11 @@
 //! race conditions. It's main purpose is not to provide direct value to the crate user, but to
 //! enable the layers on top of it to be written in safe code.
 
-mod diagnostics;
 mod environment;
-pub use self::diagnostics::*;
 pub use self::environment::*;
 
 use std;
-
-use ffi::{SQLSMALLINT, SQLHANDLE, HandleType};
+use ffi::SQLSMALLINT;
 
 fn as_out_buffer(buffer: &mut [u8]) -> *mut u8 {
     if buffer.len() == 0 {
@@ -26,9 +23,4 @@ fn as_buffer_length(n: usize) -> SQLSMALLINT {
     } else {
         n as i16
     }
-}
-
-pub unsafe trait Handle {
-    fn handle(&self) -> SQLHANDLE;
-    fn handle_type() -> HandleType;
 }

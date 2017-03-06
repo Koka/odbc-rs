@@ -1,16 +1,22 @@
 //! Holds implementation of odbc connection
-use super::{ffi, Environment, Result, Error};
-use safe::{Handle, GetDiagRec};
+use super::{ffi, Environment, Return, Result, Raii, Error, GetDiagRec, Handle};
 use super::ffi::SQLRETURN::*;
 use std;
 use std::marker::PhantomData;
 
 /// Represents a connection to an ODBC data source
 pub struct DataSource<'a> {
-    handle: ffi::SQLHDBC,
+    raii: Raii<ffi::Dbc>,
     // we use phantom data to tell the borrow checker that we need to keep the environment alive for
     // the lifetime of the connection
-    env: PhantomData<&'a Environment>,
+    parent: PhantomData<&'a Environment>,
+}
+
+impl<'a> Handle for DataSource<'a> {
+    type To = ffi::Dbc;
+    unsafe fn handle(&self) -> ffi::SQLHDBC {
+        self.raii.handle()
+    }
 }
 
 impl<'a> DataSource<'a> {
@@ -26,10 +32,19 @@ impl<'a> DataSource<'a> {
                                         usr: &str,
                                         pwd: &str)
                                         -> Result<DataSource<'b>> {
-        let data_source = Self::allocate(env)?;
+        let raii = match Raii::with_parent(env) {
+            Return::Success(dbc) => dbc,
+            Return::SuccessWithInfo(dbc) => dbc,
+            Return::Error => return Err(Error::SqlError(env.get_diag_rec(1).unwrap())),
+        };
+
+        let data_source = DataSource {
+            raii: raii,
+            parent: PhantomData,
+        };
 
         unsafe {
-            match ffi::SQLConnect(data_source.handle,
+            match ffi::SQLConnect(data_source.handle(),
                                   dsn.as_ptr(),
                                   dsn.as_bytes().len() as ffi::SQLSMALLINT,
                                   usr.as_ptr(),
@@ -38,7 +53,7 @@ impl<'a> DataSource<'a> {
                                   pwd.as_bytes().len() as ffi::SQLSMALLINT) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(data_source),
-                _ => Err(Error::SqlError(data_source.get_diagnostic_record(1).unwrap())),
+                _ => Err(Error::SqlError(data_source.get_diag_rec(1).unwrap())),
             }
         }
     }
@@ -53,7 +68,7 @@ impl<'a> DataSource<'a> {
         let mut buffer: [u8; 2] = [0; 2];
 
         unsafe {
-            match ffi::SQLGetInfo(self.handle,
+            match ffi::SQLGetInfo(self.raii.handle(),
                                   ffi::SQL_DATA_SOURCE_READ_ONLY,
                                   buffer.as_mut_ptr() as *mut std::os::raw::c_void,
                                   buffer.len() as ffi::SQLSMALLINT,
@@ -69,50 +84,27 @@ impl<'a> DataSource<'a> {
                            }
                        })
                 }
-                SQL_ERROR => Err(Error::SqlError(self.get_diagnostic_record(1).unwrap())),
+                SQL_ERROR => Err(Error::SqlError(self.get_diag_rec(1).unwrap())),
                 _ => unreachable!(),
             }
         }
     }
 
-    /// Allows access to the raw ODBC handle
-    pub unsafe fn raw(&mut self) -> ffi::SQLHDBC {
-        self.handle
-    }
-
-    fn allocate(env: &mut Environment) -> Result<DataSource> {
-        unsafe {
-            let mut conn = std::ptr::null_mut();
-            match ffi::SQLAllocHandle(ffi::SQL_HANDLE_DBC, env.raw() as ffi::SQLHANDLE, &mut conn) {
-                SQL_SUCCESS |
-                SQL_SUCCESS_WITH_INFO => {
-                    Ok(DataSource {
-                           handle: conn as ffi::SQLHDBC,
-                           env: PhantomData,
-                       })
-                }
-                // Driver Manager failed to allocate environment
-                SQL_ERROR => Err(Error::SqlError(env.get_diagnostic_record(1).unwrap())),
-                _ => unreachable!(),
-            }
+    pub fn disconnect(&mut self) -> Result<()> {
+        match self.raii.disconnect() {
+            Return::Success(()) | Return::SuccessWithInfo(()) => Ok(()),
+            Return::Error => Err(Error::SqlError(self.get_diag_rec(1).unwrap())),
         }
     }
 }
 
-unsafe impl<'a> Handle for DataSource<'a> {
-    fn handle(&self) -> ffi::SQLHANDLE {
-        self.handle as ffi::SQLHANDLE
-    }
-
-    fn handle_type() -> ffi::HandleType {
-        ffi::SQL_HANDLE_DBC
-    }
-}
-
-impl<'a> Drop for DataSource<'a> {
-    fn drop(&mut self) {
-        unsafe {
-            ffi::SQLFreeHandle(ffi::SQL_HANDLE_DBC, self.handle());
+impl Raii<ffi::Dbc> {
+    fn disconnect(&mut self) -> Return<()> {
+        match unsafe { ffi::SQLDisconnect(self.handle()) } {
+            ffi::SQL_SUCCESS => Return::Success(()),
+            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
+            ffi::SQL_ERROR => Return::Error,
+            _ => panic!("SQLDisconnect returned unexpected result"),
         }
     }
 }

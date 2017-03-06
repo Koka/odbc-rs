@@ -1,14 +1,33 @@
 pub mod ffi;
-
+mod odbc_object;
+mod raii;
+mod diagnostics;
 mod safe;
 mod error;
-pub use error::*;
 mod environment;
-pub use environment::*;
 mod data_source;
-pub use data_source::*;
 mod statement;
+use odbc_object::OdbcObject;
+use raii::Raii;
+pub use diagnostics::{DiagnosticRecord, GetDiagRec};
+pub use error::*;
+pub use environment::*;
+pub use data_source::DataSource;
 pub use statement::*;
+
+/// Reflects the ability of a type to expose a valid handle
+pub trait Handle{
+    type To;
+    /// Returns a valid handle to the odbc type.
+    unsafe fn handle(&self) -> * mut Self::To;
+}
+
+#[must_use]
+pub enum Return<T> {
+    Success(T),
+    SuccessWithInfo(T),
+    Error,
+}
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -23,19 +42,24 @@ mod test {
         let mut env = Environment::new().unwrap();
         let mut ds = DataSource::with_dsn_and_credentials(&mut env, "PostgreSQL", "postgres", "")
             .unwrap();
-        let statement = Statement::with_tables(&mut ds).unwrap();
-        assert_eq!(statement.num_result_cols().unwrap(), 5);
+        // scope is required (for now) to close statement before disconnecting
+        {
+            let statement = Statement::with_tables(&mut ds).unwrap();
+            assert_eq!(statement.num_result_cols().unwrap(), 5);
+        }
+        ds.disconnect().unwrap();
     }
 
     #[test]
     fn test_connection() {
 
         let mut environment = Environment::new().expect("Environment can be created");
-        let conn =
+        let mut conn =
             DataSource::with_dsn_and_credentials(&mut environment, "PostgreSQL", "postgres", "")
                 .expect("Could not connect");
 
         assert!(!conn.read_only().unwrap());
+        conn.disconnect().unwrap();
     }
 
     #[test]

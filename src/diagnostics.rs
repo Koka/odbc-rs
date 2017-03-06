@@ -1,13 +1,20 @@
-use super::Handle;
-use ffi::{SQLGetDiagRec, SQLSMALLINT, SQLRETURN, SQLINTEGER};
+use super::{Handle, OdbcObject};
+use ffi::{SQLGetDiagRec, SQLSMALLINT, SQLRETURN, SQLINTEGER, SQLHANDLE};
 use std::ptr::null_mut;
+use std::fmt;
 
 /// ODBC Diagonstic record
 #[derive(Debug)]
-pub struct DiagRec {
+pub struct DiagnosticRecord {
     pub state: [u8; 6],
     pub native_error_pointer: i32,
     pub message: String,
+}
+
+impl fmt::Display for DiagnosticRecord {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.message)
+    }
 }
 
 pub trait GetDiagRec {
@@ -15,19 +22,21 @@ pub trait GetDiagRec {
     ///
     /// `record_number` - Record numbers start at one. If you pass an number < 1 the function will
     /// panic. If no record is available for the number specified none is returned.
-    fn get_diagnostic_record(&self, record_number: i16) -> Option<DiagRec>;
+    fn get_diag_rec(&self, record_number: i16) -> Option<DiagnosticRecord>;
 }
 
-impl<T: Handle> GetDiagRec for T {
-    fn get_diagnostic_record(&self, record_number: i16) -> Option<DiagRec> {
+impl<H> GetDiagRec for H
+    where H: Handle,
+          H::To: OdbcObject
+{
+    fn get_diag_rec(&self, record_number: i16) -> Option<DiagnosticRecord> {
         // Call SQLGetDiagRec two times. First time to get the message text length, the second
         // to fill the result with diagnostic information
         let mut text_length: SQLSMALLINT = 0;
 
         match unsafe {
-
-                  SQLGetDiagRec(T::handle_type(),
-                                self.handle(),
+                  SQLGetDiagRec(H::To::handle_type(),
+                                self.handle() as SQLHANDLE,
                                 record_number,
                                 null_mut(),
                                 null_mut(),
@@ -49,15 +58,15 @@ impl<T: Handle> GetDiagRec for T {
         }
 
         let mut message = vec![0; (text_length + 1) as usize];
-        let mut result = DiagRec {
+        let mut result = DiagnosticRecord {
             state: [0; 6],
             native_error_pointer: 0,
             message: String::new(), // +1 for terminating zero
         };
 
         match unsafe {
-                  SQLGetDiagRec(T::handle_type(),
-                                self.handle(),
+                  SQLGetDiagRec(H::To::handle_type(),
+                                self.handle() as SQLHANDLE,
                                 record_number,
                                 result.state.as_mut_ptr(),
                                 result.native_error_pointer as *mut SQLINTEGER,
@@ -79,29 +88,36 @@ impl<T: Handle> GetDiagRec for T {
 mod test {
 
     use super::*;
+    use super::super::Raii;
 
     #[test]
     fn provoke_error() {
-        use ffi::{SQL_HANDLE_DBC, SQLAllocHandle};
-        use safe::{Environment, EnvAllocResult};
-
-        let environment = match Environment::new() {
-            EnvAllocResult::Success(env) => env,
-            _ => panic!("unexpected behaviour allocating environment"),
-        };
-        let error = unsafe {
-            // We set the output pointer to zero. This is an error!
-            SQLAllocHandle(SQL_HANDLE_DBC, environment.handle(), null_mut());
-            // Let's create a diagnostic record describing that error
-            environment.get_diagnostic_record(1).unwrap()
-        };
         let expected = if cfg!(target_os = "windows") {
             "[Microsoft][ODBC Driver Manager] Invalid argument value"
         } else {
             "[unixODBC][Driver Manager]Invalid use of null pointer"
         };
+
+        use Return;
+        use ffi::{SQL_HANDLE_DBC, SQLHANDLE, SQLAllocHandle};
+
+        let environment = match unsafe { Raii::new() } {
+            Return::Success(env) => env,
+            _ => panic!("unexpected behaviour allocating environment"),
+        };
+
+        let error = unsafe {
+
+            // We set the output pointer to zero. This is an error!
+            SQLAllocHandle(SQL_HANDLE_DBC,
+                           environment.handle() as SQLHANDLE,
+                           null_mut());
+            // Let's create a diagnostic record describing that error
+            environment.get_diag_rec(1).unwrap()
+        };
+
         assert_eq!(error.message, expected);
-        assert!(environment.get_diagnostic_record(2).is_none());
+        assert!(environment.get_diag_rec(2).is_none());
     }
 }
 

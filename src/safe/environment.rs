@@ -1,55 +1,16 @@
-use super::{as_buffer_length, as_out_buffer, Handle};
-use ffi::{SQLAllocHandle, SQLFreeHandle, SQLSetEnvAttr, SQLDataSources, SQLDrivers, HandleType,
-          SQLRETURN, SQLHENV, SQLHANDLE, SQLSMALLINT, SQLCHAR, SQL_HANDLE_ENV,
+use super::{as_buffer_length, as_out_buffer};
+use super::super::{ffi, Raii, Handle};
+use ffi::{SQLSetEnvAttr, SQLDataSources, SQLDrivers, SQLRETURN, SQLHENV, SQLSMALLINT, SQLCHAR,
           SQL_ATTR_ODBC_VERSION, SQL_OV_ODBC3, FetchOrientation};
-use std::ptr::null_mut;
 use std::os::raw::c_void;
 
-/// Safe wrapper around ODBC Environment handle
-pub struct Environment {
-    handle: SQLHENV,
-}
-
-impl Drop for Environment {
-    fn drop(&mut self) {
-        unsafe {
-            SQLFreeHandle(SQL_HANDLE_ENV, self.handle as SQLHANDLE);
-        }
-    }
-}
-
-unsafe impl Handle for Environment {
-    fn handle(&self) -> SQLHANDLE {
-        self.handle as SQLHANDLE
-    }
-
-    fn handle_type() -> HandleType {
-        SQL_HANDLE_ENV
-    }
-}
-
-impl Environment {
-    pub fn new() -> EnvAllocResult {
-
-        use self::EnvAllocResult::*;
-
-        let mut env = null_mut();
-        match unsafe { SQLAllocHandle(SQL_HANDLE_ENV, null_mut(), &mut env) } {
-            SQLRETURN::SQL_SUCCESS => Success(Environment { handle: env as SQLHENV }),
-            SQLRETURN::SQL_SUCCESS_WITH_INFO => {
-                SuccessWithInfo(Environment { handle: env as SQLHENV })
-            }
-            SQLRETURN::SQL_ERROR => Error,
-            _ => panic!("SQLAllocHandle returned an unexpected result"),
-        }
-    }
-
+impl Raii<ffi::Env> {
     pub fn set_odbc_version_3(&mut self) -> SetEnvAttrResult {
 
         use self::SetEnvAttrResult::*;
 
         match unsafe {
-                  SQLSetEnvAttr(self.handle,
+                  SQLSetEnvAttr(self.handle(),
                                 SQL_ATTR_ODBC_VERSION,
                                 SQL_OV_ODBC3 as *mut c_void,
                                 0)
@@ -97,7 +58,7 @@ impl Environment {
                          -> IterationResult<(i16, i16)> {
         let (mut server_name_length, mut description_length): (i16, i16) = (0, 0);
         match unsafe {
-                  c_function(self.handle,
+                  c_function(self.handle(),
                              direction,
                              as_out_buffer(server_name),
                              as_buffer_length(server_name.len()),
@@ -135,17 +96,6 @@ pub enum IterationResult<T> {
     Success(T),
     SuccessWithInfo(T),
     NoData,
-    Error,
-}
-
-/// Returned if an Environment is allocated
-#[must_use]
-pub enum EnvAllocResult {
-    /// Creation of the environment is a success
-    Success(Environment),
-    /// Successfully created environment with warnings
-    SuccessWithInfo(Environment),
-    /// Allocation failed
     Error,
 }
 

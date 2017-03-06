@@ -1,7 +1,6 @@
 //! This module implements the ODBC Environment
-use super::{Error, Result, ffi};
+use super::{Error, Result, Return, ffi, GetDiagRec, Raii, Handle};
 use super::safe;
-use safe::{Handle, GetDiagRec};
 use std::collections::HashMap;
 use std::cell::RefCell;
 use std;
@@ -10,12 +9,13 @@ use std;
 /// Creating an instance of this type is the first thing you do then using ODBC. The environment
 /// must outlive all connections created with it
 pub struct Environment {
-    handle: RefCell<safe::Environment>,
+    handle: RefCell<Raii<ffi::Env>>,
 }
 
-impl safe::GetDiagRec for Environment {
-    fn get_diagnostic_record(&self, record_number: i16) -> Option<safe::DiagRec> {
-        self.handle.borrow().get_diagnostic_record(record_number)
+impl Handle for Environment {
+    type To = ffi::Env;
+    unsafe fn handle(&self) -> ffi::SQLHENV {
+        self.handle.borrow().handle()
     }
 }
 
@@ -41,7 +41,7 @@ pub struct DriverInfo {
     pub attributes: HashMap<String, String>,
 }
 
-type SqlInfoMethod = fn(&mut safe::Environment,
+type SqlInfoMethod = fn(&mut Raii<ffi::Env>,
                         ffi::FetchOrientation,
                         &mut [u8],
                         &mut [u8])
@@ -53,20 +53,18 @@ impl Environment {
     /// Declares the Application's ODBC Version to be 3
     pub fn new() -> Result<Environment> {
 
-        use safe::{EnvAllocResult, SetEnvAttrResult};
+        use safe::SetEnvAttrResult;
 
-        let mut result = match safe::Environment::new() {
-            EnvAllocResult::Success(env) |
-            EnvAllocResult::SuccessWithInfo(env) => env,
-            EnvAllocResult::Error => return Err(Error::EnvAllocFailure),
+        let mut result = match unsafe { Raii::new() } {
+            Return::Success(env) |
+            Return::SuccessWithInfo(env) => env,
+            Return::Error => return Err(Error::EnvAllocFailure),
         };
 
         match result.set_odbc_version_3() {
             SetEnvAttrResult::Success |
             SetEnvAttrResult::SuccessWithInfo => Ok(Environment { handle: RefCell::new(result) }),
-            SetEnvAttrResult::Error => {
-                Err(Error::SqlError(result.get_diagnostic_record(1).unwrap()))
-            }
+            SetEnvAttrResult::Error => Err(Error::SqlError(result.get_diag_rec(1).unwrap())),
         }
     }
 
@@ -76,13 +74,13 @@ impl Environment {
         // everything without truncating and a second time for actually storing the values
         // alloc_info iterates ones over every driver to obtain the requiered buffer sizes
         let (max_desc, max_attr, num_drivers) =
-            self.alloc_info(safe::Environment::drivers, ffi::SQL_FETCH_FIRST)?;
+            self.alloc_info(Raii::drivers, ffi::SQL_FETCH_FIRST)?;
 
         let mut driver_list = Vec::with_capacity(num_drivers);
         let mut description_buffer = vec![0; (max_desc + 1) as usize];
         let mut attribute_buffer = vec![0; (max_attr + 1) as usize];
         while let Some((desc, attr)) =
-            self.get_info(safe::Environment::drivers,
+            self.get_info(Raii::drivers,
                           ffi::SQL_FETCH_NEXT,
                           &mut description_buffer,
                           &mut attribute_buffer)? {
@@ -114,8 +112,7 @@ impl Environment {
     fn data_sources_impl(&self, direction: ffi::FetchOrientation) -> Result<Vec<DataSourceInfo>> {
 
         // alloc_info iterates ones over every datasource to obtain the requiered buffer sizes
-        let (max_name, max_desc, num_sources) =
-            self.alloc_info(safe::Environment::data_sources, direction)?;
+        let (max_name, max_desc, num_sources) = self.alloc_info(Raii::data_sources, direction)?;
 
         let mut source_list = Vec::with_capacity(num_sources);
         let mut name_buffer: Vec<_> = (0..(max_name + 1)).map(|_| 0u8).collect();
@@ -125,7 +122,7 @@ impl Environment {
         // SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or
         // system data sources
         if let Some((name, desc)) =
-            self.get_info(safe::Environment::data_sources,
+            self.get_info(Raii::data_sources,
                           direction,
                           &mut name_buffer,
                           &mut description_buffer)? {
@@ -138,7 +135,7 @@ impl Environment {
         }
 
         while let Some((name, desc)) =
-            self.get_info(safe::Environment::data_sources,
+            self.get_info(Raii::data_sources,
                           ffi::SQL_FETCH_NEXT,
                           &mut name_buffer,
                           &mut description_buffer)? {
@@ -148,11 +145,6 @@ impl Environment {
                              })
         }
         Ok(source_list)
-    }
-
-    /// Allows access to the raw ODBC handle
-    pub unsafe fn raw(&mut self) -> ffi::SQLHENV {
-        self.handle.borrow().handle() as ffi::SQLHENV
     }
 
     /// Calls either SQLDrivers or SQLDataSources with the two given buffers and parses the result
@@ -172,7 +164,7 @@ impl Environment {
                          std::str::from_utf8(&buf2[0..(len2 as usize)]).unwrap())))
             }
             safe::IterationResult::Error => {
-                Err(Error::SqlError(self.handle.borrow().get_diagnostic_record(1).unwrap()))
+                Err(Error::SqlError(self.handle.borrow().get_diag_rec(1).unwrap()))
             }
             safe::IterationResult::NoData => Ok(None),
         }
@@ -206,7 +198,7 @@ impl Environment {
                 safe::IterationResult::Error => {
                     return Err(Error::SqlError(self.handle
                                                    .borrow()
-                                                   .get_diagnostic_record(1)
+                                                   .get_diag_rec(1)
                                                    .unwrap()));
                 }
             }
