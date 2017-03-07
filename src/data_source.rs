@@ -1,5 +1,5 @@
 //! Holds implementation of odbc connection
-use super::{ffi, Environment, Return, Result, Raii, Error, GetDiagRec, Handle};
+use super::{ffi, Environment, Return, Result, Raii, GetDiagRec, Handle};
 use super::ffi::SQLRETURN::*;
 use std;
 use std::marker::PhantomData;
@@ -35,7 +35,7 @@ impl<'a> DataSource<'a> {
         let raii = match Raii::with_parent(env) {
             Return::Success(dbc) => dbc,
             Return::SuccessWithInfo(dbc) => dbc,
-            Return::Error => return Err(Error::SqlError(env.get_diag_rec(1).unwrap())),
+            Return::Error => return Err(env.get_diag_rec(1).unwrap()),
         };
 
         let data_source = DataSource {
@@ -53,7 +53,7 @@ impl<'a> DataSource<'a> {
                                   pwd.as_bytes().len() as ffi::SQLSMALLINT) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(data_source),
-                _ => Err(Error::SqlError(data_source.get_diag_rec(1).unwrap())),
+                _ => Err(data_source.get_diag_rec(1).unwrap()),
             }
         }
     }
@@ -84,7 +84,7 @@ impl<'a> DataSource<'a> {
                            }
                        })
                 }
-                SQL_ERROR => Err(Error::SqlError(self.get_diag_rec(1).unwrap())),
+                SQL_ERROR => Err(self.get_diag_rec(1).unwrap()),
                 _ => unreachable!(),
             }
         }
@@ -93,7 +93,7 @@ impl<'a> DataSource<'a> {
     pub fn disconnect(&mut self) -> Result<()> {
         match self.raii.disconnect() {
             Return::Success(()) | Return::SuccessWithInfo(()) => Ok(()),
-            Return::Error => Err(Error::SqlError(self.get_diag_rec(1).unwrap())),
+            Return::Error => Err(self.get_diag_rec(1).unwrap()),
         }
     }
 }

@@ -1,5 +1,5 @@
 //! This module implements the ODBC Environment
-use super::{Error, Result, Return, ffi, GetDiagRec, Raii, Handle};
+use super::{Result, EnvAllocError, Return, ffi, GetDiagRec, Raii, Handle};
 use super::safe;
 use std::collections::HashMap;
 use std::cell::RefCell;
@@ -51,20 +51,20 @@ impl Environment {
     /// Allocates a new ODBC Environment
     ///
     /// Declares the Application's ODBC Version to be 3
-    pub fn new() -> Result<Environment> {
+    pub fn new() -> std::result::Result<Environment, EnvAllocError> {
 
         use safe::SetEnvAttrResult;
 
         let mut result = match unsafe { Raii::new() } {
             Return::Success(env) |
             Return::SuccessWithInfo(env) => env,
-            Return::Error => return Err(Error::EnvAllocFailure),
+            Return::Error => return Err(EnvAllocError::Error),
         };
 
         match result.set_odbc_version_3() {
             SetEnvAttrResult::Success |
             SetEnvAttrResult::SuccessWithInfo => Ok(Environment { handle: RefCell::new(result) }),
-            SetEnvAttrResult::Error => Err(Error::SqlError(result.get_diag_rec(1).unwrap())),
+            SetEnvAttrResult::Error => Err(EnvAllocError::Info((result.get_diag_rec(1).unwrap()))),
         }
     }
 
@@ -163,9 +163,7 @@ impl Environment {
                 Ok(Some((std::str::from_utf8(&buf1[0..(len1 as usize)]).unwrap(),
                          std::str::from_utf8(&buf2[0..(len2 as usize)]).unwrap())))
             }
-            safe::IterationResult::Error => {
-                Err(Error::SqlError(self.handle.borrow().get_diag_rec(1).unwrap()))
-            }
+            safe::IterationResult::Error => Err(self.handle.borrow().get_diag_rec(1).unwrap()),
             safe::IterationResult::NoData => Ok(None),
         }
     }
@@ -196,10 +194,10 @@ impl Environment {
                 }
                 safe::IterationResult::NoData => break,
                 safe::IterationResult::Error => {
-                    return Err(Error::SqlError(self.handle
-                                                   .borrow()
-                                                   .get_diag_rec(1)
-                                                   .unwrap()));
+                    return Err(self.handle
+                                   .borrow()
+                                   .get_diag_rec(1)
+                                   .unwrap());
                 }
             }
 

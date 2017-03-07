@@ -1,19 +1,64 @@
-use super::{Handle, OdbcObject};
-use ffi::{SQLGetDiagRec, SQLSMALLINT, SQLRETURN, SQLINTEGER, SQLHANDLE};
-use std::ptr::null_mut;
+use super::{ffi, Handle, OdbcObject};
 use std::fmt;
+use std::ffi::CStr;
+use std::error::Error;
 
-/// ODBC Diagonstic record
-#[derive(Debug)]
+/// ODBC Diagnostic Record
+///
+/// The `description` method of the `std::error::Error` trait only returns the message. Use
+/// `std::fmt::Display` to retrive status code and other information.
 pub struct DiagnosticRecord {
-    pub state: [u8; 6],
-    pub native_error_pointer: i32,
-    pub message: String,
+    // All elements but the last one, may not be nul. The last one must be nul.
+    state: [ffi::SQLCHAR; ffi::SQL_SQLSTATE_SIZE + 1],
+    // Must at least contain one nul
+    message: [ffi::SQLCHAR; ffi::SQL_MAX_MESSAGE_LENGTH as usize],
+    // The numbers of characters in message not nul
+    message_length: ffi::SQLSMALLINT,
+    native_error: ffi::SQLINTEGER,
+}
+
+impl DiagnosticRecord {
+    fn new() -> DiagnosticRecord {
+        DiagnosticRecord {
+            state: [0u8; ffi::SQL_SQLSTATE_SIZE + 1],
+            message: [0u8; ffi::SQL_MAX_MESSAGE_LENGTH as usize],
+            native_error: 0,
+            message_length: 0,
+        }
+    }
 }
 
 impl fmt::Display for DiagnosticRecord {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.message)
+        // Todo: replace unwrap with `?` in Rust 1.17
+        let state = CStr::from_bytes_with_nul(&self.state).unwrap();
+        let message = CStr::from_bytes_with_nul(&self.message[0..
+                                                 (self.message_length as usize + 1)])
+                .unwrap();
+
+        write!(f,
+               "State: {}, Native error: {}, Message: {}",
+               state.to_str().unwrap(),
+               self.native_error,
+               message.to_str().unwrap())
+    }
+}
+
+impl fmt::Debug for DiagnosticRecord {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Display::fmt(self, f)
+    }
+}
+
+impl Error for DiagnosticRecord {
+    fn description(&self) -> &str {
+        CStr::from_bytes_with_nul(&self.message[0..(self.message_length as usize + 1)])
+            .unwrap()
+            .to_str()
+            .unwrap()
+    }
+    fn cause(&self) -> Option<&Error> {
+        None
     }
 }
 
@@ -25,61 +70,38 @@ pub trait GetDiagRec {
     fn get_diag_rec(&self, record_number: i16) -> Option<DiagnosticRecord>;
 }
 
+/// Retrieves a diagnostic record
+///
+/// `record_number` - Record numbers start at one. If you pass an number < 1 the function will
+/// panic. If no record is available for the number specified none is returned.
 impl<H> GetDiagRec for H
     where H: Handle,
           H::To: OdbcObject
 {
-    fn get_diag_rec(&self, record_number: i16) -> Option<DiagnosticRecord> {
-        // Call SQLGetDiagRec two times. First time to get the message text length, the second
-        // to fill the result with diagnostic information
-        let mut text_length: SQLSMALLINT = 0;
+    fn get_diag_rec(&self, record_number: i16) -> Option<(DiagnosticRecord)> {
+        let mut result = DiagnosticRecord::new();
 
         match unsafe {
-                  SQLGetDiagRec(H::To::handle_type(),
-                                self.handle() as SQLHANDLE,
-                                record_number,
-                                null_mut(),
-                                null_mut(),
-                                null_mut(),
-                                0,
-                                &mut text_length as *mut SQLSMALLINT)
+                  ffi::SQLGetDiagRec(H::To::handle_type(),
+                                     self.handle() as ffi::SQLHANDLE,
+                                     record_number,
+                                     result.state.as_mut_ptr(),
+                                     &mut result.native_error as *mut ffi::SQLINTEGER,
+                                     result.message.as_mut_ptr(),
+                                     ffi::SQL_MAX_MESSAGE_LENGTH,
+                                     &mut result.message_length as *mut ffi::SQLSMALLINT)
               } {
-            SQLRETURN::SQL_SUCCESS |
-            SQLRETURN::SQL_SUCCESS_WITH_INFO => (),
-            SQLRETURN::SQL_ERROR => {
+            ffi::SQL_SUCCESS => Some(result),
+            ffi::SQL_NO_DATA => None,
+            ffi::SQL_SUCCESS_WITH_INFO => Some(result),
+            ffi::SQL_ERROR => {
                 if record_number > 0 {
-                    panic!("SQLGetDiagRec returned an unexpected result")
+                    panic!("SQLGetDiagRec returned SQL_ERROR")
                 } else {
                     panic!("record number start at 1 has been {}", record_number)
                 }
             }
-            SQLRETURN::SQL_NO_DATA => return None,
-            _ => panic!("SQLGetDiagRec returned an unexpected result"),
-        }
-
-        let mut message = vec![0; (text_length + 1) as usize];
-        let mut result = DiagnosticRecord {
-            state: [0; 6],
-            native_error_pointer: 0,
-            message: String::new(), // +1 for terminating zero
-        };
-
-        match unsafe {
-                  SQLGetDiagRec(H::To::handle_type(),
-                                self.handle() as SQLHANDLE,
-                                record_number,
-                                result.state.as_mut_ptr(),
-                                result.native_error_pointer as *mut SQLINTEGER,
-                                message.as_mut_ptr(),
-                                text_length + 1,
-                                null_mut())
-              } {
-            SQLRETURN::SQL_SUCCESS => {
-                message.pop(); //Drop terminating zero
-                result.message = String::from_utf8(message).expect("invalid UTF8 encoding");
-                Some(result)
-            }
-            _ => panic!("SQLGetDiagRec returned an unexpected result"),
+            _ => panic!("SQLGetDiag returned unexpected result"),
         }
     }
 }
@@ -88,36 +110,23 @@ impl<H> GetDiagRec for H
 mod test {
 
     use super::*;
-    use super::super::Raii;
 
     #[test]
-    fn provoke_error() {
-        let expected = if cfg!(target_os = "windows") {
-            "[Microsoft][ODBC Driver Manager] Invalid argument value"
-        } else {
-            "[unixODBC][Driver Manager]Invalid use of null pointer"
-        };
+    fn formatting() {
 
-        use Return;
-        use ffi::{SQL_HANDLE_DBC, SQLHANDLE, SQLAllocHandle};
+        // build diagnostic record
+        let message = b"[Microsoft][ODBC Driver Manager] Function sequence error\0";
+        let mut rec = DiagnosticRecord::new();
+        rec.state = b"HY010\0".clone();
+        rec.message_length = 56;
+        for i in 0..(rec.message_length as usize) {
+            rec.message[i] = message[i];
+        }
 
-        let environment = match unsafe { Raii::new() } {
-            Return::Success(env) => env,
-            _ => panic!("unexpected behaviour allocating environment"),
-        };
-
-        let error = unsafe {
-
-            // We set the output pointer to zero. This is an error!
-            SQLAllocHandle(SQL_HANDLE_DBC,
-                           environment.handle() as SQLHANDLE,
-                           null_mut());
-            // Let's create a diagnostic record describing that error
-            environment.get_diag_rec(1).unwrap()
-        };
-
-        assert_eq!(error.message, expected);
-        assert!(environment.get_diag_rec(2).is_none());
+        // test formatting
+        assert_eq!(format!("{}", rec),
+                   "State: HY010, Native error: 0, Message: [Microsoft][ODBC Driver Manager] \
+                    Function sequence error");
     }
 }
 

@@ -1,5 +1,5 @@
 
-use super::{ffi, DataSource, Error, Return, Result, Raii, GetDiagRec, Handle};
+use super::{ffi, DataSource, Return, Result, Raii, GetDiagRec, Handle};
 use super::ffi::SQLRETURN::*;
 use std::marker::PhantomData;
 
@@ -23,7 +23,7 @@ impl<'a> Statement<'a> {
         let raii = match Raii::with_parent(ds) {
             Return::Success(s) => s,
             Return::SuccessWithInfo(s) => s,
-            Return::Error => return Err(Error::SqlError(ds.get_diag_rec(1).unwrap())),
+            Return::Error => return Err(ds.get_diag_rec(1).unwrap()),
         };
 
         let stmt = Statement {
@@ -47,7 +47,7 @@ impl<'a> Statement<'a> {
                                  table_type.as_bytes().len() as ffi::SQLSMALLINT) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(stmt),
-                SQL_ERROR => Err(Error::SqlError(stmt.get_diag_rec(1).unwrap())),
+                SQL_ERROR => Err(stmt.get_diag_rec(1).unwrap()),
                 SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
                 _ => unreachable!(),
             }
@@ -65,7 +65,7 @@ impl<'a> Statement<'a> {
                                         &mut num_cols as *mut ffi::SQLSMALLINT) {
                 SQL_SUCCESS |
                 SQL_SUCCESS_WITH_INFO => Ok(num_cols),
-                SQL_ERROR => Err(Error::SqlError(self.get_diag_rec(1).unwrap())),
+                SQL_ERROR => Err(self.get_diag_rec(1).unwrap()),
                 SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
                 _ => unreachable!(),
             }
