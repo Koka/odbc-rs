@@ -53,8 +53,6 @@ impl Environment {
     /// Declares the Application's ODBC Version to be 3
     pub fn new() -> std::result::Result<Environment, EnvAllocError> {
 
-        use safe::SetEnvAttrResult;
-
         let mut result = match unsafe { Raii::new() } {
             Return::Success(env) |
             Return::SuccessWithInfo(env) => env,
@@ -62,9 +60,9 @@ impl Environment {
         };
 
         match result.set_odbc_version_3() {
-            SetEnvAttrResult::Success |
-            SetEnvAttrResult::SuccessWithInfo => Ok(Environment { handle: RefCell::new(result) }),
-            SetEnvAttrResult::Error => Err(EnvAllocError::Info((result.get_diag_rec(1).unwrap()))),
+            Return::Success(()) |
+            Return::SuccessWithInfo(()) => Ok(Environment { handle: RefCell::new(result) }),
+            Return::Error => Err(EnvAllocError::Info((result.get_diag_rec(1).unwrap()))),
         }
     }
 

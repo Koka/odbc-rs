@@ -1,13 +1,11 @@
 use super::{as_buffer_length, as_out_buffer};
-use super::super::{ffi, Raii, Handle};
+use super::super::{ffi, Raii, Handle, Return};
 use ffi::{SQLSetEnvAttr, SQLDataSources, SQLDrivers, SQLRETURN, SQLHENV, SQLSMALLINT, SQLCHAR,
           SQL_ATTR_ODBC_VERSION, SQL_OV_ODBC3, FetchOrientation};
 use std::os::raw::c_void;
 
 impl Raii<ffi::Env> {
-    pub fn set_odbc_version_3(&mut self) -> SetEnvAttrResult {
-
-        use self::SetEnvAttrResult::*;
+    pub fn set_odbc_version_3(&mut self) -> Return<()> {
 
         match unsafe {
                   SQLSetEnvAttr(self.handle(),
@@ -15,9 +13,9 @@ impl Raii<ffi::Env> {
                                 SQL_OV_ODBC3 as *mut c_void,
                                 0)
               } {
-            SQLRETURN::SQL_SUCCESS => Success,
-            SQLRETURN::SQL_SUCCESS_WITH_INFO => SuccessWithInfo,
-            SQLRETURN::SQL_ERROR => Error,
+            SQLRETURN::SQL_SUCCESS => Return::Success(()),
+            SQLRETURN::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
+            SQLRETURN::SQL_ERROR => Return::Error,
             _ => panic!("SQLSetEnvAttr returned an unexpected result"),
         }
     }
@@ -96,14 +94,6 @@ pub enum IterationResult<T> {
     Success(T),
     SuccessWithInfo(T),
     NoData,
-    Error,
-}
-
-/// Returned if an Environment is allocated
-#[must_use]
-pub enum SetEnvAttrResult {
-    Success,
-    SuccessWithInfo,
     Error,
 }
 

@@ -3,6 +3,31 @@ use odbc::*;
 
 fn main() {
 
+    match connect() {
+        Ok(()) => (),
+        Err(err) => println!("{}", err),
+    }
+}
+
+fn connect() -> odbc::Result<()> {
+
+    let env = Environment::new().unwrap();
+    // env.set_odbc_version_3()?;
+    println!("Driver list:");
+    for driver_info in env.drivers()? {
+        println!("\nDriver Name: {}", driver_info.description);
+        for (key, value) in driver_info.attributes {
+            println!("    {}={}", key, value);
+        }
+    }
+
+    println!("\nDataSource list:");
+    for ds in env.data_sources()? {
+        println!("    name: {} description: {}",
+                 ds.server_name,
+                 ds.description);
+    }
+
     use ffi::*;
     use std::ffi::{CStr, CString};
 
@@ -13,11 +38,6 @@ fn main() {
     };
 
     unsafe {
-        let mut env: SQLHANDLE = std::ptr::null_mut();
-        SQLAllocHandle(SQL_HANDLE_ENV,
-                       std::ptr::null_mut(),
-                       &mut env as *mut SQLHANDLE);
-        let mut env = env as SQLHENV;
 
         let mut ret: SQLRETURN;
 
@@ -27,36 +47,10 @@ fn main() {
         let mut desc = [0; 1024];
         let mut desc_ret: SQLSMALLINT = 0;
 
-        println!("Driver list:");
-        while is_success(SQLDrivers(env,
-                                    SQL_FETCH_NEXT,
-                                    name.as_mut_ptr(),
-                                    name.len() as i16,
-                                    &mut name_ret,
-                                    desc.as_mut_ptr(),
-                                    desc.len() as i16,
-                                    &mut desc_ret)) {
-            println!("{:?} - {:?}",
-                     CStr::from_ptr(name.as_ptr() as *const i8),
-                     CStr::from_ptr(desc.as_ptr() as *const i8));
-        }
-
-        println!("DataSource list:");
-        while is_success(SQLDataSources(env,
-                                        SQL_FETCH_NEXT,
-                                        name.as_mut_ptr(),
-                                        name.len() as i16,
-                                        &mut name_ret,
-                                        desc.as_mut_ptr(),
-                                        desc.len() as i16,
-                                        &mut desc_ret)) {
-            println!("{:?} - {:?}",
-                     CStr::from_ptr(name.as_ptr() as *const i8),
-                     CStr::from_ptr(desc.as_ptr() as *const i8));
-        }
-
         let mut dbc: SQLHANDLE = std::ptr::null_mut();
-        SQLAllocHandle(SQL_HANDLE_DBC, env as SQLHANDLE, &mut dbc as *mut SQLHANDLE);
+        SQLAllocHandle(SQL_HANDLE_DBC,
+                       env.handle() as SQLHANDLE,
+                       &mut dbc as *mut SQLHANDLE);
         let mut dbc = dbc as SQLHDBC;
 
         let dsn = CString::new("DSN=pglocal;Database=crm;Uid=postgres;Password=postgres").unwrap();
@@ -172,9 +166,9 @@ fn main() {
         }
 
         SQLFreeHandle(SQL_HANDLE_DBC, dbc as SQLHANDLE);
-        SQLFreeHandle(SQL_HANDLE_ENV, env as SQLHANDLE);
     }
 
     println!("BYE!");
+    Ok(())
 }
 
