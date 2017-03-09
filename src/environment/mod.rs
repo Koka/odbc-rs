@@ -1,51 +1,29 @@
-//! This module implements the ODBC Environment
-use super::{Result, EnvAllocError, Return, ffi, GetDiagRec, Raii, Handle};
-use super::safe;
-use std::collections::HashMap;
-use std::cell::RefCell;
+//! Implements the ODBC Environment
+mod set_version;
+mod list_data_sources;
+pub use self::list_data_sources::{DataSourceInfo,DriverInfo};
+use super::{Result, Return, ffi, GetDiagRec, Raii, Handle, EnvAllocError};
 use std;
 /// Handle to an ODBC Environment
 ///
 /// Creating an instance of this type is the first thing you do then using ODBC. The environment
 /// must outlive all connections created with it
 pub struct Environment {
-    handle: RefCell<Raii<ffi::Env>>,
+    raii: Raii<ffi::Env>,
 }
 
 impl Handle for Environment {
     type To = ffi::Env;
     unsafe fn handle(&self) -> ffi::SQLHENV {
-        self.handle.borrow().handle()
+        self.raii.handle()
     }
 }
 
-/// Holds name and description of a datasource
-///
-/// Can be obtained via `Environment::data_sources`
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct DataSourceInfo {
-    /// Name of the data source
-    pub server_name: String,
-    /// Description of the data source
-    pub description: String,
-}
-
-/// Struct holding information available on a driver.
-///
-/// Can be obtained via `Environment::drivers`
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct DriverInfo {
-    /// Name of the odbc driver
-    pub description: String,
-    /// List of attributes of the odbc driver
-    pub attributes: HashMap<String, String>,
-}
-
-type SqlInfoMethod = fn(&mut Raii<ffi::Env>,
+type SqlInfoMethod = fn(&Raii<ffi::Env>,
                         ffi::FetchOrientation,
                         &mut [u8],
                         &mut [u8])
-                        -> safe::IterationResult<(i16, i16)>;
+                        -> Return<Option<(i16, i16)>>;
 
 impl Environment {
     /// Allocates a new ODBC Environment
@@ -53,41 +31,20 @@ impl Environment {
     /// Declares the Application's ODBC Version to be 3
     pub fn new() -> std::result::Result<Environment, EnvAllocError> {
 
-        let mut result = match unsafe { Raii::new() } {
+        match unsafe { Raii::new() } {
             Return::Success(env) |
-            Return::SuccessWithInfo(env) => env,
-            Return::Error => return Err(EnvAllocError::Error),
-        };
-
-        match result.set_odbc_version_3() {
-            Return::Success(()) |
-            Return::SuccessWithInfo(()) => Ok(Environment { handle: RefCell::new(result) }),
-            Return::Error => Err(EnvAllocError::Info((result.get_diag_rec(1).unwrap()))),
+            Return::SuccessWithInfo(env) => Ok(Environment { raii: env }),
+            Return::Error => Err(EnvAllocError),
         }
     }
 
-    /// Stores all driver description and attributes in a Vec
-    pub fn drivers(&self) -> Result<Vec<DriverInfo>> {
-        // Iterate twice, once for reading the maximum required buffer lengths so we can read
-        // everything without truncating and a second time for actually storing the values
-        // alloc_info iterates ones over every driver to obtain the requiered buffer sizes
-        let (max_desc, max_attr, num_drivers) =
-            self.alloc_info(Raii::drivers, ffi::SQL_FETCH_FIRST)?;
-
-        let mut driver_list = Vec::with_capacity(num_drivers);
-        let mut description_buffer = vec![0; (max_desc + 1) as usize];
-        let mut attribute_buffer = vec![0; (max_attr + 1) as usize];
-        while let Some((desc, attr)) =
-            self.get_info(Raii::drivers,
-                          ffi::SQL_FETCH_NEXT,
-                          &mut description_buffer,
-                          &mut attribute_buffer)? {
-            driver_list.push(DriverInfo {
-                                 description: desc.to_owned(),
-                                 attributes: Self::parse_attributes(attr),
-                             })
+    /// Tells the driver(s) that we will use features of up to ODBC version 3
+    pub fn set_odbc_version_3(&mut self) -> Result<()> {
+        match self.raii.set_odbc_version_3() {
+            Return::Success(()) |
+            Return::SuccessWithInfo(()) => Ok(()),
+            Return::Error => Err(self.get_diag_rec(1).unwrap()),
         }
-        Ok(driver_list)
     }
 
     /// Stores all data source server names and descriptions in a Vec
@@ -154,15 +111,15 @@ impl Environment {
                         buf2: &'b mut [u8])
                         -> Result<Option<(&'a str, &'b str)>> {
 
-        let result = f(&mut self.handle.borrow_mut(), direction, buf1, buf2);
+        let result = f(&self.raii, direction, buf1, buf2);
         match result {
-            safe::IterationResult::Success((len1, len2)) |
-            safe::IterationResult::SuccessWithInfo((len1, len2)) => {
+            Return::Success(Some((len1, len2))) |
+            Return::SuccessWithInfo(Some((len1, len2))) => {
                 Ok(Some((std::str::from_utf8(&buf1[0..(len1 as usize)]).unwrap(),
                          std::str::from_utf8(&buf2[0..(len2 as usize)]).unwrap())))
             }
-            safe::IterationResult::Error => Err(self.handle.borrow().get_diag_rec(1).unwrap()),
-            safe::IterationResult::NoData => Ok(None),
+            Return::Error => Err(self.raii.get_diag_rec(1).unwrap()),
+            Return::Success(None) | Return::SuccessWithInfo(None) => Ok(None),
         }
     }
 
@@ -177,29 +134,28 @@ impl Environment {
         let mut max2 = 0;
         let mut count = 0;
 
-        let mut result = f(&mut self.handle.borrow_mut(),
+        let mut result = f(&self.raii,
                            direction,
                            &mut string_buf1,
                            &mut string_buf2);
 
         loop {
             match result {
-                safe::IterationResult::Success((buf1_length_out, buf2_length_out)) |
-                safe::IterationResult::SuccessWithInfo((buf1_length_out, buf2_length_out)) => {
+                Return::Success(Some((buf1_length_out, buf2_length_out))) |
+                Return::SuccessWithInfo(Some((buf1_length_out, buf2_length_out))) => {
                     count += 1;
                     max1 = std::cmp::max(max1, buf1_length_out);
                     max2 = std::cmp::max(max2, buf2_length_out);
                 }
-                safe::IterationResult::NoData => break,
-                safe::IterationResult::Error => {
-                    return Err(self.handle
-                                   .borrow()
+                Return::Success(None) | Return::SuccessWithInfo(None)=> break,
+                Return::Error => {
+                    return Err(self.raii
                                    .get_diag_rec(1)
                                    .unwrap());
                 }
             }
 
-            result = f(&mut self.handle.borrow_mut(),
+            result = f(&self.raii,
                        ffi::SQL_FETCH_NEXT,
                        &mut string_buf1,
                        &mut string_buf2)
@@ -207,40 +163,4 @@ impl Environment {
 
         Ok((max1, max2, count))
     }
-
-    /// Called by drivers to pares list of attributes
-    ///
-    /// Key value pairs are seperated by `\0`. Key and value are seperated by `=`
-    fn parse_attributes(attributes: &str) -> HashMap<String, String> {
-        attributes.split('\0')
-            .take_while(|kv_str| *kv_str != String::new())
-            .map(|kv_str| {
-                     let mut iter = kv_str.split('=');
-                     let key = iter.next().unwrap();
-                     let value = iter.next().unwrap();
-                     (key.to_string(), value.to_string())
-                 })
-            .collect()
-    }
 }
-
-#[cfg(test)]
-mod test {
-
-    use super::*;
-
-    #[test]
-    fn parse_attributes() {
-        let buffer = "APILevel=2\0ConnectFunctions=YYY\0CPTimeout=60\0DriverODBCVer=03.\
-                      50\0FileUsage=0\0SQLLevel=1\0UsageCount=1\0\0";
-        let attributes = Environment::parse_attributes(buffer);
-        assert_eq!(attributes["APILevel"], "2");
-        assert_eq!(attributes["ConnectFunctions"], "YYY");
-        assert_eq!(attributes["CPTimeout"], "60");
-        assert_eq!(attributes["DriverODBCVer"], "03.50");
-        assert_eq!(attributes["FileUsage"], "0");
-        assert_eq!(attributes["SQLLevel"], "1");
-        assert_eq!(attributes["UsageCount"], "1");
-    }
-}
-

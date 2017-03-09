@@ -11,8 +11,8 @@ fn main() {
 
 fn connect() -> odbc::Result<()> {
 
-    let env = Environment::new().unwrap();
-    // env.set_odbc_version_3()?;
+    let mut env = Environment::new().unwrap();
+    env.set_odbc_version_3()?;
     println!("Driver list:");
     for driver_info in env.drivers()? {
         println!("\nDriver Name: {}", driver_info.description);
