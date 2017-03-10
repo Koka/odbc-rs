@@ -5,6 +5,7 @@ use odbc::*;
 fn list_tables() {
 
     let mut env = Environment::new().unwrap();
+    env.set_odbc_version_3();
     let mut ds = DataSource::with_dsn_and_credentials(&mut env, "PostgreSQL", "postgres", "")
         .unwrap();
     // scope is required (for now) to close statement before disconnecting
@@ -19,6 +20,7 @@ fn list_tables() {
 fn test_connection() {
 
     let mut environment = Environment::new().expect("Environment can be created");
+    environment.set_odbc_version_3();
     let mut conn =
         DataSource::with_dsn_and_credentials(&mut environment, "PostgreSQL", "postgres", "")
             .expect("Could not connect");
@@ -29,9 +31,9 @@ fn test_connection() {
 
 #[test]
 fn list_drivers() {
-    let environment = Environment::new();
-    let drivers = environment.expect("Environment can be created")
-        .drivers()
+    let mut environment = Environment::new().unwrap();
+    environment.set_odbc_version_3();
+    let drivers = environment.drivers()
         .expect("Drivers can be iterated over");
     println!("{:?}", drivers);
 
@@ -41,9 +43,9 @@ fn list_drivers() {
 
 #[test]
 fn list_data_sources() {
-    let environment = Environment::new();
-    let sources = environment.expect("Environment can be created")
-        .data_sources()
+    let mut environment = Environment::new().unwrap();
+    environment.set_odbc_version_3();
+    let sources = environment.data_sources()
         .expect("Data sources can be iterated over");
     println!("{:?}", sources);
 
@@ -56,9 +58,9 @@ fn list_data_sources() {
 
 #[test]
 fn list_user_data_sources() {
-    let environment = Environment::new();
-    let sources = environment.expect("Environment can be created")
-        .user_data_sources()
+    let mut environment = Environment::new().unwrap();
+    environment.set_odbc_version_3();
+    let sources = environment.user_data_sources()
         .expect("Data sources can be iterated over");
     println!("{:?}", sources);
 
@@ -71,9 +73,9 @@ fn list_user_data_sources() {
 
 #[test]
 fn list_system_data_sources() {
-    let environment = Environment::new();
-    let sources = environment.expect("Environment can be created")
-        .system_data_sources()
+    let mut environment = Environment::new().unwrap();
+    environment.set_odbc_version_3();
+    let sources = environment.system_data_sources()
         .expect("Data sources can be iterated over");
     println!("{:?}", sources);
 
