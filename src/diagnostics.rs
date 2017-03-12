@@ -34,7 +34,7 @@ impl fmt::Display for DiagnosticRecord {
         let state = CStr::from_bytes_with_nul(&self.state).unwrap();
         let message = CStr::from_bytes_with_nul(&self.message[0..
                                                  (self.message_length as usize + 1)])
-                .unwrap();
+            .unwrap();
 
         write!(f,
                "State: {}, Native error: {}, Message: {}",
@@ -82,15 +82,15 @@ impl<H> GetDiagRec for H
         let mut result = DiagnosticRecord::new();
 
         match unsafe {
-                  ffi::SQLGetDiagRec(H::To::handle_type(),
-                                     self.handle() as ffi::SQLHANDLE,
-                                     record_number,
-                                     result.state.as_mut_ptr(),
-                                     &mut result.native_error as *mut ffi::SQLINTEGER,
-                                     result.message.as_mut_ptr(),
-                                     ffi::SQL_MAX_MESSAGE_LENGTH,
-                                     &mut result.message_length as *mut ffi::SQLSMALLINT)
-              } {
+            ffi::SQLGetDiagRec(H::To::handle_type(),
+                               self.handle() as ffi::SQLHANDLE,
+                               record_number,
+                               result.state.as_mut_ptr(),
+                               &mut result.native_error as *mut ffi::SQLINTEGER,
+                               result.message.as_mut_ptr(),
+                               ffi::SQL_MAX_MESSAGE_LENGTH,
+                               &mut result.message_length as *mut ffi::SQLSMALLINT)
+        } {
             ffi::SQL_SUCCESS => Some(result),
             ffi::SQL_NO_DATA => None,
             ffi::SQL_SUCCESS_WITH_INFO => Some(result),
@@ -129,4 +129,3 @@ mod test {
                     Function sequence error");
     }
 }
-

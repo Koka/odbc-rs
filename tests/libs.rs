@@ -6,11 +6,12 @@ fn list_tables() {
 
     let mut env = Environment::new().unwrap();
     env.set_odbc_version_3();
-    let mut ds = DataSource::with_dsn_and_credentials(&mut env, "PostgreSQL", "postgres", "")
-        .unwrap();
+    let mut ds = DataSource::with_parent(&mut env).unwrap();
+    ds.connect("PostgreSQL", "postgres", "").unwrap();
     // scope is required (for now) to close statement before disconnecting
     {
-        let statement = Statement::with_tables(&mut ds).unwrap();
+        let mut statement = Statement::with_parent(&mut ds).unwrap();
+        statement.tables().unwrap();
         assert_eq!(statement.num_result_cols().unwrap(), 5);
     }
     ds.disconnect().unwrap();
@@ -21,9 +22,8 @@ fn test_connection() {
 
     let mut environment = Environment::new().expect("Environment can be created");
     environment.set_odbc_version_3();
-    let mut conn =
-        DataSource::with_dsn_and_credentials(&mut environment, "PostgreSQL", "postgres", "")
-            .expect("Could not connect");
+    let mut conn = DataSource::with_parent(&mut environment).unwrap();
+    conn.connect("PostgreSQL", "postgres", "").unwrap();
 
     assert!(!conn.read_only().unwrap());
     conn.disconnect().unwrap();

@@ -1,8 +1,8 @@
 //! Holds implementation of odbc connection
 use super::{ffi, Environment, Return, Result, Raii, GetDiagRec, Handle};
-use super::ffi::SQLRETURN::*;
 use std;
 use std::marker::PhantomData;
+use std::ptr::null_mut;
 
 /// Represents a connection to an ODBC data source
 pub struct DataSource<'a> {
@@ -20,27 +20,32 @@ impl<'a> Handle for DataSource<'a> {
 }
 
 impl<'a> DataSource<'a> {
-    /// Connects to an ODBC data source
+    /// Allocate an ODBC data source
     ///
     /// # Arguments
     /// * `env` - Environment used to allocate the data source handle.
-    /// * `dsn` - Data source name configured in the `odbc.ini` file
-    /// * `usr` - User identifier
-    /// * `pwd` - Authentication (usually password)
-    pub fn with_dsn_and_credentials<'b>(env: &'b mut Environment,
-                                        dsn: &str,
-                                        usr: &str,
-                                        pwd: &str)
-                                        -> Result<DataSource<'b>> {
-        let mut raii = Raii::with_parent(env).into_result(env)?;
-        raii.connect(dsn, usr, pwd).into_result(&raii)?;
-
+    pub fn with_parent(env: &'a Environment) -> Result<DataSource<'a>> {
+        let raii = Raii::with_parent(env).into_result(env)?;
         let data_source = DataSource {
             raii: raii,
             parent: PhantomData,
         };
 
         Ok(data_source)
+    }
+
+    /// Connects to an ODBC data source
+    ///
+    /// # Arguments
+    /// * `dsn` - Data source name configured in the `odbc.ini` file
+    /// * `usr` - User identifier
+    /// * `pwd` - Authentication (usually password)
+    pub fn connect(&mut self, dsn: &str, usr: &str, pwd: &str) -> Result<()> {
+        self.raii.connect(dsn, usr, pwd).into_result(self)
+    }
+
+    pub fn use_connection_string(&mut self, connection_str : &str) -> Result<()>{
+        self.raii.driver_connect(connection_str).into_result(self)
     }
 
     /// `true` if the data source is set to READ ONLY mode, `false` otherwise.
@@ -69,28 +74,28 @@ impl Raii<ffi::Dbc> {
                                   info_type,
                                   buffer.as_mut_ptr() as *mut std::os::raw::c_void,
                                   buffer.len() as ffi::SQLSMALLINT,
-                                  std::ptr::null_mut()) {
-                SQL_SUCCESS => {
+                                  null_mut()) {
+                ffi::SQL_SUCCESS => {
                     Return::Success({
-                                        assert!(buffer[1] == 0);
-                                        match buffer[0] as char {
-                                            'N' => false,
-                                            'Y' => true,
-                                            _ => panic!(r#"Driver may only return "N" or "Y""#),
-                                        }
-                                    })
+                        assert!(buffer[1] == 0);
+                        match buffer[0] as char {
+                            'N' => false,
+                            'Y' => true,
+                            _ => panic!(r#"Driver may only return "N" or "Y""#),
+                        }
+                    })
                 }
-                SQL_SUCCESS_WITH_INFO => {
+                ffi::SQL_SUCCESS_WITH_INFO => {
                     Return::SuccessWithInfo({
-                                        assert!(buffer[1] == 0);
-                                        match buffer[0] as char {
-                                            'N' => false,
-                                            'Y' => true,
-                                            _ => panic!(r#"Driver may only return "N" or "Y""#),
-                                        }
-                                    })
+                        assert!(buffer[1] == 0);
+                        match buffer[0] as char {
+                            'N' => false,
+                            'Y' => true,
+                            _ => panic!(r#"Driver may only return "N" or "Y""#),
+                        }
+                    })
                 }
-                SQL_ERROR => Return::Error,
+                ffi::SQL_ERROR => Return::Error,
                 r => panic!("SQLGetInfo returned unexpected result {:?}", r),
             }
         }
@@ -105,10 +110,32 @@ impl Raii<ffi::Dbc> {
                                   usr.as_bytes().len() as ffi::SQLSMALLINT,
                                   pwd.as_ptr(),
                                   pwd.as_bytes().len() as ffi::SQLSMALLINT) {
-                SQL_SUCCESS => Return::Success(()),
-                SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
+                ffi::SQL_SUCCESS => Return::Success(()),
+                ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
                 _ => Return::Error,
             }
+        }
+    }
+
+    fn driver_connect(&mut self, connection_str: &str) -> Return<()> {
+        let length = connection_str.as_bytes().len();
+        if length > ffi::SQLSMALLINT::max_value() as usize {
+            panic!("Connection string is too long");
+        }
+        match unsafe {
+            ffi::SQLDriverConnect(self.handle(),
+                                  null_mut(),
+                                  connection_str.as_ptr(),
+                                  length as ffi::SQLSMALLINT,
+                                  null_mut(),
+                                  0,
+                                  null_mut(),
+                                  ffi::SQL_DRIVER_NOPROMPT)
+        }{
+            ffi::SQL_SUCCESS => Return::Success(()),
+            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
+            ffi::SQL_ERROR => Return::Error,
+            r => panic!("SQLDriverConnect returned unexpected {:?}", r),
         }
     }
 
@@ -121,4 +148,3 @@ impl Raii<ffi::Dbc> {
         }
     }
 }
-

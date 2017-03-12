@@ -1,7 +1,7 @@
 //! Implements the ODBC Environment
 mod set_version;
 mod list_data_sources;
-pub use self::list_data_sources::{DataSourceInfo,DriverInfo};
+pub use self::list_data_sources::{DataSourceInfo, DriverInfo};
 use super::{Result, Return, ffi, GetDiagRec, Raii, Handle, EnvAllocError};
 use std;
 /// Handle to an ODBC Environment

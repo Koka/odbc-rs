@@ -19,14 +19,17 @@ impl<'a> Handle for Statement<'a> {
 }
 
 impl<'a> Statement<'a> {
-    pub fn with_tables<'b>(ds: &'b mut DataSource) -> Result<Statement<'b>> {
+    pub fn with_parent(ds: &'a mut DataSource) -> Result<Statement<'a>> {
         let raii = Raii::with_parent(ds).into_result(ds)?;
-        raii.tables().into_result(&raii)?;
         let stmt = Statement {
             raii: raii,
             parent: PhantomData,
         };
         Ok(stmt)
+    }
+
+    pub fn tables<'b>(&mut self) -> Result<()> {
+        self.raii.tables().into_result(self)
     }
 
     /// The number of columns in a result set

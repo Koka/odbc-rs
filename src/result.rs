@@ -52,4 +52,3 @@ impl std::error::Error for EnvAllocError {
         None
     }
 }
-

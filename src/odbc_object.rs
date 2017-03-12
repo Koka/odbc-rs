@@ -26,4 +26,3 @@ unsafe impl OdbcObject for ffi::Stmt {
         ffi::SQL_HANDLE_STMT
     }
 }
-

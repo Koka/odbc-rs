@@ -5,11 +5,11 @@ impl Raii<ffi::Env> {
     pub fn set_odbc_version_3(&mut self) -> Return<()> {
 
         match unsafe {
-                  ffi::SQLSetEnvAttr(self.handle(),
-                                     ffi::SQL_ATTR_ODBC_VERSION,
-                                     ffi::SQL_OV_ODBC3 as *mut std::os::raw::c_void,
-                                     0)
-              } {
+            ffi::SQLSetEnvAttr(self.handle(),
+                               ffi::SQL_ATTR_ODBC_VERSION,
+                               ffi::SQL_OV_ODBC3 as *mut std::os::raw::c_void,
+                               0)
+        } {
             ffi::SQL_SUCCESS => Return::Success(()),
             ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
             ffi::SQL_ERROR => Return::Error,
@@ -17,4 +17,3 @@ impl Raii<ffi::Env> {
         }
     }
 }
-

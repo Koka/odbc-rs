@@ -18,8 +18,8 @@ pub use data_source::DataSource;
 pub use statement::*;
 
 /// Reflects the ability of a type to expose a valid handle
-pub trait Handle{
+pub trait Handle {
     type To;
     /// Returns a valid handle to the odbc type.
-    unsafe fn handle(&self) -> * mut Self::To;
+    unsafe fn handle(&self) -> *mut Self::To;
 }
