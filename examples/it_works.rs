@@ -1,113 +1,84 @@
+// Use this crate and set environmet variable RUST_LOG=odbc to see ODBC warnings
+extern crate env_logger;
 extern crate odbc;
 use odbc::*;
 
 fn main() {
 
-    use ffi::*;
-    use std::ffi::{CStr, CString};
+    match connect() {
+        Ok(()) => (),
+        Err(err) => println!("{}", err),
+    }
+    println!("BYE!");
+}
 
-    let is_success = |ret| match ret {
-        SQL_SUCCESS |
-        SQL_SUCCESS_WITH_INFO => true,
-        _ => false,
-    };
+fn connect() -> odbc::Result<()> {
 
-    unsafe {
-        let mut env: SQLHANDLE = std::ptr::null_mut();
-        SQLAllocHandle(SQL_HANDLE_ENV,
-                       std::ptr::null_mut(),
-                       &mut env as *mut SQLHANDLE);
-        let mut env = env as SQLHENV;
+    env_logger::init().unwrap();
 
-        let mut ret: SQLRETURN;
+    let mut env = Environment::new().unwrap();
+    env.set_odbc_version_3()?;
 
-        let mut name = [0; 1024];
-        let mut name_ret: SQLSMALLINT = 0;
-
-        let mut desc = [0; 1024];
-        let mut desc_ret: SQLSMALLINT = 0;
-
-        println!("Driver list:");
-        while is_success(SQLDrivers(env,
-                                    SQL_FETCH_NEXT,
-                                    name.as_mut_ptr(),
-                                    name.len() as i16,
-                                    &mut name_ret,
-                                    desc.as_mut_ptr(),
-                                    desc.len() as i16,
-                                    &mut desc_ret)) {
-            println!("{:?} - {:?}",
-                     CStr::from_ptr(name.as_ptr() as *const i8),
-                     CStr::from_ptr(desc.as_ptr() as *const i8));
+    println!("Driver list:");
+    for driver_info in env.drivers()? {
+        println!("\nDriver Name: {}", driver_info.description);
+        for (key, value) in driver_info.attributes {
+            println!("    {}={}", key, value);
         }
+    }
 
-        println!("DataSource list:");
-        while is_success(SQLDataSources(env,
-                                        SQL_FETCH_NEXT,
-                                        name.as_mut_ptr(),
-                                        name.len() as i16,
-                                        &mut name_ret,
-                                        desc.as_mut_ptr(),
-                                        desc.len() as i16,
-                                        &mut desc_ret)) {
-            println!("{:?} - {:?}",
-                     CStr::from_ptr(name.as_ptr() as *const i8),
-                     CStr::from_ptr(desc.as_ptr() as *const i8));
-        }
+    println!("\nDataSource list:");
+    for ds in env.data_sources()? {
+        println!("    {}\n    {}\n\n", ds.server_name, ds.description);
+    }
 
-        let mut dbc: SQLHANDLE = std::ptr::null_mut();
-        SQLAllocHandle(SQL_HANDLE_DBC, env as SQLHANDLE, &mut dbc as *mut SQLHANDLE);
-        let mut dbc = dbc as SQLHDBC;
+    let mut dbc = DataSource::with_parent(&env)?;
+    let conn_str = "DSN=pglocal;Database=crm;Uid=postgres;Password=postgres";
+    println!("CONNECTING TO {}", conn_str);
+    dbc.use_connection_string(conn_str)?;
+    {
+        let mut stmt = Statement::with_parent(&mut dbc)?;
 
-        let dsn = CString::new("DSN=pglocal;Database=crm;Uid=postgres;Password=postgres").unwrap();
+        use ffi::*;
+        use std::ffi::{CStr, CString};
 
-        println!("CONNECTING TO {:?}", dsn);
+        let is_success = |ret| match ret {
+            SQL_SUCCESS |
+            SQL_SUCCESS_WITH_INFO => true,
+            _ => false,
+        };
 
-        let dsn_ptr = dsn.into_raw();
+        unsafe {
 
-        ret = SQLDriverConnect(dbc,
-                               std::ptr::null_mut(),
-                               dsn_ptr as *mut u8,
-                               SQL_NTS,
-                               name.as_mut_ptr(),
-                               name.len() as i16,
-                               &mut name_ret,
-                               SQL_DRIVER_NOPROMPT);
+            let mut ret: SQLRETURN;
 
-        CString::from_raw(dsn_ptr);
+            let mut name = [0; 1024];
+            let mut name_ret: SQLSMALLINT = 0;
 
-        if is_success(ret) {
-            println!("CONNECTED: {:?}",
-                     CStr::from_ptr(name.as_ptr() as *const i8));
-
-            let mut stmt: SQLHANDLE = std::ptr::null_mut();
-            SQLAllocHandle(SQL_HANDLE_STMT,
-                           dbc as SQLHANDLE,
-                           &mut stmt as *mut SQLHANDLE);
-            let mut stmt = stmt as SQLHSTMT;
+            let mut desc = [0; 1024];
+            let mut desc_ret: SQLSMALLINT = 0;
 
             let sql = CString::new("select * from security.user").unwrap();
 
             println!("EXECUTING SQL {:?}", sql);
 
             let sql_ptr = sql.into_raw();
-            ret = SQLExecDirect(stmt, sql_ptr as *mut u8, SQL_NTSL);
+            ret = SQLExecDirect(stmt.handle(), sql_ptr as *mut u8, SQL_NTSL);
             CString::from_raw(sql_ptr);
 
             if is_success(ret) {
-                let mut columns: SQLSMALLINT = 0;
-                SQLNumResultCols(stmt, &mut columns);
+                let columns = stmt.num_result_cols()?;
 
                 println!("SUCCESSFUL:");
 
                 let mut i = 1;
-                while is_success(SQLFetch(stmt)) {
+                while is_success(SQLFetch(stmt.handle())) {
                     println!("\tROW: {}", i);
 
                     for j in 1..columns {
                         let mut indicator: SQLLEN = 0;
                         let mut buf = [0; 512];
-                        ret = SQLGetData(stmt,
+                        ret = SQLGetData(stmt.handle(),
                                          j as u16,
                                          SQL_C_CHAR,
                                          buf.as_mut_ptr() as SQLPOINTER,
@@ -131,7 +102,7 @@ fn main() {
                 let mut i = 1;
                 let mut native: SQLINTEGER = 0;
                 while is_success(SQLGetDiagRec(SQL_HANDLE_STMT,
-                                               stmt as SQLHANDLE,
+                                               stmt.handle() as SQLHANDLE,
                                                i,
                                                name.as_mut_ptr(),
                                                &mut native,
@@ -146,35 +117,9 @@ fn main() {
                     i += 1;
                 }
             }
-
-            SQLFreeHandle(SQL_HANDLE_STMT, stmt as SQLHANDLE);
-            SQLDisconnect(dbc);
-        } else {
-            println!("NOT CONNECTED: {:?}",
-                     CStr::from_ptr(name.as_ptr() as *const i8));
-            let mut i = 1;
-            let mut native: SQLINTEGER = 0;
-            while is_success(SQLGetDiagRec(SQL_HANDLE_DBC,
-                                           dbc as SQLHANDLE,
-                                           i,
-                                           name.as_mut_ptr(),
-                                           &mut native,
-                                           desc.as_mut_ptr(),
-                                           desc.len() as i16,
-                                           &mut desc_ret)) {
-                println!("\t{:?}:{}:{}:{:?}",
-                         CStr::from_ptr(name.as_ptr() as *const i8),
-                         i,
-                         native,
-                         CStr::from_ptr(desc.as_ptr() as *const i8));
-                i += 1;
-            }
         }
-
-        SQLFreeHandle(SQL_HANDLE_DBC, dbc as SQLHANDLE);
-        SQLFreeHandle(SQL_HANDLE_ENV, env as SQLHANDLE);
     }
-
-    println!("BYE!");
+    dbc.disconnect()?;
+    Ok(())
 }
 
