@@ -30,6 +30,36 @@ fn test_connection() {
 }
 
 #[test]
+fn test_invalid_connection_string() {
+
+    let expected = if cfg!(target_os = "windows") {
+        "State: IM002, Native error: 0, Message: [Microsoft][ODBC Driver Manager] Data source \
+            name not found and no default driver specified"
+    } else {
+        "State: IM002, Native error: 0, Message: [unixODBC][Driver Manager]Data source name not \
+            found, and no default driver specified"
+    };
+
+    let mut environment = Environment::new().unwrap();
+    environment.set_odbc_version_3().unwrap();
+    let mut conn = DataSource::with_parent(&environment).unwrap();
+    let result = conn.connect_with_connection_string("bla");
+    let message = format!("{}", result.err().unwrap());
+    assert_eq!(expected, message);
+}
+
+#[test]
+fn test_connection_string() {
+
+    let mut environment = Environment::new().unwrap();
+    environment.set_odbc_version_3().unwrap();
+    let mut conn = DataSource::with_parent(&environment).unwrap();
+    conn.connect_with_connection_string("dsn=PostgreSQL;Uid=postgres;Pwd=;")
+        .unwrap();
+    conn.disconnect().unwrap();
+}
+
+#[test]
 fn list_drivers() {
     let mut environment = Environment::new().unwrap();
     environment.set_odbc_version_3().unwrap();
