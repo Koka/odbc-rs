@@ -1,3 +1,5 @@
+// Use this crate and set environmet variable RUST_LOG=odbc to see ODBC warnings
+extern crate env_logger;
 extern crate odbc;
 use odbc::*;
 
@@ -11,8 +13,11 @@ fn main() {
 
 fn connect() -> odbc::Result<()> {
 
+    env_logger::init().unwrap();
+
     let mut env = Environment::new().unwrap();
     env.set_odbc_version_3()?;
+
     println!("Driver list:");
     for driver_info in env.drivers()? {
         println!("\nDriver Name: {}", driver_info.description);
@@ -23,9 +28,7 @@ fn connect() -> odbc::Result<()> {
 
     println!("\nDataSource list:");
     for ds in env.data_sources()? {
-        println!("    name: {} description: {}",
-                 ds.server_name,
-                 ds.description);
+        println!("    {}\n    {}\n\n", ds.server_name, ds.description);
     }
 
     use ffi::*;

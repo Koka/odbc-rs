@@ -12,3 +12,7 @@ license = "MIT"
 
 [dependencies]
 odbc-ffi = "0.2.2"
+log = "0.3.7"
+
+[dev-dependencies]
+env_logger = "0.3"

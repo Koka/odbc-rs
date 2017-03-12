@@ -1,5 +1,5 @@
 
-use super::{ffi, DataSource, Return, Result, Raii, GetDiagRec, Handle};
+use super::{ffi, DataSource, Return, Result, Raii, Handle};
 use super::ffi::SQLRETURN::*;
 use std::marker::PhantomData;
 
@@ -20,23 +20,45 @@ impl<'a> Handle for Statement<'a> {
 
 impl<'a> Statement<'a> {
     pub fn with_tables<'b>(ds: &'b mut DataSource) -> Result<Statement<'b>> {
-        let raii = match Raii::with_parent(ds) {
-            Return::Success(s) => s,
-            Return::SuccessWithInfo(s) => s,
-            Return::Error => return Err(ds.get_diag_rec(1).unwrap()),
-        };
-
+        let raii = Raii::with_parent(ds).into_result(ds)?;
+        raii.tables().into_result(&raii)?;
         let stmt = Statement {
             raii: raii,
             parent: PhantomData,
         };
+        Ok(stmt)
+    }
 
+    /// The number of columns in a result set
+    ///
+    /// Can be called successfully only when the statement is in the prepared, executed, or
+    /// positioned state. If the statement does not return columns the result will be 0.
+    pub fn num_result_cols(&self) -> Result<i16> {
+        self.raii.num_result_cols().into_result(self)
+    }
+}
+
+impl Raii<ffi::Stmt> {
+    fn num_result_cols(&self) -> Return<i16> {
+        let mut num_cols: ffi::SQLSMALLINT = 0;
+        unsafe {
+            match ffi::SQLNumResultCols(self.handle(), &mut num_cols as *mut ffi::SQLSMALLINT) {
+                SQL_SUCCESS => Return::Success(num_cols),
+                SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(num_cols),
+                SQL_ERROR => Return::Error,
+                SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
+                _ => unreachable!(),
+            }
+        }
+    }
+
+    fn tables(&self) -> Return<()> {
         let catalog_name = "";
         let schema_name = "";
         let table_name = "";
         let table_type = "TABLE";
         unsafe {
-            match ffi::SQLTables(stmt.raii.handle(),
+            match ffi::SQLTables(self.handle(),
                                  catalog_name.as_ptr(),
                                  catalog_name.as_bytes().len() as ffi::SQLSMALLINT,
                                  schema_name.as_ptr(),
@@ -45,27 +67,9 @@ impl<'a> Statement<'a> {
                                  table_name.as_bytes().len() as ffi::SQLSMALLINT,
                                  table_type.as_ptr(),
                                  table_type.as_bytes().len() as ffi::SQLSMALLINT) {
-                SQL_SUCCESS |
-                SQL_SUCCESS_WITH_INFO => Ok(stmt),
-                SQL_ERROR => Err(stmt.get_diag_rec(1).unwrap()),
-                SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
-                _ => unreachable!(),
-            }
-        }
-    }
-
-    /// The number of columns in a result set
-    ///
-    /// Can be called successfully only when the statement is in the prepared, executed, or
-    /// positioned state. If the statement does not return columns the result will be 0.
-    pub fn num_result_cols(&self) -> Result<i16> {
-        let mut num_cols: ffi::SQLSMALLINT = 0;
-        unsafe {
-            match ffi::SQLNumResultCols(self.raii.handle(),
-                                        &mut num_cols as *mut ffi::SQLSMALLINT) {
-                SQL_SUCCESS |
-                SQL_SUCCESS_WITH_INFO => Ok(num_cols),
-                SQL_ERROR => Err(self.get_diag_rec(1).unwrap()),
+                SQL_SUCCESS => Return::Success(()),
+                SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
+                SQL_ERROR => Return::Error,
                 SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
                 _ => unreachable!(),
             }
