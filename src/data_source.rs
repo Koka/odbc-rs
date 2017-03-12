@@ -44,7 +44,7 @@ impl<'a> DataSource<'a> {
         self.raii.connect(dsn, usr, pwd).into_result(self)
     }
 
-    pub fn use_connection_string(&mut self, connection_str : &str) -> Result<()>{
+    pub fn connect_with_connection_string(&mut self, connection_str : &str) -> Result<()>{
         self.raii.driver_connect(connection_str).into_result(self)
     }
 
