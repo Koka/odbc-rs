@@ -16,10 +16,10 @@ fn main() {
 
 fn connect() -> std::result::Result<(), DiagnosticRecord> {
 
-    let mut env = Environment::new().unwrap();
-    env.set_odbc_version_3()?;
+    let env = Environment::new().unwrap();
+    let env3 = env.set_odbc_version_3()?;
 
-    let mut conn = DataSource::with_parent(&env)?;
+    let mut conn = DataSource::with_parent(&env3)?;
 
     let mut buffer = String::new();
     println!("Please enter connection string: ");

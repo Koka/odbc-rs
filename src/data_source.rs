@@ -1,5 +1,5 @@
 //! Holds implementation of odbc connection
-use super::{ffi, Environment, Return, Result, Raii, GetDiagRec, Handle};
+use super::{ffi, Environment, Return, Result, Raii, GetDiagRec, Handle, Version3};
 use std;
 use std::marker::PhantomData;
 use std::ptr::null_mut;
@@ -9,7 +9,7 @@ pub struct DataSource<'a> {
     raii: Raii<ffi::Dbc>,
     // we use phantom data to tell the borrow checker that we need to keep the environment alive for
     // the lifetime of the connection
-    parent: PhantomData<&'a Environment>,
+    parent: PhantomData<&'a Environment<Version3>>,
 }
 
 impl<'a> Handle for DataSource<'a> {
@@ -24,7 +24,7 @@ impl<'a> DataSource<'a> {
     ///
     /// # Arguments
     /// * `env` - Environment used to allocate the data source handle.
-    pub fn with_parent(env: &'a Environment) -> Result<DataSource<'a>> {
+    pub fn with_parent(env: &'a Environment<Version3>) -> Result<DataSource<'a>> {
         let raii = Raii::with_parent(env).into_result(env)?;
         let data_source = DataSource {
             raii: raii,

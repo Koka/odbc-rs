@@ -15,11 +15,11 @@ fn print_drivers_and_datasources() -> odbc::Result<()> {
 
     env_logger::init().unwrap();
 
-    let mut env = Environment::new().unwrap();
-    env.set_odbc_version_3()?;
+    let env = Environment::new().unwrap();
+    let env3 = env.set_odbc_version_3()?;
 
     println!("Driver list:");
-    for driver_info in env.drivers()? {
+    for driver_info in env3.drivers()? {
         println!("\nDriver Name: {}", driver_info.description);
         for (key, value) in driver_info.attributes {
             println!("    {}={}", key, value);
@@ -27,7 +27,7 @@ fn print_drivers_and_datasources() -> odbc::Result<()> {
     }
 
     println!("\nDataSource list:");
-    for ds in env.data_sources()? {
+    for ds in env3.data_sources()? {
         println!("    {}\n    {}\n\n", ds.server_name, ds.description);
     }
     Ok(())
