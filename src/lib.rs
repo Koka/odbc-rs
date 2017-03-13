@@ -14,7 +14,7 @@ use raii::Raii;
 pub use diagnostics::{DiagnosticRecord, GetDiagRec};
 pub use result::*;
 pub use environment::*;
-pub use data_source::DataSource;
+pub use data_source::{DataSource, Connected, Disconnected};
 pub use statement::*;
 
 /// Reflects the ability of a type to expose a valid handle

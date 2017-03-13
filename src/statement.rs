@@ -1,5 +1,5 @@
 
-use super::{ffi, DataSource, Return, Result, Raii, Handle};
+use super::{ffi, DataSource, Return, Result, Raii, Handle, Connected};
 use super::ffi::SQLRETURN::*;
 use std::marker::PhantomData;
 use std::ptr::null_mut;
@@ -10,7 +10,7 @@ pub struct Statement<'a> {
     raii: Raii<ffi::Stmt>,
     // we use phantom data to tell the borrow checker that we need to keep the data source alive
     // for the lifetime of the statement
-    parent: PhantomData<&'a DataSource<'a>>,
+    parent: PhantomData<&'a DataSource<'a, Connected>>,
 }
 
 impl<'a> Handle for Statement<'a> {
@@ -21,7 +21,7 @@ impl<'a> Handle for Statement<'a> {
 }
 
 impl<'a> Statement<'a> {
-    pub fn with_parent(ds: &'a mut DataSource) -> Result<Statement<'a>> {
+    pub fn with_parent(ds: &'a mut DataSource<Connected>) -> Result<Statement<'a>> {
         let raii = Raii::with_parent(ds).into_result(ds)?;
         let stmt = Statement {
             raii: raii,

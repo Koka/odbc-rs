@@ -6,8 +6,8 @@ fn list_tables() {
 
     let env = Environment::new().unwrap();
     let env = env.set_odbc_version_3().unwrap();
-    let mut ds = DataSource::with_parent(&env).unwrap();
-    ds.connect("PostgreSQL", "postgres", "").unwrap();
+    let ds = DataSource::with_parent(&env).unwrap();
+    let mut ds = ds.connect("PostgreSQL", "postgres", "").unwrap();
     // scope is required (for now) to close statement before disconnecting
     {
         let mut statement = Statement::with_parent(&mut ds).unwrap();
@@ -22,8 +22,8 @@ fn test_connection() {
 
     let environment = Environment::new().expect("Environment can be created");
     let environment = environment.set_odbc_version_3().unwrap();
-    let mut conn = DataSource::with_parent(&environment).unwrap();
-    conn.connect("PostgreSQL", "postgres", "").unwrap();
+    let conn = DataSource::with_parent(&environment).unwrap();
+    let conn = conn.connect("PostgreSQL", "postgres", "").unwrap();
 
     assert!(!conn.read_only().unwrap());
     conn.disconnect().unwrap();
@@ -42,7 +42,7 @@ fn test_invalid_connection_string() {
 
     let environment = Environment::new().unwrap();
     let environment = environment.set_odbc_version_3().unwrap();
-    let mut conn = DataSource::with_parent(&environment).unwrap();
+    let conn = DataSource::with_parent(&environment).unwrap();
     let result = conn.connect_with_connection_string("bla");
     let message = format!("{}", result.err().unwrap());
     assert_eq!(expected, message);
@@ -53,8 +53,8 @@ fn test_connection_string() {
 
     let environment = Environment::new().unwrap();
     let environment = environment.set_odbc_version_3().unwrap();
-    let mut conn = DataSource::with_parent(&environment).unwrap();
-    conn.connect_with_connection_string("dsn=PostgreSQL;Uid=postgres;Pwd=;")
+    let conn = DataSource::with_parent(&environment).unwrap();
+    let conn = conn.connect_with_connection_string("dsn=PostgreSQL;Uid=postgres;Pwd=;")
         .unwrap();
     conn.disconnect().unwrap();
 }

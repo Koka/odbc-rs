@@ -19,20 +19,20 @@ fn connect() -> std::result::Result<(), DiagnosticRecord> {
     let env = Environment::new().unwrap();
     let env3 = env.set_odbc_version_3()?;
 
-    let mut conn = DataSource::with_parent(&env3)?;
+    let conn = DataSource::with_parent(&env3)?;
 
     let mut buffer = String::new();
     println!("Please enter connection string: ");
     io::stdin().read_line(&mut buffer).unwrap();
 
-    conn.connect_with_connection_string(&buffer)?;
+    let mut conn = conn.connect_with_connection_string(&buffer)?;
     execute_statement(&mut conn)?;
     conn.disconnect()?;
     Ok(())
 }
 
 //Execute statement in smaller scope, so it gets deallocated before disconnect
-fn execute_statement(mut conn: &mut DataSource) -> Result<()> {
+fn execute_statement(mut conn: &mut DataSource<Connected>) -> Result<()> {
     //Execute statement in smaller scope, so it gets deallocated before disconnect
     let mut stmt = Statement::with_parent(&mut conn)?;
 
