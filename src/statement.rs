@@ -2,6 +2,8 @@
 use super::{ffi, DataSource, Return, Result, Raii, Handle};
 use super::ffi::SQLRETURN::*;
 use std::marker::PhantomData;
+use std::ptr::null_mut;
+use std;
 
 /// RAII wrapper around ODBC statement
 pub struct Statement<'a> {
@@ -39,6 +41,27 @@ impl<'a> Statement<'a> {
     pub fn num_result_cols(&self) -> Result<i16> {
         self.raii.num_result_cols().into_result(self)
     }
+
+    /// Executes a preparable statement, using the current values of the parameter marker variables
+    /// if any parameters exist in the statement.
+    ///
+    /// `SQLExecDirect` is the fastest way to submit an SQL statement for one-time execution.
+    pub fn exec_direct(&mut self, statement_text: &str) -> Result<bool> {
+        self.raii.exec_direct(statement_text).into_result(self)
+    }
+
+    /// Fetches the next rowset of data from the result set and returns data for all bound columns.
+    ///
+    /// # Return
+    /// Returns false on the last row
+    pub fn fetch(&mut self) -> Result<bool> {
+        self.raii.fetch().into_result(self)
+    }
+
+    /// Retrieves data for a single column in the result set
+    pub fn get_data(&mut self, col_or_param_num: u16) -> Result<Option<String>>{
+        self.raii.get_data(col_or_param_num).into_result(self)
+    }
 }
 
 impl Raii<ffi::Stmt> {
@@ -52,6 +75,36 @@ impl Raii<ffi::Stmt> {
                 SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
                 _ => unreachable!(),
             }
+        }
+    }
+
+    fn exec_direct(&mut self, statement_text: &str) -> Return<bool> {
+        let length = statement_text.len();
+        if length > ffi::SQLINTEGER::max_value() as usize {
+            panic!("Statement text too long");
+        }
+        match unsafe {
+                  ffi::SQLExecDirect(self.handle(),
+                                     statement_text.as_ptr(),
+                                     length as ffi::SQLINTEGER)
+              } {
+            ffi::SQL_SUCCESS => Return::Success(true),
+            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(true),
+            ffi::SQL_ERROR => Return::Error,
+            ffi::SQL_NEED_DATA => panic!("SQLExecDirec returned SQL_NEED_DATA"),
+            ffi::SQL_NO_DATA => Return::Success(false),
+            r => panic!("SQLExecDirect returned unexpected result: {:?}", r),
+        }
+    }
+
+    /// Fetches the next rowset of data from the result set and returns data for all bound columns.
+    fn fetch(&mut self) -> Return<bool> {
+        match unsafe { ffi::SQLFetch(self.handle()) } {
+            ffi::SQL_SUCCESS => Return::Success(true),
+            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(true),
+            ffi::SQL_ERROR => Return::Error,
+            ffi::SQL_NO_DATA => Return::Success(false),
+            r => panic!("SQLFetch returned unexpected result: {:?}", r),
         }
     }
 
@@ -75,6 +128,75 @@ impl Raii<ffi::Stmt> {
                 SQL_ERROR => Return::Error,
                 SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
                 _ => unreachable!(),
+            }
+        }
+    }
+
+    fn get_data(&mut self, col_or_param_num: u16) -> Return<Option<String>> {
+        let mut indicator: ffi::SQLLEN = 0;
+        const BUF_LENGTH: ffi::SQLLEN = 512;
+        let mut buf = [0u8; BUF_LENGTH as usize];
+        unsafe {
+            // Get buffer length...
+            let result = ffi::SQLGetData(self.handle(),
+                                         col_or_param_num,
+                                         ffi::SQL_C_CHAR,
+                                         buf.as_mut_ptr() as ffi::SQLPOINTER,
+                                         BUF_LENGTH,
+                                         &mut indicator as *mut ffi::SQLLEN);
+            match result {
+                ffi::SQL_SUCCESS => {
+                    if indicator == ffi::SQL_NULL_DATA {
+                        Return::Success(None)
+                    } else {
+                        Return::Success(Some(std::str::from_utf8(&buf[..(indicator as usize)])
+                                                 .unwrap()
+                                                 .to_owned()))
+                    }
+                }
+                ffi::SQL_SUCCESS_WITH_INFO => {
+                    if indicator == ffi::SQL_NO_TOTAL {
+                        Return::SuccessWithInfo(None)
+                    } else {
+                        // Check if string has been truncated. String is also truncated if indicator is
+                        // equal to BUF_LENGTH because of terminating nul
+                        if indicator >= BUF_LENGTH {
+                            let extra_space = (indicator as usize + 1) - (BUF_LENGTH as usize - 1);
+                            let mut heap_buf = Vec::with_capacity((indicator as usize) + 1);
+                            // Copy everything but the terminating zero into the new buffer
+                            heap_buf.extend_from_slice(&buf[..(BUF_LENGTH as usize) - 1]);
+                            // increase length
+                            heap_buf.extend(std::iter::repeat(0).take(extra_space));
+                            // Get remainder of string
+                            let ret = ffi::SQLGetData(self.handle(),
+                                                        col_or_param_num,
+                                                        ffi::SQL_C_CHAR,
+                                                        heap_buf.as_mut_slice()[(BUF_LENGTH as usize) -
+                                                        1..]
+                                                                .as_mut_ptr() as
+                                                        ffi::SQLPOINTER,
+                                                        extra_space as ffi::SQLLEN,
+                                                        null_mut());
+                            heap_buf.pop();
+                            let value = String::from_utf8(heap_buf).unwrap();
+                            match ret {
+                                ffi::SQL_SUCCESS => Return::Success(Some(value)),
+                                ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(Some(value)),
+                                ffi::SQL_ERROR => Return::Error,
+                                r => panic!("SQLGetData returned {:?}", r)
+                            }
+                        } else {
+                            // No truncation. Warning may be due to some other issue.
+                            Return::SuccessWithInfo(
+                            Some(std::str::from_utf8(&buf[..(indicator as usize)])
+                                .unwrap()
+                                .to_owned()))
+                        }
+                    }
+                }
+                ffi::SQL_ERROR => Return::Error,
+                ffi::SQL_NO_DATA => panic!("SQLGetData has already returned the colmun data"),
+                _ => panic!("unexpected return value from SQLGetData"),
             }
         }
     }
