@@ -19,6 +19,11 @@ pub struct Statement<'a, S> {
     state : PhantomData<S>,
 }
 
+/// Used to retrieve data from the fields of a query resul
+pub struct Cursor<'a, 'b : 'a>{
+    stmt : &'a mut Statement<'b, Executed>,
+}
+
 impl<'a, S> Handle for Statement<'a, S> {
     type To = ffi::Stmt;
     unsafe fn handle(&self) -> ffi::SQLHSTMT {
@@ -26,20 +31,21 @@ impl<'a, S> Handle for Statement<'a, S> {
     }
 }
 
+impl<'a, S> Statement<'a, S>{
+    fn with_raii( raii : Raii<ffi::Stmt>) -> Self{
+        Statement{ raii: raii, parent : PhantomData, state : PhantomData }
+    }
+}
+
 impl<'a> Statement<'a, Allocated> {
-    pub fn with_parent(ds: &'a DataSource<Connected>) -> Result<Statement<'a, Allocated>> {
+    pub fn with_parent(ds: &'a DataSource<Connected>) -> Result<Self> {
         let raii = Raii::with_parent(ds).into_result(ds)?;
-        let stmt = Statement {
-            raii: raii,
-            parent: PhantomData,
-            state: PhantomData,
-        };
-        Ok(stmt)
+        Ok(Self::with_raii(raii))
     }
 
     pub fn tables<'b>(mut self) -> Result<Statement<'a, Executed>> {
         self.raii.tables().into_result(&self)?;
-        Ok( Statement{ raii: self.raii, parent: PhantomData, state: PhantomData})
+        Ok(Statement::with_raii(self.raii))
     }
 
     /// Executes a preparable statement, using the current values of the parameter marker variables
@@ -48,7 +54,7 @@ impl<'a> Statement<'a, Allocated> {
     /// `SQLExecDirect` is the fastest way to submit an SQL statement for one-time execution.
     pub fn exec_direct(mut self, statement_text: &str) -> Result<Statement<'a, Executed>> {
         assert!(self.raii.exec_direct(statement_text).into_result(&self)?);
-        Ok( Statement{ raii: self.raii, parent: PhantomData, state: PhantomData})
+        Ok(Statement::with_raii(self.raii))
     }
 }
 
@@ -66,13 +72,19 @@ impl<'a> Statement<'a, Executed> {
     ///
     /// # Return
     /// Returns false on the last row
-    pub fn fetch(&mut self) -> Result<bool> {
-        self.raii.fetch().into_result(self)
+    pub fn fetch<'b>(&'b mut self) -> Result<Option<Cursor<'b, 'a>>> {
+        if self.raii.fetch().into_result(self)?{
+            Ok(Some(Cursor{stmt:self}))
+        } else {
+            Ok(None)
+        }
     }
+}
 
+impl<'a, 'b> Cursor<'a, 'b>{
     /// Retrieves data for a single column in the result set
     pub fn get_data(&mut self, col_or_param_num: u16) -> Result<Option<String>>{
-        self.raii.get_data(col_or_param_num).into_result(self)
+        self.stmt.raii.get_data(col_or_param_num).into_result(self.stmt)
     }
 }
 
