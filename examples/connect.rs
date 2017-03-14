@@ -26,14 +26,10 @@ fn connect() -> std::result::Result<(), DiagnosticRecord> {
     io::stdin().read_line(&mut buffer).unwrap();
 
     let mut conn = conn.connect_with_connection_string(&buffer)?;
-    execute_statement(&mut conn)?;
-    conn.disconnect()?;
-    Ok(())
+    execute_statement(&mut conn)
 }
 
-//Execute statement in smaller scope, so it gets deallocated before disconnect
 fn execute_statement(mut conn: &mut DataSource<Connected>) -> Result<()> {
-    //Execute statement in smaller scope, so it gets deallocated before disconnect
     let mut stmt = Statement::with_parent(&mut conn)?;
 
     let mut sql_text = String::new();

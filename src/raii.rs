@@ -20,7 +20,7 @@ impl<T: OdbcObject> Drop for Raii<T> {
     fn drop(&mut self) {
         match unsafe { ffi::SQLFreeHandle(T::handle_type(), self.handle() as ffi::SQLHANDLE) } {
             ffi::SQL_SUCCESS => (),
-            ffi::SQL_ERROR => panic!("Error freeing handle: {}", self.get_diag_rec(1).unwrap()),
+            ffi::SQL_ERROR => error!("Error freeing handle: {}", self.get_diag_rec(1).unwrap()),
             _ => panic!("Unexepected return value of SQLFreeHandle"),
         }
     }
@@ -32,10 +32,10 @@ impl<T: OdbcObject> Raii<T> {
     {
         let mut handle: ffi::SQLHANDLE = null_mut();
         match unsafe {
-            ffi::SQLAllocHandle(T::handle_type(),
-                                parent.handle() as ffi::SQLHANDLE,
-                                &mut handle as *mut ffi::SQLHANDLE)
-        } {
+                  ffi::SQLAllocHandle(T::handle_type(),
+                                      parent.handle() as ffi::SQLHANDLE,
+                                      &mut handle as *mut ffi::SQLHANDLE)
+              } {
             ffi::SQL_SUCCESS => Return::Success(Raii { handle: handle as *mut T }),
             ffi::SQL_SUCCESS_WITH_INFO => {
                 Return::SuccessWithInfo(Raii { handle: handle as *mut T })
@@ -61,3 +61,4 @@ impl Raii<ffi::Env> {
         }
     }
 }
+

@@ -18,11 +18,11 @@ fn list_tables() {
 }
 
 #[test]
-fn test_connection() {
+fn not_read_only() {
 
-    let environment = Environment::new().expect("Environment can be created");
-    let environment = environment.set_odbc_version_3().unwrap();
-    let conn = DataSource::with_parent(&environment).unwrap();
+    let env = Environment::new().unwrap();
+    let env = env.set_odbc_version_3().unwrap();
+    let conn = DataSource::with_parent(&env).unwrap();
     let conn = conn.connect("PostgreSQL", "postgres", "").unwrap();
 
     assert!(!conn.read_only().unwrap());
@@ -30,7 +30,19 @@ fn test_connection() {
 }
 
 #[test]
-fn test_invalid_connection_string() {
+fn implicit_disconnect() {
+
+    let env = Environment::new().unwrap();
+    let env = env.set_odbc_version_3().unwrap();
+    let conn = DataSource::with_parent(&env).unwrap();
+    conn.connect("PostgreSQL", "postgres", "").unwrap();
+
+    // if there would be no implicit disconnect, all the drops would panic with function sequence
+    // error
+}
+
+#[test]
+fn invalid_connection_string() {
 
     let expected = if cfg!(target_os = "windows") {
         "State: IM002, Native error: 0, Message: [Microsoft][ODBC Driver Manager] Data source \
