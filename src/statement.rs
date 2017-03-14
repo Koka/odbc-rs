@@ -27,7 +27,7 @@ impl<'a, S> Handle for Statement<'a, S> {
 }
 
 impl<'a> Statement<'a, Allocated> {
-    pub fn with_parent(ds: &'a mut DataSource<Connected>) -> Result<Statement<'a, Allocated>> {
+    pub fn with_parent(ds: &'a DataSource<Connected>) -> Result<Statement<'a, Allocated>> {
         let raii = Raii::with_parent(ds).into_result(ds)?;
         let stmt = Statement {
             raii: raii,
