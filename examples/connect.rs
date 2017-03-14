@@ -30,13 +30,13 @@ fn connect() -> std::result::Result<(), DiagnosticRecord> {
 }
 
 fn execute_statement(mut conn: &mut DataSource<Connected>) -> Result<()> {
-    let mut stmt = Statement::with_parent(&mut conn)?;
+    let stmt = Statement::with_parent(&mut conn)?;
 
     let mut sql_text = String::new();
     println!("Please enter SQL statement string: ");
     io::stdin().read_line(&mut sql_text).unwrap();
 
-    assert!(stmt.exec_direct(&sql_text)?);
+    let mut stmt = stmt.exec_direct(&sql_text)?;
     let cols = stmt.num_result_cols()?;
 
     while stmt.fetch()? {
@@ -48,6 +48,7 @@ fn execute_statement(mut conn: &mut DataSource<Connected>) -> Result<()> {
         }
         println!("");
     }
+
     Ok(())
 }
 

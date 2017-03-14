@@ -5,34 +5,54 @@ use std::marker::PhantomData;
 use std::ptr::null_mut;
 use std;
 
+/// `Statement` state used to represent a freshly allocated connection
+pub enum Allocated{}
+/// `Statement` state used to represet an executed statement
+pub enum Executed{}
+
 /// RAII wrapper around ODBC statement
-pub struct Statement<'a> {
+pub struct Statement<'a, S> {
     raii: Raii<ffi::Stmt>,
     // we use phantom data to tell the borrow checker that we need to keep the data source alive
     // for the lifetime of the statement
     parent: PhantomData<&'a DataSource<'a, Connected>>,
+    state : PhantomData<S>,
 }
 
-impl<'a> Handle for Statement<'a> {
+impl<'a, S> Handle for Statement<'a, S> {
     type To = ffi::Stmt;
     unsafe fn handle(&self) -> ffi::SQLHSTMT {
         self.raii.handle()
     }
 }
 
-impl<'a> Statement<'a> {
-    pub fn with_parent(ds: &'a mut DataSource<Connected>) -> Result<Statement<'a>> {
+impl<'a> Statement<'a, Allocated> {
+    pub fn with_parent(ds: &'a mut DataSource<Connected>) -> Result<Statement<'a, Allocated>> {
         let raii = Raii::with_parent(ds).into_result(ds)?;
         let stmt = Statement {
             raii: raii,
             parent: PhantomData,
+            state: PhantomData,
         };
         Ok(stmt)
     }
 
-    pub fn tables<'b>(&mut self) -> Result<()> {
-        self.raii.tables().into_result(self)
+    pub fn tables<'b>(mut self) -> Result<Statement<'a, Executed>> {
+        self.raii.tables().into_result(&self)?;
+        Ok( Statement{ raii: self.raii, parent: PhantomData, state: PhantomData})
     }
+
+    /// Executes a preparable statement, using the current values of the parameter marker variables
+    /// if any parameters exist in the statement.
+    ///
+    /// `SQLExecDirect` is the fastest way to submit an SQL statement for one-time execution.
+    pub fn exec_direct(mut self, statement_text: &str) -> Result<Statement<'a, Executed>> {
+        assert!(self.raii.exec_direct(statement_text).into_result(&self)?);
+        Ok( Statement{ raii: self.raii, parent: PhantomData, state: PhantomData})
+    }
+}
+
+impl<'a> Statement<'a, Executed> {
 
     /// The number of columns in a result set
     ///
@@ -40,14 +60,6 @@ impl<'a> Statement<'a> {
     /// positioned state. If the statement does not return columns the result will be 0.
     pub fn num_result_cols(&self) -> Result<i16> {
         self.raii.num_result_cols().into_result(self)
-    }
-
-    /// Executes a preparable statement, using the current values of the parameter marker variables
-    /// if any parameters exist in the statement.
-    ///
-    /// `SQLExecDirect` is the fastest way to submit an SQL statement for one-time execution.
-    pub fn exec_direct(&mut self, statement_text: &str) -> Result<bool> {
-        self.raii.exec_direct(statement_text).into_result(self)
     }
 
     /// Fetches the next rowset of data from the result set and returns data for all bound columns.
@@ -72,8 +84,7 @@ impl Raii<ffi::Stmt> {
                 SQL_SUCCESS => Return::Success(num_cols),
                 SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(num_cols),
                 SQL_ERROR => Return::Error,
-                SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
-                _ => unreachable!(),
+                r => panic!("SQLNumResultCols returned unexpected result: {:?}", r),
             }
         }
     }
@@ -108,7 +119,7 @@ impl Raii<ffi::Stmt> {
         }
     }
 
-    fn tables(&self) -> Return<()> {
+    fn tables(&mut self) -> Return<()> {
         let catalog_name = "";
         let schema_name = "";
         let table_name = "";
@@ -126,8 +137,7 @@ impl Raii<ffi::Stmt> {
                 SQL_SUCCESS => Return::Success(()),
                 SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
                 SQL_ERROR => Return::Error,
-                SQL_STILL_EXECUTING => panic!("Multithreading currently impossible in safe code"),
-                _ => unreachable!(),
+                r => panic!("SQLTables returned: {:?}", r),
             }
         }
     }

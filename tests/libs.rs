@@ -10,8 +10,8 @@ fn list_tables() {
     let mut ds = ds.connect("PostgreSQL", "postgres", "").unwrap();
     // scope is required (for now) to close statement before disconnecting
     {
-        let mut statement = Statement::with_parent(&mut ds).unwrap();
-        statement.tables().unwrap();
+        let statement = Statement::with_parent(&mut ds).unwrap();
+        let statement = statement.tables().unwrap();
         assert_eq!(statement.num_result_cols().unwrap(), 5);
     }
     ds.disconnect().unwrap();

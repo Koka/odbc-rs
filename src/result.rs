@@ -17,12 +17,20 @@ impl<T> Return<T> {
         match self {
             Return::Success(value) => Ok(value),
             Return::SuccessWithInfo(value) => {
-                warn!("{}", odbc_object.get_diag_rec(1).unwrap());
+                let mut i = 1;
+                while let Some(diag) = odbc_object.get_diag_rec(i) {
+                    error!("{}", diag);
+                    i += 1;
+                }
                 Ok(value)
             }
             Return::Error => {
                 let diag = odbc_object.get_diag_rec(1).unwrap();
-                error!("{}", diag);
+                let mut i = 2;
+                while let Some(diag) = odbc_object.get_diag_rec(i) {
+                    error!("{}", diag);
+                    i += 1;
+                }
                 Err(diag)
             }
         }
@@ -52,3 +60,4 @@ impl std::error::Error for EnvAllocError {
         None
     }
 }
+

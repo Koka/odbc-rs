@@ -8,7 +8,7 @@ use std;
 
 /// Environment state used to represent that no odbc version has been set.
 pub enum NoVersion{}
-/// Environment state esed to represent that environment has been set to odbc version 3
+/// Environment state used to represent that environment has been set to odbc version 3
 pub enum Version3{}
 
 /// Handle to an ODBC Environment
