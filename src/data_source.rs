@@ -4,9 +4,9 @@ use std;
 use std::marker::PhantomData;
 use std::ptr::null_mut;
 
-/// DataSource state, used to represent a connection to a data source.
+/// DataSource state used to represent a connection to a data source.
 pub enum Connected{}
-/// DataSource state, used to represent a data source handle which not connected to a data source.
+/// DataSource state used to represent a data source handle which not connected to a data source.
 pub enum Disconnected{}
 
 /// Type can be used to represent a `DataSource` state
