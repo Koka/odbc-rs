@@ -1,34 +1,84 @@
 //! Holds implementation of odbc connection
-use super::{ffi, Environment, Return, Result, Raii, GetDiagRec, Handle};
+use super::{ffi, Environment, Return, Result, Raii, Handle, Version3};
 use std;
 use std::marker::PhantomData;
 use std::ptr::null_mut;
 
+/// DataSource state used to represent a connection to a data source.
+pub enum Connected{}
+/// DataSource state used to represent a data source handle which not connected to a data source.
+pub enum Disconnected{}
+
+/// Type can be used to represent a `DataSource` state
+pub trait DataSourceState{
+    /// Called then a `DataSource` is dropped
+    fn on_drop(me: &mut Raii<ffi::Dbc>) ->Result<()>;
+}
+
+impl DataSourceState for Connected{
+    fn on_drop(me: &mut Raii<ffi::Dbc>) -> Result<()>{
+        me.disconnect().into_result(me)
+    }
+}
+
+impl DataSourceState for Disconnected{
+    fn on_drop(_: &mut Raii<ffi::Dbc>)->Result<()>{
+        Ok(())
+    }
+}
+
 /// Represents a connection to an ODBC data source
-pub struct DataSource<'a> {
+///
+/// A `DataSource` is in one of two states `Connected` or `Disconnected`. These are known at
+/// compile time. Every new `DataSource` starts out as `Disconnected`. To do execute a query it
+/// needs to be connected. You can achieve this by calling e.g. `connect` and captuer the result in
+/// a new binding which will be of type `DataSource::<Connected>`.
+pub struct DataSource<'a, S: DataSourceState> {
     raii: Raii<ffi::Dbc>,
     // we use phantom data to tell the borrow checker that we need to keep the environment alive for
     // the lifetime of the connection
-    parent: PhantomData<&'a Environment>,
+    parent: PhantomData<&'a Environment<Version3>>,
+    state: PhantomData<S>,
 }
 
-impl<'a> Handle for DataSource<'a> {
+impl<'a, S: DataSourceState> Handle for DataSource<'a, S> {
     type To = ffi::Dbc;
     unsafe fn handle(&self) -> ffi::SQLHDBC {
         self.raii.handle()
     }
 }
 
-impl<'a> DataSource<'a> {
+impl<'a, S: DataSourceState> Drop for DataSource<'a, S>{
+    fn drop(&mut self){
+        match S::on_drop(&mut self.raii){
+            Ok(()) => (),
+            Err(d) => error!("Error during drop of DataSource: {}", d),
+        }
+    }
+}
+
+impl<'a, S: DataSourceState> DataSource<'a, S> {
+    /// Deconstruct this Connection into its constituent parts.
+    fn deconstruct(self) -> Raii<ffi::Dbc> {
+        unsafe {
+            let parts = std::ptr::read(&self.raii);
+            std::mem::forget(self); //destroy self without calling drop
+            parts
+        }
+    }
+}
+
+impl<'a> DataSource<'a, Disconnected> {
     /// Allocate an ODBC data source
     ///
     /// # Arguments
     /// * `env` - Environment used to allocate the data source handle.
-    pub fn with_parent(env: &'a Environment) -> Result<DataSource<'a>> {
+    pub fn with_parent(env: &'a Environment<Version3>) -> Result<DataSource<'a, Disconnected>> {
         let raii = Raii::with_parent(env).into_result(env)?;
         let data_source = DataSource {
             raii: raii,
             parent: PhantomData,
+            state: PhantomData
         };
 
         Ok(data_source)
@@ -40,14 +90,18 @@ impl<'a> DataSource<'a> {
     /// * `dsn` - Data source name configured in the `odbc.ini` file
     /// * `usr` - User identifier
     /// * `pwd` - Authentication (usually password)
-    pub fn connect(&mut self, dsn: &str, usr: &str, pwd: &str) -> Result<()> {
-        self.raii.connect(dsn, usr, pwd).into_result(self)
+    pub fn connect(mut self, dsn: &str, usr: &str, pwd: &str) -> Result<DataSource<'a, Connected>> {
+        self.raii.connect(dsn, usr, pwd).into_result(&self)?;
+        Ok(DataSource{ raii : self.deconstruct(), parent: PhantomData, state: PhantomData})
     }
 
-    pub fn connect_with_connection_string(&mut self, connection_str : &str) -> Result<()>{
-        self.raii.driver_connect(connection_str).into_result(self)
+    pub fn connect_with_connection_string(mut self, connection_str : &str) -> Result<DataSource<'a, Connected>> {
+        self.raii.driver_connect(connection_str).into_result(&self)?;
+        Ok(DataSource{ raii : self.deconstruct(), parent: PhantomData, state: PhantomData})
     }
+}
 
+impl<'a> DataSource<'a, Connected> {
     /// `true` if the data source is set to READ ONLY mode, `false` otherwise.
     ///
     /// This characteristic pertains only to the data source itself; it is not characteristic of
@@ -58,11 +112,11 @@ impl<'a> DataSource<'a> {
         self.raii.get_info_yn(ffi::SQL_DATA_SOURCE_READ_ONLY).into_result(self)
     }
 
-    pub fn disconnect(&mut self) -> Result<()> {
-        match self.raii.disconnect() {
-            Return::Success(()) | Return::SuccessWithInfo(()) => Ok(()),
-            Return::Error => Err(self.get_diag_rec(1).unwrap()),
-        }
+    /// Closes the connection to the DataSource. If not called explicitly this the disconnect will
+    /// be invoked by `drop()`
+    pub fn disconnect(mut self) -> Result<DataSource<'a, Disconnected>> {
+        self.raii.disconnect().into_result(&self)?;
+        Ok(DataSource{ raii : self.deconstruct(), parent: PhantomData, state: PhantomData})
     }
 }
 

@@ -16,31 +16,27 @@ fn main() {
 
 fn connect() -> std::result::Result<(), DiagnosticRecord> {
 
-    let mut env = Environment::new().unwrap();
-    env.set_odbc_version_3()?;
+    let env = Environment::new().unwrap();
+    let env3 = env.set_odbc_version_3()?;
 
-    let mut conn = DataSource::with_parent(&env)?;
+    let conn = DataSource::with_parent(&env3)?;
 
     let mut buffer = String::new();
     println!("Please enter connection string: ");
     io::stdin().read_line(&mut buffer).unwrap();
 
-    conn.connect_with_connection_string(&buffer)?;
-    execute_statement(&mut conn)?;
-    conn.disconnect()?;
-    Ok(())
+    let mut conn = conn.connect_with_connection_string(&buffer)?;
+    execute_statement(&mut conn)
 }
 
-//Execute statement in smaller scope, so it gets deallocated before disconnect
-fn execute_statement(mut conn: &mut DataSource) -> Result<()> {
-    //Execute statement in smaller scope, so it gets deallocated before disconnect
-    let mut stmt = Statement::with_parent(&mut conn)?;
+fn execute_statement(mut conn: &mut DataSource<Connected>) -> Result<()> {
+    let stmt = Statement::with_parent(&mut conn)?;
 
     let mut sql_text = String::new();
     println!("Please enter SQL statement string: ");
     io::stdin().read_line(&mut sql_text).unwrap();
 
-    assert!(stmt.exec_direct(&sql_text)?);
+    let mut stmt = stmt.exec_direct(&sql_text)?;
     let cols = stmt.num_result_cols()?;
 
     while stmt.fetch()? {
@@ -52,6 +48,7 @@ fn execute_statement(mut conn: &mut DataSource) -> Result<()> {
         }
         println!("");
     }
+
     Ok(())
 }
 
