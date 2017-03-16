@@ -89,9 +89,9 @@ fn test_direct_select() {
     let mut actual = Vec::new();
     while let Some(mut cursor) = stmt.fetch().unwrap() {
         actual.push(Movie {
-            title: cursor.get_data(1).unwrap().unwrap(),
-            year: cursor.get_data(2).unwrap().unwrap(),
-        })
+                        title: cursor.get_data(1).unwrap().unwrap(),
+                        year: cursor.get_data(2).unwrap().unwrap(),
+                    })
     }
 
     assert!(actual ==
@@ -137,7 +137,7 @@ fn list_data_sources() {
                     },
                     DataSourceInfo {
                         server_name: "TestDataSource".to_owned(),
-                        drive: "SQLite3".to_owned(),
+                        driver: "SQLite3".to_owned(),
                     }];
     assert!(sources.iter().eq(expected.iter()));
 }
@@ -174,3 +174,4 @@ fn list_system_data_sources() {
     let expected: [DataSourceInfo; 0] = [];
     assert!(sources.iter().eq(expected.iter()));
 }
+
