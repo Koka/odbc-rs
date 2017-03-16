@@ -39,9 +39,9 @@ fn execute_statement(mut conn: &mut DataSource<Connected>) -> Result<()> {
     let mut stmt = stmt.exec_direct(&sql_text)?;
     let cols = stmt.num_result_cols()?;
 
-    while stmt.fetch()? {
+    while let Some(mut cursor) = stmt.fetch()? {
         for i in 1..(cols + 1) {
-            match stmt.get_data(i as u16)? {
+            match cursor.get_data(i as u16)? {
                 Some(val) => print!(" {}", val),
                 None => print!(" NULL"),
             }
