@@ -7,7 +7,7 @@ fn list_tables() {
     let env = Environment::new().unwrap();
     let env = env.set_odbc_version_3().unwrap();
     let ds = DataSource::with_parent(&env).unwrap();
-    let mut ds = ds.connect("PostgreSQL", "postgres", "").unwrap();
+    let mut ds = ds.connect("TestDataSource", "", "").unwrap();
     // scope is required (for now) to close statement before disconnecting
     {
         let statement = Statement::with_parent(&mut ds).unwrap();
@@ -23,7 +23,7 @@ fn not_read_only() {
     let env = Environment::new().unwrap();
     let env = env.set_odbc_version_3().unwrap();
     let conn = DataSource::with_parent(&env).unwrap();
-    let conn = conn.connect("PostgreSQL", "postgres", "").unwrap();
+    let conn = conn.connect("TestDataSource", "", "").unwrap();
 
     assert!(!conn.read_only().unwrap());
     conn.disconnect().unwrap();
@@ -35,7 +35,7 @@ fn implicit_disconnect() {
     let env = Environment::new().unwrap();
     let env = env.set_odbc_version_3().unwrap();
     let conn = DataSource::with_parent(&env).unwrap();
-    conn.connect("PostgreSQL", "postgres", "").unwrap();
+    conn.connect("TestDataSource", "", "").unwrap();
 
     // if there would be no implicit disconnect, all the drops would panic with function sequence
     // error
@@ -66,11 +66,46 @@ fn test_connection_string() {
     let environment = Environment::new().unwrap();
     let environment = environment.set_odbc_version_3().unwrap();
     let conn = DataSource::with_parent(&environment).unwrap();
-    let conn = conn.connect_with_connection_string("dsn=PostgreSQL;Uid=postgres;Pwd=;")
+    let conn = conn.connect_with_connection_string("dsn=TestDataSource;Uid=;Pwd=;")
         .unwrap();
     conn.disconnect().unwrap();
 }
 
+#[test]
+fn test_direct_select() {
+    let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
+    let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
+    let stmt = Statement::with_parent(&conn).unwrap();
+
+    let mut stmt = stmt.exec_direct("SELECT TITLE, YEAR FROM MOVIES ORDER BY YEAR").unwrap();
+    assert_eq!(stmt.num_result_cols().unwrap(), 2);
+
+    #[derive(PartialEq)]
+    struct Movie {
+        title: String,
+        year: String,
+    }
+
+    let mut actual = Vec::new();
+    while let Some(mut cursor) = stmt.fetch().unwrap() {
+        actual.push(Movie {
+            title: cursor.get_data(1).unwrap().unwrap(),
+            year: cursor.get_data(2).unwrap().unwrap(),
+        })
+    }
+
+    assert!(actual ==
+            vec![Movie {
+                     title: "2001: A Space Odyssey".to_owned(),
+                     year: "1968".to_owned(),
+                 },
+                 Movie {
+                     title: "Jurassic Park".to_owned(),
+                     year: "1993".to_owned(),
+                 }]);
+}
+
+#[cfg(linux)]
 #[test]
 fn list_drivers() {
     let environment = Environment::new().unwrap();
@@ -83,6 +118,7 @@ fn list_drivers() {
     assert!(drivers.iter().map(|d| &d.description).eq(expected.iter()));
 }
 
+#[cfg(linux)]
 #[test]
 fn list_data_sources() {
     let environment = Environment::new().unwrap();
@@ -98,6 +134,7 @@ fn list_data_sources() {
     assert!(sources.iter().eq(expected.iter()));
 }
 
+#[cfg(linux)]
 #[test]
 fn list_user_data_sources() {
     let environment = Environment::new().unwrap();
@@ -113,6 +150,7 @@ fn list_user_data_sources() {
     assert!(sources.iter().eq(expected.iter()));
 }
 
+#[cfg(linux)]
 #[test]
 fn list_system_data_sources() {
     let environment = Environment::new().unwrap();
@@ -124,4 +162,3 @@ fn list_system_data_sources() {
     let expected: [DataSourceInfo; 0] = [];
     assert!(sources.iter().eq(expected.iter()));
 }
-

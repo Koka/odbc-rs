@@ -39,11 +39,11 @@ impl Environment<Version3> {
         attributes.split('\0')
             .take_while(|kv_str| *kv_str != String::new())
             .map(|kv_str| {
-                     let mut iter = kv_str.split('=');
-                     let key = iter.next().unwrap();
-                     let value = iter.next().unwrap();
-                     (key.to_string(), value.to_string())
-                 })
+                let mut iter = kv_str.split('=');
+                let key = iter.next().unwrap();
+                let value = iter.next().unwrap();
+                (key.to_string(), value.to_string())
+            })
             .collect()
     }
 
@@ -64,9 +64,9 @@ impl Environment<Version3> {
                           &mut description_buffer,
                           &mut attribute_buffer)? {
             driver_list.push(DriverInfo {
-                                 description: desc.to_owned(),
-                                 attributes: Self::parse_attributes(attr),
-                             })
+                description: desc.to_owned(),
+                attributes: Self::parse_attributes(attr),
+            })
         }
         Ok(driver_list)
     }
@@ -106,9 +106,9 @@ impl Environment<Version3> {
                           &mut name_buffer,
                           &mut description_buffer)? {
             source_list.push(DataSourceInfo {
-                                 server_name: name.to_owned(),
-                                 description: desc.to_owned(),
-                             })
+                server_name: name.to_owned(),
+                description: desc.to_owned(),
+            })
         } else {
             return Ok(source_list);
         }
@@ -119,9 +119,9 @@ impl Environment<Version3> {
                           &mut name_buffer,
                           &mut description_buffer)? {
             source_list.push(DataSourceInfo {
-                                 server_name: name.to_owned(),
-                                 description: desc.to_owned(),
-                             })
+                server_name: name.to_owned(),
+                description: desc.to_owned(),
+            })
         }
         Ok(source_list)
     }
@@ -223,15 +223,15 @@ impl Raii<ffi::Env> {
                          -> Return<Option<(i16, i16)>> {
         let (mut server_name_length, mut description_length): (i16, i16) = (0, 0);
         match unsafe {
-                  c_function(self.handle(),
-                             direction,
-                             as_out_buffer(server_name),
-                             as_buffer_length(server_name.len()),
-                             &mut server_name_length as *mut i16,
-                             as_out_buffer(description),
-                             as_buffer_length(description.len()),
-                             &mut description_length as *mut i16)
-              } {
+            c_function(self.handle(),
+                       direction,
+                       as_out_buffer(server_name),
+                       as_buffer_length(server_name.len()),
+                       &mut server_name_length as *mut i16,
+                       as_out_buffer(description),
+                       as_buffer_length(description.len()),
+                       &mut description_length as *mut i16)
+        } {
             SQLRETURN::SQL_SUCCESS => {
                 Return::Success(Some((server_name_length, description_length)))
             }
@@ -292,4 +292,3 @@ mod test {
         assert_eq!(attributes["UsageCount"], "1");
     }
 }
-

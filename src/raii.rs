@@ -32,10 +32,10 @@ impl<T: OdbcObject> Raii<T> {
     {
         let mut handle: ffi::SQLHANDLE = null_mut();
         match unsafe {
-                  ffi::SQLAllocHandle(T::handle_type(),
-                                      parent.handle() as ffi::SQLHANDLE,
-                                      &mut handle as *mut ffi::SQLHANDLE)
-              } {
+            ffi::SQLAllocHandle(T::handle_type(),
+                                parent.handle() as ffi::SQLHANDLE,
+                                &mut handle as *mut ffi::SQLHANDLE)
+        } {
             ffi::SQL_SUCCESS => Return::Success(Raii { handle: handle as *mut T }),
             ffi::SQL_SUCCESS_WITH_INFO => {
                 Return::SuccessWithInfo(Raii { handle: handle as *mut T })
@@ -61,4 +61,3 @@ impl Raii<ffi::Env> {
         }
     }
 }
-

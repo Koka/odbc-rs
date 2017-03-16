@@ -32,4 +32,3 @@ fn print_drivers_and_datasources() -> odbc::Result<()> {
     }
     Ok(())
 }
-
