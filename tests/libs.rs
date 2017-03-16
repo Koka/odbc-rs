@@ -80,7 +80,7 @@ fn test_direct_select() {
     let mut stmt = stmt.exec_direct("SELECT TITLE, YEAR FROM MOVIES ORDER BY YEAR").unwrap();
     assert_eq!(stmt.num_result_cols().unwrap(), 2);
 
-    #[derive(PartialEq)]
+    #[derive(PartialEq, Debug)]
     struct Movie {
         title: String,
         year: String,
@@ -94,7 +94,7 @@ fn test_direct_select() {
                     })
     }
 
-    println!("test_direct_select query result: {}", actual);
+    println!("test_direct_select query result: {:?}", actual);
 
     assert!(actual ==
             vec![Movie {
