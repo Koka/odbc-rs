@@ -94,9 +94,7 @@ fn test_direct_select() {
                     })
     }
 
-    println!("test_direct_select query result: {:?}", actual);
-
-    assert!(actual ==
+    let check = actual ==
             vec![Movie {
                      title: "2001: A Space Odyssey".to_owned(),
                      year: "1968".to_owned(),
@@ -105,6 +103,10 @@ fn test_direct_select() {
                      title: "Jurassic Park".to_owned(),
                      year: "1993".to_owned(),
                  }]);
+
+    println!("test_direct_select query result: {:?}", actual);
+
+    assert!(check);
 }
 
 
