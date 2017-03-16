@@ -95,14 +95,14 @@ fn test_direct_select() {
     }
 
     let check = actual ==
-            vec![Movie {
-                     title: "2001: A Space Odyssey".to_owned(),
-                     year: "1968".to_owned(),
-                 },
-                 Movie {
-                     title: "Jurassic Park".to_owned(),
-                     year: "1993".to_owned(),
-                 }]);
+                vec![Movie {
+                         title: "2001: A Space Odyssey".to_owned(),
+                         year: "1968".to_owned(),
+                     },
+                     Movie {
+                         title: "Jurassic Park".to_owned(),
+                         year: "1993".to_owned(),
+                     }];
 
     println!("test_direct_select query result: {:?}", actual);
 
