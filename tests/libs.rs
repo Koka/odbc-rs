@@ -138,7 +138,7 @@ fn list_data_sources() {
                     DataSourceInfo {
                         server_name: "TestDataSource".to_owned(),
                         description: "Test database for odbc-rs".to_owned(),
-                    };
+                    }];
     assert!(sources.iter().eq(expected.iter()));
 }
 
