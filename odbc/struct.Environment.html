@@ -47,17 +47,13 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-2646' class='srclink' href='../src/odbc/src/environment.rs.html#10-12' title='goto source code'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct Environment { /* fields omitted */ }</pre><div class='docblock'><p>Handle to an ODBC Environment</p>
+               </span><a class='srclink' href='../src/odbc/environment/mod.rs.html#18-21' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Environment&lt;V&gt; { /* fields omitted */ }</pre><div class='docblock'><p>Handle to an ODBC Environment</p>
 
 <p>Creating an instance of this type is the first thing you do then using ODBC. The environment
 must outlive all connections created with it</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-2723' class='srclink' href='../src/odbc/src/environment.rs.html#47-272' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.new' class='method'><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&gt;</code></span></h4>
-<div class='docblock'><p>Allocates a new ODBC Environment</p>
-
-<p>Declares the Application&#39;s ODBC Version to be 3</p>
-</div><h4 id='method.drivers' class='method'><span id='drivers.v' class='invisible'><code>fn <a href='#method.drivers' class='fnname'>drivers</a>(&amp;self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../odbc/struct.DriverInfo.html' title='odbc::DriverInfo'>DriverInfo</a>&gt;&gt;</code></span></h4>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.Version3.html' title='odbc::Version3'>Version3</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/environment/list_data_sources.rs.html#34-187' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.drivers' class='method'><span id='drivers.v' class='invisible'><code>fn <a href='#method.drivers' class='fnname'>drivers</a>(&amp;self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../odbc/struct.DriverInfo.html' title='odbc::DriverInfo'>DriverInfo</a>&gt;&gt;</code></span></h4>
 <div class='docblock'><p>Stores all driver description and attributes in a Vec</p>
 </div><h4 id='method.data_sources' class='method'><span id='data_sources.v' class='invisible'><code>fn <a href='#method.data_sources' class='fnname'>data_sources</a>(&amp;self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../odbc/struct.DataSourceInfo.html' title='odbc::DataSourceInfo'>DataSourceInfo</a>&gt;&gt;</code></span></h4>
 <div class='docblock'><p>Stores all data source server names and descriptions in a Vec</p>
@@ -65,13 +61,17 @@ must outlive all connections created with it</p>
 <div class='docblock'><p>Stores all sytem data source server names and descriptions in a Vec</p>
 </div><h4 id='method.user_data_sources' class='method'><span id='user_data_sources.v' class='invisible'><code>fn <a href='#method.user_data_sources' class='fnname'>user_data_sources</a>(&amp;self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../odbc/struct.DataSourceInfo.html' title='odbc::DataSourceInfo'>DataSourceInfo</a>&gt;&gt;</code></span></h4>
 <div class='docblock'><p>Stores all user data source server names and descriptions in a Vec</p>
-</div><h4 id='method.raw' class='method'><span id='raw.v' class='invisible'><code>unsafe fn <a href='#method.raw' class='fnname'>raw</a>(&amp;mut self) -&gt; <a class='type' href='../odbc/raw/type.SQLHENV.html' title='odbc::raw::SQLHENV'>SQLHENV</a></code></span></h4>
-<div class='docblock'><p>Allows access to the raw ODBC handle</p>
-</div><h4 id='method.set_attribute' class='method'><span id='set_attribute.v' class='invisible'><code>unsafe fn <a href='#method.set_attribute' class='fnname'>set_attribute</a>(&amp;mut self, attribute: <a class='type' href='../odbc/raw/type.SQLINTEGER.html' title='odbc::raw::SQLINTEGER'>SQLINTEGER</a>, value: <a class='type' href='../odbc/raw/type.SQLPOINTER.html' title='odbc::raw::SQLPOINTER'>SQLPOINTER</a>, length: <a class='type' href='../odbc/raw/type.SQLINTEGER.html' title='odbc::raw::SQLINTEGER'>SQLINTEGER</a>) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</code></span></h4>
-<div class='docblock'><p>Allows setting attributes to Environment</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-2801' class='srclink' href='../src/odbc/src/environment.rs.html#274-280' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.drop' class='method'><span id='drop.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></span></h4>
-<div class='docblock'><p>A method called when the value goes out of scope. <a href="https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#tymethod.drop">Read more</a></p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.NoVersion.html' title='odbc::NoVersion'>NoVersion</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/environment/mod.rs.html#30-51' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new' class='method'><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.NoVersion.html' title='odbc::NoVersion'>NoVersion</a>&gt;, <a class='struct' href='../odbc/struct.EnvAllocError.html' title='odbc::EnvAllocError'>EnvAllocError</a>&gt;</code></span></h4>
+<div class='docblock'><p>Allocates a new ODBC Environment</p>
+
+<p>Declares the Application&#39;s ODBC Version to be 3</p>
+</div><h4 id='method.set_odbc_version_3' class='method'><span id='set_odbc_version_3.v' class='invisible'><code>fn <a href='#method.set_odbc_version_3' class='fnname'>set_odbc_version_3</a>(self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.Version3.html' title='odbc::Version3'>Version3</a>&gt;&gt;</code></span></h4>
+<div class='docblock'><p>Tells the driver(s) that we will use features of up to ODBC version 3</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;V&gt; <a class='trait' href='../odbc/trait.Handle.html' title='odbc::Handle'>Handle</a> for <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;V&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/environment/mod.rs.html#23-28' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='associatedtype.To' class='type'><span id='To.t' class='invisible'><code>type <a href='../odbc/trait.Handle.html#associatedtype.To' class='type'>To</a> = <a class='enum' href='../odbc_ffi/enum.Env.html' title='odbc_ffi::Env'>Env</a></code></span></h4>
+<h4 id='method.handle' class='method'><span id='handle.v' class='invisible'><code>unsafe fn <a href='../odbc/trait.Handle.html#tymethod.handle' class='fnname'>handle</a>(&amp;self) -&gt; <a class='type' href='../odbc_ffi/type.SQLHENV.html' title='odbc_ffi::SQLHENV'>SQLHENV</a></code></span></h4>
+<div class='docblock'><p>Returns a valid handle to the odbc type.</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 
@@ -128,11 +128,9 @@ must outlive all connections created with it</p>
     <script>
         window.rootPath = "../";
         window.currentCrate = "odbc";
-        window.playgroundUrl = "";
     </script>
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
-    
     <script defer src="../search-index.js"></script>
 </body>
 </html>

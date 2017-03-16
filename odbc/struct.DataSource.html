@@ -47,29 +47,47 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-2809' class='srclink' href='../src/odbc/src/data_source.rs.html#7-12' title='goto source code'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct DataSource&lt;'a&gt; { /* fields omitted */ }</pre><div class='docblock'><p>Represents a connection to an ODBC data source</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a id='src-2813' class='srclink' href='../src/odbc/src/data_source.rs.html#14-93' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.with_dsn_and_credentials' class='method'><span id='with_dsn_and_credentials.v' class='invisible'><code>fn <a href='#method.with_dsn_and_credentials' class='fnname'>with_dsn_and_credentials</a>&lt;'b&gt;(env: &amp;'b mut <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>, dsn: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, usr: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>, pwd: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'b&gt;&gt;</code></span></h4>
-<div class='docblock'><p>Connects to an ODBC data source</p>
+               </span><a class='srclink' href='../src/odbc/data_source.rs.html#36-42' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct DataSource&lt;'a, S:&nbsp;DataSourceState&gt; { /* fields omitted */ }</pre><div class='docblock'><p>Represents a connection to an ODBC data source</p>
+
+<p>A <code>DataSource</code> is in one of two states <code>Connected</code> or <code>Disconnected</code>. These are known at
+compile time. Every new <code>DataSource</code> starts out as <code>Disconnected</code>. To do execute a query it
+needs to be connected. You can achieve this by calling e.g. <code>connect</code> and captuer the result in
+a new binding which will be of type <code>DataSource::&lt;Connected&gt;</code>.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, <a class='enum' href='../odbc/enum.Disconnected.html' title='odbc::Disconnected'>Disconnected</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/data_source.rs.html#71-102' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.with_parent' class='method'><span id='with_parent.v' class='invisible'><code>fn <a href='#method.with_parent' class='fnname'>with_parent</a>(env: &amp;'a <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.Version3.html' title='odbc::Version3'>Version3</a>&gt;)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, <a class='enum' href='../odbc/enum.Disconnected.html' title='odbc::Disconnected'>Disconnected</a>&gt;&gt;</code></span></h4>
+<div class='docblock'><p>Allocate an ODBC data source</p>
 
 <h1 id='arguments' class='section-header'><a href='#arguments'>Arguments</a></h1>
 <ul>
 <li><code>env</code> - Environment used to allocate the data source handle.</li>
-<li><code>dsn</code> - Data source name configured in the <code>odbc.ini</code> file!()</li>
+</ul>
+</div><h4 id='method.connect' class='method'><span id='connect.v' class='invisible'><code>fn <a href='#method.connect' class='fnname'>connect</a>(self,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dsn: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usr: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pwd: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, <a class='enum' href='../odbc/enum.Connected.html' title='odbc::Connected'>Connected</a>&gt;&gt;</code></span></h4>
+<div class='docblock'><p>Connects to an ODBC data source</p>
+
+<h1 id='arguments-1' class='section-header'><a href='#arguments-1'>Arguments</a></h1>
+<ul>
+<li><code>dsn</code> - Data source name configured in the <code>odbc.ini</code> file</li>
 <li><code>usr</code> - User identifier</li>
 <li><code>pwd</code> - Authentication (usually password)</li>
 </ul>
-</div><h4 id='method.read_only' class='method'><span id='read_only.v' class='invisible'><code>fn <a href='#method.read_only' class='fnname'>read_only</a>(&amp;self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>&gt;</code></span></h4>
+</div><h4 id='method.connect_with_connection_string' class='method'><span id='connect_with_connection_string.v' class='invisible'><code>fn <a href='#method.connect_with_connection_string' class='fnname'>connect_with_connection_string</a>(self,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; connection_str: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, <a class='enum' href='../odbc/enum.Connected.html' title='odbc::Connected'>Connected</a>&gt;&gt;</code></span></h4>
+</div><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, <a class='enum' href='../odbc/enum.Connected.html' title='odbc::Connected'>Connected</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/data_source.rs.html#104-121' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.read_only' class='method'><span id='read_only.v' class='invisible'><code>fn <a href='#method.read_only' class='fnname'>read_only</a>(&amp;self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>&gt;</code></span></h4>
 <div class='docblock'><p><code>true</code> if the data source is set to READ ONLY mode, <code>false</code> otherwise.</p>
 
 <p>This characteristic pertains only to the data source itself; it is not characteristic of
 the driver that enables access to the data source. A driver that is read/write can be used
 with a data source that is read-only. If a driver is read-only, all of its data sources
 must be read-only.</p>
-</div><h4 id='method.raw' class='method'><span id='raw.v' class='invisible'><code>unsafe fn <a href='#method.raw' class='fnname'>raw</a>(&amp;mut self) -&gt; <a class='type' href='../odbc/raw/type.SQLHDBC.html' title='odbc::raw::SQLHDBC'>SQLHDBC</a></code></span></h4>
-<div class='docblock'><p>Allows access to the raw ODBC handle</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a id='src-2834' class='srclink' href='../src/odbc/src/data_source.rs.html#95-101' title='goto source code'>[src]</a></span></h3>
+</div><h4 id='method.disconnect' class='method'><span id='disconnect.v' class='invisible'><code>fn <a href='#method.disconnect' class='fnname'>disconnect</a>(self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, <a class='enum' href='../odbc/enum.Disconnected.html' title='odbc::Disconnected'>Disconnected</a>&gt;&gt;</code></span></h4>
+<div class='docblock'><p>Closes the connection to the DataSource. If not called explicitly this the disconnect will
+be invoked by <code>drop()</code></p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a, S:&nbsp;DataSourceState&gt; <a class='trait' href='../odbc/trait.Handle.html' title='odbc::Handle'>Handle</a> for <a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, S&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/data_source.rs.html#44-49' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='associatedtype.To' class='type'><span id='To.t' class='invisible'><code>type <a href='../odbc/trait.Handle.html#associatedtype.To' class='type'>To</a> = <a class='enum' href='../odbc_ffi/enum.Dbc.html' title='odbc_ffi::Dbc'>Dbc</a></code></span></h4>
+<h4 id='method.handle' class='method'><span id='handle.v' class='invisible'><code>unsafe fn <a href='../odbc/trait.Handle.html#tymethod.handle' class='fnname'>handle</a>(&amp;self) -&gt; <a class='type' href='../odbc_ffi/type.SQLHDBC.html' title='odbc_ffi::SQLHDBC'>SQLHDBC</a></code></span></h4>
+<div class='docblock'><p>Returns a valid handle to the odbc type.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl&lt;'a, S:&nbsp;DataSourceState&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, S&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/data_source.rs.html#51-58' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.drop' class='method'><span id='drop.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></span></h4>
 <div class='docblock'><p>A method called when the value goes out of scope. <a href="https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#tymethod.drop">Read more</a></p>
 </div></div></section>
@@ -128,11 +146,9 @@ must be read-only.</p>
     <script>
         window.rootPath = "../";
         window.currentCrate = "odbc";
-        window.playgroundUrl = "";
     </script>
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
-    
     <script defer src="../search-index.js"></script>
 </body>
 </html>

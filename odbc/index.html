@@ -47,17 +47,46 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-0' class='srclink' href='../src/odbc/src/lib.rs.html#1-285' title='goto source code'>[src]</a></span></h1>
-<h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+               </span><a class='srclink' href='../src/odbc/lib.rs.html#1-52' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'>
+<h1 id='odbc' class='section-header'><a href='#odbc'>ODBC</a></h1>
+<p>Open Database Connectivity or short ODBC is a low level high performance interface
+introduced by Microsoft to access relational data stores. This crate wraps the raw C interface
+and is intended to be usable in safe and idiomatic Rust.</p>
+
+<p><a href="https://docs.microsoft.com/en-us/sql/odbc/reference/what-is-odbc">What is ODBC?</a></p>
+
+<p><a href="https://docs.microsoft.com/en-us/sql/odbc/reference/odbc-programmer-s-reference">ODBC Programmer&#39;s Reference</a></p>
+
+<h1 id='internal-desgin' class='section-header'><a href='#internal-desgin'>Internal Desgin</a></h1>
+<p>While designed as a relatively low level wrapper around ODBC this crate tries to prevent many
+at compile time. The borrow checker and the RAII (Resource Acquisition Is Initialization) idiom
+should prevent any occurence of <code>SQL_INVALID_HANDLE</code> in safe code.</p>
+
+<p>Using the type system and the borrow checker this crate ensures that each method call happens
+in a valid state. This should eliminate function sequence errors in safe code. It is impossible
+to e.g. allocate a Statement handle before connecting to a data source. See:</p>
+
+<p><a href="https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/basic-odbc-application-steps">Basic ODBC Application Steps</a></p>
+
+<p><a href="https://docs.microsoft.com/en-us/sql/odbc/reference/appendixes/appendix-b-odbc-state-transition-tables">ODBC State Transitions</a></p>
+</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='mod' href='raw/index.html'
-                                  title='odbc::raw'>raw</a></td>
+                           <td><a class='mod' href='ffi/index.html'
+                                  title='odbc::ffi'>ffi</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>Reexport odbc-ffi as ffi</p>
                            </td>
                        </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.Cursor.html'
+                                  title='odbc::Cursor'>Cursor</a></td>
+                           <td class='docblock-short'>
+                                <p>Used to retrieve data from the fields of a query resul</p>
+                           </td>
+                       </tr>
                        <tr class=' module-item'>
                            <td><a class='struct' href='struct.DataSource.html'
                                   title='odbc::DataSource'>DataSource</a></td>
@@ -73,8 +102,8 @@
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='struct' href='struct.DiagRec.html'
-                                  title='odbc::DiagRec'>DiagRec</a></td>
+                           <td><a class='struct' href='struct.DiagnosticRecord.html'
+                                  title='odbc::DiagnosticRecord'>DiagnosticRecord</a></td>
                            <td class='docblock-short'>
                                 <p>ODBC Diagnostic Record</p>
                            </td>
@@ -87,18 +116,82 @@
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class='struct' href='struct.EnvAllocError.html'
+                                  title='odbc::EnvAllocError'>EnvAllocError</a></td>
+                           <td class='docblock-short'>
+                                <p>Environment allocation error</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class='struct' href='struct.Environment.html'
                                   title='odbc::Environment'>Environment</a></td>
                            <td class='docblock-short'>
                                 <p>Handle to an ODBC Environment</p>
                            </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.Statement.html'
+                                  title='odbc::Statement'>Statement</a></td>
+                           <td class='docblock-short'>
+                                <p>RAII wrapper around ODBC statement</p>
+                           </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='enum' href='enum.Error.html'
-                                  title='odbc::Error'>Error</a></td>
+                           <td><a class='enum' href='enum.Allocated.html'
+                                  title='odbc::Allocated'>Allocated</a></td>
                            <td class='docblock-short'>
-                                <p>An ODBC Error</p>
+                                <p><code>Statement</code> state used to represent a freshly allocated connection</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.Connected.html'
+                                  title='odbc::Connected'>Connected</a></td>
+                           <td class='docblock-short'>
+                                <p>DataSource state used to represent a connection to a data source.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.Disconnected.html'
+                                  title='odbc::Disconnected'>Disconnected</a></td>
+                           <td class='docblock-short'>
+                                <p>DataSource state used to represent a data source handle which not connected to a data source.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.Executed.html'
+                                  title='odbc::Executed'>Executed</a></td>
+                           <td class='docblock-short'>
+                                <p><code>Statement</code> state used to represet an executed statement</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.NoVersion.html'
+                                  title='odbc::NoVersion'>NoVersion</a></td>
+                           <td class='docblock-short'>
+                                <p>Environment state used to represent that no odbc version has been set.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.Version3.html'
+                                  title='odbc::Version3'>Version3</a></td>
+                           <td class='docblock-short'>
+                                <p>Environment state used to represent that environment has been set to odbc version 3</p>
+                           </td>
+                       </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class='trait' href='trait.GetDiagRec.html'
+                                  title='odbc::GetDiagRec'>GetDiagRec</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='trait' href='trait.Handle.html'
+                                  title='odbc::Handle'>Handle</a></td>
+                           <td class='docblock-short'>
+                                <p>Reflects the ability of a type to expose a valid handle</p>
                            </td>
                        </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
 <table>
@@ -164,11 +257,9 @@
     <script>
         window.rootPath = "../";
         window.currentCrate = "odbc";
-        window.playgroundUrl = "";
     </script>
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
-    
     <script defer src="../search-index.js"></script>
 </body>
 </html>
