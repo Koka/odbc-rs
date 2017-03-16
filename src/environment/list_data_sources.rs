@@ -14,7 +14,7 @@ pub struct DataSourceInfo {
     /// Name of the data source
     pub server_name: String,
     /// Description of the data source
-    pub description: String,
+    pub driver: String,
 }
 
 /// Struct holding information available on a driver.
@@ -107,7 +107,7 @@ impl Environment<Version3> {
                           &mut description_buffer)? {
             source_list.push(DataSourceInfo {
                 server_name: name.to_owned(),
-                description: desc.to_owned(),
+                driver: desc.to_owned(),
             })
         } else {
             return Ok(source_list);
@@ -120,7 +120,7 @@ impl Environment<Version3> {
                           &mut description_buffer)? {
             source_list.push(DataSourceInfo {
                 server_name: name.to_owned(),
-                description: desc.to_owned(),
+                driver: desc.to_owned(),
             })
         }
         Ok(source_list)

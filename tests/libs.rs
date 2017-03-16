@@ -133,11 +133,11 @@ fn list_data_sources() {
 
     let expected = [DataSourceInfo {
                         server_name: "PostgreSQL".to_owned(),
-                        description: "PostgreSQL Unicode".to_owned(),
+                        driver: "PostgreSQL Unicode".to_owned(),
                     },
                     DataSourceInfo {
                         server_name: "TestDataSource".to_owned(),
-                        description: "Test database for odbc-rs".to_owned(),
+                        drive: "SQLite3".to_owned(),
                     }];
     assert!(sources.iter().eq(expected.iter()));
 }
@@ -153,11 +153,11 @@ fn list_user_data_sources() {
 
     let expected = [DataSourceInfo {
                         server_name: "PostgreSQL".to_owned(),
-                        description: "PostgreSQL Unicode".to_owned(),
+                        driver: "PostgreSQL Unicode".to_owned(),
                     },
                     DataSourceInfo {
                         server_name: "TestDataSource".to_owned(),
-                        description: "Test database for odbc-rs".to_owned(),
+                        driver: "SQLite3".to_owned(),
                     }];
     assert!(sources.iter().eq(expected.iter()));
 }
