@@ -94,6 +94,8 @@ fn test_direct_select() {
                     })
     }
 
+    println!("test_direct_select query result: {}", actual);
+
     assert!(actual ==
             vec![Movie {
                      title: "2001: A Space Odyssey".to_owned(),
