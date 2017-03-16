@@ -105,7 +105,11 @@ fn test_direct_select() {
                  }]);
 }
 
-#[cfg(linux)]
+
+// These tests query the results of catalog functions. These results are only likely to match the
+// expectation on the travis.ci build on linux. Therefore we limit compilation and execution of
+// these tests to this platform.
+#[cfg(unix)]
 #[test]
 fn list_drivers() {
     let environment = Environment::new().unwrap();
@@ -118,7 +122,7 @@ fn list_drivers() {
     assert!(drivers.iter().map(|d| &d.description).eq(expected.iter()));
 }
 
-#[cfg(linux)]
+#[cfg(unix)]
 #[test]
 fn list_data_sources() {
     let environment = Environment::new().unwrap();
@@ -134,7 +138,7 @@ fn list_data_sources() {
     assert!(sources.iter().eq(expected.iter()));
 }
 
-#[cfg(linux)]
+#[cfg(unix)]
 #[test]
 fn list_user_data_sources() {
     let environment = Environment::new().unwrap();
@@ -150,7 +154,7 @@ fn list_user_data_sources() {
     assert!(sources.iter().eq(expected.iter()));
 }
 
-#[cfg(linux)]
+#[cfg(unix)]
 #[test]
 fn list_system_data_sources() {
     let environment = Environment::new().unwrap();
