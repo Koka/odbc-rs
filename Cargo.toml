@@ -11,7 +11,7 @@ keywords = ["odbc", "binding", "ffi", "database", "db"]
 license = "MIT"
 
 [dependencies]
-odbc-ffi = "0.2.2"
+odbc-ffi = "0.2.3"
 log = "0.3.7"
 
 [dev-dependencies]
