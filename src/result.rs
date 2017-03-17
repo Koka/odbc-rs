@@ -19,14 +19,17 @@ impl<T> Return<T> {
             Return::SuccessWithInfo(value) => {
                 let mut i = 1;
                 while let Some(diag) = odbc_object.get_diag_rec(i) {
-                    error!("{}", diag);
+                    warn!("{}", diag);
                     i += 1;
                 }
                 Ok(value)
             }
             Return::Error => {
+                // Return the first record
                 let diag = odbc_object.get_diag_rec(1).unwrap();
+                error!("{}", diag);
                 let mut i = 2;
+                // log the rest
                 while let Some(diag) = odbc_object.get_diag_rec(i) {
                     error!("{}", diag);
                     i += 1;

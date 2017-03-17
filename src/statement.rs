@@ -1,14 +1,14 @@
 
-use super::{ffi, DataSource, Return, Result, Raii, Handle, Connected};
-use super::ffi::SQLRETURN::*;
+use {ffi, DataSource, Return, Result, Raii, Handle, Connected};
+use ffi::SQLRETURN::*;
 use std::marker::PhantomData;
 use std::ptr::null_mut;
 use std;
 
 /// `Statement` state used to represent a freshly allocated connection
-pub enum Allocated{}
+pub enum Allocated {}
 /// `Statement` state used to represet an executed statement
-pub enum Executed{}
+pub enum Executed {}
 
 /// RAII wrapper around ODBC statement
 pub struct Statement<'a, S> {
@@ -16,12 +16,13 @@ pub struct Statement<'a, S> {
     // we use phantom data to tell the borrow checker that we need to keep the data source alive
     // for the lifetime of the statement
     parent: PhantomData<&'a DataSource<'a, Connected>>,
-    state : PhantomData<S>,
+    state: PhantomData<S>,
 }
 
 /// Used to retrieve data from the fields of a query resul
-pub struct Cursor<'a, 'b : 'a>{
-    stmt : &'a mut Statement<'b, Executed>,
+pub struct Cursor<'a, 'b: 'a> {
+    stmt: &'a mut Statement<'b, Executed>,
+    buffer: [u8; 512],
 }
 
 impl<'a, S> Handle for Statement<'a, S> {
@@ -31,9 +32,13 @@ impl<'a, S> Handle for Statement<'a, S> {
     }
 }
 
-impl<'a, S> Statement<'a, S>{
-    fn with_raii( raii : Raii<ffi::Stmt>) -> Self{
-        Statement{ raii: raii, parent : PhantomData, state : PhantomData }
+impl<'a, S> Statement<'a, S> {
+    fn with_raii(raii: Raii<ffi::Stmt>) -> Self {
+        Statement {
+            raii: raii,
+            parent: PhantomData,
+            state: PhantomData,
+        }
     }
 }
 
@@ -59,7 +64,6 @@ impl<'a> Statement<'a, Allocated> {
 }
 
 impl<'a> Statement<'a, Executed> {
-
     /// The number of columns in a result set
     ///
     /// Can be called successfully only when the statement is in the prepared, executed, or
@@ -73,18 +77,21 @@ impl<'a> Statement<'a, Executed> {
     /// # Return
     /// Returns false on the last row
     pub fn fetch<'b>(&'b mut self) -> Result<Option<Cursor<'b, 'a>>> {
-        if self.raii.fetch().into_result(self)?{
-            Ok(Some(Cursor{stmt:self}))
+        if self.raii.fetch().into_result(self)? {
+            Ok(Some(Cursor {
+                        stmt: self,
+                        buffer: [0u8; 512],
+                    }))
         } else {
             Ok(None)
         }
     }
 }
 
-impl<'a, 'b> Cursor<'a, 'b>{
+impl<'a, 'b> Cursor<'a, 'b> {
     /// Retrieves data for a single column in the result set
-    pub fn get_data(&mut self, col_or_param_num: u16) -> Result<Option<String>>{
-        self.stmt.raii.get_data(col_or_param_num).into_result(self.stmt)
+    pub fn get_data(&mut self, col_or_param_num: u16) -> Result<Option<String>> {
+        self.stmt.raii.get_data(col_or_param_num, &mut self.buffer).into_result(self.stmt)
     }
 }
 
@@ -154,24 +161,29 @@ impl Raii<ffi::Stmt> {
         }
     }
 
-    fn get_data(&mut self, col_or_param_num: u16) -> Return<Option<String>> {
+    fn get_data(&mut self, col_or_param_num: u16, buffer: &mut [u8]) -> Return<Option<String>> {
+        if buffer.len() == 0 {
+            panic!("buffer length may not be null");
+        }
+        if buffer.len() > ffi::SQLLEN::max_value() as usize {
+            panic!("buffer is larger than {} bytes", ffi::SQLLEN::max_value());
+        }
+
         let mut indicator: ffi::SQLLEN = 0;
-        const BUF_LENGTH: ffi::SQLLEN = 512;
-        let mut buf = [0u8; BUF_LENGTH as usize];
         unsafe {
             // Get buffer length...
             let result = ffi::SQLGetData(self.handle(),
                                          col_or_param_num,
                                          ffi::SQL_C_CHAR,
-                                         buf.as_mut_ptr() as ffi::SQLPOINTER,
-                                         BUF_LENGTH,
+                                         buffer.as_mut_ptr() as ffi::SQLPOINTER,
+                                         buffer.len() as ffi::SQLLEN,
                                          &mut indicator as *mut ffi::SQLLEN);
             match result {
                 ffi::SQL_SUCCESS => {
                     if indicator == ffi::SQL_NULL_DATA {
                         Return::Success(None)
                     } else {
-                        Return::Success(Some(std::str::from_utf8(&buf[..(indicator as usize)])
+                        Return::Success(Some(std::str::from_utf8(&buffer[..(indicator as usize)])
                                                  .unwrap()
                                                  .to_owned()))
                     }
@@ -180,39 +192,38 @@ impl Raii<ffi::Stmt> {
                     if indicator == ffi::SQL_NO_TOTAL {
                         Return::SuccessWithInfo(None)
                     } else {
-                        // Check if string has been truncated. String is also truncated if indicator is
-                        // equal to BUF_LENGTH because of terminating nul
-                        if indicator >= BUF_LENGTH {
-                            let extra_space = (indicator as usize + 1) - (BUF_LENGTH as usize - 1);
+                        // Check if string has been truncated. String is also truncated if
+                        // indicator is equal to BUF_LENGTH because of terminating nul
+                        if indicator >= buffer.len() as ffi::SQLLEN {
+                            let extra_space = (indicator as usize + 1) - (buffer.len() - 1);
                             let mut heap_buf = Vec::with_capacity((indicator as usize) + 1);
                             // Copy everything but the terminating zero into the new buffer
-                            heap_buf.extend_from_slice(&buf[..(BUF_LENGTH as usize) - 1]);
+                            heap_buf.extend_from_slice(&buffer[..(buffer.len() - 1)]);
                             // increase length
                             heap_buf.extend(std::iter::repeat(0).take(extra_space));
                             // Get remainder of string
                             let ret = ffi::SQLGetData(self.handle(),
-                                                        col_or_param_num,
-                                                        ffi::SQL_C_CHAR,
-                                                        heap_buf.as_mut_slice()[(BUF_LENGTH as usize) -
-                                                        1..]
-                                                                .as_mut_ptr() as
-                                                        ffi::SQLPOINTER,
-                                                        extra_space as ffi::SQLLEN,
-                                                        null_mut());
+                                                      col_or_param_num,
+                                                      ffi::SQL_C_CHAR,
+                                                      heap_buf.as_mut_slice()[buffer.len() - 1..]
+                                                          .as_mut_ptr() as
+                                                      ffi::SQLPOINTER,
+                                                      extra_space as ffi::SQLLEN,
+                                                      null_mut());
                             heap_buf.pop();
                             let value = String::from_utf8(heap_buf).unwrap();
                             match ret {
                                 ffi::SQL_SUCCESS => Return::Success(Some(value)),
                                 ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(Some(value)),
                                 ffi::SQL_ERROR => Return::Error,
-                                r => panic!("SQLGetData returned {:?}", r)
+                                r => panic!("SQLGetData returned {:?}", r),
                             }
                         } else {
                             // No truncation. Warning may be due to some other issue.
-                            Return::SuccessWithInfo(
-                            Some(std::str::from_utf8(&buf[..(indicator as usize)])
-                                .unwrap()
-                                .to_owned()))
+                            Return::SuccessWithInfo(Some(std::str::from_utf8(&buffer[..(indicator as
+                                                                                 usize)])
+                                                                 .unwrap()
+                                                                 .to_owned()))
                         }
                     }
                 }

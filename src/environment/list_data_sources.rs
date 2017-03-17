@@ -1,10 +1,9 @@
 use super::{Environment, Result, GetDiagRec, Version3};
-use super::super::{ffi, Raii, Handle, Return};
+use {ffi, Raii, Handle, Return, as_out_buffer, as_buffer_length};
 use ffi::{SQLDataSources, SQLDrivers, SQLRETURN, SQLHENV, SQLSMALLINT, SQLCHAR, FetchOrientation};
 use std::collections::HashMap;
 use std::str::from_utf8;
 use std::cmp::max;
-use std::ptr::null_mut;
 
 /// Holds name and description of a datasource
 ///
@@ -14,7 +13,7 @@ pub struct DataSourceInfo {
     /// Name of the data source
     pub server_name: String,
     /// Description of the data source
-    pub description: String,
+    pub driver: String,
 }
 
 /// Struct holding information available on a driver.
@@ -107,7 +106,7 @@ impl Environment<Version3> {
                           &mut description_buffer)? {
             source_list.push(DataSourceInfo {
                                  server_name: name.to_owned(),
-                                 description: desc.to_owned(),
+                                 driver: desc.to_owned(),
                              })
         } else {
             return Ok(source_list);
@@ -120,7 +119,7 @@ impl Environment<Version3> {
                           &mut description_buffer)? {
             source_list.push(DataSourceInfo {
                                  server_name: name.to_owned(),
-                                 description: desc.to_owned(),
+                                 driver: desc.to_owned(),
                              })
         }
         Ok(source_list)
@@ -255,23 +254,6 @@ type SqlInfoFunction = unsafe extern "C" fn(SQLHENV,
                                             SQLSMALLINT,
                                             *mut SQLSMALLINT)
                                             -> SQLRETURN;
-
-fn as_out_buffer(buffer: &mut [u8]) -> *mut u8 {
-    if buffer.len() == 0 {
-        null_mut()
-    } else {
-        buffer.as_mut_ptr()
-    }
-}
-
-fn as_buffer_length(n: usize) -> ffi::SQLSMALLINT {
-    use std;
-    if n > std::i16::MAX as usize {
-        std::i16::MAX
-    } else {
-        n as i16
-    }
-}
 
 #[cfg(test)]
 mod test {

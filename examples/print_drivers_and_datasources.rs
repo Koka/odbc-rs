@@ -28,8 +28,7 @@ fn print_drivers_and_datasources() -> odbc::Result<()> {
 
     println!("\nDataSource list:");
     for ds in env3.data_sources()? {
-        println!("    {}\n    {}\n\n", ds.server_name, ds.description);
+        println!("    {}\n    {}\n\n", ds.server_name, ds.driver);
     }
     Ok(())
 }
-

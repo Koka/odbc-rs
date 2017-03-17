@@ -51,4 +51,3 @@ fn execute_statement(mut conn: &mut DataSource<Connected>) -> Result<()> {
 
     Ok(())
 }
-
