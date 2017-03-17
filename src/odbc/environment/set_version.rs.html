@@ -9,6 +9,7 @@
 
     <title>set_version.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../main.css">
     
@@ -71,7 +72,7 @@
         <span class='kw'>match</span> <span class='kw'>unsafe</span> {
             <span class='ident'>ffi</span>::<span class='ident'>SQLSetEnvAttr</span>(<span class='self'>self</span>.<span class='ident'>handle</span>(),
                                <span class='ident'>ffi</span>::<span class='ident'>SQL_ATTR_ODBC_VERSION</span>,
-                               <span class='ident'>ffi</span>::<span class='ident'>SQL_OV_ODBC3</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>std</span>::<span class='ident'>os</span>::<span class='ident'>raw</span>::<span class='ident'>c_void</span>,
+                               <span class='ident'>ffi</span>::<span class='ident'>SQL_OV_ODBC3</span> <span class='kw'>as</span> <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>std</span>::<span class='ident'>os</span>::<span class='ident'>raw</span>::<span class='ident'>c_void</span>,
                                <span class='number'>0</span>)
         } {
             <span class='ident'>ffi</span>::<span class='ident'>SQL_SUCCESS</span> <span class='op'>=&gt;</span> <span class='ident'>Return</span>::<span class='ident'>Success</span>(()),

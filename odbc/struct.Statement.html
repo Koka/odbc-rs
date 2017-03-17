@@ -9,6 +9,7 @@
 
     <title>odbc::Statement - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
     
@@ -49,7 +50,7 @@
                    </a>
                </span><a class='srclink' href='../src/odbc/statement.rs.html#14-20' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Statement&lt;'a, S&gt; { /* fields omitted */ }</pre><div class='docblock'><p>RAII wrapper around ODBC statement</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, <a class='enum' href='../odbc/enum.Allocated.html' title='odbc::Allocated'>Allocated</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/statement.rs.html#40-59' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, <a class='enum' href='../odbc/enum.Allocated.html' title='odbc::Allocated'>Allocated</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/statement.rs.html#45-64' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.with_parent' class='method'><span id='with_parent.v' class='invisible'><code>fn <a href='#method.with_parent' class='fnname'>with_parent</a>(ds: &amp;'a <a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;<a class='enum' href='../odbc/enum.Connected.html' title='odbc::Connected'>Connected</a>&gt;) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;Self&gt;</code></span></h4>
 <h4 id='method.tables' class='method'><span id='tables.v' class='invisible'><code>fn <a href='#method.tables' class='fnname'>tables</a>&lt;'b&gt;(self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, <a class='enum' href='../odbc/enum.Executed.html' title='odbc::Executed'>Executed</a>&gt;&gt;</code></span></h4>
 <h4 id='method.exec_direct' class='method'><span id='exec_direct.v' class='invisible'><code>fn <a href='#method.exec_direct' class='fnname'>exec_direct</a>(self, statement_text: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, <a class='enum' href='../odbc/enum.Executed.html' title='odbc::Executed'>Executed</a>&gt;&gt;</code></span></h4>
@@ -57,7 +58,7 @@
 if any parameters exist in the statement.</p>
 
 <p><code>SQLExecDirect</code> is the fastest way to submit an SQL statement for one-time execution.</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, <a class='enum' href='../odbc/enum.Executed.html' title='odbc::Executed'>Executed</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/statement.rs.html#61-82' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, <a class='enum' href='../odbc/enum.Executed.html' title='odbc::Executed'>Executed</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/statement.rs.html#66-89' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.num_result_cols' class='method'><span id='num_result_cols.v' class='invisible'><code>fn <a href='#method.num_result_cols' class='fnname'>num_result_cols</a>(&amp;self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i16.html'>i16</a>&gt;</code></span></h4>
 <div class='docblock'><p>The number of columns in a result set</p>
 
@@ -68,7 +69,7 @@ positioned state. If the statement does not return columns the result will be 0.
 
 <h1 id='return' class='section-header'><a href='#return'>Return</a></h1>
 <p>Returns false on the last row</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a, S&gt; <a class='trait' href='../odbc/trait.Handle.html' title='odbc::Handle'>Handle</a> for <a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, S&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/statement.rs.html#27-32' title='goto source code'>[src]</a></span></h3>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a, S&gt; <a class='trait' href='../odbc/trait.Handle.html' title='odbc::Handle'>Handle</a> for <a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, S&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/statement.rs.html#28-33' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.To' class='type'><span id='To.t' class='invisible'><code>type <a href='../odbc/trait.Handle.html#associatedtype.To' class='type'>To</a> = <a class='enum' href='../odbc_ffi/enum.Stmt.html' title='odbc_ffi::Stmt'>Stmt</a></code></span></h4>
 <h4 id='method.handle' class='method'><span id='handle.v' class='invisible'><code>unsafe fn <a href='../odbc/trait.Handle.html#tymethod.handle' class='fnname'>handle</a>(&amp;self) -&gt; <a class='type' href='../odbc_ffi/type.SQLHSTMT.html' title='odbc_ffi::SQLHSTMT'>SQLHSTMT</a></code></span></h4>
 <div class='docblock'><p>Returns a valid handle to the odbc type.</p>

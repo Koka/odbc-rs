@@ -9,6 +9,7 @@
 
     <title>mod.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../main.css">
     
@@ -93,6 +94,17 @@
 <span id="49">49</span>
 <span id="50">50</span>
 <span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Implements the ODBC Environment</span>
 <span class='kw'>mod</span> <span class='ident'>set_version</span>;
@@ -103,9 +115,9 @@
 <span class='kw'>use</span> <span class='ident'>std</span>;
 
 <span class='doccomment'>/// Environment state used to represent that no odbc version has been set.</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>NoVersion</span>{}
+<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>NoVersion</span> {}
 <span class='doccomment'>/// Environment state used to represent that environment has been set to odbc version 3</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Version3</span>{}
+<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Version3</span> {}
 
 <span class='doccomment'>/// Handle to an ODBC Environment</span>
 <span class='doccomment'>///</span>
@@ -113,7 +125,7 @@
 <span class='doccomment'>/// must outlive all connections created with it</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Environment</span><span class='op'>&lt;</span><span class='ident'>V</span><span class='op'>&gt;</span> {
     <span class='ident'>raii</span>: <span class='ident'>Raii</span><span class='op'>&lt;</span><span class='ident'>ffi</span>::<span class='ident'>Env</span><span class='op'>&gt;</span>,
-    <span class='ident'>state</span> : <span class='ident'>PhantomData</span><span class='op'>&lt;</span><span class='ident'>V</span><span class='op'>&gt;</span>,
+    <span class='ident'>state</span>: <span class='ident'>PhantomData</span><span class='op'>&lt;</span><span class='ident'>V</span><span class='op'>&gt;</span>,
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>V</span><span class='op'>&gt;</span> <span class='ident'>Handle</span> <span class='kw'>for</span> <span class='ident'>Environment</span><span class='op'>&lt;</span><span class='ident'>V</span><span class='op'>&gt;</span> {
@@ -130,10 +142,18 @@
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='ident'>std</span>::<span class='ident'>result</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Environment</span><span class='op'>&lt;</span><span class='ident'>NoVersion</span><span class='op'>&gt;</span>, <span class='ident'>EnvAllocError</span><span class='op'>&gt;</span> {
 
         <span class='kw'>match</span> <span class='kw'>unsafe</span> { <span class='ident'>Raii</span>::<span class='ident'>new</span>() } {
-            <span class='ident'>Return</span>::<span class='ident'>Success</span>(<span class='ident'>env</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='ident'>Environment</span> { <span class='ident'>raii</span>: <span class='ident'>env</span>, <span class='ident'>state</span>: <span class='ident'>PhantomData</span> }),
+            <span class='ident'>Return</span>::<span class='ident'>Success</span>(<span class='ident'>env</span>) <span class='op'>=&gt;</span> {
+                <span class='prelude-val'>Ok</span>(<span class='ident'>Environment</span> {
+                    <span class='ident'>raii</span>: <span class='ident'>env</span>,
+                    <span class='ident'>state</span>: <span class='ident'>PhantomData</span>,
+                })
+            }
             <span class='ident'>Return</span>::<span class='ident'>SuccessWithInfo</span>(<span class='ident'>env</span>) <span class='op'>=&gt;</span> {
                 <span class='macro'>warn</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>env</span>.<span class='ident'>get_diag_rec</span>(<span class='number'>1</span>).<span class='ident'>unwrap</span>());
-                <span class='prelude-val'>Ok</span>(<span class='ident'>Environment</span> { <span class='ident'>raii</span>: <span class='ident'>env</span>, <span class='ident'>state</span>: <span class='ident'>PhantomData</span> })
+                <span class='prelude-val'>Ok</span>(<span class='ident'>Environment</span> {
+                    <span class='ident'>raii</span>: <span class='ident'>env</span>,
+                    <span class='ident'>state</span>: <span class='ident'>PhantomData</span>,
+                })
             }
             <span class='ident'>Return</span>::<span class='ident'>Error</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>EnvAllocError</span>),
         }
@@ -142,7 +162,10 @@
     <span class='doccomment'>/// Tells the driver(s) that we will use features of up to ODBC version 3</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_odbc_version_3</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Environment</span><span class='op'>&lt;</span><span class='ident'>Version3</span><span class='op'>&gt;&gt;</span> {
         <span class='self'>self</span>.<span class='ident'>raii</span>.<span class='ident'>set_odbc_version_3</span>().<span class='ident'>into_result</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>)<span class='question-mark'>?</span>;
-        <span class='prelude-val'>Ok</span>(<span class='ident'>Environment</span>{ <span class='ident'>raii</span> : <span class='self'>self</span>.<span class='ident'>raii</span>, <span class='ident'>state</span>: <span class='ident'>PhantomData</span> })
+        <span class='prelude-val'>Ok</span>(<span class='ident'>Environment</span> {
+            <span class='ident'>raii</span>: <span class='self'>self</span>.<span class='ident'>raii</span>,
+            <span class='ident'>state</span>: <span class='ident'>PhantomData</span>,
+        })
     }
 }
 </pre>

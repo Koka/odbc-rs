@@ -9,6 +9,7 @@
 
     <title>odbc::Environment - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
     
@@ -52,7 +53,7 @@
 
 <p>Creating an instance of this type is the first thing you do then using ODBC. The environment
 must outlive all connections created with it</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.Version3.html' title='odbc::Version3'>Version3</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/environment/list_data_sources.rs.html#34-187' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.Version3.html' title='odbc::Version3'>Version3</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/environment/list_data_sources.rs.html#33-186' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.drivers' class='method'><span id='drivers.v' class='invisible'><code>fn <a href='#method.drivers' class='fnname'>drivers</a>(&amp;self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../odbc/struct.DriverInfo.html' title='odbc::DriverInfo'>DriverInfo</a>&gt;&gt;</code></span></h4>
 <div class='docblock'><p>Stores all driver description and attributes in a Vec</p>
 </div><h4 id='method.data_sources' class='method'><span id='data_sources.v' class='invisible'><code>fn <a href='#method.data_sources' class='fnname'>data_sources</a>(&amp;self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../odbc/struct.DataSourceInfo.html' title='odbc::DataSourceInfo'>DataSourceInfo</a>&gt;&gt;</code></span></h4>
@@ -61,7 +62,7 @@ must outlive all connections created with it</p>
 <div class='docblock'><p>Stores all sytem data source server names and descriptions in a Vec</p>
 </div><h4 id='method.user_data_sources' class='method'><span id='user_data_sources.v' class='invisible'><code>fn <a href='#method.user_data_sources' class='fnname'>user_data_sources</a>(&amp;self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../odbc/struct.DataSourceInfo.html' title='odbc::DataSourceInfo'>DataSourceInfo</a>&gt;&gt;</code></span></h4>
 <div class='docblock'><p>Stores all user data source server names and descriptions in a Vec</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.NoVersion.html' title='odbc::NoVersion'>NoVersion</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/environment/mod.rs.html#30-51' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.NoVersion.html' title='odbc::NoVersion'>NoVersion</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/environment/mod.rs.html#30-62' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.new' class='method'><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.NoVersion.html' title='odbc::NoVersion'>NoVersion</a>&gt;, <a class='struct' href='../odbc/struct.EnvAllocError.html' title='odbc::EnvAllocError'>EnvAllocError</a>&gt;</code></span></h4>
 <div class='docblock'><p>Allocates a new ODBC Environment</p>
 

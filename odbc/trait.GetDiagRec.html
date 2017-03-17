@@ -9,6 +9,7 @@
 
     <title>odbc::GetDiagRec - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
     
@@ -53,14 +54,14 @@
 }</pre>
             <h2 id='required-methods'>Required Methods</h2>
             <div class='methods'>
-        <h3 id='tymethod.get_diag_rec' class='method stab '><span id='get_diag_rec.v' class='invisible'><code>fn <a href='#tymethod.get_diag_rec' class='fnname'>get_diag_rec</a>(&amp;self, record_number: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i16.html'>i16</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../odbc/struct.DiagnosticRecord.html' title='odbc::DiagnosticRecord'>DiagnosticRecord</a>&gt;</code></span></h3><div class='docblock'><p>Retrieves a diagnostic record</p>
+        <h3 id='tymethod.get_diag_rec' class='method'><span id='get_diag_rec.v' class='invisible'><code>fn <a href='#tymethod.get_diag_rec' class='fnname'>get_diag_rec</a>(&amp;self, record_number: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i16.html'>i16</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../odbc/struct.DiagnosticRecord.html' title='odbc::DiagnosticRecord'>DiagnosticRecord</a>&gt;</code></span></h3><div class='docblock'><p>Retrieves a diagnostic record</p>
 
 <p><code>record_number</code> - Record numbers start at one. If you pass an number &lt; 1 the function will
 panic. If no record is available for the number specified none is returned.</p>
 </div></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>
-    <li><code>impl&lt;H&gt; GetDiagRec for H <span class='where'>where H: <a class='trait' href='../odbc/trait.Handle.html' title='odbc::Handle'>Handle</a>, H::<a class='trait' href='../odbc/trait.Handle.html' title='odbc::Handle'>To</a>: OdbcObject</span></code></li>
+    <li><code>impl&lt;H&gt; GetDiagRec for H <span class='where fmt-newline'>where H: <a class='trait' href='../odbc/trait.Handle.html' title='odbc::Handle'>Handle</a>, H::<a class='trait' href='../odbc/trait.Handle.html' title='odbc::Handle'>To</a>: OdbcObject</span></code></li>
 </ul><script type="text/javascript" async
                          src="../implementors/odbc/trait.GetDiagRec.js">
                  </script></section>

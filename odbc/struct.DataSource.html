@@ -9,6 +9,7 @@
 
     <title>odbc::DataSource - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
     
@@ -54,7 +55,7 @@
 compile time. Every new <code>DataSource</code> starts out as <code>Disconnected</code>. To do execute a query it
 needs to be connected. You can achieve this by calling e.g. <code>connect</code> and captuer the result in
 a new binding which will be of type <code>DataSource::&lt;Connected&gt;</code>.</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, <a class='enum' href='../odbc/enum.Disconnected.html' title='odbc::Disconnected'>Disconnected</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/data_source.rs.html#71-102' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, <a class='enum' href='../odbc/enum.Disconnected.html' title='odbc::Disconnected'>Disconnected</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/data_source.rs.html#71-112' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.with_parent' class='method'><span id='with_parent.v' class='invisible'><code>fn <a href='#method.with_parent' class='fnname'>with_parent</a>(env: &amp;'a <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.Version3.html' title='odbc::Version3'>Version3</a>&gt;)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, <a class='enum' href='../odbc/enum.Disconnected.html' title='odbc::Disconnected'>Disconnected</a>&gt;&gt;</code></span></h4>
 <div class='docblock'><p>Allocate an ODBC data source</p>
 
@@ -72,7 +73,7 @@ a new binding which will be of type <code>DataSource::&lt;Connected&gt;</code>.<
 <li><code>pwd</code> - Authentication (usually password)</li>
 </ul>
 </div><h4 id='method.connect_with_connection_string' class='method'><span id='connect_with_connection_string.v' class='invisible'><code>fn <a href='#method.connect_with_connection_string' class='fnname'>connect_with_connection_string</a>(self,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; connection_str: &amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, <a class='enum' href='../odbc/enum.Connected.html' title='odbc::Connected'>Connected</a>&gt;&gt;</code></span></h4>
-</div><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, <a class='enum' href='../odbc/enum.Connected.html' title='odbc::Connected'>Connected</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/data_source.rs.html#104-121' title='goto source code'>[src]</a></span></h3>
+</div><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, <a class='enum' href='../odbc/enum.Connected.html' title='odbc::Connected'>Connected</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/data_source.rs.html#114-135' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.read_only' class='method'><span id='read_only.v' class='invisible'><code>fn <a href='#method.read_only' class='fnname'>read_only</a>(&amp;self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>&gt;</code></span></h4>
 <div class='docblock'><p><code>true</code> if the data source is set to READ ONLY mode, <code>false</code> otherwise.</p>
 
