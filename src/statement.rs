@@ -86,6 +86,40 @@ impl<'a> Statement<'a, Executed> {
             Ok(None)
         }
     }
+
+    /// Call this method to reuse the statement to execute another query.
+    ///
+    /// Only call this method if you have already read the result set returned by the previous
+    /// query, or if you do no not intend to read it.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use odbc::*;
+    /// # fn reuse () -> Result<()> {
+    /// let env = Environment::new().unwrap().set_odbc_version_3()?;
+    /// let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "")?;
+    /// let stmt = Statement::with_parent(&conn)?;
+    /// let stmt = stmt.exec_direct("CREATE TABLE STAGE (A TEXT, B TEXT);")?;
+    /// let stmt = stmt.close_cursor()?;
+    /// let stmt = stmt.exec_direct("INSERT INTO STAGE (A, B) VALUES ('Hello', 'World');")?;
+    /// let stmt = stmt.close_cursor()?;
+    /// let mut stmt = stmt.exec_direct("SELECT A, B FROM STAGE;")?;
+    /// {
+    ///     let mut cursor = stmt.fetch().unwrap().unwrap();
+    ///     assert!(cursor.get_data(1)?.unwrap() == "Hello");
+    ///     assert!(cursor.get_data(2)?.unwrap() == "World");
+    /// }
+    /// let stmt = stmt.close_cursor()?;
+    /// stmt.exec_direct("DROP TABLE STAGE;")?;
+    /// # Ok(())
+    /// # };
+    /// # reuse().unwrap();
+    /// ```
+    pub fn close_cursor(mut self) -> Result<Statement<'a, Allocated>> {
+        self.raii.close_cursor().into_result(&self)?;
+        Ok(Statement::with_raii(self.raii))
+    }
 }
 
 impl<'a, 'b> Cursor<'a, 'b> {
@@ -229,7 +263,18 @@ impl Raii<ffi::Stmt> {
                 }
                 ffi::SQL_ERROR => Return::Error,
                 ffi::SQL_NO_DATA => panic!("SQLGetData has already returned the colmun data"),
-                _ => panic!("unexpected return value from SQLGetData"),
+                r => panic!("unexpected return value from SQLGetData: {:?}", r),
+            }
+        }
+    }
+
+    fn close_cursor(&mut self) -> Return<()> {
+        unsafe {
+            match ffi::SQLCloseCursor(self.handle()) {
+                ffi::SQL_SUCCESS => Return::Success(()),
+                ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
+                ffi::SQL_ERROR => Return::Error,
+                r => panic!("unexpected return value from SQLCloseCursor: {:?}", r),
             }
         }
     }

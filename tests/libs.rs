@@ -109,6 +109,26 @@ fn test_direct_select() {
     assert!(check);
 }
 
+#[test]
+fn reuse_statement() {
+    let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
+    let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
+    let stmt = Statement::with_parent(&conn).unwrap();
+
+    let stmt = stmt.exec_direct("CREATE TABLE STAGE (A TEXT, B TEXT);").unwrap();
+    let stmt = stmt.close_cursor().unwrap();
+    let stmt = stmt.exec_direct("INSERT INTO STAGE (A, B) VALUES ('Hello', 'World');").unwrap();
+    let stmt = stmt.close_cursor().unwrap();
+    let mut stmt = stmt.exec_direct("SELECT A, B FROM STAGE;").unwrap();
+    {
+        let mut cursor = stmt.fetch().unwrap().unwrap();
+        assert!(cursor.get_data(1).unwrap().unwrap() == "Hello");
+        assert!(cursor.get_data(2).unwrap().unwrap() == "World");
+    }
+    let stmt = stmt.close_cursor().unwrap();
+    stmt.exec_direct("DROP TABLE STAGE;").unwrap();
+}
+
 
 // These tests query the results of catalog functions. These results are only likely to match the
 // expectation on the travis.ci build on linux. Therefore we limit compilation and execution of
