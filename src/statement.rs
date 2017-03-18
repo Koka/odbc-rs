@@ -121,6 +121,8 @@ impl<'a> Statement<'a, HasResult> {
     /// let conn = DataSource::with_parent(&env)?.connect("TestDataSource", "", "")?;
     /// let stmt = Statement::with_parent(&conn)?;
     /// let stmt = match stmt.exec_direct("CREATE TABLE STAGE (A TEXT, B TEXT);")?{
+    ///     // Some drivers will return an empty result set. We need to close it before we can use
+    ///     // statement again.
     ///     Data(stmt) => stmt.close_cursor()?,
     ///     NoData(stmt) => stmt,
     /// };
