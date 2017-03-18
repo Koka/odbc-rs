@@ -12,7 +12,7 @@ license = "MIT"
 categories = ["api-bindings", "database"]
 
 [dependencies]
-odbc-ffi = "0.2.2"
+odbc-ffi = "0.2.3"
 log = "0.3.7"
 
 [dev-dependencies]

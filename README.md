@@ -1,4 +1,5 @@
-# Rust ODBC FFI binding
+% ODBC
+# ODBC wrapper for safe idiomatic Rust
 
 Library for writing [ODBC](https://msdn.microsoft.com/en-us/library/ms710154.aspx) applications in Rust.
 
@@ -47,17 +48,20 @@ fn execute_statement(mut conn: &mut DataSource<Connected>) -> Result<()> {
     println!("Please enter SQL statement string: ");
     io::stdin().read_line(&mut sql_text).unwrap();
 
-    let mut stmt = stmt.exec_direct(&sql_text)?;
-    let cols = stmt.num_result_cols()?;
-
-    while let Some(mut cursor) = stmt.fetch()? {
-        for i in 1..(cols + 1) {
-            match cursor.get_data(i as u16)? {
-                Some(val) => print!(" {}", val),
-                None => print!(" NULL"),
+    match stmt.exec_direct(&sql_text)?{
+        Data(mut stmt) =>{
+            let cols = stmt.num_result_cols()?;
+            while let Some(mut cursor) = stmt.fetch()? {
+                for i in 1..(cols + 1) {
+                    match cursor.get_data(i as u16)? {
+                        Some(val) => print!(" {}", val),
+                        None => print!(" NULL"),
+                    }
+                }
+                println!("");
             }
         }
-        println!("");
+        NoData(_) => println!("Query executed, no data returned")
     }
 
     Ok(())
