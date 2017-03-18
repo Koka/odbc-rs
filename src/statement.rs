@@ -7,8 +7,25 @@ use std;
 
 /// `Statement` state used to represent a freshly allocated connection
 pub enum Allocated {}
-/// `Statement` state used to represet an executed statement
-pub enum Executed {}
+/// `Statement` state used to represent a statement with a result set cursor
+///
+/// A statement is most likely to enter this state after a `SELECT` query.
+pub enum HasResult {}
+/// `Statement` state used to represent a statement with no result set
+///
+/// A statement is likely to enter this state after executing e.g. a `CREATE TABLE` statement
+type NoResult = Allocated; // pub enum NoResult {}
+
+/// Holds a `Statement` after execution of a query.Allocated
+///
+/// A executed statement may be in one of two states. Either the statement has yielded a result set
+/// or not. Keep in mind that some ODBC drivers just yield empty result sets on e.g. `INSERT`
+/// Statements
+pub enum Executed<'a> {
+    Data(Statement<'a, HasResult>),
+    NoData(Statement<'a, NoResult>),
+}
+pub use Executed::*;
 
 /// RAII wrapper around ODBC statement
 pub struct Statement<'a, S> {
@@ -21,7 +38,7 @@ pub struct Statement<'a, S> {
 
 /// Used to retrieve data from the fields of a query resul
 pub struct Cursor<'a, 'b: 'a> {
-    stmt: &'a mut Statement<'b, Executed>,
+    stmt: &'a mut Statement<'b, HasResult>,
     buffer: [u8; 512],
 }
 
@@ -48,7 +65,7 @@ impl<'a> Statement<'a, Allocated> {
         Ok(Self::with_raii(raii))
     }
 
-    pub fn tables<'b>(mut self) -> Result<Statement<'a, Executed>> {
+    pub fn tables<'b>(mut self) -> Result<Statement<'a, HasResult>> {
         self.raii.tables().into_result(&self)?;
         Ok(Statement::with_raii(self.raii))
     }
@@ -57,13 +74,16 @@ impl<'a> Statement<'a, Allocated> {
     /// if any parameters exist in the statement.
     ///
     /// `SQLExecDirect` is the fastest way to submit an SQL statement for one-time execution.
-    pub fn exec_direct(mut self, statement_text: &str) -> Result<Statement<'a, Executed>> {
-        self.raii.exec_direct(statement_text).into_result(&self)?;
-        Ok(Statement::with_raii(self.raii))
+    pub fn exec_direct(mut self, statement_text: &str) -> Result<Executed<'a>> {
+        if self.raii.exec_direct(statement_text).into_result(&self)? {
+            Ok(Executed::Data(Statement::with_raii(self.raii)))
+        } else {
+            Ok(Executed::NoData(Statement::with_raii(self.raii)))
+        }
     }
 }
 
-impl<'a> Statement<'a, Executed> {
+impl<'a> Statement<'a, HasResult> {
     /// The number of columns in a result set
     ///
     /// Can be called successfully only when the statement is in the prepared, executed, or
@@ -98,25 +118,18 @@ impl<'a> Statement<'a, Executed> {
     /// # use odbc::*;
     /// # fn reuse () -> Result<()> {
     /// let env = Environment::new().unwrap().set_odbc_version_3()?;
-    /// let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "")?;
+    /// let conn = DataSource::with_parent(&env)?.connect("TestDataSource", "", "")?;
     /// let stmt = Statement::with_parent(&conn)?;
-    /// let stmt = stmt.exec_direct("CREATE TABLE STAGE (A TEXT, B TEXT);")?;
-    /// let stmt = stmt.close_cursor()?;
+    /// let stmt = match stmt.exec_direct("CREATE TABLE STAGE (A TEXT, B TEXT);")?{
+    ///     Data(stmt) => stmt.close_cursor()?,
+    ///     NoData(stmt) => stmt,
+    /// };
     /// let stmt = stmt.exec_direct("INSERT INTO STAGE (A, B) VALUES ('Hello', 'World');")?;
-    /// let stmt = stmt.close_cursor()?;
-    /// let mut stmt = stmt.exec_direct("SELECT A, B FROM STAGE;")?;
-    /// {
-    ///     let mut cursor = stmt.fetch().unwrap().unwrap();
-    ///     assert!(cursor.get_data(1)?.unwrap() == "Hello");
-    ///     assert!(cursor.get_data(2)?.unwrap() == "World");
-    /// }
-    /// let stmt = stmt.close_cursor()?;
-    /// stmt.exec_direct("DROP TABLE STAGE;")?;
+    /// //...
     /// # Ok(())
     /// # };
-    /// # reuse().unwrap();
     /// ```
-    pub fn close_cursor(mut self) -> Result<Statement<'a, Allocated>> {
+    pub fn close_cursor(mut self) -> Result<Statement<'a, NoResult>> {
         self.raii.close_cursor().into_result(&self)?;
         Ok(Statement::with_raii(self.raii))
     }

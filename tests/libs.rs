@@ -77,7 +77,11 @@ fn test_direct_select() {
     let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
-    let mut stmt = stmt.exec_direct("SELECT TITLE, YEAR FROM MOVIES ORDER BY YEAR").unwrap();
+    let mut stmt = match stmt.exec_direct("SELECT TITLE, YEAR FROM MOVIES ORDER BY YEAR").unwrap() {
+        Data(stmt) => stmt,
+        NoData(_) => panic!("SELECT statement did not return result set!"),
+    };
+
     assert_eq!(stmt.num_result_cols().unwrap(), 2);
 
     #[derive(PartialEq, Debug)]
@@ -115,18 +119,26 @@ fn reuse_statement() {
     let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
-    let stmt = stmt.exec_direct("CREATE TABLE STAGE (A TEXT, B TEXT);").unwrap();
-    let stmt = stmt.close_cursor().unwrap();
-    let stmt = stmt.exec_direct("INSERT INTO STAGE (A, B) VALUES ('Hello', 'World');").unwrap();
-    let stmt = stmt.close_cursor().unwrap();
-    let mut stmt = stmt.exec_direct("SELECT A, B FROM STAGE;").unwrap();
+    let stmt = match stmt.exec_direct("CREATE TABLE STAGE (A TEXT, B TEXT);").unwrap(){
+        Data(stmt) => stmt.close_cursor().unwrap(), //A result set has been returned, we need to close it.
+        NoData(stmt) => stmt,
+    };
+    let stmt = match stmt.exec_direct("INSERT INTO STAGE (A, B) VALUES ('Hello', 'World');").unwrap(){
+        Data(stmt) => stmt.close_cursor().unwrap(),
+        NoData(stmt) => stmt,
+    };
+    if let Data(mut stmt) = stmt.exec_direct("SELECT A, B FROM STAGE;").unwrap()
     {
-        let mut cursor = stmt.fetch().unwrap().unwrap();
-        assert!(cursor.get_data(1).unwrap().unwrap() == "Hello");
-        assert!(cursor.get_data(2).unwrap().unwrap() == "World");
-    }
-    let stmt = stmt.close_cursor().unwrap();
-    stmt.exec_direct("DROP TABLE STAGE;").unwrap();
+        {
+            let mut cursor = stmt.fetch().unwrap().unwrap();
+            assert!(cursor.get_data(1).unwrap().unwrap() == "Hello");
+            assert!(cursor.get_data(2).unwrap().unwrap() == "World");
+        }
+        let stmt = stmt.close_cursor().unwrap();
+        stmt.exec_direct("DROP TABLE STAGE;").unwrap();
+    } else{
+        panic!("SELECT statement returned no result set")
+    };
 }
 
 
