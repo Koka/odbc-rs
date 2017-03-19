@@ -20,9 +20,33 @@ unsafe impl FixedSizeType for i16 {
     }
 }
 
+unsafe impl FixedSizeType for u16 {
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_USHORT
+    }
+}
+
+unsafe impl FixedSizeType for i32 {
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_SLONG
+    }
+}
+
+unsafe impl FixedSizeType for u32 {
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_ULONG
+    }
+}
+
 unsafe impl FixedSizeType for f32 {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_FLOAT
+    }
+}
+
+unsafe impl FixedSizeType for f64 {
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_DOUBLE
     }
 }
 
