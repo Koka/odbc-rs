@@ -87,7 +87,7 @@ fn test_direct_select() {
     #[derive(PartialEq, Debug)]
     struct Movie {
         title: String,
-        year: String,
+        year: i16,
     }
 
     let mut actual = Vec::new();
@@ -101,11 +101,11 @@ fn test_direct_select() {
     let check = actual ==
                 vec![Movie {
                          title: "2001: A Space Odyssey".to_owned(),
-                         year: "1968".to_owned(),
+                         year: 1968,
                      },
                      Movie {
                          title: "Jurassic Park".to_owned(),
-                         year: "1993".to_owned(),
+                         year: 1993,
                      }];
 
     println!("test_direct_select query result: {:?}", actual);
@@ -119,7 +119,7 @@ fn reuse_statement() {
     let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
-    let stmt = match stmt.exec_direct("CREATE TABLE STAGE (A TEXT, B TEXT);").unwrap(){
+    let stmt = match stmt.exec_direct("CREATE TABLE STAGE (A VARCHAR, B VARCHAR);").unwrap(){
         Data(stmt) => stmt.close_cursor().unwrap(), //A result set has been returned, we need to close it.
         NoData(stmt) => stmt,
     };
@@ -131,8 +131,8 @@ fn reuse_statement() {
     {
         {
             let mut cursor = stmt.fetch().unwrap().unwrap();
-            assert!(cursor.get_data(1).unwrap().unwrap() == "Hello");
-            assert!(cursor.get_data(2).unwrap().unwrap() == "World");
+            assert!(cursor.get_data::<String>(1).unwrap().unwrap() == "Hello");
+            assert!(cursor.get_data::<String>(2).unwrap().unwrap() == "World");
         }
         let stmt = stmt.close_cursor().unwrap();
         stmt.exec_direct("DROP TABLE STAGE;").unwrap();
@@ -141,6 +141,26 @@ fn reuse_statement() {
     };
 }
 
+#[test]
+fn c_data_types(){
+    let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
+    let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
+    let stmt = Statement::with_parent(&conn).unwrap();
+    if let Ok(Data(mut cursor)) = stmt.exec_direct("SELECT A, B, C FROM TEST_TYPES;"){
+        if let Ok(Some(mut row)) = cursor.fetch(){
+            let a : String = row.get_data(1).unwrap().unwrap();
+            assert_eq!("Hello, World!".to_owned(), a);
+            let b : i16 = row.get_data(2).unwrap().unwrap();
+            assert_eq!(42i16, b);
+            let c : f32 = row.get_data(3).unwrap().unwrap();
+            assert_eq!(3.14f32, c);
+        } else{
+            panic!("Result set has been empty");
+        }
+    }else{
+        panic!("SELECT did not return result set");
+    }
+}
 
 // These tests query the results of catalog functions. These results are only likely to match the
 // expectation on the travis.ci build on linux. Therefore we limit compilation and execution of

@@ -36,12 +36,12 @@ fn execute_statement(mut conn: &mut DataSource<Connected>) -> Result<()> {
     println!("Please enter SQL statement string: ");
     io::stdin().read_line(&mut sql_text).unwrap();
 
-    match stmt.exec_direct(&sql_text)?{
-        Data(mut stmt) =>{
+    match stmt.exec_direct(&sql_text)? {
+        Data(mut stmt) => {
             let cols = stmt.num_result_cols()?;
             while let Some(mut cursor) = stmt.fetch()? {
                 for i in 1..(cols + 1) {
-                    match cursor.get_data(i as u16)? {
+                    match cursor.get_data::<String>(i as u16)? {
                         Some(val) => print!(" {}", val),
                         None => print!(" NULL"),
                     }
@@ -49,7 +49,7 @@ fn execute_statement(mut conn: &mut DataSource<Connected>) -> Result<()> {
                 println!("");
             }
         }
-        NoData(_) => println!("Query executed, no data returned")
+        NoData(_) => println!("Query executed, no data returned"),
     }
 
     Ok(())
