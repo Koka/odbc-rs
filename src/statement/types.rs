@@ -3,10 +3,12 @@ use {ffi, Handle, Return};
 use std::ptr::null_mut;
 use std;
 
+/// Implemented for fixed size type those representation is directly compatible with ODBC
 pub unsafe trait FixedSizeType: Sized + Default {
     fn c_data_type() -> ffi::SqlCDataType;
 }
 
+/// Indicates that a type can be retrieved using `Cursor::get_data`
 pub unsafe trait Output: Sized {
     fn get_data(stmt: &mut Raii<ffi::Stmt>,
                 col_or_param_num: u16,
