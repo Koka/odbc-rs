@@ -41,21 +41,21 @@ environment:
     - channel: stable
       target: x86_64-pc-windows-msvc
   # Stable 32-bit MSVC
-    - channel: stable
-      target: i686-pc-windows-msvc
+  #  - channel: stable
+  #    target: i686-pc-windows-msvc
   # Beta 64-bit MSVC
     - channel: beta
       target: x86_64-pc-windows-msvc
   # Beta 32-bit MSVC
-    - channel: beta
-      target: i686-pc-windows-msvc
+  #  - channel: beta
+  #    target: i686-pc-windows-msvc
   # Nightly 64-bit MSVC
     - channel: nightly
       target: x86_64-pc-windows-msvc
       #cargoflags: --features "unstable"
   # Nightly 32-bit MSVC
-    - channel: nightly
-      target: i686-pc-windows-msvc
+  #  - channel: nightly
+  #    target: i686-pc-windows-msvc
       #cargoflags: --features "unstable"
 
 ### GNU Toolchains ###
@@ -64,21 +64,21 @@ environment:
     - channel: stable
       target: x86_64-pc-windows-gnu
   # Stable 32-bit GNU
-    - channel: stable
-      target: i686-pc-windows-gnu
+  #  - channel: stable
+  #    target: i686-pc-windows-gnu
   # Beta 64-bit GNU
     - channel: beta
       target: x86_64-pc-windows-gnu
   # Beta 32-bit GNU
-    - channel: beta
-      target: i686-pc-windows-gnu
+  #  - channel: beta
+  #    target: i686-pc-windows-gnu
   # Nightly 64-bit GNU
     - channel: nightly
       target: x86_64-pc-windows-gnu
       #cargoflags: --features "unstable"
   # Nightly 32-bit GNU
-    - channel: nightly
-      target: i686-pc-windows-gnu
+  #  - channel: nightly
+  #    target: i686-pc-windows-gnu
       #cargoflags: --features "unstable"
 
 ### Allowed failures ###
@@ -102,6 +102,26 @@ matrix:
 # For simple configurations, instead of using the build matrix, you can simply set the
 # default-toolchain and default-host manually here.
 install:
+  - ps: |
+      Write-Host "Installing SQLite ODBC Driver:" -ForegroundColor Magenta
+      $sqliteodbc64Path = "$($env:TEMP)\sqliteodbc_w64.exe"
+      $sqliteodbc32Path = "$($env:TEMP)\sqliteodbc.exe"
+      (New-Object Net.WebClient).DownloadFile('http://www.ch-werner.de/sqliteodbc/sqliteodbc_w64.exe', $sqliteodbc64Path)
+      (New-Object Net.WebClient).DownloadFile('http://www.ch-werner.de/sqliteodbc/sqliteodbc.exe', $sqliteodbc32Path)
+      cmd /c start /wait $sqliteodbc64Path /S
+      if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
+      cmd /c start /wait $sqliteodbc32Path /S
+      if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
+  - ps: |
+      Write-Host "Installed ODBC drivers (64-bit):" -ForegroundColor Magenta
+      Get-OdbcDriver -Platform 64-bit | Select-Object -ExpandProperty Name
+  - ps: |
+      Write-Host "Installed ODBC drivers (32-bit):" -ForegroundColor Magenta
+      Get-OdbcDriver -Platform 32-bit | Select-Object -ExpandProperty Name
+  - ps: |
+      Add-OdbcDsn -Name "TestDataSource" -DriverName "SQLite3 ODBC Driver" -DsnType "User" -Platform "32-bit" -SetPropertyValue "Database=./travis/test.db"
+  - ps: |
+      Add-OdbcDsn -Name "TestDataSource64" -DriverName "SQLite3 ODBC Driver" -DsnType "User" -Platform "64-bit" -SetPropertyValue "Database=./travis/test.db"
   - appveyor DownloadFile https://win.rustup.rs/ -FileName rustup-init.exe
   - rustup-init -yv --default-toolchain %channel% --default-host %target%
   - set PATH=%PATH%;%USERPROFILE%\.cargo\bin
