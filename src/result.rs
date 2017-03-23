@@ -3,6 +3,7 @@ use super::{DiagnosticRecord, GetDiagRec};
 use std::fmt::{Display, Formatter};
 use std;
 
+/// Result type returned by most functions in this crate
 pub type Result<T> = std::result::Result<T, DiagnosticRecord>;
 
 #[must_use]

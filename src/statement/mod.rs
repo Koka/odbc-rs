@@ -139,7 +139,7 @@ impl<'a> Statement<'a, HasResult> {
 
 impl<'a, 'b> Cursor<'a, 'b> {
     /// Retrieves data for a single column in the result set
-    pub fn get_data<T>(&mut self, col_or_param_num: u16) -> Result<Option<T>> where T : Output{
+    pub fn get_data<'c, T>(&'c mut self, col_or_param_num: u16) -> Result<Option<T>> where T : Output<'c>{
         T::get_data(&mut self.stmt.raii, col_or_param_num, &mut self.buffer).into_result(self.stmt)
     }
 }
