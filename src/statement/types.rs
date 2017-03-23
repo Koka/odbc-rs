@@ -10,11 +10,11 @@ pub unsafe trait FixedSizeType: Sized + Default {
 }
 
 /// Indicates that a type can be retrieved using `Cursor::get_data`
-pub unsafe trait Output: Sized {
-    fn get_data<'a>(stmt: &mut Raii<ffi::Stmt>,
-                    col_or_param_num: u16,
-                    buffer: &'a mut [u8])
-                    -> Return<Option<Self>>;
+pub unsafe trait Output<'a>: Sized {
+    fn get_data(stmt: &mut Raii<ffi::Stmt>,
+                col_or_param_num: u16,
+                buffer: &'a mut [u8])
+                -> Return<Option<Self>>;
 }
 
 unsafe impl FixedSizeType for u8 {
@@ -53,6 +53,18 @@ unsafe impl FixedSizeType for u32 {
     }
 }
 
+unsafe impl FixedSizeType for i64 {
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_SBIGINT
+    }
+}
+
+unsafe impl FixedSizeType for u64 {
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_UBIGINT
+    }
+}
+
 unsafe impl FixedSizeType for f32 {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_FLOAT
@@ -65,23 +77,32 @@ unsafe impl FixedSizeType for f64 {
     }
 }
 
-unsafe impl<T> Output for T
+unsafe impl<'a, T> Output<'a> for T
     where T: FixedSizeType
 {
     fn get_data(stmt: &mut Raii<ffi::Stmt>,
                 col_or_param_num: u16,
-                _: &mut [u8])
+                _: &'a mut [u8])
                 -> Return<Option<Self>> {
         stmt.get_data_fixed_size(col_or_param_num)
     }
 }
 
-unsafe impl Output for String {
+unsafe impl<'a> Output<'a> for String {
     fn get_data(stmt: &mut Raii<ffi::Stmt>,
                 col_or_param_num: u16,
-                buffer: &mut [u8])
+                buffer: &'a mut [u8])
                 -> Return<Option<Self>> {
         stmt.get_data_string(col_or_param_num, buffer)
+    }
+}
+
+unsafe impl<'a> Output<'a> for &'a str {
+    fn get_data(stmt: &mut Raii<ffi::Stmt>,
+                col_or_param_num: u16,
+                buffer: &'a mut [u8])
+                -> Return<Option<&'a str>> {
+        stmt.get_data_str(col_or_param_num, buffer)
     }
 }
 

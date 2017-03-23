@@ -14,7 +14,7 @@ pub enum Version3 {}
 /// Handle to an ODBC Environment
 ///
 /// Creating an instance of this type is the first thing you do then using ODBC. The environment
-/// must outlive all connections created with it
+/// must outlive all connections created with it.
 pub struct Environment<V> {
     raii: Raii<ffi::Env>,
     state: PhantomData<V>,
@@ -30,7 +30,20 @@ impl<V> Handle for Environment<V> {
 impl Environment<NoVersion> {
     /// Allocates a new ODBC Environment
     ///
-    /// Declares the Application's ODBC Version to be 3
+    /// After creation the `Environment` is in the `NoVersion` state. To do something with it you
+    /// need to set the ODBC Version using `set_odbc_version_3`.
+    ///
+    /// # Example
+    /// ```
+    /// # use odbc::*;
+    /// let env = match Environment::new(){
+    ///     // Successful creation of Environment
+    ///     Ok(env) => env,
+    ///     // Sadly, we do not know the reason for failure, because there is no `Environment` to
+    ///     // to get the `DiagnosticRecord` from.
+    ///     Err(EnvAllocError) => panic!("Could not create an ODBC Environment."),
+    /// };
+    /// ```
     pub fn new() -> std::result::Result<Environment<NoVersion>, EnvAllocError> {
 
         match unsafe { Raii::new() } {

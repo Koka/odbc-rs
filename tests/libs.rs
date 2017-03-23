@@ -1,5 +1,6 @@
 extern crate odbc;
 use odbc::*;
+mod native_types;
 
 #[test]
 fn list_tables() {
@@ -139,27 +140,6 @@ fn reuse_statement() {
     } else{
         panic!("SELECT statement returned no result set")
     };
-}
-
-#[test]
-fn c_data_types(){
-    let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
-    let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
-    let stmt = Statement::with_parent(&conn).unwrap();
-    if let Ok(Data(mut cursor)) = stmt.exec_direct("SELECT A, B, C FROM TEST_TYPES;"){
-        if let Ok(Some(mut row)) = cursor.fetch(){
-            let a : String = row.get_data(1).unwrap().unwrap();
-            assert_eq!("Hello, World!".to_owned(), a);
-            let b : i16 = row.get_data(2).unwrap().unwrap();
-            assert_eq!(42i16, b);
-            let c : f32 = row.get_data(3).unwrap().unwrap();
-            assert_eq!(3.14f32, c);
-        } else{
-            panic!("Result set has been empty");
-        }
-    }else{
-        panic!("SELECT did not return result set");
-    }
 }
 
 // These tests query the results of catalog functions. These results are only likely to match the
