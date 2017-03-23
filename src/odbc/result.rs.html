@@ -109,12 +109,14 @@
 <span id="64">64</span>
 <span id="65">65</span>
 <span id="66">66</span>
+<span id="67">67</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Result types to enabling handling of ODBC Errors</span>
 <span class='kw'>use</span> <span class='kw'>super</span>::{<span class='ident'>DiagnosticRecord</span>, <span class='ident'>GetDiagRec</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::{<span class='ident'>Display</span>, <span class='ident'>Formatter</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>;
 
+<span class='doccomment'>/// Result type returned by most functions in this crate</span>
 <span class='kw'>pub</span> <span class='kw'>type</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>std</span>::<span class='ident'>result</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>DiagnosticRecord</span><span class='op'>&gt;</span>;
 
 <span class='attribute'>#[<span class='ident'>must_use</span>]</span>
