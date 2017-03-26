@@ -15,8 +15,8 @@ macro_rules! test_type {
 
         let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
         let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
-        let mut stmt = Statement::with_parent(&conn).unwrap();
-        stmt.bind_parameter(1, &param).unwrap();
+        let stmt = Statement::with_parent(&conn).unwrap();
+        let stmt = stmt.bind_parameter(1, &param).unwrap();
         if let Ok(Data(mut cursor)) = stmt.exec_direct($c){
             if let Some(mut row) = cursor.fetch().unwrap(){
                 let value : $t = row.get_data(1).unwrap().unwrap();

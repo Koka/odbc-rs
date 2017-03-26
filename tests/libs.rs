@@ -147,9 +147,9 @@ fn reuse_statement() {
 fn execution_with_parameter() {
     let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
     let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
-    let mut stmt = Statement::with_parent(&conn).unwrap();
-
-    stmt.bind_parameter(1, &1968).unwrap();
+    let stmt = Statement::with_parent(&conn).unwrap();
+    let param = 1968;
+    let stmt = stmt.bind_parameter(1, &param).unwrap();
 
     if let Data(mut stmt) = stmt.exec_direct("SELECT TITLE FROM MOVIES WHERE YEAR = ?").unwrap() {
         let mut cursor = stmt.fetch().unwrap().unwrap();

@@ -22,51 +22,53 @@ type NoResult = Allocated; // pub enum NoResult {}
 /// A executed statement may be in one of two states. Either the statement has yielded a result set
 /// or not. Keep in mind that some ODBC drivers just yield empty result sets on e.g. `INSERT`
 /// Statements
-pub enum Executed<'a> {
-    Data(Statement<'a, HasResult>),
-    NoData(Statement<'a, NoResult>),
+pub enum Executed<'a, 'b> {
+    Data(Statement<'a, 'b, HasResult>),
+    NoData(Statement<'a, 'b, NoResult>),
 }
 pub use Executed::*;
 
 /// RAII wrapper around ODBC statement
-pub struct Statement<'a, S> {
+pub struct Statement<'a, 'b, S> {
     raii: Raii<ffi::Stmt>,
     // we use phantom data to tell the borrow checker that we need to keep the data source alive
     // for the lifetime of the statement
     parent: PhantomData<&'a DataSource<'a, Connected>>,
     state: PhantomData<S>,
+    bound: PhantomData<&'b [u8]>,
 }
 
 /// Used to retrieve data from the fields of a query resul
-pub struct Cursor<'a, 'b: 'a> {
-    stmt: &'a mut Statement<'b, HasResult>,
+pub struct Cursor<'a, 'b: 'a, 'c : 'a> {
+    stmt: &'a mut Statement<'b, 'c, HasResult>,
     buffer: [u8; 512],
 }
 
-impl<'a, S> Handle for Statement<'a, S> {
+impl<'a, 'b, S> Handle for Statement<'a, 'b, S> {
     type To = ffi::Stmt;
     unsafe fn handle(&self) -> ffi::SQLHSTMT {
         self.raii.handle()
     }
 }
 
-impl<'a, S> Statement<'a, S> {
+impl<'a, 'b, S> Statement<'a, 'b, S> {
     fn with_raii(raii: Raii<ffi::Stmt>) -> Self {
         Statement {
             raii: raii,
             parent: PhantomData,
             state: PhantomData,
+            bound: PhantomData,
         }
     }
 }
 
-impl<'a> Statement<'a, Allocated> {
+impl<'a, 'b> Statement<'a, 'b, Allocated> {
     pub fn with_parent(ds: &'a DataSource<Connected>) -> Result<Self> {
         let raii = Raii::with_parent(ds).into_result(ds)?;
         Ok(Self::with_raii(raii))
     }
 
-    pub fn tables<'b>(mut self) -> Result<Statement<'a, HasResult>> {
+    pub fn tables(mut self) -> Result<Statement<'a, 'b, HasResult>> {
         self.raii.tables().into_result(&self)?;
         Ok(Statement::with_raii(self.raii))
     }
@@ -75,7 +77,7 @@ impl<'a> Statement<'a, Allocated> {
     /// if any parameters exist in the statement.
     ///
     /// `SQLExecDirect` is the fastest way to submit an SQL statement for one-time execution.
-    pub fn exec_direct(mut self, statement_text: &str) -> Result<Executed<'a>> {
+    pub fn exec_direct(mut self, statement_text: &str) -> Result<Executed<'a, 'b>> {
         if self.raii.exec_direct(statement_text).into_result(&self)? {
             Ok(Executed::Data(Statement::with_raii(self.raii)))
         } else {
@@ -84,7 +86,7 @@ impl<'a> Statement<'a, Allocated> {
     }
 }
 
-impl<'a> Statement<'a, HasResult> {
+impl<'a, 'b> Statement<'a, 'b, HasResult> {
     /// The number of columns in a result set
     ///
     /// Can be called successfully only when the statement is in the prepared, executed, or
@@ -97,7 +99,7 @@ impl<'a> Statement<'a, HasResult> {
     ///
     /// # Return
     /// Returns false on the last row
-    pub fn fetch<'b>(&'b mut self) -> Result<Option<Cursor<'b, 'a>>> {
+    pub fn fetch<'c>(&'c mut self) -> Result<Option<Cursor<'c, 'a, 'b>>> {
         if self.raii.fetch().into_result(self)? {
             Ok(Some(Cursor {
                 stmt: self,
@@ -135,16 +137,16 @@ impl<'a> Statement<'a, HasResult> {
     /// # Ok(())
     /// # };
     /// ```
-    pub fn close_cursor(mut self) -> Result<Statement<'a, NoResult>> {
+    pub fn close_cursor(mut self) -> Result<Statement<'a, 'b, NoResult>> {
         self.raii.close_cursor().into_result(&self)?;
         Ok(Statement::with_raii(self.raii))
     }
 }
 
-impl<'a, 'b> Cursor<'a, 'b> {
+impl<'a, 'b, 'c> Cursor<'a, 'b, 'c> {
     /// Retrieves data for a single column in the result set
-    pub fn get_data<'c, T>(&'c mut self, col_or_param_num: u16) -> Result<Option<T>>
-        where T: Output<'c>
+    pub fn get_data<'d, T>(&'d mut self, col_or_param_num: u16) -> Result<Option<T>>
+        where T: Output<'d>
     {
         T::get_data(&mut self.stmt.raii, col_or_param_num, &mut self.buffer).into_result(self.stmt)
     }
