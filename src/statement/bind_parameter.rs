@@ -6,31 +6,33 @@ pub unsafe trait InputParameter {
     fn column_size(&self) -> ffi::SQLULEN;
     fn decimal_digits(&self) -> ffi::SQLSMALLINT;
     fn value_ptr(&self) -> ffi::SQLPOINTER;
+    fn indicator(&self) -> ffi::SQLLEN;
 }
 
 impl<'a, S> Statement<'a, S> {
-    pub fn bind_parameter(&mut self, parameter_index: u16, value: u32) -> Result<()> {
+    pub fn bind_parameter<T>(&mut self, parameter_index: u16, value: &T) -> Result<()>
+        where T: InputParameter
+    {
         self.raii.bind_input_parameter(parameter_index, value).into_result(self)
     }
 }
 
 impl Raii<ffi::Stmt> {
-    fn bind_input_parameter(&mut self, parameter_index: u16, value: u32) -> Return<()> {
-
-        use std::ptr::null_mut;
-        let indicator = null_mut();
+    fn bind_input_parameter<T>(&mut self, parameter_index: u16, value: &T) -> Return<()>
+        where T: InputParameter
+    {
         match unsafe {
                   ffi::SQLBindParameter(
                 self.handle(),
                 parameter_index,
                 ffi::SQL_PARAM_INPUT,
-                ffi::SQL_C_ULONG,
+                value.c_data_type(),
                 ffi::SQL_UNKNOWN_TYPE,
-                4, // column size
-                0, // decimal digits
-                &value as *const u32 as ffi::SQLPOINTER, // parameter value ptr
+                value.column_size(),
+                value.decimal_digits(),
+                value.value_ptr(),
                 0, // buffer length
-                indicator // str len or ind ptr
+                &value.indicator() as * const ffi::SQLLEN as * mut ffi::SQLLEN// str len or ind ptr
             )
               } {
             ffi::SQL_SUCCESS => Return::Success(()),
@@ -38,6 +40,73 @@ impl Raii<ffi::Stmt> {
             ffi::SQL_ERROR => Return::Error,
             r => panic!("Unexpected return from SQLBindParameter: {:?}", r),
         }
+    }
+}
+
+unsafe impl<'a> InputParameter for &'a str {
+    fn c_data_type(&self) -> ffi::SqlCDataType {
+        ffi::SQL_C_CHAR
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        self.as_bytes().len() as ffi::SQLULEN
+    }
+
+    fn decimal_digits(&self) -> ffi::SQLSMALLINT {
+        0
+    }
+
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self.as_bytes().as_ptr() as ffi::SQLPOINTER
+    }
+
+    fn indicator(&self) -> ffi::SQLLEN {
+        self.as_bytes().len() as ffi::SQLLEN
+    }
+}
+
+unsafe impl InputParameter for String {
+    fn c_data_type(&self) -> ffi::SqlCDataType {
+        ffi::SQL_C_CHAR
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        self.as_bytes().len() as ffi::SQLULEN
+    }
+
+    fn decimal_digits(&self) -> ffi::SQLSMALLINT {
+        0
+    }
+
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self.as_bytes().as_ptr() as ffi::SQLPOINTER
+    }
+
+    fn indicator(&self) -> ffi::SQLLEN {
+        self.as_bytes().len() as ffi::SQLLEN
+    }
+}
+
+unsafe impl InputParameter for u32 {
+    fn c_data_type(&self) -> ffi::SqlCDataType {
+        ffi::SQL_C_ULONG
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        use std::mem::size_of;
+        size_of::<Self>() as ffi::SQLULEN
+    }
+
+    fn decimal_digits(&self) -> ffi::SQLSMALLINT {
+        0
+    }
+
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
+
+    fn indicator(&self) -> ffi::SQLLEN {
+        0
     }
 }
 

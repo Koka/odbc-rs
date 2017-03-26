@@ -149,27 +149,7 @@ fn execution_with_parameter() {
     let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
     let mut stmt = Statement::with_parent(&conn).unwrap();
 
-    // unsafe {
-
-    //     use std::ptr::null_mut;
-
-    //     let mut out = null_mut();
-    //     let mut out2 = null_mut();
-    //     ffi::SQLBindParameter(
-    //         stmt.handle(),
-    //         1, //parameter_index,
-    //         ffi::SQL_PARAM_INPUT,
-    //         ffi::SQL_C_SLONG,
-    //         ffi::SQL_INTEGER,
-    //         0, // column size
-    //         0, // decimal digits
-    //         out, // parameter value ptr
-    //         0, // buffer length
-    //         out2 // str len or ind ptr
-    //     );
-    // }
-
-    stmt.bind_parameter(1, 1968);
+    stmt.bind_parameter(1, &1968).unwrap();
 
     if let Data(mut stmt) = stmt.exec_direct("SELECT TITLE FROM MOVIES WHERE YEAR = ?").unwrap() {
         let mut cursor = stmt.fetch().unwrap().unwrap();
