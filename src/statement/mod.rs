@@ -1,5 +1,6 @@
 
 mod types;
+mod bind_parameter;
 pub use self::types::Output;
 use {ffi, DataSource, Return, Result, Raii, Handle, Connected};
 use ffi::SQLRETURN::*;
@@ -99,9 +100,9 @@ impl<'a> Statement<'a, HasResult> {
     pub fn fetch<'b>(&'b mut self) -> Result<Option<Cursor<'b, 'a>>> {
         if self.raii.fetch().into_result(self)? {
             Ok(Some(Cursor {
-                        stmt: self,
-                        buffer: [0u8; 512],
-                    }))
+                stmt: self,
+                buffer: [0u8; 512],
+            }))
         } else {
             Ok(None)
         }
@@ -109,6 +110,9 @@ impl<'a> Statement<'a, HasResult> {
 
     /// Call this method to reuse the statement to execute another query.
     ///
+    /// For many drivers allocating new statemens is expensive. So reusing a `Statement` is usually
+    /// more efficient than freeing an existing and alloctaing a new one. However to reuse a
+    /// statement any open result sets must be closed.
     /// Only call this method if you have already read the result set returned by the previous
     /// query, or if you do no not intend to read it.
     ///
@@ -139,7 +143,9 @@ impl<'a> Statement<'a, HasResult> {
 
 impl<'a, 'b> Cursor<'a, 'b> {
     /// Retrieves data for a single column in the result set
-    pub fn get_data<'c, T>(&'c mut self, col_or_param_num: u16) -> Result<Option<T>> where T : Output<'c>{
+    pub fn get_data<'c, T>(&'c mut self, col_or_param_num: u16) -> Result<Option<T>>
+        where T: Output<'c>
+    {
         T::get_data(&mut self.stmt.raii, col_or_param_num, &mut self.buffer).into_result(self.stmt)
     }
 }
@@ -163,10 +169,10 @@ impl Raii<ffi::Stmt> {
             panic!("Statement text too long");
         }
         match unsafe {
-                  ffi::SQLExecDirect(self.handle(),
-                                     statement_text.as_ptr(),
-                                     length as ffi::SQLINTEGER)
-              } {
+            ffi::SQLExecDirect(self.handle(),
+                               statement_text.as_ptr(),
+                               length as ffi::SQLINTEGER)
+        } {
             ffi::SQL_SUCCESS => Return::Success(true),
             ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(true),
             ffi::SQL_ERROR => Return::Error,
@@ -221,4 +227,3 @@ impl Raii<ffi::Stmt> {
         }
     }
 }
-

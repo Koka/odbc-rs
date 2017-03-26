@@ -1,18 +1,18 @@
 [package]
 name = "odbc"
-description = "ODBC FFI binding for Rust"
+description = "ODBC wrapper for idiomatic Rust"
 version = "0.4.1"
 authors = ["Konstantin Salikhov <koka58@yandex.ru>"]
 repository = "https://github.com/Koka/odbc-rs"
 documentation = "http://koka.github.io/odbc-rs/odbc/"
 homepage = "https://github.com/Koka/odbc-rs"
 readme = "README.md"
-keywords = ["odbc", "binding", "ffi", "database", "db"]
+keywords = ["odbc", "binding", "sql", "database", "db"]
 license = "MIT"
 categories = ["api-bindings", "database"]
 
 [dependencies]
-odbc-sys = "0.2.5"
+odbc-sys = "0.2.6"
 log = "0.3.7"
 
 [dev-dependencies]

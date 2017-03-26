@@ -5,9 +5,9 @@
 extern crate odbc;
 use odbc::*;
 
-const A : &'static str = "SELECT A FROM TEST_TYPES;";
-const B : &'static str = "SELECT B FROM TEST_TYPES;";
-const C : &'static str = "SELECT C FROM TEST_TYPES;";
+const A: &'static str = "SELECT A FROM TEST_TYPES;";
+const B: &'static str = "SELECT B FROM TEST_TYPES;";
+const C: &'static str = "SELECT C FROM TEST_TYPES;";
 
 macro_rules! test_type {
     ($t:ty, $c:expr, $e:expr) => ({
@@ -28,12 +28,12 @@ macro_rules! test_type {
 }
 
 #[test]
-fn _ref_str(){
+fn _ref_str() {
     test_type!(&str, A, "Hello, World!")
 }
 
 #[test]
-fn _string(){
+fn _string() {
     test_type!(String, A, String::from("Hello, World!"))
 }
 
