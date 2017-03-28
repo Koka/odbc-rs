@@ -48,17 +48,17 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/odbc/statement/mod.rs.html#24-27' title='goto source code'>[src]</a></span></h1>
-<pre class='rust enum'>pub enum Executed&lt;'a&gt; {
-    Data(<a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, <a class='enum' href='../odbc/enum.HasResult.html' title='odbc::HasResult'>HasResult</a>&gt;),
-    NoData(<a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, <a class='enum' href='../odbc/enum.Allocated.html' title='odbc::Allocated'>Allocated</a>&gt;),
+               </span><a class='srclink' href='../src/odbc/statement/mod.rs.html#27-30' title='goto source code'>[src]</a></span></h1>
+<pre class='rust enum'>pub enum Executed&lt;'a, 'b&gt; {
+    Data(<a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, 'b, <a class='enum' href='../odbc/enum.HasResult.html' title='odbc::HasResult'>HasResult</a>&gt;),
+    NoData(<a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, 'b, <a class='enum' href='../odbc/enum.Allocated.html' title='odbc::Allocated'>Allocated</a>&gt;),
 }</pre><div class='docblock'><p>Holds a <code>Statement</code> after execution of a query.Allocated</p>
 
 <p>A executed statement may be in one of two states. Either the statement has yielded a result set
 or not. Keep in mind that some ODBC drivers just yield empty result sets on e.g. <code>INSERT</code>
 Statements</p>
 </div><h2 class='variants'>Variants</h2>
-<span id='variant.Data' class='variant'><span id='Data.v' class='invisible'><code>Data(<a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, <a class='enum' href='../odbc/enum.HasResult.html' title='odbc::HasResult'>HasResult</a>&gt;)</code></span></span><span id='variant.NoData' class='variant'><span id='NoData.v' class='invisible'><code>NoData(<a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, <a class='enum' href='../odbc/enum.Allocated.html' title='odbc::Allocated'>Allocated</a>&gt;)</code></span></span></section>
+<span id='variant.Data' class='variant'><span id='Data.v' class='invisible'><code>Data(<a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, 'b, <a class='enum' href='../odbc/enum.HasResult.html' title='odbc::HasResult'>HasResult</a>&gt;)</code></span></span><span id='variant.NoData' class='variant'><span id='NoData.v' class='invisible'><code>NoData(<a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, 'b, <a class='enum' href='../odbc/enum.Allocated.html' title='odbc::Allocated'>Allocated</a>&gt;)</code></span></span></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>

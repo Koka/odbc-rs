@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.2.5/src/lib.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.2.6/src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
@@ -326,6 +326,35 @@
 <span id="281">281</span>
 <span id="282">282</span>
 <span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! ODBC types those representation is compatible with the ODBC C API.</span>
 <span class='doccomment'>//!</span>
@@ -337,17 +366,20 @@
 <span class='doccomment'>//! ODBC 4.0 is still under development by Microsoft, so these symbols are deactivated by default</span>
 <span class='doccomment'>//! in the cargo.toml</span>
 
-<span class='kw'>mod</span> <span class='ident'>sqlreturn</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>sqlreturn</span>::<span class='kw-2'>*</span>;
-<span class='kw'>mod</span> <span class='ident'>info_type</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>info_type</span>::<span class='kw-2'>*</span>;
-<span class='kw'>mod</span> <span class='ident'>fetch_orientation</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>fetch_orientation</span>::<span class='kw-2'>*</span>;
-<span class='kw'>mod</span> <span class='ident'>attributes</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>attributes</span>::<span class='kw-2'>*</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>os</span>::<span class='ident'>raw</span>::{<span class='ident'>c_void</span>, <span class='ident'>c_short</span>, <span class='ident'>c_ushort</span>, <span class='ident'>c_int</span>};
-<span class='kw'>mod</span> <span class='ident'>c_data_type</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>c_data_type</span>::<span class='kw-2'>*</span>;
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>input_output</span>::<span class='kw-2'>*</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>os</span>::<span class='ident'>raw</span>::<span class='ident'>c_void</span>;
+
+<span class='kw'>mod</span> <span class='ident'>sqlreturn</span>;
+<span class='kw'>mod</span> <span class='ident'>info_type</span>;
+<span class='kw'>mod</span> <span class='ident'>fetch_orientation</span>;
+<span class='kw'>mod</span> <span class='ident'>attributes</span>;
+<span class='kw'>mod</span> <span class='ident'>c_data_type</span>;
+<span class='kw'>mod</span> <span class='ident'>input_output</span>;
 
 <span class='comment'>//These types can never be instantiated in Rust code.</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Obj</span> {}
@@ -363,10 +395,10 @@
 <span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLHDBC</span> <span class='op'>=</span> <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>Dbc</span>;
 <span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLHSTMT</span> <span class='op'>=</span> <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>Stmt</span>;
 
-<span class='doccomment'>/// 16 Bit signed integer</span>
-<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLSMALLINT</span> <span class='op'>=</span> <span class='ident'>c_short</span>;
-<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLUSMALLINT</span> <span class='op'>=</span> <span class='ident'>c_ushort</span>;
-<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLINTEGER</span> <span class='op'>=</span> <span class='ident'>c_int</span>;
+<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLSMALLINT</span> <span class='op'>=</span> <span class='ident'>i16</span>;
+<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLUSMALLINT</span> <span class='op'>=</span> <span class='ident'>u16</span>;
+<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLINTEGER</span> <span class='op'>=</span> <span class='ident'>i32</span>;
+<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLUINTEGER</span> <span class='op'>=</span> <span class='ident'>u32</span>;
 <span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLPOINTER</span> <span class='op'>=</span> <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>c_void</span>;
 <span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLCHAR</span> <span class='op'>=</span> <span class='ident'>u8</span>;
 
@@ -374,6 +406,11 @@
 <span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLLEN</span> <span class='op'>=</span> <span class='ident'>i64</span>;
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>target_pointer_width</span> <span class='op'>=</span> <span class='string'>&quot;32&quot;</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLLEN</span> <span class='op'>=</span> <span class='ident'>SQLINTEGER</span>;
+
+<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>target_pointer_width</span> <span class='op'>=</span> <span class='string'>&quot;64&quot;</span>)]</span>
+<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLULEN</span> <span class='op'>=</span> <span class='ident'>u64</span>;
+<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>target_pointer_width</span> <span class='op'>=</span> <span class='string'>&quot;32&quot;</span>)]</span>
+<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLULEN</span> <span class='op'>=</span> <span class='ident'>SQLUINTEGER</span>;
 
 <span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>SQLHWND</span> <span class='op'>=</span> <span class='ident'>SQLPOINTER</span>;
 
@@ -491,6 +528,11 @@
                          <span class='ident'>text_length</span>: <span class='ident'>SQLINTEGER</span>)
                          <span class='op'>-&gt;</span> <span class='ident'>SQLRETURN</span>;
 
+    <span class='doccomment'>/// Returns the number of columns in a result set</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// # Returns</span>
+    <span class='doccomment'>/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, `SQL_INVALID_HANDLE` or</span>
+    <span class='doccomment'>/// `SQL_STILL_EXECUTING`</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>SQLNumResultCols</span>(<span class='ident'>statement_handle</span>: <span class='ident'>SQLHSTMT</span>,
                             <span class='ident'>column_count_ptr</span>: <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>SQLSMALLINT</span>)
                             <span class='op'>-&gt;</span> <span class='ident'>SQLRETURN</span>;
@@ -609,6 +651,22 @@
     <span class='doccomment'>/// # Returns</span>
     <span class='doccomment'>/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR` or `SQL_INVALID_HANDLE`</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>SQLCloseCursor</span>(<span class='ident'>hstmt</span>: <span class='ident'>SQLHSTMT</span>) <span class='op'>-&gt;</span> <span class='ident'>SQLRETURN</span>;
+
+    <span class='doccomment'>/// Binds a buffer to a parameter marker in an SQL statement</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// # Returns</span>
+    <span class='doccomment'>/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR` or `SQL_INVALID_HANDLE`</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>SQLBindParameter</span>(<span class='ident'>hstmt</span>: <span class='ident'>SQLHSTMT</span>,
+                            <span class='ident'>parameter_number</span>: <span class='ident'>SQLUSMALLINT</span>,
+                            <span class='ident'>input_output_type</span>: <span class='ident'>InputOutput</span>,
+                            <span class='ident'>value_type</span>: <span class='ident'>SqlCDataType</span>,
+                            <span class='ident'>parmeter_type</span>: <span class='ident'>SqlDataType</span>,
+                            <span class='ident'>column_size</span>: <span class='ident'>SQLULEN</span>,
+                            <span class='ident'>decimal_digits</span>: <span class='ident'>SQLSMALLINT</span>,
+                            <span class='ident'>parameter_value_ptr</span>: <span class='ident'>SQLPOINTER</span>,
+                            <span class='ident'>buffer_length</span>: <span class='ident'>SQLLEN</span>,
+                            <span class='ident'>str_len_or_ind_ptr</span>: <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>SQLLEN</span>)
+                            <span class='op'>-&gt;</span> <span class='ident'>SQLRETURN</span>;
 }
 </pre>
 </section>

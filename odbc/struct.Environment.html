@@ -62,7 +62,7 @@ must outlive all connections created with it.</p>
 <div class='docblock'><p>Stores all sytem data source server names and descriptions in a Vec</p>
 </div><h4 id='method.user_data_sources' class='method'><span id='user_data_sources.v' class='invisible'><code>fn <a href='#method.user_data_sources' class='fnname'>user_data_sources</a>(&amp;self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../odbc/struct.DataSourceInfo.html' title='odbc::DataSourceInfo'>DataSourceInfo</a>&gt;&gt;</code></span></h4>
 <div class='docblock'><p>Stores all user data source server names and descriptions in a Vec</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.NoVersion.html' title='odbc::NoVersion'>NoVersion</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/environment/mod.rs.html#30-75' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.NoVersion.html' title='odbc::NoVersion'>NoVersion</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/environment/mod.rs.html#30-87' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.new' class='method'><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.NoVersion.html' title='odbc::NoVersion'>NoVersion</a>&gt;, <a class='struct' href='../odbc/struct.EnvAllocError.html' title='odbc::EnvAllocError'>EnvAllocError</a>&gt;</code></span></h4>
 <div class='docblock'><p>Allocates a new ODBC Environment</p>
 
@@ -80,6 +80,17 @@ need to set the ODBC Version using <code>set_odbc_version_3</code>.</p>
 };</pre>
 </div><h4 id='method.set_odbc_version_3' class='method'><span id='set_odbc_version_3.v' class='invisible'><code>fn <a href='#method.set_odbc_version_3' class='fnname'>set_odbc_version_3</a>(self) -&gt; <a class='type' href='../odbc/type.Result.html' title='odbc::Result'>Result</a>&lt;<a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;<a class='enum' href='../odbc/enum.Version3.html' title='odbc::Version3'>Version3</a>&gt;&gt;</code></span></h4>
 <div class='docblock'><p>Tells the driver(s) that we will use features of up to ODBC version 3</p>
+
+<p>The first thing to do with an ODBC <code>Environment</code> is to set a version.</p>
+
+<h1 id='example-1' class='section-header'><a href='#example-1'>Example</a></h1>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>fn</span> <span class='ident'>do_database_stuff</span>() <span class='op'>-&gt;</span> <span class='ident'>std</span>::<span class='ident'>result</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>std</span>::<span class='ident'>error</span>::<span class='ident'>Error</span><span class='op'>&gt;&gt;</span> {
+    <span class='kw'>use</span> <span class='ident'>odbc</span>::<span class='kw-2'>*</span>;
+    <span class='kw'>let</span> <span class='ident'>env</span> <span class='op'>=</span> <span class='ident'>Environment</span>::<span class='ident'>new</span>()<span class='question-mark'>?</span>.<span class='ident'>set_odbc_version_3</span>()<span class='question-mark'>?</span>; <span class='comment'>// first thing to do</span>
+    <span class='comment'>// ...</span>
+    <span class='prelude-val'>Ok</span>(())
+}</pre>
 </div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;V&gt; <a class='trait' href='../odbc/trait.Handle.html' title='odbc::Handle'>Handle</a> for <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;V&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/environment/mod.rs.html#23-28' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.To' class='type'><span id='To.t' class='invisible'><code>type <a href='../odbc/trait.Handle.html#associatedtype.To' class='type'>To</a> = <a class='enum' href='../odbc_sys/enum.Env.html' title='odbc_sys::Env'>Env</a></code></span></h4>
 <h4 id='method.handle' class='method'><span id='handle.v' class='invisible'><code>unsafe fn <a href='../odbc/trait.Handle.html#tymethod.handle' class='fnname'>handle</a>(&amp;self) -&gt; <a class='type' href='../odbc_sys/type.SQLHENV.html' title='odbc_sys::SQLHENV'>SQLHENV</a></code></span></h4>

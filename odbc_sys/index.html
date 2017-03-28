@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#1-283' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#1-312' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>ODBC types those representation is compatible with the ODBC C API.</p>
 
 <p>This layer has not been created using automatic code generation. It is incomplete, i.e. it does
@@ -101,6 +101,13 @@ in the cargo.toml</p>
                                   title='odbc_sys::InfoType'>InfoType</a></td>
                            <td class='docblock-short'>
                                 <p>Information requested by SQLGetInfo</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.InputOutput.html'
+                                  title='odbc_sys::InputOutput'>InputOutput</a></td>
+                           <td class='docblock-short'>
+                                <p>Used by <code>SQLBindParameter</code>.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -219,6 +226,13 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class='fn' href='fn.SQLBindParameter.html'
+                                  title='odbc_sys::SQLBindParameter'>SQLBindParameter</a></td>
+                           <td class='docblock-short'>
+                                <p>Binds a buffer to a parameter marker in an SQL statement</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class='fn' href='fn.SQLCloseCursor.html'
                                   title='odbc_sys::SQLCloseCursor'>SQLCloseCursor</a></td>
                            <td class='docblock-short'>
@@ -312,7 +326,7 @@ descriptor handle.</p>
                            <td><a class='fn' href='fn.SQLNumResultCols.html'
                                   title='odbc_sys::SQLNumResultCols'>SQLNumResultCols</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>Returns the number of columns in a result set</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -399,7 +413,21 @@ source, including status, transaction state, and error information.</p>
                            <td><a class='type' href='type.SQLSMALLINT.html'
                                   title='odbc_sys::SQLSMALLINT'>SQLSMALLINT</a></td>
                            <td class='docblock-short'>
-                                <p>16 Bit signed integer</p>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='type' href='type.SQLUINTEGER.html'
+                                  title='odbc_sys::SQLUINTEGER'>SQLUINTEGER</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='type' href='type.SQLULEN.html'
+                                  title='odbc_sys::SQLULEN'>SQLULEN</a></td>
+                           <td class='docblock-short'>
+                                
                            </td>
                        </tr>
                        <tr class=' module-item'>

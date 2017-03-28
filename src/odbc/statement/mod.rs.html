@@ -267,10 +267,22 @@
 <span id="222">222</span>
 <span id="223">223</span>
 <span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
 </pre><pre class='rust '>
 
 <span class='kw'>mod</span> <span class='ident'>types</span>;
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>types</span>::<span class='ident'>Output</span>;
+<span class='kw'>mod</span> <span class='ident'>input</span>;
+<span class='kw'>mod</span> <span class='ident'>output</span>;
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>output</span>::<span class='ident'>Output</span>;
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>input</span>::<span class='ident'>InputParameter</span>;
 <span class='kw'>use</span> {<span class='ident'>ffi</span>, <span class='ident'>DataSource</span>, <span class='ident'>Return</span>, <span class='prelude-ty'>Result</span>, <span class='ident'>Raii</span>, <span class='ident'>Handle</span>, <span class='ident'>Connected</span>};
 <span class='kw'>use</span> <span class='ident'>ffi</span>::<span class='ident'>SQLRETURN</span>::<span class='kw-2'>*</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>marker</span>::<span class='ident'>PhantomData</span>;
@@ -291,51 +303,53 @@
 <span class='doccomment'>/// A executed statement may be in one of two states. Either the statement has yielded a result set</span>
 <span class='doccomment'>/// or not. Keep in mind that some ODBC drivers just yield empty result sets on e.g. `INSERT`</span>
 <span class='doccomment'>/// Statements</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Executed</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
-    <span class='ident'>Data</span>(<span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>HasResult</span><span class='op'>&gt;</span>),
-    <span class='ident'>NoData</span>(<span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>NoResult</span><span class='op'>&gt;</span>),
+<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Executed</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span><span class='op'>&gt;</span> {
+    <span class='ident'>Data</span>(<span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>HasResult</span><span class='op'>&gt;</span>),
+    <span class='ident'>NoData</span>(<span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>NoResult</span><span class='op'>&gt;</span>),
 }
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>Executed</span>::<span class='kw-2'>*</span>;
 
 <span class='doccomment'>/// RAII wrapper around ODBC statement</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>S</span><span class='op'>&gt;</span> {
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>S</span><span class='op'>&gt;</span> {
     <span class='ident'>raii</span>: <span class='ident'>Raii</span><span class='op'>&lt;</span><span class='ident'>ffi</span>::<span class='ident'>Stmt</span><span class='op'>&gt;</span>,
     <span class='comment'>// we use phantom data to tell the borrow checker that we need to keep the data source alive</span>
     <span class='comment'>// for the lifetime of the statement</span>
     <span class='ident'>parent</span>: <span class='ident'>PhantomData</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>DataSource</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>Connected</span><span class='op'>&gt;&gt;</span>,
     <span class='ident'>state</span>: <span class='ident'>PhantomData</span><span class='op'>&lt;</span><span class='ident'>S</span><span class='op'>&gt;</span>,
+    <span class='ident'>parameters</span>: <span class='ident'>PhantomData</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;b</span> [<span class='ident'>u8</span>]<span class='op'>&gt;</span>,
 }
 
 <span class='doccomment'>/// Used to retrieve data from the fields of a query resul</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Cursor</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>: <span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
-    <span class='ident'>stmt</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>HasResult</span><span class='op'>&gt;</span>,
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Cursor</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>: <span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;c</span> : <span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
+    <span class='ident'>stmt</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='lifetime'>&#39;c</span>, <span class='ident'>HasResult</span><span class='op'>&gt;</span>,
     <span class='ident'>buffer</span>: [<span class='ident'>u8</span>; <span class='number'>512</span>],
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>S</span><span class='op'>&gt;</span> <span class='ident'>Handle</span> <span class='kw'>for</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>S</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>S</span><span class='op'>&gt;</span> <span class='ident'>Handle</span> <span class='kw'>for</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>S</span><span class='op'>&gt;</span> {
     <span class='kw'>type</span> <span class='ident'>To</span> <span class='op'>=</span> <span class='ident'>ffi</span>::<span class='ident'>Stmt</span>;
     <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>handle</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>ffi</span>::<span class='ident'>SQLHSTMT</span> {
         <span class='self'>self</span>.<span class='ident'>raii</span>.<span class='ident'>handle</span>()
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>S</span><span class='op'>&gt;</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>S</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>S</span><span class='op'>&gt;</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>S</span><span class='op'>&gt;</span> {
     <span class='kw'>fn</span> <span class='ident'>with_raii</span>(<span class='ident'>raii</span>: <span class='ident'>Raii</span><span class='op'>&lt;</span><span class='ident'>ffi</span>::<span class='ident'>Stmt</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> {
         <span class='ident'>Statement</span> {
             <span class='ident'>raii</span>: <span class='ident'>raii</span>,
             <span class='ident'>parent</span>: <span class='ident'>PhantomData</span>,
             <span class='ident'>state</span>: <span class='ident'>PhantomData</span>,
+            <span class='ident'>parameters</span>: <span class='ident'>PhantomData</span>,
         }
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>Allocated</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span><span class='op'>&gt;</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>Allocated</span><span class='op'>&gt;</span> {
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>with_parent</span>(<span class='ident'>ds</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>DataSource</span><span class='op'>&lt;</span><span class='ident'>Connected</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='self'>Self</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>raii</span> <span class='op'>=</span> <span class='ident'>Raii</span>::<span class='ident'>with_parent</span>(<span class='ident'>ds</span>).<span class='ident'>into_result</span>(<span class='ident'>ds</span>)<span class='question-mark'>?</span>;
         <span class='prelude-val'>Ok</span>(<span class='self'>Self</span>::<span class='ident'>with_raii</span>(<span class='ident'>raii</span>))
     }
 
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>tables</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span><span class='op'>&gt;</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>HasResult</span><span class='op'>&gt;&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>tables</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>HasResult</span><span class='op'>&gt;&gt;</span> {
         <span class='self'>self</span>.<span class='ident'>raii</span>.<span class='ident'>tables</span>().<span class='ident'>into_result</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>)<span class='question-mark'>?</span>;
         <span class='prelude-val'>Ok</span>(<span class='ident'>Statement</span>::<span class='ident'>with_raii</span>(<span class='self'>self</span>.<span class='ident'>raii</span>))
     }
@@ -344,7 +358,7 @@
     <span class='doccomment'>/// if any parameters exist in the statement.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// `SQLExecDirect` is the fastest way to submit an SQL statement for one-time execution.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>exec_direct</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>statement_text</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Executed</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>exec_direct</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>statement_text</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Executed</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span><span class='op'>&gt;&gt;</span> {
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>raii</span>.<span class='ident'>exec_direct</span>(<span class='ident'>statement_text</span>).<span class='ident'>into_result</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>)<span class='question-mark'>?</span> {
             <span class='prelude-val'>Ok</span>(<span class='ident'>Executed</span>::<span class='ident'>Data</span>(<span class='ident'>Statement</span>::<span class='ident'>with_raii</span>(<span class='self'>self</span>.<span class='ident'>raii</span>)))
         } <span class='kw'>else</span> {
@@ -353,7 +367,7 @@
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>HasResult</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span><span class='op'>&gt;</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>HasResult</span><span class='op'>&gt;</span> {
     <span class='doccomment'>/// The number of columns in a result set</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Can be called successfully only when the statement is in the prepared, executed, or</span>
@@ -366,12 +380,12 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Return</span>
     <span class='doccomment'>/// Returns false on the last row</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>fetch</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;b</span> <span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Cursor</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='lifetime'>&#39;a</span><span class='op'>&gt;&gt;</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>fetch</span><span class='op'>&lt;</span><span class='lifetime'>&#39;c</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;c</span> <span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Cursor</span><span class='op'>&lt;</span><span class='lifetime'>&#39;c</span>, <span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span><span class='op'>&gt;&gt;</span><span class='op'>&gt;</span> {
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>raii</span>.<span class='ident'>fetch</span>().<span class='ident'>into_result</span>(<span class='self'>self</span>)<span class='question-mark'>?</span> {
             <span class='prelude-val'>Ok</span>(<span class='prelude-val'>Some</span>(<span class='ident'>Cursor</span> {
-                        <span class='ident'>stmt</span>: <span class='self'>self</span>,
-                        <span class='ident'>buffer</span>: [<span class='number'>0u8</span>; <span class='number'>512</span>],
-                    }))
+                <span class='ident'>stmt</span>: <span class='self'>self</span>,
+                <span class='ident'>buffer</span>: [<span class='number'>0u8</span>; <span class='number'>512</span>],
+            }))
         } <span class='kw'>else</span> {
             <span class='prelude-val'>Ok</span>(<span class='prelude-val'>None</span>)
         }
@@ -379,6 +393,9 @@
 
     <span class='doccomment'>/// Call this method to reuse the statement to execute another query.</span>
     <span class='doccomment'>///</span>
+    <span class='doccomment'>/// For many drivers allocating new statemens is expensive. So reusing a `Statement` is usually</span>
+    <span class='doccomment'>/// more efficient than freeing an existing and alloctaing a new one. However to reuse a</span>
+    <span class='doccomment'>/// statement any open result sets must be closed.</span>
     <span class='doccomment'>/// Only call this method if you have already read the result set returned by the previous</span>
     <span class='doccomment'>/// query, or if you do no not intend to read it.</span>
     <span class='doccomment'>///</span>
@@ -401,15 +418,17 @@
     <span class='doccomment'>/// # Ok(())</span>
     <span class='doccomment'>/// # };</span>
     <span class='doccomment'>/// ```</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>close_cursor</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>NoResult</span><span class='op'>&gt;&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>close_cursor</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>NoResult</span><span class='op'>&gt;&gt;</span> {
         <span class='self'>self</span>.<span class='ident'>raii</span>.<span class='ident'>close_cursor</span>().<span class='ident'>into_result</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>)<span class='question-mark'>?</span>;
         <span class='prelude-val'>Ok</span>(<span class='ident'>Statement</span>::<span class='ident'>with_raii</span>(<span class='self'>self</span>.<span class='ident'>raii</span>))
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span><span class='op'>&gt;</span> <span class='ident'>Cursor</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='lifetime'>&#39;c</span><span class='op'>&gt;</span> <span class='ident'>Cursor</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='lifetime'>&#39;c</span><span class='op'>&gt;</span> {
     <span class='doccomment'>/// Retrieves data for a single column in the result set</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_data</span><span class='op'>&lt;</span><span class='lifetime'>&#39;c</span>, <span class='ident'>T</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;c</span> <span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>col_or_param_num</span>: <span class='ident'>u16</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span> <span class='kw'>where</span> <span class='ident'>T</span> : <span class='ident'>Output</span><span class='op'>&lt;</span><span class='lifetime'>&#39;c</span><span class='op'>&gt;</span>{
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_data</span><span class='op'>&lt;</span><span class='lifetime'>&#39;d</span>, <span class='ident'>T</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;d</span> <span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>col_or_param_num</span>: <span class='ident'>u16</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span>
+        <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Output</span><span class='op'>&lt;</span><span class='lifetime'>&#39;d</span><span class='op'>&gt;</span>
+    {
         <span class='ident'>T</span>::<span class='ident'>get_data</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>stmt</span>.<span class='ident'>raii</span>, <span class='ident'>col_or_param_num</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>buffer</span>).<span class='ident'>into_result</span>(<span class='self'>self</span>.<span class='ident'>stmt</span>)
     }
 }
@@ -433,10 +452,10 @@
             <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;Statement text too long&quot;</span>);
         }
         <span class='kw'>match</span> <span class='kw'>unsafe</span> {
-                  <span class='ident'>ffi</span>::<span class='ident'>SQLExecDirect</span>(<span class='self'>self</span>.<span class='ident'>handle</span>(),
-                                     <span class='ident'>statement_text</span>.<span class='ident'>as_ptr</span>(),
-                                     <span class='ident'>length</span> <span class='kw'>as</span> <span class='ident'>ffi</span>::<span class='ident'>SQLINTEGER</span>)
-              } {
+            <span class='ident'>ffi</span>::<span class='ident'>SQLExecDirect</span>(<span class='self'>self</span>.<span class='ident'>handle</span>(),
+                               <span class='ident'>statement_text</span>.<span class='ident'>as_ptr</span>(),
+                               <span class='ident'>length</span> <span class='kw'>as</span> <span class='ident'>ffi</span>::<span class='ident'>SQLINTEGER</span>)
+        } {
             <span class='ident'>ffi</span>::<span class='ident'>SQL_SUCCESS</span> <span class='op'>=&gt;</span> <span class='ident'>Return</span>::<span class='ident'>Success</span>(<span class='bool-val'>true</span>),
             <span class='ident'>ffi</span>::<span class='ident'>SQL_SUCCESS_WITH_INFO</span> <span class='op'>=&gt;</span> <span class='ident'>Return</span>::<span class='ident'>SuccessWithInfo</span>(<span class='bool-val'>true</span>),
             <span class='ident'>ffi</span>::<span class='ident'>SQL_ERROR</span> <span class='op'>=&gt;</span> <span class='ident'>Return</span>::<span class='ident'>Error</span>,
@@ -491,7 +510,6 @@
         }
     }
 }
-
 </pre>
 </section>
     <section id='search' class="content hidden"></section>

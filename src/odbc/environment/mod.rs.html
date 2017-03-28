@@ -118,6 +118,18 @@
 <span id="73">73</span>
 <span id="74">74</span>
 <span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Implements the ODBC Environment</span>
 <span class='kw'>mod</span> <span class='ident'>set_version</span>;
@@ -186,6 +198,18 @@
     }
 
     <span class='doccomment'>/// Tells the driver(s) that we will use features of up to ODBC version 3</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// The first thing to do with an ODBC `Environment` is to set a version.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// # Example</span>
+    <span class='doccomment'>/// ```</span>
+    <span class='doccomment'>/// fn do_database_stuff() -&gt; std::result::Result&lt;(), Box&lt;std::error::Error&gt;&gt; {</span>
+    <span class='doccomment'>///     use odbc::*;</span>
+    <span class='doccomment'>///     let env = Environment::new()?.set_odbc_version_3()?; // first thing to do</span>
+    <span class='doccomment'>///     // ...</span>
+    <span class='doccomment'>///     Ok(())</span>
+    <span class='doccomment'>/// }</span>
+    <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_odbc_version_3</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Environment</span><span class='op'>&lt;</span><span class='ident'>Version3</span><span class='op'>&gt;&gt;</span> {
         <span class='self'>self</span>.<span class='ident'>raii</span>.<span class='ident'>set_odbc_version_3</span>().<span class='ident'>into_result</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>)<span class='question-mark'>?</span>;
         <span class='prelude-val'>Ok</span>(<span class='ident'>Environment</span> {
