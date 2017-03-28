@@ -40,7 +40,7 @@ pub struct Statement<'a, 'b, S> {
     parameters: PhantomData<&'b [u8]>,
 }
 
-/// Used to retrieve data from the fields of a query resul
+/// Used to retrieve data from the fields of a query result
 pub struct Cursor<'a, 'b: 'a, 'c : 'a> {
     stmt: &'a mut Statement<'b, 'c, HasResult>,
     buffer: [u8; 512],
