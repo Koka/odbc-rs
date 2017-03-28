@@ -1,7 +1,9 @@
 
 mod types;
-mod bind_parameter;
-pub use self::types::Output;
+mod input;
+mod output;
+pub use self::output::Output;
+pub use self::input::InputParameter;
 use {ffi, DataSource, Return, Result, Raii, Handle, Connected};
 use ffi::SQLRETURN::*;
 use std::marker::PhantomData;
@@ -35,7 +37,7 @@ pub struct Statement<'a, 'b, S> {
     // for the lifetime of the statement
     parent: PhantomData<&'a DataSource<'a, Connected>>,
     state: PhantomData<S>,
-    bound: PhantomData<&'b [u8]>,
+    parameters: PhantomData<&'b [u8]>,
 }
 
 /// Used to retrieve data from the fields of a query resul
@@ -57,7 +59,7 @@ impl<'a, 'b, S> Statement<'a, 'b, S> {
             raii: raii,
             parent: PhantomData,
             state: PhantomData,
-            bound: PhantomData,
+            parameters: PhantomData,
         }
     }
 }
