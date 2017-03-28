@@ -26,15 +26,15 @@ impl<'a, 'b, S> Statement<'a, 'b, S> {
     /// ```
     /// # use odbc::*;
     /// # fn do_odbc_stuff() -> std::result::Result<(), Box<std::error::Error>> {
-    ///     let env = Environment::new()?.set_odbc_version_3()?;
-    ///     let conn = DataSource::with_parent(&env)?.connect("TestDataSource", "", "")?;
-    ///     let stmt = Statement::with_parent(&conn)?;
-    ///     let param = 1968;
-    ///     let stmt = stmt.bind_parameter(1, &param)?;
-    ///     let sql_text = "SELECT TITLE FROM MOVIES WHERE YEAR = ?";
-    ///     if let Data(mut stmt) = stmt.exec_direct(sql_text)? {
-    ///         // ...
-    ///     }
+    /// let env = Environment::new()?.set_odbc_version_3()?;
+    /// let conn = DataSource::with_parent(&env)?.connect("TestDataSource", "", "")?;
+    /// let stmt = Statement::with_parent(&conn)?;
+    /// let param = 1968;
+    /// let stmt = stmt.bind_parameter(1, &param)?;
+    /// let sql_text = "SELECT TITLE FROM MOVIES WHERE YEAR = ?";
+    /// if let Data(mut stmt) = stmt.exec_direct(sql_text)? {
+    ///     // ...
+    /// }
     /// #   Ok(())
     /// # }
     /// ```
