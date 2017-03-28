@@ -78,7 +78,8 @@ fn test_direct_select() {
     let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
-    let mut stmt = match stmt.exec_direct("SELECT TITLE, YEAR FROM MOVIES ORDER BY YEAR").unwrap() {
+    let mut stmt = match stmt.exec_direct("SELECT TITLE, YEAR FROM MOVIES ORDER BY YEAR")
+        .unwrap() {
         Data(stmt) => stmt,
         NoData(_) => panic!("SELECT statement did not return result set!"),
     };
@@ -94,9 +95,9 @@ fn test_direct_select() {
     let mut actual = Vec::new();
     while let Some(mut cursor) = stmt.fetch().unwrap() {
         actual.push(Movie {
-                        title: cursor.get_data(1).unwrap().unwrap(),
-                        year: cursor.get_data(2).unwrap().unwrap(),
-                    })
+            title: cursor.get_data(1).unwrap().unwrap(),
+            year: cursor.get_data(2).unwrap().unwrap(),
+        })
     }
 
     let check = actual ==
@@ -120,16 +121,16 @@ fn reuse_statement() {
     let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
-    let stmt = match stmt.exec_direct("CREATE TABLE STAGE (A VARCHAR, B VARCHAR);").unwrap(){
+    let stmt = match stmt.exec_direct("CREATE TABLE STAGE (A VARCHAR, B VARCHAR);").unwrap() {
         Data(stmt) => stmt.close_cursor().unwrap(), //A result set has been returned, we need to close it.
         NoData(stmt) => stmt,
     };
-    let stmt = match stmt.exec_direct("INSERT INTO STAGE (A, B) VALUES ('Hello', 'World');").unwrap(){
+    let stmt = match stmt.exec_direct("INSERT INTO STAGE (A, B) VALUES ('Hello', 'World');")
+        .unwrap() {
         Data(stmt) => stmt.close_cursor().unwrap(),
         NoData(stmt) => stmt,
     };
-    if let Data(mut stmt) = stmt.exec_direct("SELECT A, B FROM STAGE;").unwrap()
-    {
+    if let Data(mut stmt) = stmt.exec_direct("SELECT A, B FROM STAGE;").unwrap() {
         {
             let mut cursor = stmt.fetch().unwrap().unwrap();
             assert!(cursor.get_data::<String>(1).unwrap().unwrap() == "Hello");
@@ -137,7 +138,23 @@ fn reuse_statement() {
         }
         let stmt = stmt.close_cursor().unwrap();
         stmt.exec_direct("DROP TABLE STAGE;").unwrap();
-    } else{
+    } else {
+        panic!("SELECT statement returned no result set")
+    };
+}
+
+#[test]
+fn execution_with_parameter() {
+    let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
+    let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
+    let stmt = Statement::with_parent(&conn).unwrap();
+    let param = 1968;
+    let stmt = stmt.bind_parameter(1, &param).unwrap();
+
+    if let Data(mut stmt) = stmt.exec_direct("SELECT TITLE FROM MOVIES WHERE YEAR = ?").unwrap() {
+        let mut cursor = stmt.fetch().unwrap().unwrap();
+        assert!(cursor.get_data::<String>(1).unwrap().unwrap() == "2001: A Space Odyssey");
+    } else {
         panic!("SELECT statement returned no result set")
     };
 }
@@ -210,4 +227,3 @@ fn list_system_data_sources() {
     let expected: [DataSourceInfo; 0] = [];
     assert!(sources.iter().eq(expected.iter()));
 }
-

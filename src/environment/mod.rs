@@ -65,6 +65,18 @@ impl Environment<NoVersion> {
     }
 
     /// Tells the driver(s) that we will use features of up to ODBC version 3
+    ///
+    /// The first thing to do with an ODBC `Environment` is to set a version.
+    ///
+    /// # Example
+    /// ```
+    /// fn do_database_stuff() -> std::result::Result<(), Box<std::error::Error>> {
+    ///     use odbc::*;
+    ///     let env = Environment::new()?.set_odbc_version_3()?; // first thing to do
+    ///     // ...
+    ///     Ok(())
+    /// }
+    /// ```
     pub fn set_odbc_version_3(mut self) -> Result<Environment<Version3>> {
         self.raii.set_odbc_version_3().into_result(&self)?;
         Ok(Environment {
