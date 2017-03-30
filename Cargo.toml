@@ -11,6 +11,10 @@ keywords = ["odbc", "binding", "sql", "database", "db"]
 license = "MIT"
 categories = ["api-bindings", "database"]
 
+[features]
+default = []
+travis = []
+
 [dependencies]
 odbc-sys = "0.2.6"
 log = "0.3.7"

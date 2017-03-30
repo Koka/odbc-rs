@@ -162,7 +162,7 @@ fn execution_with_parameter() {
 // These tests query the results of catalog functions. These results are only likely to match the
 // expectation on the travis.ci build on linux. Therefore we limit compilation and execution of
 // these tests to this platform.
-#[cfg(unix)]
+#[cfg_attr(not(feature = "travis"), ignore)]
 #[test]
 fn list_drivers() {
     let environment = Environment::new().unwrap();
@@ -172,10 +172,10 @@ fn list_drivers() {
     println!("{:?}", drivers);
 
     let expected = ["PostgreSQL ANSI", "PostgreSQL Unicode", "SQLite", "SQLite3"];
-    assert!(drivers.iter().map(|d| &d.description).eq(expected.iter()));
+    assert!(drivers.iter().map(|d| &d.description).contains(expected.iter()));
 }
 
-#[cfg(unix)]
+#[cfg_attr(not(feature = "travis"), ignore)]
 #[test]
 fn list_data_sources() {
     let environment = Environment::new().unwrap();
@@ -192,10 +192,10 @@ fn list_data_sources() {
                         server_name: "TestDataSource".to_owned(),
                         driver: "SQLite3".to_owned(),
                     }];
-    assert!(sources.iter().eq(expected.iter()));
+    assert!(sources.iter().contains(expected.iter()));
 }
 
-#[cfg(unix)]
+#[cfg_attr(not(feature = "travis"), ignore)]
 #[test]
 fn list_user_data_sources() {
     let environment = Environment::new().unwrap();
@@ -212,10 +212,10 @@ fn list_user_data_sources() {
                         server_name: "TestDataSource".to_owned(),
                         driver: "SQLite3".to_owned(),
                     }];
-    assert!(sources.iter().eq(expected.iter()));
+    assert!(sources.iter().contains(expected.iter()));
 }
 
-#[cfg(unix)]
+#[cfg_attr(not(feature = "travis"), ignore)]
 #[test]
 fn list_system_data_sources() {
     let environment = Environment::new().unwrap();
@@ -225,5 +225,5 @@ fn list_system_data_sources() {
     println!("{:?}", sources);
 
     let expected: [DataSourceInfo; 0] = [];
-    assert!(sources.iter().eq(expected.iter()));
+    assert!(sources.iter().contains(expected.iter()));
 }
