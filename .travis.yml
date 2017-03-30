@@ -25,6 +25,8 @@ before_script:
  - export ODBCINI=${PWD}/travis/odbc.ini
  - pip install 'travis-cargo<0.2' --user
  - export PATH=$HOME/.local/bin:$PATH
+script:
+ - cargo test --verbose --features travis
 after_success:
  - travis-cargo coveralls --no-sudo --verify --exclude-pattern .cargo --kcov-options="--coveralls-id=$COVERALLS_ID"
  - ./kcov/build/src/kcov --verify --coveralls-id=$COVERALLS_ID --exclude-pattern=/.cargo target/odbc target/debug/odbc-*
