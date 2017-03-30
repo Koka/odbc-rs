@@ -172,7 +172,7 @@ fn list_drivers() {
     println!("{:?}", drivers);
 
     let expected = ["PostgreSQL ANSI", "PostgreSQL Unicode", "SQLite", "SQLite3"];
-    assert!(drivers.iter().map(|d| &d.description).contains(expected.iter()));
+    assert!(drivers.iter().map(|d| &d.description).eq(expected.iter()));
 }
 
 #[cfg_attr(not(feature = "travis"), ignore)]
