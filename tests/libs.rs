@@ -192,7 +192,7 @@ fn list_data_sources() {
                         server_name: "TestDataSource".to_owned(),
                         driver: "SQLite3".to_owned(),
                     }];
-    assert!(sources.iter().contains(expected.iter()));
+    assert!(sources.iter().eq(expected.iter()));
 }
 
 #[cfg_attr(not(feature = "travis"), ignore)]
@@ -212,7 +212,7 @@ fn list_user_data_sources() {
                         server_name: "TestDataSource".to_owned(),
                         driver: "SQLite3".to_owned(),
                     }];
-    assert!(sources.iter().contains(expected.iter()));
+    assert!(sources.iter().eq(expected.iter()));
 }
 
 #[cfg_attr(not(feature = "travis"), ignore)]
@@ -225,5 +225,5 @@ fn list_system_data_sources() {
     println!("{:?}", sources);
 
     let expected: [DataSourceInfo; 0] = [];
-    assert!(sources.iter().contains(expected.iter()));
+    assert!(sources.iter().eq(expected.iter()));
 }
