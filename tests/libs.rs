@@ -8,10 +8,10 @@ fn list_tables() {
     let env = Environment::new().unwrap();
     let env = env.set_odbc_version_3().unwrap();
     let ds = DataSource::with_parent(&env).unwrap();
-    let mut ds = ds.connect("TestDataSource", "", "").unwrap();
+    let ds = ds.connect("TestDataSource", "", "").unwrap();
     // scope is required (for now) to close statement before disconnecting
     {
-        let statement = Statement::with_parent(&mut ds).unwrap();
+        let statement = Statement::with_parent(&ds).unwrap();
         let statement = statement.tables().unwrap();
         assert_eq!(statement.num_result_cols().unwrap(), 5);
     }
@@ -133,8 +133,8 @@ fn reuse_statement() {
     if let Data(mut stmt) = stmt.exec_direct("SELECT A, B FROM STAGE;").unwrap() {
         {
             let mut cursor = stmt.fetch().unwrap().unwrap();
-            assert!(cursor.get_data::<String>(1).unwrap().unwrap() == "Hello");
-            assert!(cursor.get_data::<String>(2).unwrap().unwrap() == "World");
+            assert_eq!(cursor.get_data::<String>(1).unwrap().unwrap(),"Hello");
+            assert_eq!(cursor.get_data::<String>(2).unwrap().unwrap(), "World");
         }
         let stmt = stmt.close_cursor().unwrap();
         stmt.exec_direct("DROP TABLE STAGE;").unwrap();
@@ -153,7 +153,7 @@ fn execution_with_parameter() {
 
     if let Data(mut stmt) = stmt.exec_direct("SELECT TITLE FROM MOVIES WHERE YEAR = ?").unwrap() {
         let mut cursor = stmt.fetch().unwrap().unwrap();
-        assert!(cursor.get_data::<String>(1).unwrap().unwrap() == "2001: A Space Odyssey");
+        assert_eq!(cursor.get_data::<String>(1).unwrap().unwrap(), "2001: A Space Odyssey");
     } else {
         panic!("SELECT statement returned no result set")
     };

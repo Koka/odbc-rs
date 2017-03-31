@@ -25,12 +25,12 @@ fn connect() -> std::result::Result<(), DiagnosticRecord> {
     println!("Please enter connection string: ");
     io::stdin().read_line(&mut buffer).unwrap();
 
-    let mut conn = conn.connect_with_connection_string(&buffer)?;
-    execute_statement(&mut conn)
+    let conn = conn.connect_with_connection_string(&buffer)?;
+    execute_statement(&conn)
 }
 
-fn execute_statement(mut conn: &mut DataSource<Connected>) -> Result<()> {
-    let stmt = Statement::with_parent(&mut conn)?;
+fn execute_statement(conn: &DataSource<Connected>) -> Result<()> {
+    let stmt = Statement::with_parent(conn)?;
 
     let mut sql_text = String::new();
     println!("Please enter SQL statement string: ");
