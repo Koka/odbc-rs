@@ -10,7 +10,7 @@ pub unsafe trait InputParameter {
     fn indicator(&self) -> ffi::SQLLEN;
 }
 
-impl<'a, 'b, S> Statement<'a, 'b, S> {
+impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
     /// Binds a parameter to a parameter marker in an SQL statement.
     ///
     /// # Result
@@ -41,12 +41,14 @@ impl<'a, 'b, S> Statement<'a, 'b, S> {
     pub fn bind_parameter<'c, T>(mut self,
                                  parameter_index: u16,
                                  value: &'c T)
-                                 -> Result<Statement<'a, 'c, S>>
+                                 -> Result<Statement<'a, 'c, S, R>>
         where T: InputParameter,
               T: ?Sized,
               'b: 'c
     {
-        self.raii.bind_input_parameter(parameter_index, value).into_result(&self)?;
+        self.raii
+            .bind_input_parameter(parameter_index, value)
+            .into_result(&self)?;
         Ok(self)
     }
 }
