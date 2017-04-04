@@ -41,60 +41,60 @@ fn _string() {
 
 #[test]
 fn _i8() {
-    let param : i8 = 42;
+    let param: i8 = 42;
     test_type!(B, &param)
 }
 
 #[test]
 fn _u8() {
-    let param : u8 = 42;
+    let param: u8 = 42;
     test_type!(B, &param)
 }
 
 #[test]
 fn _i16() {
-    let param : i16 = 42;
+    let param: i16 = 42;
     test_type!(B, &param)
 }
 
 #[test]
 fn _u16() {
-    let param : u16 = 42;
+    let param: u16 = 42;
     test_type!(B, &param)
 }
 
 #[test]
 fn _i32() {
-    let param : i32 = 42;
+    let param: i32 = 42;
     test_type!(B, &param)
 }
 
 #[test]
 fn _u32() {
-    let param : u32 = 42;
+    let param: u32 = 42;
     test_type!(B, &param)
 }
 
 #[test]
 fn _i64() {
-    let param : i64 = 42;
+    let param: i64 = 42;
     test_type!(B, &param)
 }
 
 #[test]
 fn _u64() {
-    let param : u64 = 42;
+    let param: u64 = 42;
     test_type!(B, &param)
 }
 
 #[test]
 fn _f32() {
-    let param : f32 = 42.0;
+    let param: f32 = 42.0;
     test_type!(B, &param)
 }
 
 #[test]
 fn _f64() {
-    let param : f64 = 3.14;
+    let param: f64 = 3.14;
     test_type!(C, &param)
 }

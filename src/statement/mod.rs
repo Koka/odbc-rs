@@ -52,7 +52,7 @@ pub struct Statement<'a, 'b, S, R> {
 }
 
 /// Used to retrieve data from the fields of a query result
-pub struct Cursor<'a, 'b: 'a, 'c : 'a, S:'a> {
+pub struct Cursor<'a, 'b: 'a, 'c: 'a, S: 'a> {
     stmt: &'a mut Statement<'b, 'c, S, HasResult>,
     buffer: [u8; 512],
 }

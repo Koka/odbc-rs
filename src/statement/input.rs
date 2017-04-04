@@ -51,6 +51,13 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
             .into_result(&self)?;
         Ok(self)
     }
+
+    /// Releasing all parameter buffers set by `bind_parameter`. This method consumes the statement
+    /// and returns a new one those lifetime is no longer limited by the buffers bound.
+    pub fn reset_parameters(mut self) -> Result<Statement<'a, 'a, S, R>> {
+        self.raii.reset_parameters().into_result(&mut self)?;
+        Ok(Statement::with_raii(self.raii))
+    }
 }
 
 impl Raii<ffi::Stmt> {
@@ -59,7 +66,7 @@ impl Raii<ffi::Stmt> {
               T: ?Sized
     {
         match unsafe {
-                  ffi::SQLBindParameter(
+            ffi::SQLBindParameter(
                 self.handle(),
                 parameter_index,
                 ffi::SQL_PARAM_INPUT,
@@ -71,11 +78,20 @@ impl Raii<ffi::Stmt> {
                 0, // buffer length
                 &value.indicator() as * const ffi::SQLLEN as * mut ffi::SQLLEN// str len or ind ptr
             )
-              } {
+        } {
             ffi::SQL_SUCCESS => Return::Success(()),
             ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
             ffi::SQL_ERROR => Return::Error,
             r => panic!("Unexpected return from SQLBindParameter: {:?}", r),
+        }
+    }
+
+    fn reset_parameters(&mut self) -> Return<()> {
+        match unsafe { ffi::SQLFreeStmt(self.handle(), ffi::SQL_RESET_PARAMS) } {
+            ffi::SQL_SUCCESS => Return::Success(()),
+            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
+            ffi::SQL_ERROR => Return::Error,
+            r => panic!("SQLFreeStmt returned unexpected result: {:?}", r),
         }
     }
 }
@@ -148,4 +164,3 @@ unsafe impl<T> InputParameter for T
         0
     }
 }
-
