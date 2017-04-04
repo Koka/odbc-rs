@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#1-312' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#1-378' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>ODBC types those representation is compatible with the ODBC C API.</p>
 
 <p>This layer has not been created using automatic code generation. It is incomplete, i.e. it does
@@ -59,7 +59,7 @@ power (all) and safety guarantess(none) as the wrapped C-API.
 ODBC 4.0 is still under development by Microsoft, so these symbols are deactivated by default
 in the cargo.toml</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
-<table><tr><td><code>pub use <a class='enum' href='../odbc_sys/enum.SqlCDataType.html' title='odbc_sys::SqlCDataType'>SQL_C_ULONG</a> as SQL_C_BOOKMARK;</code></td></tr><tr><td><code>pub use self::<a class='enum' href='../odbc_sys/enum.SqlDataType.html' title='odbc_sys::SqlDataType'>SqlDataType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class='enum' href='../odbc_sys/enum.HandleType.html' title='odbc_sys::HandleType'>HandleType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class='enum' href='../odbc_sys/enum.SqlDriverConnectOption.html' title='odbc_sys::SqlDriverConnectOption'>SqlDriverConnectOption</a>::*;</code></td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table><tr><td><code>pub use <a class='enum' href='../odbc_sys/enum.SqlCDataType.html' title='odbc_sys::SqlCDataType'>SQL_C_ULONG</a> as SQL_C_BOOKMARK;</code></td></tr><tr><td><code>pub use <a class='enum' href='../odbc_sys/enum.FreeStmtOption.html' title='odbc_sys::FreeStmtOption'>FreeStmtOption</a>::*;</code></td></tr><tr><td><code>pub use self::<a class='enum' href='../odbc_sys/enum.SqlDataType.html' title='odbc_sys::SqlDataType'>SqlDataType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class='enum' href='../odbc_sys/enum.HandleType.html' title='odbc_sys::HandleType'>HandleType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class='enum' href='../odbc_sys/enum.SqlDriverConnectOption.html' title='odbc_sys::SqlDriverConnectOption'>SqlDriverConnectOption</a>::*;</code></td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class='enum' href='enum.Dbc.html'
@@ -87,6 +87,13 @@ in the cargo.toml</p>
                                   title='odbc_sys::FetchOrientation'>FetchOrientation</a></td>
                            <td class='docblock-short'>
                                 <p>Codes used for FetchOrientation in <code>SQLFetchScroll</code>, <code>SQLDataSources</code> and in <code>SQLDrivers</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.FreeStmtOption.html'
+                                  title='odbc_sys::FreeStmtOption'>FreeStmtOption</a></td>
+                           <td class='docblock-short'>
+                                <p>SQL Free Statement options</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -243,7 +250,9 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                            <td><a class='fn' href='fn.SQLConnect.html'
                                   title='odbc_sys::SQLConnect'>SQLConnect</a></td>
                            <td class='docblock-short'>
-                                <p>SQLConnect establishes connections to a driver and a data source.</p>
+                                <p>SQLConnect establishes connections to a driver and a data source. The connection handle
+references storage of all information about the connection to the data source, including
+status, transaction state, and error information.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -282,7 +291,17 @@ by the Driver Manager.</p>
                            <td><a class='fn' href='fn.SQLExecDirect.html'
                                   title='odbc_sys::SQLExecDirect'>SQLExecDirect</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>Executes a preparable statement, using the current values of the parameter marker variables
+if any parameters exist in the statement. This is the fastest way to submit an SQL
+statement for one-time execution</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.SQLExecute.html'
+                                  title='odbc_sys::SQLExecute'>SQLExecute</a></td>
+                           <td class='docblock-short'>
+                                <p>Executes a prepared statement, using the current values of the parameter marker variables
+if any paramater markers exis in the statement.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -302,6 +321,15 @@ descriptor handle.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class='fn' href='fn.SQLFreeStmt.html'
+                                  title='odbc_sys::SQLFreeStmt'>SQLFreeStmt</a></td>
+                           <td class='docblock-short'>
+                                <p>Stops processing associated with a specific statement, closes any open cursors associated
+with the statement, discards pending results, or, optionally, frees all resources
+associated with the statement handle.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class='fn' href='fn.SQLGetData.html'
                                   title='odbc_sys::SQLGetData'>SQLGetData</a></td>
                            <td class='docblock-short'>
@@ -312,7 +340,8 @@ descriptor handle.</p>
                            <td><a class='fn' href='fn.SQLGetDiagRec.html'
                                   title='odbc_sys::SQLGetDiagRec'>SQLGetDiagRec</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>Return the current values of multiple fields of a diagnostic record that contains eror,
+warning, and status information.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -327,6 +356,13 @@ descriptor handle.</p>
                                   title='odbc_sys::SQLNumResultCols'>SQLNumResultCols</a></td>
                            <td class='docblock-short'>
                                 <p>Returns the number of columns in a result set</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='fn' href='fn.SQLPrepare.html'
+                                  title='odbc_sys::SQLPrepare'>SQLPrepare</a></td>
+                           <td class='docblock-short'>
+                                <p>Compiles the statement and generates an access plan.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>

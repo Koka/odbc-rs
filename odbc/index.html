@@ -85,7 +85,7 @@ to e.g. allocate a Statement handle before connecting to a data source. See:</p>
                            <td><a class='struct' href='struct.Cursor.html'
                                   title='odbc::Cursor'>Cursor</a></td>
                            <td class='docblock-short'>
-                                <p>Used to retrieve data from the fields of a query resul</p>
+                                <p>Used to retrieve data from the fields of a query result</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -160,13 +160,6 @@ to e.g. allocate a Statement handle before connecting to a data source. See:</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='enum' href='enum.Executed.html'
-                                  title='odbc::Executed'>Executed</a></td>
-                           <td class='docblock-short'>
-                                <p>Holds a <code>Statement</code> after execution of a query.Allocated</p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
                            <td><a class='enum' href='enum.HasResult.html'
                                   title='odbc::HasResult'>HasResult</a></td>
                            <td class='docblock-short'>
@@ -174,10 +167,31 @@ to e.g. allocate a Statement handle before connecting to a data source. See:</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class='enum' href='enum.NoResult.html'
+                                  title='odbc::NoResult'>NoResult</a></td>
+                           <td class='docblock-short'>
+                                <p><code>Statement</code> state used to represent a statement with no result set</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class='enum' href='enum.NoVersion.html'
                                   title='odbc::NoVersion'>NoVersion</a></td>
                            <td class='docblock-short'>
                                 <p>Environment state used to represent that no odbc version has been set.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.Prepared.html'
+                                  title='odbc::Prepared'>Prepared</a></td>
+                           <td class='docblock-short'>
+                                <p><code>Statement</code> state used to represent a statement compiled into an access plan</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='enum' href='enum.ResultSetState.html'
+                                  title='odbc::ResultSetState'>ResultSetState</a></td>
+                           <td class='docblock-short'>
+                                <p>Holds a <code>Statement</code> after execution of a query.Allocated</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -217,6 +231,13 @@ to e.g. allocate a Statement handle before connecting to a data source. See:</p>
                            </td>
                        </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
 <table>
+                       <tr class=' module-item'>
+                           <td><a class='type' href='type.Executed.html'
+                                  title='odbc::Executed'>Executed</a></td>
+                           <td class='docblock-short'>
+                                <p><code>Statement</code> state used to represent a statement with a result set cursor</p>
+                           </td>
+                       </tr>
                        <tr class=' module-item'>
                            <td><a class='type' href='type.Result.html'
                                   title='odbc::Result'>Result</a></td>

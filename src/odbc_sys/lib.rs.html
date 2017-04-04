@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.2.6/src/lib.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.2.8/src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
@@ -355,6 +355,72 @@
 <span id="310">310</span>
 <span id="311">311</span>
 <span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! ODBC types those representation is compatible with the ODBC C API.</span>
 <span class='doccomment'>//!</span>
@@ -425,6 +491,34 @@
 <span class='comment'>// Special SQLGetData indicator values</span>
 <span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>SQL_NULL_DATA</span>: <span class='ident'>SQLLEN</span> <span class='op'>=</span> <span class='op'>-</span><span class='number'>1</span>;
 <span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>SQL_NO_TOTAL</span>: <span class='ident'>SQLLEN</span> <span class='op'>=</span> <span class='op'>-</span><span class='number'>4</span>;
+
+<span class='doccomment'>/// SQL Free Statement options</span>
+<span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>u16</span>)]</span>
+<span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>non_camel_case_types</span>)]</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>, <span class='ident'>Clone</span>, <span class='ident'>Copy</span>)]</span>
+<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>FreeStmtOption</span>{
+    <span class='doccomment'>/// Closes the cursor associated with StatementHandle (if one was defined) and discards all</span>
+    <span class='doccomment'>/// pending results. The application can reopen this cursor later by executing a SELECT</span>
+    <span class='doccomment'>/// statement again with the same or different parameter values. If no cursor is open, this</span>
+    <span class='doccomment'>/// option has no effect for the application. `SQLCloseCursor` can also be called to close a</span>
+    <span class='doccomment'>/// cursor.</span>
+    <span class='ident'>SQL_CLOSE</span> <span class='op'>=</span> <span class='number'>0</span>,
+    <span class='doccomment'>/// Sets the `SQL_DESC_COUNT` field of the ARD to 0, releasing all column buffers bound by</span>
+    <span class='doccomment'>/// `SQLBindCol` for the given StatementHandle. This does not unbind the bookmark column; to do</span>
+    <span class='doccomment'>/// that, the `SQL_DESC_DATA_PTR` field of the ARD for the bookmark column is set to NULL.</span>
+    <span class='doccomment'>/// Notice that if this operation is performed on an explicitly allocated descriptor that is</span>
+    <span class='doccomment'>/// shared by more than one statement, the operation will affect the bindings of all statements</span>
+    <span class='doccomment'>/// that share the descriptor.</span>
+    <span class='ident'>SQL_UNBIND</span> <span class='op'>=</span> <span class='number'>1</span>,
+    <span class='comment'>//SQL_DROP = 2,</span>
+
+    <span class='doccomment'>/// Sets the `SQL_DESC_COUNT` field of the APD to 0, releasing all parameter buffers set by</span>
+    <span class='doccomment'>/// `SQLBindParameter` for the given StatementHandle. If this operation is performed on an</span>
+    <span class='doccomment'>/// explicitly allocated descriptor that is shared by more than one statement, this operation</span>
+    <span class='doccomment'>/// will affect the bindings of all the statements that share the descriptor.</span>
+    <span class='ident'>SQL_RESET_PARAMS</span> <span class='op'>=</span> <span class='number'>3</span>,
+}
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>FreeStmtOption</span>::<span class='kw-2'>*</span>;
 
 <span class='doccomment'>/// SQL Data Types</span>
 <span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>i16</span>)]</span>
@@ -513,6 +607,12 @@
     <span class='doccomment'>/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, or `SQL_INVALID_HANDLE`</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>SQLDisconnect</span>(<span class='ident'>connection_handle</span>: <span class='ident'>SQLHDBC</span>) <span class='op'>-&gt;</span> <span class='ident'>SQLRETURN</span>;
 
+    <span class='doccomment'>/// Return the current values of multiple fields of a diagnostic record that contains eror,</span>
+    <span class='doccomment'>/// warning, and status information.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// # Returns</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, or `SQL_INVALID_HANDLE`</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>SQLGetDiagRec</span>(<span class='ident'>handle_type</span>: <span class='ident'>HandleType</span>,
                          <span class='ident'>handle</span>: <span class='ident'>SQLHANDLE</span>,
                          <span class='ident'>RecNumber</span>: <span class='ident'>SQLSMALLINT</span>,
@@ -523,6 +623,13 @@
                          <span class='ident'>text_length_ptr</span>: <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>SQLSMALLINT</span>)
                          <span class='op'>-&gt;</span> <span class='ident'>SQLRETURN</span>;
 
+    <span class='doccomment'>/// Executes a preparable statement, using the current values of the parameter marker variables</span>
+    <span class='doccomment'>/// if any parameters exist in the statement. This is the fastest way to submit an SQL</span>
+    <span class='doccomment'>/// statement for one-time execution</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// # Returns</span>
+    <span class='doccomment'>/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_NEED_DATA`, `SQL_STILL_EXECUTING`, `SQL_ERROR`</span>
+    <span class='doccomment'>/// , `SQL_NO_DATA`, `SQL_INVALID_HANDLE`, or `SQL_PARAM_DATA_AVAILABLE`.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>SQLExecDirect</span>(<span class='ident'>statement_handle</span>: <span class='ident'>SQLHSTMT</span>,
                          <span class='ident'>statement_text</span>: <span class='kw-2'>*</span><span class='kw'>const</span> <span class='ident'>SQLCHAR</span>,
                          <span class='ident'>text_length</span>: <span class='ident'>SQLINTEGER</span>)
@@ -565,10 +672,9 @@
                       <span class='ident'>string_length_ptr</span>: <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>SQLSMALLINT</span>)
                       <span class='op'>-&gt;</span> <span class='ident'>SQLRETURN</span>;
 
-    <span class='doccomment'>/// SQLConnect establishes connections to a driver and a data source.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// The connection handle references storage of all information about the connection to the</span>
-    <span class='doccomment'>/// data source, including status, transaction state, and error information.</span>
+    <span class='doccomment'>/// SQLConnect establishes connections to a driver and a data source. The connection handle</span>
+    <span class='doccomment'>/// references storage of all information about the connection to the data source, including</span>
+    <span class='doccomment'>/// status, transaction state, and error information.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Returns</span>
     <span class='doccomment'>/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, `SQL_INVALID_HANDLE`, or</span>
@@ -667,6 +773,32 @@
                             <span class='ident'>buffer_length</span>: <span class='ident'>SQLLEN</span>,
                             <span class='ident'>str_len_or_ind_ptr</span>: <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>SQLLEN</span>)
                             <span class='op'>-&gt;</span> <span class='ident'>SQLRETURN</span>;
+
+    <span class='doccomment'>/// Compiles the statement and generates an access plan.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// # Returns</span>
+    <span class='doccomment'>/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, `SQL_INVALID_HANDLE`, or</span>
+    <span class='doccomment'>/// `SQL_STILL_EXECUTING`</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>SQLPrepare</span>(<span class='ident'>hstmt</span>: <span class='ident'>SQLHSTMT</span>,
+                      <span class='ident'>statement_text</span>: <span class='kw-2'>*</span><span class='kw'>const</span> <span class='ident'>SQLCHAR</span>,
+                      <span class='ident'>text_length</span>: <span class='ident'>SQLINTEGER</span>)
+                      <span class='op'>-&gt;</span> <span class='ident'>SQLRETURN</span>;
+
+    <span class='doccomment'>/// Executes a prepared statement, using the current values of the parameter marker variables</span>
+    <span class='doccomment'>/// if any paramater markers exis in the statement.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// # Returns</span>
+    <span class='doccomment'>/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_NEED_DATA`, `SQL_STILL_EXECUTING`, `SQL_ERROR`</span>
+    <span class='doccomment'>/// , `SQL_NO_DATA`, `SQL_INVALID_HANDLE`, or `SQL_PARAM_DATA_AVAILABLE`.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>SQLExecute</span>(<span class='ident'>hstmt</span>: <span class='ident'>SQLHSTMT</span>) <span class='op'>-&gt;</span> <span class='ident'>SQLRETURN</span>;
+
+    <span class='doccomment'>/// Stops processing associated with a specific statement, closes any open cursors associated</span>
+    <span class='doccomment'>/// with the statement, discards pending results, or, optionally, frees all resources</span>
+    <span class='doccomment'>/// associated with the statement handle.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// # Returns</span>
+    <span class='doccomment'>/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, or `SQL_INVALID_HANDLE`.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>SQLFreeStmt</span>(<span class='ident'>hstmt</span>: <span class='ident'>SQLHSTMT</span>, <span class='ident'>option</span>: <span class='ident'>FreeStmtOption</span>) <span class='op'>-&gt;</span> <span class='ident'>SQLRETURN</span>;
 }
 </pre>
 </section>
