@@ -159,6 +159,34 @@ fn execution_with_parameter() {
     };
 }
 
+#[test]
+fn prepared_execution() {
+    let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
+    let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
+    let stmt = Statement::with_parent(&conn).unwrap();
+    let stmt = stmt.prepare("SELECT TITLE FROM MOVIES WHERE YEAR = ?").unwrap();
+
+    fn execute_query<'a>(year: u16,
+                         expected: &str,
+                         stmt: Statement<'a, 'a, Prepared, NoResult>)
+                         -> Result<Statement<'a, 'a, Prepared, NoResult>> {
+        let stmt = stmt.bind_parameter(1, &year)?;
+        let stmt = if let Data(mut stmt) = stmt.execute()? {
+            {
+                let mut cursor = stmt.fetch()?.unwrap();
+                assert_eq!(cursor.get_data::<String>(1)?.unwrap(), expected);
+            }
+            stmt.close_cursor()?
+        } else {
+            panic!("SELECT statement returned no result set");
+        };
+        stmt.reset_parameters()
+    };
+
+    let stmt = execute_query(1968, "2001: A Space Odyssey", stmt).unwrap();
+    execute_query(1993, "Jurassic Park", stmt).unwrap();
+}
+
 // These tests query the results of catalog functions. These results are only likely to match the
 // expectation on the travis.ci build on linux. Therefore we limit compilation and execution of
 // these tests to this platform.

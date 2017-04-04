@@ -10,7 +10,7 @@ pub unsafe trait InputParameter {
     fn indicator(&self) -> ffi::SQLLEN;
 }
 
-impl<'a, 'b, S> Statement<'a, 'b, S> {
+impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
     /// Binds a parameter to a parameter marker in an SQL statement.
     ///
     /// # Result
@@ -26,28 +26,37 @@ impl<'a, 'b, S> Statement<'a, 'b, S> {
     /// ```
     /// # use odbc::*;
     /// # fn do_odbc_stuff() -> std::result::Result<(), Box<std::error::Error>> {
-    ///     let env = Environment::new()?.set_odbc_version_3()?;
-    ///     let conn = DataSource::with_parent(&env)?.connect("TestDataSource", "", "")?;
-    ///     let stmt = Statement::with_parent(&conn)?;
-    ///     let param = 1968;
-    ///     let stmt = stmt.bind_parameter(1, &param)?;
-    ///     let sql_text = "SELECT TITLE FROM MOVIES WHERE YEAR = ?";
-    ///     if let Data(mut stmt) = stmt.exec_direct(sql_text)? {
-    ///         // ...
-    ///     }
+    /// let env = Environment::new()?.set_odbc_version_3()?;
+    /// let conn = DataSource::with_parent(&env)?.connect("TestDataSource", "", "")?;
+    /// let stmt = Statement::with_parent(&conn)?;
+    /// let param = 1968;
+    /// let stmt = stmt.bind_parameter(1, &param)?;
+    /// let sql_text = "SELECT TITLE FROM MOVIES WHERE YEAR = ?";
+    /// if let Data(mut stmt) = stmt.exec_direct(sql_text)? {
+    ///     // ...
+    /// }
     /// #   Ok(())
     /// # }
     /// ```
     pub fn bind_parameter<'c, T>(mut self,
                                  parameter_index: u16,
                                  value: &'c T)
-                                 -> Result<Statement<'a, 'c, S>>
+                                 -> Result<Statement<'a, 'c, S, R>>
         where T: InputParameter,
               T: ?Sized,
               'b: 'c
     {
-        self.raii.bind_input_parameter(parameter_index, value).into_result(&self)?;
+        self.raii
+            .bind_input_parameter(parameter_index, value)
+            .into_result(&self)?;
         Ok(self)
+    }
+
+    /// Releasing all parameter buffers set by `bind_parameter`. This method consumes the statement
+    /// and returns a new one those lifetime is no longer limited by the buffers bound.
+    pub fn reset_parameters(mut self) -> Result<Statement<'a, 'a, S, R>> {
+        self.raii.reset_parameters().into_result(&mut self)?;
+        Ok(Statement::with_raii(self.raii))
     }
 }
 
@@ -57,7 +66,7 @@ impl Raii<ffi::Stmt> {
               T: ?Sized
     {
         match unsafe {
-                  ffi::SQLBindParameter(
+            ffi::SQLBindParameter(
                 self.handle(),
                 parameter_index,
                 ffi::SQL_PARAM_INPUT,
@@ -69,11 +78,20 @@ impl Raii<ffi::Stmt> {
                 0, // buffer length
                 &value.indicator() as * const ffi::SQLLEN as * mut ffi::SQLLEN// str len or ind ptr
             )
-              } {
+        } {
             ffi::SQL_SUCCESS => Return::Success(()),
             ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
             ffi::SQL_ERROR => Return::Error,
             r => panic!("Unexpected return from SQLBindParameter: {:?}", r),
+        }
+    }
+
+    fn reset_parameters(&mut self) -> Return<()> {
+        match unsafe { ffi::SQLFreeStmt(self.handle(), ffi::SQL_RESET_PARAMS) } {
+            ffi::SQL_SUCCESS => Return::Success(()),
+            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
+            ffi::SQL_ERROR => Return::Error,
+            r => panic!("SQLFreeStmt returned unexpected result: {:?}", r),
         }
     }
 }
@@ -146,4 +164,3 @@ unsafe impl<T> InputParameter for T
         0
     }
 }
-

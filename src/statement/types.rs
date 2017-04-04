@@ -64,4 +64,3 @@ unsafe impl FixedSizedType for f64 {
         ffi::SQL_C_DOUBLE
     }
 }
-
