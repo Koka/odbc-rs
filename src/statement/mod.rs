@@ -11,21 +11,17 @@ use std::marker::PhantomData;
 
 /// `Statement` state used to represent a freshly allocated connection
 pub enum Allocated {}
-/// `Statement` state used to represent a statement with a result set cursor
-///
-/// A statement is most likely to enter this state after a `SELECT` query.
+/// `Statement` state used to represent a statement with a result set cursor. A statement is most
+/// likely to enter this state after a `SELECT` query.
 pub type Executed = Allocated;
-/// `Statement` state used to represent a statement compiled into an access plan
-///
-/// A statement will enter this state after a call to `Statement::prepared`
+/// `Statement` state used to represent a statement compiled into an access plan. A statement will
+/// enter this state after a call to `Statement::prepared`
 pub enum Prepared {}
-/// `Statement` state used to represent a statement with a result set cursor
-///
-/// A statement is most likely to enter this state after a `SELECT` query.
+/// `Statement` state used to represent a statement with a result set cursor. A statement is most
+/// likely to enter this state after a `SELECT` query.
 pub enum HasResult {}
-/// `Statement` state used to represent a statement with no result set
-///
-/// A statement is likely to enter this state after executing e.g. a `CREATE TABLE` statement
+/// `Statement` state used to represent a statement with no result set. A statement is likely to
+/// enter this state after executing e.g. a `CREATE TABLE` statement
 pub enum NoResult {}
 
 /// Holds a `Statement` after execution of a query.Allocated
@@ -39,7 +35,7 @@ pub enum ResultSetState<'a, 'b, S> {
 }
 pub use ResultSetState::*;
 
-/// RAII wrapper around ODBC statement
+/// A `Statement` can be used to execute queries and retrieves results.
 pub struct Statement<'a, 'b, S, R> {
     raii: Raii<ffi::Stmt>,
     // we use phantom data to tell the borrow checker that we need to keep the data source alive

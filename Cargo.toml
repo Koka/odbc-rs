@@ -21,3 +21,6 @@ log = "0.3.7"
 
 [dev-dependencies]
 env_logger = "0.3"
+
+[badges]
+travis-ci = { repository = "koka/odbc-rs", branch = "master" }
