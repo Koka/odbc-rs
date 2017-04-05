@@ -1,6 +1,5 @@
 extern crate odbc;
 use odbc::*;
-mod native_types;
 
 #[test]
 fn list_tables() {

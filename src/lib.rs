@@ -11,12 +11,12 @@
 //! # Internal Desgin
 //!
 //! While designed as a relatively low level wrapper around ODBC this crate tries to prevent many
-//! at compile time. The borrow checker and the RAII (Resource Acquisition Is Initialization) idiom
-//! should prevent any occurence of `SQL_INVALID_HANDLE` in safe code.
+//! errors at compile time. The borrow checker and the RAII (Resource Acquisition Is
+//! Initialization) idiom should prevent any occurence of `SQL_INVALID_HANDLE` in safe code.
 //!
 //! Using the type system and the borrow checker this crate ensures that each method call happens
-//! in a valid state. This should eliminate function sequence errors in safe code. It is impossible
-//! to e.g. allocate a Statement handle before connecting to a data source. See:
+//! in a valid state and state transitions are modeled in the type system. This should eliminate
+//! the possibility of function sequence errors in safe code.
 //!
 //! [Basic ODBC Application Steps]
 //! (https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/basic-odbc-application-steps)

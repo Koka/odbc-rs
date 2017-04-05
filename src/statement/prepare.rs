@@ -14,13 +14,12 @@ impl<'a, 'b> Statement<'a, 'b, Allocated, NoResult> {
     /// let env = Environment::new().unwrap().set_odbc_version_3()?;
     /// let conn = DataSource::with_parent(&env)?.connect("TestDataSource", "", "")?;
     /// let stmt = Statement::with_parent(&conn)?;
-    /// let mut stmt = stmt.prepare("SELECT TITLE FROM MOVIES WHERE YEAR = ?").unwrap();
+    /// let mut stmt = stmt.prepare("SELECT TITLE FROM MOVIES WHERE YEAR = ?")?;
     ///
     /// fn print_one_movie_from<'a> (year: u16, stmt: Statement<'a,'a, Prepared, NoResult>) -> Result<Statement<'a, 'a, Prepared, NoResult>>{
     ///    let stmt = stmt.bind_parameter(1, &year)?;
     ///    let stmt = if let Data(mut stmt) = stmt.execute()?{
-    ///        {
-    ///            let mut cursor = stmt.fetch()?.unwrap();
+    ///        if let Some(mut cursor) = stmt.fetch()?{
     ///            println!("{}", cursor.get_data::<String>(1)?.unwrap());
     ///        }
     ///        stmt.close_cursor()?
