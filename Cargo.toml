@@ -1,8 +1,8 @@
 [package]
 name = "odbc"
 description = "ODBC wrapper for idiomatic Rust"
-version = "0.6.0"
-authors = ["Konstantin Salikhov <koka58@yandex.ru>"]
+version = "0.6.1"
+authors = ["Konstantin Salikhov <koka58@yandex.ru>", "Markus Klein <markus.klein@live.de>"]
 repository = "https://github.com/Koka/odbc-rs"
 documentation = "http://koka.github.io/odbc-rs/odbc/"
 homepage = "https://github.com/Koka/odbc-rs"
@@ -24,3 +24,5 @@ env_logger = "0.3"
 
 [badges]
 travis-ci = { repository = "koka/odbc-rs", branch = "master" }
+appveyor = { repository = "koka/odbc-rs", branch = "master" }
+
