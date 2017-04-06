@@ -127,12 +127,12 @@
 <span class='doccomment'>//! # Internal Desgin</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! While designed as a relatively low level wrapper around ODBC this crate tries to prevent many</span>
-<span class='doccomment'>//! at compile time. The borrow checker and the RAII (Resource Acquisition Is Initialization) idiom</span>
-<span class='doccomment'>//! should prevent any occurence of `SQL_INVALID_HANDLE` in safe code.</span>
+<span class='doccomment'>//! errors at compile time. The borrow checker and the RAII (Resource Acquisition Is</span>
+<span class='doccomment'>//! Initialization) idiom should prevent any occurence of `SQL_INVALID_HANDLE` in safe code.</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! Using the type system and the borrow checker this crate ensures that each method call happens</span>
-<span class='doccomment'>//! in a valid state. This should eliminate function sequence errors in safe code. It is impossible</span>
-<span class='doccomment'>//! to e.g. allocate a Statement handle before connecting to a data source. See:</span>
+<span class='doccomment'>//! in a valid state and state transitions are modeled in the type system. This should eliminate</span>
+<span class='doccomment'>//! the possibility of function sequence errors in safe code.</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! [Basic ODBC Application Steps]</span>
 <span class='doccomment'>//! (https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/basic-odbc-application-steps)</span>

@@ -61,12 +61,12 @@ and is intended to be usable in safe and idiomatic Rust.</p>
 
 <h1 id='internal-desgin' class='section-header'><a href='#internal-desgin'>Internal Desgin</a></h1>
 <p>While designed as a relatively low level wrapper around ODBC this crate tries to prevent many
-at compile time. The borrow checker and the RAII (Resource Acquisition Is Initialization) idiom
-should prevent any occurence of <code>SQL_INVALID_HANDLE</code> in safe code.</p>
+errors at compile time. The borrow checker and the RAII (Resource Acquisition Is
+Initialization) idiom should prevent any occurence of <code>SQL_INVALID_HANDLE</code> in safe code.</p>
 
 <p>Using the type system and the borrow checker this crate ensures that each method call happens
-in a valid state. This should eliminate function sequence errors in safe code. It is impossible
-to e.g. allocate a Statement handle before connecting to a data source. See:</p>
+in a valid state and state transitions are modeled in the type system. This should eliminate
+the possibility of function sequence errors in safe code.</p>
 
 <p><a href="https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/basic-odbc-application-steps">Basic ODBC Application Steps</a></p>
 
@@ -134,7 +134,7 @@ to e.g. allocate a Statement handle before connecting to a data source. See:</p>
                            <td><a class='struct' href='struct.Statement.html'
                                   title='odbc::Statement'>Statement</a></td>
                            <td class='docblock-short'>
-                                <p>RAII wrapper around ODBC statement</p>
+                                <p>A <code>Statement</code> can be used to execute queries and retrieves results.</p>
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
@@ -163,14 +163,16 @@ to e.g. allocate a Statement handle before connecting to a data source. See:</p>
                            <td><a class='enum' href='enum.HasResult.html'
                                   title='odbc::HasResult'>HasResult</a></td>
                            <td class='docblock-short'>
-                                <p><code>Statement</code> state used to represent a statement with a result set cursor</p>
+                                <p><code>Statement</code> state used to represent a statement with a result set cursor. A statement is most
+likely to enter this state after a <code>SELECT</code> query.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
                            <td><a class='enum' href='enum.NoResult.html'
                                   title='odbc::NoResult'>NoResult</a></td>
                            <td class='docblock-short'>
-                                <p><code>Statement</code> state used to represent a statement with no result set</p>
+                                <p><code>Statement</code> state used to represent a statement with no result set. A statement is likely to
+enter this state after executing e.g. a <code>CREATE TABLE</code> statement</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -184,7 +186,8 @@ to e.g. allocate a Statement handle before connecting to a data source. See:</p>
                            <td><a class='enum' href='enum.Prepared.html'
                                   title='odbc::Prepared'>Prepared</a></td>
                            <td class='docblock-short'>
-                                <p><code>Statement</code> state used to represent a statement compiled into an access plan</p>
+                                <p><code>Statement</code> state used to represent a statement compiled into an access plan. A statement will
+enter this state after a call to <code>Statement::prepared</code></p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -206,7 +209,8 @@ to e.g. allocate a Statement handle before connecting to a data source. See:</p>
                            <td><a class='trait' href='trait.GetDiagRec.html'
                                   title='odbc::GetDiagRec'>GetDiagRec</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>Allows retriving a diagnostic record, describing errors (or lack thereof) during the last
+operation.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -235,7 +239,8 @@ to e.g. allocate a Statement handle before connecting to a data source. See:</p>
                            <td><a class='type' href='type.Executed.html'
                                   title='odbc::Executed'>Executed</a></td>
                            <td class='docblock-short'>
-                                <p><code>Statement</code> state used to represent a statement with a result set cursor</p>
+                                <p><code>Statement</code> state used to represent a statement with a result set cursor. A statement is most
+likely to enter this state after a <code>SELECT</code> query.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>

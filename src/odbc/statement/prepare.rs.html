@@ -122,7 +122,6 @@
 <span id="77">77</span>
 <span id="78">78</span>
 <span id="79">79</span>
-<span id="80">80</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> {<span class='ident'>ffi</span>, <span class='ident'>Raii</span>, <span class='ident'>Return</span>, <span class='ident'>Handle</span>, <span class='ident'>Statement</span>, <span class='prelude-ty'>Result</span>, <span class='ident'>Prepared</span>, <span class='ident'>Allocated</span>, <span class='ident'>NoResult</span>, <span class='ident'>ResultSetState</span>};
 
@@ -140,13 +139,12 @@
     <span class='doccomment'>/// let env = Environment::new().unwrap().set_odbc_version_3()?;</span>
     <span class='doccomment'>/// let conn = DataSource::with_parent(&amp;env)?.connect(&quot;TestDataSource&quot;, &quot;&quot;, &quot;&quot;)?;</span>
     <span class='doccomment'>/// let stmt = Statement::with_parent(&amp;conn)?;</span>
-    <span class='doccomment'>/// let mut stmt = stmt.prepare(&quot;SELECT TITLE FROM MOVIES WHERE YEAR = ?&quot;).unwrap();</span>
+    <span class='doccomment'>/// let mut stmt = stmt.prepare(&quot;SELECT TITLE FROM MOVIES WHERE YEAR = ?&quot;)?;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// fn print_one_movie_from&lt;&#39;a&gt; (year: u16, stmt: Statement&lt;&#39;a,&#39;a, Prepared, NoResult&gt;) -&gt; Result&lt;Statement&lt;&#39;a, &#39;a, Prepared, NoResult&gt;&gt;{</span>
     <span class='doccomment'>///    let stmt = stmt.bind_parameter(1, &amp;year)?;</span>
     <span class='doccomment'>///    let stmt = if let Data(mut stmt) = stmt.execute()?{</span>
-    <span class='doccomment'>///        {</span>
-    <span class='doccomment'>///            let mut cursor = stmt.fetch()?.unwrap();</span>
+    <span class='doccomment'>///        if let Some(mut cursor) = stmt.fetch()?{</span>
     <span class='doccomment'>///            println!(&quot;{}&quot;, cursor.get_data::&lt;String&gt;(1)?.unwrap());</span>
     <span class='doccomment'>///        }</span>
     <span class='doccomment'>///        stmt.close_cursor()?</span>

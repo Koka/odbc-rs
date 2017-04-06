@@ -173,7 +173,6 @@
 <span id="128">128</span>
 <span id="129">129</span>
 <span id="130">130</span>
-<span id="131">131</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='kw'>super</span>::{<span class='ident'>ffi</span>, <span class='ident'>Handle</span>, <span class='ident'>OdbcObject</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
@@ -211,7 +210,7 @@
         <span class='kw'>let</span> <span class='ident'>state</span> <span class='op'>=</span> <span class='ident'>CStr</span>::<span class='ident'>from_bytes_with_nul</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>state</span>).<span class='ident'>unwrap</span>();
         <span class='kw'>let</span> <span class='ident'>message</span> <span class='op'>=</span> <span class='ident'>CStr</span>::<span class='ident'>from_bytes_with_nul</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>message</span>[<span class='number'>0</span>..
                                                  (<span class='self'>self</span>.<span class='ident'>message_length</span> <span class='kw'>as</span> <span class='ident'>usize</span> <span class='op'>+</span> <span class='number'>1</span>)])
-            .<span class='ident'>unwrap</span>();
+                .<span class='ident'>unwrap</span>();
 
         <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>,
                <span class='string'>&quot;State: {}, Native error: {}, Message: {}&quot;</span>,
@@ -239,6 +238,8 @@
     }
 }
 
+<span class='doccomment'>/// Allows retriving a diagnostic record, describing errors (or lack thereof) during the last</span>
+<span class='doccomment'>/// operation.</span>
 <span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>GetDiagRec</span> {
     <span class='doccomment'>/// Retrieves a diagnostic record</span>
     <span class='doccomment'>///</span>
@@ -247,10 +248,6 @@
     <span class='kw'>fn</span> <span class='ident'>get_diag_rec</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>record_number</span>: <span class='ident'>i16</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>DiagnosticRecord</span><span class='op'>&gt;</span>;
 }
 
-<span class='doccomment'>/// Retrieves a diagnostic record</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// `record_number` - Record numbers start at one. If you pass an number &lt; 1 the function will</span>
-<span class='doccomment'>/// panic. If no record is available for the number specified none is returned.</span>
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>H</span><span class='op'>&gt;</span> <span class='ident'>GetDiagRec</span> <span class='kw'>for</span> <span class='ident'>H</span>
     <span class='kw'>where</span> <span class='ident'>H</span>: <span class='ident'>Handle</span>,
           <span class='ident'>H</span>::<span class='ident'>To</span>: <span class='ident'>OdbcObject</span>
@@ -259,15 +256,15 @@
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>DiagnosticRecord</span>::<span class='ident'>new</span>();
 
         <span class='kw'>match</span> <span class='kw'>unsafe</span> {
-            <span class='ident'>ffi</span>::<span class='ident'>SQLGetDiagRec</span>(<span class='ident'>H</span>::<span class='ident'>To</span>::<span class='ident'>handle_type</span>(),
-                               <span class='self'>self</span>.<span class='ident'>handle</span>() <span class='kw'>as</span> <span class='ident'>ffi</span>::<span class='ident'>SQLHANDLE</span>,
-                               <span class='ident'>record_number</span>,
-                               <span class='ident'>result</span>.<span class='ident'>state</span>.<span class='ident'>as_mut_ptr</span>(),
-                               <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>result</span>.<span class='ident'>native_error</span> <span class='kw'>as</span> <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>ffi</span>::<span class='ident'>SQLINTEGER</span>,
-                               <span class='ident'>result</span>.<span class='ident'>message</span>.<span class='ident'>as_mut_ptr</span>(),
-                               <span class='ident'>ffi</span>::<span class='ident'>SQL_MAX_MESSAGE_LENGTH</span>,
-                               <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>result</span>.<span class='ident'>message_length</span> <span class='kw'>as</span> <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>ffi</span>::<span class='ident'>SQLSMALLINT</span>)
-        } {
+                  <span class='ident'>ffi</span>::<span class='ident'>SQLGetDiagRec</span>(<span class='ident'>H</span>::<span class='ident'>To</span>::<span class='ident'>handle_type</span>(),
+                                     <span class='self'>self</span>.<span class='ident'>handle</span>() <span class='kw'>as</span> <span class='ident'>ffi</span>::<span class='ident'>SQLHANDLE</span>,
+                                     <span class='ident'>record_number</span>,
+                                     <span class='ident'>result</span>.<span class='ident'>state</span>.<span class='ident'>as_mut_ptr</span>(),
+                                     <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>result</span>.<span class='ident'>native_error</span> <span class='kw'>as</span> <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>ffi</span>::<span class='ident'>SQLINTEGER</span>,
+                                     <span class='ident'>result</span>.<span class='ident'>message</span>.<span class='ident'>as_mut_ptr</span>(),
+                                     <span class='ident'>ffi</span>::<span class='ident'>SQL_MAX_MESSAGE_LENGTH</span>,
+                                     <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>result</span>.<span class='ident'>message_length</span> <span class='kw'>as</span> <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>ffi</span>::<span class='ident'>SQLSMALLINT</span>)
+              } {
             <span class='ident'>ffi</span>::<span class='ident'>SQL_SUCCESS</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>result</span>),
             <span class='ident'>ffi</span>::<span class='ident'>SQL_NO_DATA</span> <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
             <span class='ident'>ffi</span>::<span class='ident'>SQL_SUCCESS_WITH_INFO</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>result</span>),
@@ -306,6 +303,7 @@
                     Function sequence error&quot;</span>);
     }
 }
+
 </pre>
 </section>
     <section id='search' class="content hidden"></section>

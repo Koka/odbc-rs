@@ -281,10 +281,6 @@
 <span id="236">236</span>
 <span id="237">237</span>
 <span id="238">238</span>
-<span id="239">239</span>
-<span id="240">240</span>
-<span id="241">241</span>
-<span id="242">242</span>
 </pre><pre class='rust '>
 
 <span class='kw'>mod</span> <span class='ident'>types</span>;
@@ -299,21 +295,17 @@
 
 <span class='doccomment'>/// `Statement` state used to represent a freshly allocated connection</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Allocated</span> {}
-<span class='doccomment'>/// `Statement` state used to represent a statement with a result set cursor</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// A statement is most likely to enter this state after a `SELECT` query.</span>
+<span class='doccomment'>/// `Statement` state used to represent a statement with a result set cursor. A statement is most</span>
+<span class='doccomment'>/// likely to enter this state after a `SELECT` query.</span>
 <span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>Executed</span> <span class='op'>=</span> <span class='ident'>Allocated</span>;
-<span class='doccomment'>/// `Statement` state used to represent a statement compiled into an access plan</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// A statement will enter this state after a call to `Statement::prepared`</span>
+<span class='doccomment'>/// `Statement` state used to represent a statement compiled into an access plan. A statement will</span>
+<span class='doccomment'>/// enter this state after a call to `Statement::prepared`</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Prepared</span> {}
-<span class='doccomment'>/// `Statement` state used to represent a statement with a result set cursor</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// A statement is most likely to enter this state after a `SELECT` query.</span>
+<span class='doccomment'>/// `Statement` state used to represent a statement with a result set cursor. A statement is most</span>
+<span class='doccomment'>/// likely to enter this state after a `SELECT` query.</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>HasResult</span> {}
-<span class='doccomment'>/// `Statement` state used to represent a statement with no result set</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// A statement is likely to enter this state after executing e.g. a `CREATE TABLE` statement</span>
+<span class='doccomment'>/// `Statement` state used to represent a statement with no result set. A statement is likely to</span>
+<span class='doccomment'>/// enter this state after executing e.g. a `CREATE TABLE` statement</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>NoResult</span> {}
 
 <span class='doccomment'>/// Holds a `Statement` after execution of a query.Allocated</span>
@@ -327,7 +319,7 @@
 }
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>ResultSetState</span>::<span class='kw-2'>*</span>;
 
-<span class='doccomment'>/// RAII wrapper around ODBC statement</span>
+<span class='doccomment'>/// A `Statement` can be used to execute queries and retrieves results.</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>S</span>, <span class='ident'>R</span><span class='op'>&gt;</span> {
     <span class='ident'>raii</span>: <span class='ident'>Raii</span><span class='op'>&lt;</span><span class='ident'>ffi</span>::<span class='ident'>Stmt</span><span class='op'>&gt;</span>,
     <span class='comment'>// we use phantom data to tell the borrow checker that we need to keep the data source alive</span>
