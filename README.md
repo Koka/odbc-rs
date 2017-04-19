@@ -6,8 +6,9 @@ Library for writing [ODBC](https://msdn.microsoft.com/en-us/library/ms710154.asp
 [![Build status](https://ci.appveyor.com/api/projects/status/45ovhoic0wg7mnv5/branch/master?svg=true)](https://ci.appveyor.com/project/Koka/odbc-rs/branch/master)
 [![https://crates.io/crates/odbc](https://meritbadge.herokuapp.com/odbc#nocache61)](https://crates.io/crates/odbc)
 [![Coverage Status](https://coveralls.io/repos/github/Koka/odbc-rs/badge.svg)](https://coveralls.io/github/Koka/odbc-rs)
+[![Docs](https://docs.rs/odbc/badge.svg)](https://docs.rs/odbc)
 
-Docs are available [here](http://koka.github.io/odbc-rs/odbc/)
+Docs are also available [here](http://koka.github.io/odbc-rs/odbc/)
 
 ```rust
 extern crate odbc;
