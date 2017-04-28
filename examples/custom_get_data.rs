@@ -16,47 +16,15 @@ impl fmt::Display for MyDateTime {
     }
 }
 
-// Let's define how to get data from result set for our custom type
-unsafe impl<'a> Output<'a> for MyDateTime {
-    fn get_data(stmt: &mut Raii<ffi::Stmt>,
-                col_or_param_num: u16,
-                buffer: &'a mut [u8])
-                -> Return<Option<Self>> {
-        unsafe {
-            let mut indicator: ffi::SQLLEN = 0;
+impl <'a> OdbcType<'a> for MyDateTime {
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_CHAR
+    }
 
-            //Let's ask ODBC driver to provide us with SQL_C_CHAR representation and then parse it to our custom type
-            let result = ffi::SQLGetData(stmt.handle(),
-                                         col_or_param_num,
-                                         ffi::SQL_C_CHAR,
-                                         buffer.as_mut_ptr() as ffi::SQLPOINTER,
-                                         buffer.len() as ffi::SQLLEN,
-                                         &mut indicator as *mut ffi::SQLLEN);
-
-            match result {
-                ffi::SQL_SUCCESS => {
-                    if indicator == ffi::SQL_NULL_DATA {
-                        Return::Success(None)
-                    } else {
-                        let str = std::str::from_utf8(&buffer[..(indicator as usize)]).unwrap();
-                        let dt = Local.datetime_from_str(str, "%Y-%m-%d %H:%M:%S%.f").unwrap();
-                        Return::Success(Some(MyDateTime(dt)))
-                    }
-                }
-                ffi::SQL_SUCCESS_WITH_INFO => {
-                    if indicator == ffi::SQL_NULL_DATA {
-                        Return::Success(None)
-                    } else {
-                        let str = std::str::from_utf8(&buffer[..(indicator as usize)]).unwrap();
-                        let dt = Local.datetime_from_str(str, "%Y-%m-%d %H:%M:%S%.f").unwrap();
-                        Return::Success(Some(MyDateTime(dt)))
-                    }
-                }
-                ffi::SQL_ERROR => Return::Error,
-                ffi::SQL_NO_DATA => panic!("SQLGetData has already returned the column data"),
-                r => panic!("unexpected return value from SQLGetData: {:?}", r),
-            }
-        }
+    fn convert(buffer: &'a [u8]) -> Self {
+        let str = std::str::from_utf8(buffer).unwrap();
+        let dt = Local.datetime_from_str(str, "%Y-%m-%d %H:%M:%S%.f").unwrap();
+        MyDateTime(dt)
     }
 }
 
