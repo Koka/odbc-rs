@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="RUBY_MODULE" version="4">
+  <component name="ModuleRunConfigurationManager">
+    <configuration default="false" name="Run custom_get_data" type="CargoCommandRunConfiguration" factoryName="Cargo Command" show_console_on_std_err="false" show_console_on_std_out="false">
+      <parameters>
+        <option name="additionalArguments">
+          <list>
+            <option value="--example" />
+            <option value="custom_get_data" />
+          </list>
+        </option>
+        <option name="backtraceMode" value="2" />
+        <option name="command" value="run" />
+        <option name="environmentVariables">
+          <map />
+        </option>
+        <option name="nocapture" value="true" />
+      </parameters>
+      <module name="odbc-rs" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Test list_data_sources" type="CargoCommandRunConfiguration" factoryName="Cargo Command" show_console_on_std_err="false" show_console_on_std_out="false">
+      <parameters>
+        <option name="additionalArguments">
+          <list>
+            <option value="--package" />
+            <option value="odbc" />
+            <option value="--test" />
+            <option value="libs" />
+            <option value="list_data_sources" />
+          </list>
+        </option>
+        <option name="backtraceMode" value="2" />
+        <option name="command" value="test" />
+        <option name="environmentVariables">
+          <map />
+        </option>
+        <option name="nocapture" value="true" />
+      </parameters>
+      <module name="odbc-rs" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Run print_drivers_and_datasources" type="CargoCommandRunConfiguration" factoryName="Cargo Command" show_console_on_std_err="false" show_console_on_std_out="false">
+      <parameters>
+        <option name="additionalArguments">
+          <list>
+            <option value="--example" />
+            <option value="print_drivers_and_datasources" />
+          </list>
+        </option>
+        <option name="backtraceMode" value="2" />
+        <option name="command" value="run" />
+        <option name="environmentVariables">
+          <map />
+        </option>
+        <option name="nocapture" value="true" />
+      </parameters>
+      <module name="odbc-rs" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Test input_parameter" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true" show_console_on_std_err="false" show_console_on_std_out="false">
+      <parameters>
+        <option name="additionalArguments">
+          <list>
+            <option value="--package" />
+            <option value="odbc" />
+            <option value="--test" />
+            <option value="input_parameter" />
+            <option value="" />
+          </list>
+        </option>
+        <option name="backtraceMode" value="2" />
+        <option name="command" value="test" />
+        <option name="environmentVariables">
+          <map />
+        </option>
+        <option name="nocapture" value="true" />
+      </parameters>
+      <module name="odbc-rs" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Test libs" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true" show_console_on_std_err="false" show_console_on_std_out="false">
+      <parameters>
+        <option name="additionalArguments">
+          <list>
+            <option value="--package" />
+            <option value="odbc" />
+            <option value="--test" />
+            <option value="libs" />
+            <option value="" />
+          </list>
+        </option>
+        <option name="backtraceMode" value="2" />
+        <option name="command" value="test" />
+        <option name="environmentVariables">
+          <map />
+        </option>
+        <option name="nocapture" value="true" />
+      </parameters>
+      <module name="odbc-rs" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Run connect" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true" show_console_on_std_err="false" show_console_on_std_out="false">
+      <parameters>
+        <option name="additionalArguments">
+          <list>
+            <option value="--example" />
+            <option value="connect" />
+          </list>
+        </option>
+        <option name="backtraceMode" value="2" />
+        <option name="command" value="run" />
+        <option name="environmentVariables">
+          <map />
+        </option>
+        <option name="nocapture" value="true" />
+      </parameters>
+      <module name="odbc-rs" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Test native_types" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true" show_console_on_std_err="false" show_console_on_std_out="false">
+      <parameters>
+        <option name="additionalArguments">
+          <list>
+            <option value="--package" />
+            <option value="odbc" />
+            <option value="--test" />
+            <option value="native_types" />
+            <option value="" />
+          </list>
+        </option>
+        <option name="backtraceMode" value="2" />
+        <option name="command" value="test" />
+        <option name="environmentVariables">
+          <map />
+        </option>
+        <option name="nocapture" value="true" />
+      </parameters>
+      <module name="odbc-rs" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Test _ref_str" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true" show_console_on_std_err="false" show_console_on_std_out="false">
+      <parameters>
+        <option name="additionalArguments">
+          <list>
+            <option value="--package" />
+            <option value="odbc" />
+            <option value="--test" />
+            <option value="input_parameter" />
+            <option value="_ref_str" />
+          </list>
+        </option>
+        <option name="backtraceMode" value="2" />
+        <option name="command" value="test" />
+        <option name="environmentVariables">
+          <map />
+        </option>
+        <option name="nocapture" value="true" />
+      </parameters>
+      <module name="odbc-rs" />
+      <method />
+    </configuration>
+  </component>
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Rust &lt;odbc-rs&gt;" level="project" />
+    <orderEntry type="library" name="Cargo &lt;odbc-rs&gt;" level="project" />
+  </component>
+</module>

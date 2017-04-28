@@ -288,10 +288,10 @@
 <span class='kw'>mod</span> <span class='ident'>output</span>;
 <span class='kw'>mod</span> <span class='ident'>prepare</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>output</span>::<span class='ident'>Output</span>;
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>input</span>::<span class='ident'>InputParameter</span>;
 <span class='kw'>use</span> {<span class='ident'>ffi</span>, <span class='ident'>DataSource</span>, <span class='ident'>Return</span>, <span class='prelude-ty'>Result</span>, <span class='ident'>Raii</span>, <span class='ident'>Handle</span>, <span class='ident'>Connected</span>};
 <span class='kw'>use</span> <span class='ident'>ffi</span>::<span class='ident'>SQLRETURN</span>::<span class='kw-2'>*</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>marker</span>::<span class='ident'>PhantomData</span>;
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>types</span>::<span class='ident'>OdbcType</span>;
 
 <span class='doccomment'>/// `Statement` state used to represent a freshly allocated connection</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Allocated</span> {}
@@ -334,7 +334,7 @@
 <span class='doccomment'>/// Used to retrieve data from the fields of a query result</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Cursor</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>: <span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;c</span>: <span class='lifetime'>&#39;a</span>, <span class='ident'>S</span>: <span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
     <span class='ident'>stmt</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='lifetime'>&#39;c</span>, <span class='ident'>S</span>, <span class='ident'>HasResult</span><span class='op'>&gt;</span>,
-    <span class='ident'>buffer</span>: [<span class='ident'>u8</span>; <span class='number'>512</span>],
+    <span class='ident'>buffer</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>S</span>, <span class='ident'>R</span><span class='op'>&gt;</span> <span class='ident'>Handle</span> <span class='kw'>for</span> <span class='ident'>Statement</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>S</span>, <span class='ident'>R</span><span class='op'>&gt;</span> {
@@ -394,7 +394,7 @@
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>raii</span>.<span class='ident'>fetch</span>().<span class='ident'>into_result</span>(<span class='self'>self</span>)<span class='question-mark'>?</span> {
             <span class='prelude-val'>Ok</span>(<span class='prelude-val'>Some</span>(<span class='ident'>Cursor</span> {
                 <span class='ident'>stmt</span>: <span class='self'>self</span>,
-                <span class='ident'>buffer</span>: [<span class='number'>0u8</span>; <span class='number'>512</span>],
+                <span class='ident'>buffer</span>: <span class='macro'>vec</span><span class='macro'>!</span>[<span class='number'>0</span>; <span class='number'>512</span>],
             }))
         } <span class='kw'>else</span> {
             <span class='prelude-val'>Ok</span>(<span class='prelude-val'>None</span>)
