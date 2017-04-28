@@ -8,8 +8,8 @@ pub trait OdbcType<'a>: Sized {
     fn convert(_: &'a [u8]) -> Self {
         unreachable!()
     }
-    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
-    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
+    fn column_size(&self) -> ffi::SQLULEN { unreachable!() }
+    fn value_ptr(&self) -> ffi::SQLPOINTER { unreachable!() }
     fn decimal_digits(&self) -> ffi::SQLSMALLINT {
         0
     }
@@ -70,6 +70,9 @@ impl<'a> OdbcType<'a> for u8 {
     fn convert(buffer: &'a [u8]) -> Self {
         convert_primitive(buffer)
     }
+
+    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
+    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
 impl<'a> OdbcType<'a> for i8 {
@@ -80,6 +83,9 @@ impl<'a> OdbcType<'a> for i8 {
     fn convert(buffer: &'a [u8]) -> Self {
         convert_primitive(buffer)
     }
+
+    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
+    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
 impl<'a> OdbcType<'a> for i16 {
@@ -90,6 +96,9 @@ impl<'a> OdbcType<'a> for i16 {
     fn convert(buffer: &'a [u8]) -> Self {
         convert_primitive(buffer)
     }
+
+    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
+    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
 impl<'a> OdbcType<'a> for u16 {
@@ -100,6 +109,9 @@ impl<'a> OdbcType<'a> for u16 {
     fn convert(buffer: &'a [u8]) -> Self {
         convert_primitive(buffer)
     }
+
+    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
+    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
 impl<'a> OdbcType<'a> for i32 {
@@ -110,6 +122,9 @@ impl<'a> OdbcType<'a> for i32 {
     fn convert(buffer: &'a [u8]) -> Self {
         convert_primitive(buffer)
     }
+
+    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
+    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
 impl<'a> OdbcType<'a> for u32 {
@@ -120,6 +135,9 @@ impl<'a> OdbcType<'a> for u32 {
     fn convert(buffer: &'a [u8]) -> Self {
         convert_primitive(buffer)
     }
+
+    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
+    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
 impl<'a> OdbcType<'a> for i64 {
@@ -130,6 +148,9 @@ impl<'a> OdbcType<'a> for i64 {
     fn convert(buffer: &'a [u8]) -> Self {
         convert_primitive(buffer)
     }
+
+    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
+    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
 impl<'a> OdbcType<'a> for u64 {
@@ -140,6 +161,9 @@ impl<'a> OdbcType<'a> for u64 {
     fn convert(buffer: &'a [u8]) -> Self {
         convert_primitive(buffer)
     }
+
+    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
+    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
 impl<'a> OdbcType<'a> for f32 {
@@ -150,6 +174,9 @@ impl<'a> OdbcType<'a> for f32 {
     fn convert(buffer: &'a [u8]) -> Self {
         convert_primitive(buffer)
     }
+
+    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
+    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
 impl<'a> OdbcType<'a> for f64 {
@@ -160,4 +187,7 @@ impl<'a> OdbcType<'a> for f64 {
     fn convert(buffer: &'a [u8]) -> Self {
         convert_primitive(buffer)
     }
+
+    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
+    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
