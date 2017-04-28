@@ -1,0 +1,29 @@
+[package]
+name = "odbc"
+description = "ODBC wrapper for idiomatic Rust"
+version = "0.7.0"
+authors = ["Konstantin Salikhov <koka58@yandex.ru>", "Markus Klein <markus-klein@live.de>"]
+repository = "https://github.com/Koka/odbc-rs"
+documentation = "http://koka.github.io/odbc-rs/odbc/"
+homepage = "https://github.com/Koka/odbc-rs"
+readme = "README.md"
+keywords = ["odbc", "binding", "sql", "database", "db"]
+license = "MIT"
+categories = ["api-bindings", "database"]
+
+[features]
+default = []
+travis = []
+
+[dependencies]
+odbc-sys = "0.2.8"
+log = "0.3.7"
+
+[dev-dependencies]
+env_logger = "0.3"
+chrono = "0.3"
+
+[badges]
+travis-ci = { repository = "Koka/odbc-rs", branch = "master" }
+appveyor = { repository = "Koka/odbc-rs", branch = "master" }
+
