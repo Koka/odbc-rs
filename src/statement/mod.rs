@@ -4,10 +4,10 @@ mod input;
 mod output;
 mod prepare;
 pub use self::output::Output;
-pub use self::input::InputParameter;
 use {ffi, DataSource, Return, Result, Raii, Handle, Connected};
 use ffi::SQLRETURN::*;
 use std::marker::PhantomData;
+pub use self::types::OdbcType;
 
 /// `Statement` state used to represent a freshly allocated connection
 pub enum Allocated {}
@@ -50,7 +50,7 @@ pub struct Statement<'a, 'b, S, R> {
 /// Used to retrieve data from the fields of a query result
 pub struct Cursor<'a, 'b: 'a, 'c: 'a, S: 'a> {
     stmt: &'a mut Statement<'b, 'c, S, HasResult>,
-    buffer: [u8; 512],
+    buffer: Vec<u8>
 }
 
 impl<'a, 'b, S, R> Handle for Statement<'a, 'b, S, R> {
@@ -110,7 +110,7 @@ impl<'a, 'b, S> Statement<'a, 'b, S, HasResult> {
         if self.raii.fetch().into_result(self)? {
             Ok(Some(Cursor {
                 stmt: self,
-                buffer: [0u8; 512],
+                buffer: vec![0; 512],
             }))
         } else {
             Ok(None)

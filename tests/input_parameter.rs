@@ -30,7 +30,7 @@ macro_rules! test_type {
 #[test]
 fn _ref_str() {
     let param = "Hello, World!";
-    test_type!(A, param)
+    test_type!(A, &param)
 }
 
 #[test]

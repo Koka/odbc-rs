@@ -1,14 +1,5 @@
 use {ffi, Return, Result, Raii, Handle, Statement};
-use super::types::FixedSizedType;
-
-/// Allows types to be used with `Statement::bind_parameter`
-pub unsafe trait InputParameter {
-    fn c_data_type(&self) -> ffi::SqlCDataType;
-    fn column_size(&self) -> ffi::SQLULEN;
-    fn decimal_digits(&self) -> ffi::SQLSMALLINT;
-    fn value_ptr(&self) -> ffi::SQLPOINTER;
-    fn indicator(&self) -> ffi::SQLLEN;
-}
+use super::types::OdbcType;
 
 impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
     /// Binds a parameter to a parameter marker in an SQL statement.
@@ -42,7 +33,7 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
                                  parameter_index: u16,
                                  value: &'c T)
                                  -> Result<Statement<'a, 'c, S, R>>
-        where T: InputParameter,
+        where T: OdbcType<'c>,
               T: ?Sized,
               'b: 'c
     {
@@ -61,8 +52,8 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
 }
 
 impl Raii<ffi::Stmt> {
-    fn bind_input_parameter<T>(&mut self, parameter_index: u16, value: &T) -> Return<()>
-        where T: InputParameter,
+    fn bind_input_parameter<'c, T>(&mut self, parameter_index: u16, value: &'c T) -> Return<()>
+        where T: OdbcType<'c>,
               T: ?Sized
     {
         match unsafe {
@@ -70,13 +61,13 @@ impl Raii<ffi::Stmt> {
                 self.handle(),
                 parameter_index,
                 ffi::SQL_PARAM_INPUT,
-                value.c_data_type(),
+                T::c_data_type(),
                 ffi::SQL_UNKNOWN_TYPE,
                 value.column_size(),
                 value.decimal_digits(),
                 value.value_ptr(),
                 0, // buffer length
-                &value.indicator() as * const ffi::SQLLEN as * mut ffi::SQLLEN// str len or ind ptr
+                &(value.column_size() as ffi::SQLLEN) as * const ffi::SQLLEN as * mut ffi::SQLLEN// str len or ind ptr
             )
         } {
             ffi::SQL_SUCCESS => Return::Success(()),
@@ -93,74 +84,5 @@ impl Raii<ffi::Stmt> {
             ffi::SQL_ERROR => Return::Error,
             r => panic!("SQLFreeStmt returned unexpected result: {:?}", r),
         }
-    }
-}
-
-unsafe impl InputParameter for str {
-    fn c_data_type(&self) -> ffi::SqlCDataType {
-        ffi::SQL_C_CHAR
-    }
-
-    fn column_size(&self) -> ffi::SQLULEN {
-        self.as_bytes().len() as ffi::SQLULEN
-    }
-
-    fn decimal_digits(&self) -> ffi::SQLSMALLINT {
-        0
-    }
-
-    fn value_ptr(&self) -> ffi::SQLPOINTER {
-        self.as_bytes().as_ptr() as ffi::SQLPOINTER
-    }
-
-    fn indicator(&self) -> ffi::SQLLEN {
-        self.as_bytes().len() as ffi::SQLLEN
-    }
-}
-
-unsafe impl InputParameter for String {
-    fn c_data_type(&self) -> ffi::SqlCDataType {
-        ffi::SQL_C_CHAR
-    }
-
-    fn column_size(&self) -> ffi::SQLULEN {
-        self.as_bytes().len() as ffi::SQLULEN
-    }
-
-    fn decimal_digits(&self) -> ffi::SQLSMALLINT {
-        0
-    }
-
-    fn value_ptr(&self) -> ffi::SQLPOINTER {
-        self.as_bytes().as_ptr() as ffi::SQLPOINTER
-    }
-
-    fn indicator(&self) -> ffi::SQLLEN {
-        self.as_bytes().len() as ffi::SQLLEN
-    }
-}
-
-unsafe impl<T> InputParameter for T
-    where T: FixedSizedType
-{
-    fn c_data_type(&self) -> ffi::SqlCDataType {
-        T::c_data_type()
-    }
-
-    fn column_size(&self) -> ffi::SQLULEN {
-        use std::mem::size_of;
-        size_of::<Self>() as ffi::SQLULEN
-    }
-
-    fn decimal_digits(&self) -> ffi::SQLSMALLINT {
-        0
-    }
-
-    fn value_ptr(&self) -> ffi::SQLPOINTER {
-        self as *const Self as ffi::SQLPOINTER
-    }
-
-    fn indicator(&self) -> ffi::SQLLEN {
-        0
     }
 }
