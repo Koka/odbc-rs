@@ -17,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -43,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1"> 1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1"> 1</span>
 <span id="2"> 2</span>
 <span id="3"> 3</span>
 <span id="4"> 4</span>
@@ -113,75 +113,75 @@
 <span id="68">68</span>
 <span id="69">69</span>
 <span id="70">70</span>
-</pre><pre class='rust '>
-<span class='doccomment'>//! # ODBC</span>
-<span class='doccomment'>//! Open Database Connectivity or short ODBC is a low level high performance interface</span>
-<span class='doccomment'>//! introduced by Microsoft to access relational data stores. This crate wraps the raw C interface</span>
-<span class='doccomment'>//! and is intended to be usable in safe and idiomatic Rust.</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! [What is ODBC?](https://docs.microsoft.com/en-us/sql/odbc/reference/what-is-odbc)</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! [ODBC Programmer&#39;s Reference]</span>
-<span class='doccomment'>//! (https://docs.microsoft.com/en-us/sql/odbc/reference/odbc-programmer-s-reference)</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! # Internal Desgin</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! While designed as a relatively low level wrapper around ODBC this crate tries to prevent many</span>
-<span class='doccomment'>//! errors at compile time. The borrow checker and the RAII (Resource Acquisition Is</span>
-<span class='doccomment'>//! Initialization) idiom should prevent any occurence of `SQL_INVALID_HANDLE` in safe code.</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! Using the type system and the borrow checker this crate ensures that each method call happens</span>
-<span class='doccomment'>//! in a valid state and state transitions are modeled in the type system. This should eliminate</span>
-<span class='doccomment'>//! the possibility of function sequence errors in safe code.</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! [Basic ODBC Application Steps]</span>
-<span class='doccomment'>//! (https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/basic-odbc-application-steps)</span>
-<span class='doccomment'>//!</span>
-<span class='doccomment'>//! [ODBC State Transitions]</span>
-<span class='doccomment'>//! (https://docs.microsoft.com/en-us/sql/odbc/reference/appendixes/appendix-b-odbc-state-transition-tables)</span>
+</pre><pre class="rust ">
+<span class="doccomment">//! # ODBC</span>
+<span class="doccomment">//! Open Database Connectivity or short ODBC is a low level high performance interface</span>
+<span class="doccomment">//! introduced by Microsoft to access relational data stores. This crate wraps the raw C interface</span>
+<span class="doccomment">//! and is intended to be usable in safe and idiomatic Rust.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! [What is ODBC?](https://docs.microsoft.com/en-us/sql/odbc/reference/what-is-odbc)</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! [ODBC Programmer&#39;s Reference]</span>
+<span class="doccomment">//! (https://docs.microsoft.com/en-us/sql/odbc/reference/odbc-programmer-s-reference)</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! # Internal Desgin</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! While designed as a relatively low level wrapper around ODBC this crate tries to prevent many</span>
+<span class="doccomment">//! errors at compile time. The borrow checker and the RAII (Resource Acquisition Is</span>
+<span class="doccomment">//! Initialization) idiom should prevent any occurence of `SQL_INVALID_HANDLE` in safe code.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Using the type system and the borrow checker this crate ensures that each method call happens</span>
+<span class="doccomment">//! in a valid state and state transitions are modeled in the type system. This should eliminate</span>
+<span class="doccomment">//! the possibility of function sequence errors in safe code.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! [Basic ODBC Application Steps]</span>
+<span class="doccomment">//! (https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/basic-odbc-application-steps)</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! [ODBC State Transitions]</span>
+<span class="doccomment">//! (https://docs.microsoft.com/en-us/sql/odbc/reference/appendixes/appendix-b-odbc-state-transition-tables)</span>
 
-<span class='attribute'>#[<span class='ident'>macro_use</span>]</span>
-<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>log</span>;
+<span class="attribute">#[<span class="ident">macro_use</span>]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">log</span>;
 
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>ffi</span>;
-<span class='kw'>mod</span> <span class='ident'>odbc_object</span>;
-<span class='kw'>mod</span> <span class='ident'>raii</span>;
-<span class='kw'>mod</span> <span class='ident'>diagnostics</span>;
-<span class='kw'>mod</span> <span class='ident'>result</span>;
-<span class='kw'>mod</span> <span class='ident'>environment</span>;
-<span class='kw'>mod</span> <span class='ident'>data_source</span>;
-<span class='kw'>mod</span> <span class='ident'>statement</span>;
-<span class='kw'>use</span> <span class='ident'>odbc_object</span>::<span class='ident'>OdbcObject</span>;
-<span class='kw'>use</span> <span class='ident'>raii</span>::<span class='ident'>Raii</span>;
-<span class='kw'>use</span> <span class='ident'>result</span>::<span class='ident'>Return</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ptr</span>::<span class='ident'>null_mut</span>;
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>diagnostics</span>::{<span class='ident'>DiagnosticRecord</span>, <span class='ident'>GetDiagRec</span>};
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>result</span>::{<span class='prelude-ty'>Result</span>, <span class='ident'>EnvAllocError</span>};
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>environment</span>::<span class='kw-2'>*</span>;
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>data_source</span>::{<span class='ident'>DataSource</span>, <span class='ident'>Connected</span>, <span class='ident'>Disconnected</span>};
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>statement</span>::<span class='kw-2'>*</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">ffi</span>;
+<span class="kw">mod</span> <span class="ident">odbc_object</span>;
+<span class="kw">mod</span> <span class="ident">raii</span>;
+<span class="kw">mod</span> <span class="ident">diagnostics</span>;
+<span class="kw">mod</span> <span class="ident">result</span>;
+<span class="kw">mod</span> <span class="ident">environment</span>;
+<span class="kw">mod</span> <span class="ident">data_source</span>;
+<span class="kw">mod</span> <span class="ident">statement</span>;
+<span class="kw">use</span> <span class="ident">odbc_object</span>::<span class="ident">OdbcObject</span>;
+<span class="kw">use</span> <span class="ident">raii</span>::<span class="ident">Raii</span>;
+<span class="kw">use</span> <span class="ident">result</span>::<span class="ident">Return</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null_mut</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">diagnostics</span>::{<span class="ident">DiagnosticRecord</span>, <span class="ident">GetDiagRec</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">result</span>::{<span class="prelude-ty">Result</span>, <span class="ident">EnvAllocError</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">environment</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">data_source</span>::{<span class="ident">DataSource</span>, <span class="ident">Connected</span>, <span class="ident">Disconnected</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">statement</span>::<span class="kw-2">*</span>;
 
-<span class='doccomment'>/// Reflects the ability of a type to expose a valid handle</span>
-<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>Handle</span> {
-    <span class='kw'>type</span> <span class='ident'>To</span>;
-    <span class='doccomment'>/// Returns a valid handle to the odbc type.</span>
-    <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>handle</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='self'>Self</span>::<span class='ident'>To</span>;
+<span class="doccomment">/// Reflects the ability of a type to expose a valid handle</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Handle</span> {
+    <span class="kw">type</span> <span class="ident">To</span>;
+    <span class="doccomment">/// Returns a valid handle to the odbc type.</span>
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">handle</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="self">Self</span>::<span class="ident">To</span>;
 }
 
-<span class='kw'>fn</span> <span class='ident'>as_out_buffer</span>(<span class='ident'>buffer</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>u8</span>]) <span class='op'>-&gt;</span> <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>u8</span> {
-    <span class='kw'>if</span> <span class='ident'>buffer</span>.<span class='ident'>len</span>() <span class='op'>==</span> <span class='number'>0</span> {
-        <span class='ident'>null_mut</span>()
-    } <span class='kw'>else</span> {
-        <span class='ident'>buffer</span>.<span class='ident'>as_mut_ptr</span>()
+<span class="kw">fn</span> <span class="ident">as_out_buffer</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">u8</span> {
+    <span class="kw">if</span> <span class="ident">buffer</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span> {
+        <span class="ident">null_mut</span>()
+    } <span class="kw">else</span> {
+        <span class="ident">buffer</span>.<span class="ident">as_mut_ptr</span>()
     }
 }
 
-<span class='kw'>fn</span> <span class='ident'>as_buffer_length</span>(<span class='ident'>n</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>ffi</span>::<span class='ident'>SQLSMALLINT</span> {
-    <span class='kw'>use</span> <span class='ident'>std</span>;
-    <span class='kw'>if</span> <span class='ident'>n</span> <span class='op'>&gt;</span> <span class='ident'>std</span>::<span class='ident'>i16</span>::<span class='ident'>MAX</span> <span class='kw'>as</span> <span class='ident'>usize</span> {
-        <span class='ident'>std</span>::<span class='ident'>i16</span>::<span class='ident'>MAX</span>
-    } <span class='kw'>else</span> {
-        <span class='ident'>n</span> <span class='kw'>as</span> <span class='ident'>i16</span>
+<span class="kw">fn</span> <span class="ident">as_buffer_length</span>(<span class="ident">n</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span> {
+    <span class="kw">use</span> <span class="ident">std</span>;
+    <span class="kw">if</span> <span class="ident">n</span> <span class="op">&gt;</span> <span class="ident">std</span>::<span class="ident">i16</span>::<span class="ident">MAX</span> <span class="kw">as</span> <span class="ident">usize</span> {
+        <span class="ident">std</span>::<span class="ident">i16</span>::<span class="ident">MAX</span>
+    } <span class="kw">else</span> {
+        <span class="ident">n</span> <span class="kw">as</span> <span class="ident">i16</span>
     }
 }
 </pre>

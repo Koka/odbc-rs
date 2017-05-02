@@ -17,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc trait">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -43,29 +43,29 @@
         </form>
     </nav>
 
-    <section id='main' class="content trait">
-<h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>odbc</a>::<wbr><a class='trait' href=''>Handle</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>odbc</a>::<wbr><a class="trait" href=''>Handle</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
                </span><a class='srclink' href='../src/odbc/lib.rs.html#49-53' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait Handle {
-    type <a href='#associatedtype.To' class='type'>To</a>;
-    unsafe fn <a href='#tymethod.handle' class='fnname'>handle</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut </a>Self::<a class='trait' href='../odbc/trait.Handle.html' title='odbc::Handle'>To</a>;
+    type <a href='#associatedtype.To' class="type">To</a>;
+    unsafe fn <a href='#tymethod.handle' class='fnname'>handle</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a>Self::<a class="trait" href="../odbc/trait.Handle.html" title="trait odbc::Handle">To</a>;
 }</pre><div class='docblock'><p>Reflects the ability of a type to expose a valid handle</p>
 </div>
             <h2 id='associated-types'>Associated Types</h2>
             <div class='methods'>
-        <h3 id='associatedtype.To' class='method'><span id='To.t' class='invisible'><code>type <a href='#associatedtype.To' class='type'>To</a></code></span></h3></div>
+        <h3 id='associatedtype.To' class='method'><span id='To.t' class='invisible'><code>type <a href='#associatedtype.To' class="type">To</a></code></span></h3></div>
             <h2 id='required-methods'>Required Methods</h2>
             <div class='methods'>
-        <h3 id='tymethod.handle' class='method'><span id='handle.v' class='invisible'><code>unsafe fn <a href='#tymethod.handle' class='fnname'>handle</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.pointer.html'>*mut </a>Self::<a class='trait' href='../odbc/trait.Handle.html' title='odbc::Handle'>To</a></code></span></h3><div class='docblock'><p>Returns a valid handle to the odbc type.</p>
+        <h3 id='tymethod.handle' class='method'><span id='handle.v' class='invisible'><code>unsafe fn <a href='#tymethod.handle' class='fnname'>handle</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a>Self::<a class="trait" href="../odbc/trait.Handle.html" title="trait odbc::Handle">To</a></code></span></h3><div class='docblock'><p>Returns a valid handle to the odbc type.</p>
 </div></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>
-    <li><code>impl&lt;V&gt; Handle for <a class='struct' href='../odbc/struct.Environment.html' title='odbc::Environment'>Environment</a>&lt;V&gt;</code></li>
-<li><code>impl&lt;'a, S:&nbsp;DataSourceState&gt; Handle for <a class='struct' href='../odbc/struct.DataSource.html' title='odbc::DataSource'>DataSource</a>&lt;'a, S&gt;</code></li>
-<li><code>impl&lt;'a, 'b, S, R&gt; Handle for <a class='struct' href='../odbc/struct.Statement.html' title='odbc::Statement'>Statement</a>&lt;'a, 'b, S, R&gt;</code></li>
+    <li><code>impl&lt;V&gt; Handle for <a class="struct" href="../odbc/struct.Environment.html" title="struct odbc::Environment">Environment</a>&lt;V&gt;</code></li>
+<li><code>impl&lt;'a, S:&nbsp;DataSourceState&gt; Handle for <a class="struct" href="../odbc/struct.DataSource.html" title="struct odbc::DataSource">DataSource</a>&lt;'a, S&gt;</code></li>
+<li><code>impl&lt;'a, 'b, S, R&gt; Handle for <a class="struct" href="../odbc/struct.Statement.html" title="struct odbc::Statement">Statement</a>&lt;'a, 'b, S, R&gt;</code></li>
 </ul><script type="text/javascript" async
                          src="../implementors/odbc/trait.Handle.js">
                  </script></section>

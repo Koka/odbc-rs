@@ -17,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -43,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1"> 1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1"> 1</span>
 <span id="2"> 2</span>
 <span id="3"> 3</span>
 <span id="4"> 4</span>
@@ -60,24 +60,24 @@
 <span id="15">15</span>
 <span id="16">16</span>
 <span id="17">17</span>
-</pre><pre class='rust '>
-<span class='doccomment'>/// Codes used for FetchOrientation in `SQLFetchScroll`, `SQLDataSources` and in `SQLDrivers`</span>
-<span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>u16</span>)]</span>
-<span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>non_camel_case_types</span>)]</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>, <span class='ident'>Clone</span>, <span class='ident'>Copy</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>FetchOrientation</span> {
-    <span class='ident'>SQL_FETCH_NEXT</span> <span class='op'>=</span> <span class='number'>1</span>,
-    <span class='ident'>SQL_FETCH_FIRST</span> <span class='op'>=</span> <span class='number'>2</span>,
-    <span class='comment'>// Other codes used for FetchOrientation in SQLFetchScroll()</span>
-    <span class='ident'>SQL_FETCH_LAST</span> <span class='op'>=</span> <span class='number'>3</span>,
-    <span class='ident'>SQL_FETCH_PRIOR</span> <span class='op'>=</span> <span class='number'>4</span>,
-    <span class='ident'>SQL_FETCH_ABSOLUTE</span> <span class='op'>=</span> <span class='number'>5</span>,
-    <span class='ident'>SQL_FETCH_RELATIVE</span> <span class='op'>=</span> <span class='number'>6</span>,
-    <span class='comment'>// additional SQLDataSources fetch directions</span>
-    <span class='ident'>SQL_FETCH_FIRST_USER</span> <span class='op'>=</span> <span class='number'>31</span>,
-    <span class='ident'>SQL_FETCH_FIRST_SYSTEM</span> <span class='op'>=</span> <span class='number'>32</span>,
+</pre><pre class="rust ">
+<span class="doccomment">/// Codes used for FetchOrientation in `SQLFetchScroll`, `SQLDataSources` and in `SQLDrivers`</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">u16</span>)]</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">FetchOrientation</span> {
+    <span class="ident">SQL_FETCH_NEXT</span> <span class="op">=</span> <span class="number">1</span>,
+    <span class="ident">SQL_FETCH_FIRST</span> <span class="op">=</span> <span class="number">2</span>,
+    <span class="comment">// Other codes used for FetchOrientation in SQLFetchScroll()</span>
+    <span class="ident">SQL_FETCH_LAST</span> <span class="op">=</span> <span class="number">3</span>,
+    <span class="ident">SQL_FETCH_PRIOR</span> <span class="op">=</span> <span class="number">4</span>,
+    <span class="ident">SQL_FETCH_ABSOLUTE</span> <span class="op">=</span> <span class="number">5</span>,
+    <span class="ident">SQL_FETCH_RELATIVE</span> <span class="op">=</span> <span class="number">6</span>,
+    <span class="comment">// additional SQLDataSources fetch directions</span>
+    <span class="ident">SQL_FETCH_FIRST_USER</span> <span class="op">=</span> <span class="number">31</span>,
+    <span class="ident">SQL_FETCH_FIRST_SYSTEM</span> <span class="op">=</span> <span class="number">32</span>,
 }
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>FetchOrientation</span>::<span class='kw-2'>*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">FetchOrientation</span>::<span class="kw-2">*</span>;
 </pre>
 </section>
     <section id='search' class="content hidden"></section>

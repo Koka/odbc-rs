@@ -17,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -43,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1"> 1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1"> 1</span>
 <span id="2"> 2</span>
 <span id="3"> 3</span>
 <span id="4"> 4</span>
@@ -60,24 +60,24 @@
 <span id="15">15</span>
 <span id="16">16</span>
 <span id="17">17</span>
-</pre><pre class='rust '>
-<span class='doccomment'>/// Used by `SQLBindParameter`.</span>
-<span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>u16</span>)]</span>
-<span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>non_camel_case_types</span>)]</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>, <span class='ident'>Clone</span>, <span class='ident'>Copy</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>InputOutput</span> {
-    <span class='ident'>SQL_PARAM_TYPE_UNKNOWN</span> <span class='op'>=</span> <span class='number'>0</span>,
-    <span class='ident'>SQL_PARAM_INPUT</span> <span class='op'>=</span> <span class='number'>1</span>,
-    <span class='ident'>SQL_PARAM_INPUT_OUTPUT</span> <span class='op'>=</span> <span class='number'>2</span>,
-    <span class='ident'>SQL_RESULT_COL</span> <span class='op'>=</span> <span class='number'>3</span>,
-    <span class='ident'>SQL_PARAM_OUTPUT</span> <span class='op'>=</span> <span class='number'>4</span>,
-    <span class='ident'>SQL_RETURN_VALUE</span> <span class='op'>=</span> <span class='number'>5</span>,
-    <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;odbc_version_3_80&quot;</span>)]</span>
-    <span class='ident'>SQL_PARAM_INPUT_OUTPUT_STREAM</span> <span class='op'>=</span> <span class='number'>8</span>,
-    <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;odbc_version_3_80&quot;</span>)]</span>
-    <span class='ident'>SQL_PARAM_OUTPUT_STREAM</span> <span class='op'>=</span> <span class='number'>16</span>,
+</pre><pre class="rust ">
+<span class="doccomment">/// Used by `SQLBindParameter`.</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">u16</span>)]</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">InputOutput</span> {
+    <span class="ident">SQL_PARAM_TYPE_UNKNOWN</span> <span class="op">=</span> <span class="number">0</span>,
+    <span class="ident">SQL_PARAM_INPUT</span> <span class="op">=</span> <span class="number">1</span>,
+    <span class="ident">SQL_PARAM_INPUT_OUTPUT</span> <span class="op">=</span> <span class="number">2</span>,
+    <span class="ident">SQL_RESULT_COL</span> <span class="op">=</span> <span class="number">3</span>,
+    <span class="ident">SQL_PARAM_OUTPUT</span> <span class="op">=</span> <span class="number">4</span>,
+    <span class="ident">SQL_RETURN_VALUE</span> <span class="op">=</span> <span class="number">5</span>,
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_3_80&quot;</span>)]</span>
+    <span class="ident">SQL_PARAM_INPUT_OUTPUT_STREAM</span> <span class="op">=</span> <span class="number">8</span>,
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_3_80&quot;</span>)]</span>
+    <span class="ident">SQL_PARAM_OUTPUT_STREAM</span> <span class="op">=</span> <span class="number">16</span>,
 }
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>InputOutput</span>::<span class='kw-2'>*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">InputOutput</span>::<span class="kw-2">*</span>;
 </pre>
 </section>
     <section id='search' class="content hidden"></section>

@@ -17,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -43,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1"> 1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1"> 1</span>
 <span id="2"> 2</span>
 <span id="3"> 3</span>
 <span id="4"> 4</span>
@@ -103,67 +103,67 @@
 <span id="58">58</span>
 <span id="59">59</span>
 <span id="60">60</span>
-</pre><pre class='rust '>
-<span class='doccomment'>/// Indicates the overall success or failure of the function</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// Each function in ODBC returns a code, known as its return code, which indicates the overall</span>
-<span class='doccomment'>/// success or failure of the function. Program logic is generally based on return codes.</span>
-<span class='doccomment'>/// See [ODBC reference](https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/return-codes-odbc)</span>
-<span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>non_camel_case_types</span>)]</span>
-<span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>i16</span>)]</span>
-<span class='attribute'>#[<span class='ident'>must_use</span>]</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>, <span class='ident'>Clone</span>, <span class='ident'>Copy</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>SQLRETURN</span> {
-    <span class='doccomment'>/// Function failed due to an invalid environment, connection, statement, or descriptor handle</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// This indicates a programming error. No additional information is available from</span>
-    <span class='doccomment'>/// `SQLGetDiagRec` or `SQLGetDiagField`. This code is returned only when the handle is a null</span>
-    <span class='doccomment'>/// pointer or is the wrong type, such as when a statement handle is passed for an argument a</span>
-    <span class='doccomment'>/// connection handle.</span>
-    <span class='ident'>SQL_INVALID_HANDLE</span> <span class='op'>=</span> <span class='op'>-</span><span class='number'>2</span>,
+</pre><pre class="rust ">
+<span class="doccomment">/// Indicates the overall success or failure of the function</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Each function in ODBC returns a code, known as its return code, which indicates the overall</span>
+<span class="doccomment">/// success or failure of the function. Program logic is generally based on return codes.</span>
+<span class="doccomment">/// See [ODBC reference](https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/return-codes-odbc)</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">i16</span>)]</span>
+<span class="attribute">#[<span class="ident">must_use</span>]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SQLRETURN</span> {
+    <span class="doccomment">/// Function failed due to an invalid environment, connection, statement, or descriptor handle</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This indicates a programming error. No additional information is available from</span>
+    <span class="doccomment">/// `SQLGetDiagRec` or `SQLGetDiagField`. This code is returned only when the handle is a null</span>
+    <span class="doccomment">/// pointer or is the wrong type, such as when a statement handle is passed for an argument a</span>
+    <span class="doccomment">/// connection handle.</span>
+    <span class="ident">SQL_INVALID_HANDLE</span> <span class="op">=</span> <span class="op">-</span><span class="number">2</span>,
 
-    <span class='doccomment'>/// Function failed</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// The application calls `SQLGetDiagRec` or `SQLGetDiagField` to retrieve additional</span>
-    <span class='doccomment'>/// information. The contents of any output arguments to the function are undefined.</span>
-    <span class='ident'>SQL_ERROR</span> <span class='op'>=</span> <span class='op'>-</span><span class='number'>1</span>,
+    <span class="doccomment">/// Function failed</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// The application calls `SQLGetDiagRec` or `SQLGetDiagField` to retrieve additional</span>
+    <span class="doccomment">/// information. The contents of any output arguments to the function are undefined.</span>
+    <span class="ident">SQL_ERROR</span> <span class="op">=</span> <span class="op">-</span><span class="number">1</span>,
 
-    <span class='doccomment'>/// Function completed successfully</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// The application calls `SQLGetDiagField` to retrieve additional information from the header</span>
-    <span class='doccomment'>/// record.</span>
-    <span class='ident'>SQL_SUCCESS</span> <span class='op'>=</span> <span class='number'>0</span>,
+    <span class="doccomment">/// Function completed successfully</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// The application calls `SQLGetDiagField` to retrieve additional information from the header</span>
+    <span class="doccomment">/// record.</span>
+    <span class="ident">SQL_SUCCESS</span> <span class="op">=</span> <span class="number">0</span>,
 
-    <span class='doccomment'>/// Function completed successfully, possibly with a nonfatal error (warning)</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// The application calls `SQLGetDiagRec` or `SQLGetDiagField` to retrieve additional</span>
-    <span class='doccomment'>/// information.</span>
-    <span class='ident'>SQL_SUCCESS_WITH_INFO</span> <span class='op'>=</span> <span class='number'>1</span>,
+    <span class="doccomment">/// Function completed successfully, possibly with a nonfatal error (warning)</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// The application calls `SQLGetDiagRec` or `SQLGetDiagField` to retrieve additional</span>
+    <span class="doccomment">/// information.</span>
+    <span class="ident">SQL_SUCCESS_WITH_INFO</span> <span class="op">=</span> <span class="number">1</span>,
 
-    <span class='doccomment'>/// A function that was started asynchronously is still executing</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// The application `SQLGetDiagRec` or `SQLGetDiagField` to retrieve additional information if</span>
-    <span class='doccomment'>/// any.</span>
-    <span class='ident'>SQL_STILL_EXECUTING</span> <span class='op'>=</span> <span class='number'>2</span>,
+    <span class="doccomment">/// A function that was started asynchronously is still executing</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// The application `SQLGetDiagRec` or `SQLGetDiagField` to retrieve additional information if</span>
+    <span class="doccomment">/// any.</span>
+    <span class="ident">SQL_STILL_EXECUTING</span> <span class="op">=</span> <span class="number">2</span>,
 
-    <span class='doccomment'>/// More data is needed</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ,such as when a parameter data is sent at execution time or additional connection</span>
-    <span class='doccomment'>/// information is required. The application calls `SQLGetDiagRec` or `SQLGetDiagField` to</span>
-    <span class='doccomment'>/// retrieve additional information, if any.</span>
-    <span class='ident'>SQL_NEED_DATA</span> <span class='op'>=</span> <span class='number'>99</span>,
+    <span class="doccomment">/// More data is needed</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ,such as when a parameter data is sent at execution time or additional connection</span>
+    <span class="doccomment">/// information is required. The application calls `SQLGetDiagRec` or `SQLGetDiagField` to</span>
+    <span class="doccomment">/// retrieve additional information, if any.</span>
+    <span class="ident">SQL_NEED_DATA</span> <span class="op">=</span> <span class="number">99</span>,
 
-    <span class='doccomment'>/// No more data was available</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// The application calls `SQLGetDiagRec` or `SQLGetDiagField` to retrieve additional</span>
-    <span class='doccomment'>/// information. One or more driver-defined status records in class 02xxx may be returned.</span>
-    <span class='ident'>SQL_NO_DATA</span> <span class='op'>=</span> <span class='number'>100</span>,
+    <span class="doccomment">/// No more data was available</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// The application calls `SQLGetDiagRec` or `SQLGetDiagField` to retrieve additional</span>
+    <span class="doccomment">/// information. One or more driver-defined status records in class 02xxx may be returned.</span>
+    <span class="ident">SQL_NO_DATA</span> <span class="op">=</span> <span class="number">100</span>,
 
-    <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;odbc_version_3_80&quot;</span>)]</span>
-    <span class='ident'>SQL_PARAM_DATA_AVAILABLE</span> <span class='op'>=</span> <span class='number'>101</span>,
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_3_80&quot;</span>)]</span>
+    <span class="ident">SQL_PARAM_DATA_AVAILABLE</span> <span class="op">=</span> <span class="number">101</span>,
 }
 
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>SQLRETURN</span>::<span class='kw-2'>*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">SQLRETURN</span>::<span class="kw-2">*</span>;
 </pre>
 </section>
     <section id='search' class="content hidden"></section>

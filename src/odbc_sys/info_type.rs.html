@@ -17,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -43,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1"> 1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1"> 1</span>
 <span id="2"> 2</span>
 <span id="3"> 3</span>
 <span id="4"> 4</span>
@@ -97,61 +97,61 @@
 <span id="52">52</span>
 <span id="53">53</span>
 <span id="54">54</span>
-</pre><pre class='rust '>
-<span class='doccomment'>/// Information requested by SQLGetInfo</span>
-<span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>u16</span>)]</span>
-<span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>non_camel_case_types</span>)]</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>, <span class='ident'>Clone</span>, <span class='ident'>Copy</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>InfoType</span> {
-    <span class='ident'>SQL_MAX_DRIVER_CONNECTIONS</span> <span class='op'>=</span> <span class='number'>0</span>,
-    <span class='ident'>SQL_MAX_CONCURRENT_ACTIVITIES</span> <span class='op'>=</span> <span class='number'>1</span>,
-    <span class='ident'>SQL_DATA_SOURCE_NAME</span> <span class='op'>=</span> <span class='number'>2</span>,
-    <span class='comment'>// SQL_FETCH_DIRECTION = 8, Deprecated in ODBC 3</span>
-    <span class='ident'>SQL_SERVER_NAME</span> <span class='op'>=</span> <span class='number'>13</span>,
-    <span class='ident'>SQL_SEARCH_PATTERN_ESCAPE</span> <span class='op'>=</span> <span class='number'>14</span>,
-    <span class='ident'>SQL_DBMS_NAME</span> <span class='op'>=</span> <span class='number'>17</span>,
-    <span class='ident'>SQL_DBMS_VER</span> <span class='op'>=</span> <span class='number'>18</span>,
-    <span class='ident'>SQL_ACCESSIBLE_TABLES</span> <span class='op'>=</span> <span class='number'>19</span>,
-    <span class='ident'>SQL_ACCESSIBLE_PROCEDURES</span> <span class='op'>=</span> <span class='number'>20</span>,
-    <span class='ident'>SQL_CURSOR_COMMIT_BEHAVIOR</span> <span class='op'>=</span> <span class='number'>23</span>,
-    <span class='ident'>SQL_DATA_SOURCE_READ_ONLY</span> <span class='op'>=</span> <span class='number'>25</span>,
-    <span class='ident'>SQL_DEFAULT_TXN_ISOLATION</span> <span class='op'>=</span> <span class='number'>26</span>,
-    <span class='ident'>SQL_IDENTIFIER_CASE</span> <span class='op'>=</span> <span class='number'>28</span>,
-    <span class='ident'>SQL_IDENTIFIER_QUOTE_CHAR</span> <span class='op'>=</span> <span class='number'>29</span>,
-    <span class='ident'>SQL_MAX_COLUMN_NAME_LEN</span> <span class='op'>=</span> <span class='number'>30</span>,
-    <span class='ident'>SQL_MAX_CURSOR_NAME_LEN</span> <span class='op'>=</span> <span class='number'>31</span>,
-    <span class='ident'>SQL_MAX_SCHEMA_NAME_LEN</span> <span class='op'>=</span> <span class='number'>32</span>,
-    <span class='ident'>SQL_MAX_CATALOG_NAME_LEN</span> <span class='op'>=</span> <span class='number'>34</span>,
-    <span class='ident'>SQL_MAX_TABLE_NAME_LEN</span> <span class='op'>=</span> <span class='number'>35</span>,
-    <span class='comment'>// SQL_SCROLL_CONCURRENCY = 43, deprecated in ODBC 3</span>
-    <span class='ident'>SQL_TRANSACTION_CAPABLE</span> <span class='op'>=</span> <span class='number'>46</span>,
-    <span class='ident'>SQL_USER_NAME</span> <span class='op'>=</span> <span class='number'>47</span>,
-    <span class='ident'>SQL_TRANSACTION_ISOLATION_OPTION</span> <span class='op'>=</span> <span class='number'>72</span>,
-    <span class='ident'>SQL_INTEGRITY</span> <span class='op'>=</span> <span class='number'>73</span>,
-    <span class='ident'>SQL_GETDATA_EXTENSIONS</span> <span class='op'>=</span> <span class='number'>81</span>,
-    <span class='ident'>SQL_NULL_COLLATION</span> <span class='op'>=</span> <span class='number'>85</span>,
-    <span class='ident'>SQL_ALTER_TABLE</span> <span class='op'>=</span> <span class='number'>86</span>,
-    <span class='ident'>SQL_ORDER_BY_COLUMNS_IN_SELECT</span> <span class='op'>=</span> <span class='number'>90</span>,
-    <span class='ident'>SQL_SPECIAL_CHARACTERS</span> <span class='op'>=</span> <span class='number'>94</span>,
-    <span class='ident'>SQL_MAX_COLUMNS_IN_GROUP_BY</span> <span class='op'>=</span> <span class='number'>97</span>,
-    <span class='ident'>SQL_MAX_COLUMNS_IN_INDEX</span> <span class='op'>=</span> <span class='number'>98</span>,
-    <span class='ident'>SQL_MAX_COLUMNS_IN_ORDER_BY</span> <span class='op'>=</span> <span class='number'>99</span>,
-    <span class='ident'>SQL_MAX_COLUMNS_IN_SELECT</span> <span class='op'>=</span> <span class='number'>100</span>,
-    <span class='ident'>SQL_MAX_COLUMNS_IN_TABLE</span> <span class='op'>=</span> <span class='number'>101</span>,
-    <span class='ident'>SQL_MAX_INDEX_SIZE</span> <span class='op'>=</span> <span class='number'>102</span>,
-    <span class='ident'>SQL_MAX_ROW_SIZE</span> <span class='op'>=</span> <span class='number'>104</span>,
-    <span class='ident'>SQL_MAX_STATEMENT_LEN</span> <span class='op'>=</span> <span class='number'>105</span>,
-    <span class='ident'>SQL_MAX_TABLES_IN_SELECT</span> <span class='op'>=</span> <span class='number'>106</span>,
-    <span class='ident'>SQL_MAX_USER_NAME_LEN</span> <span class='op'>=</span> <span class='number'>107</span>,
-    <span class='ident'>SQL_OUTER_JOIN_CAPABILITIES</span> <span class='op'>=</span> <span class='number'>115</span>,
-    <span class='ident'>SQL_XOPEN_CLI_YEAR</span> <span class='op'>=</span> <span class='number'>10000</span>,
-    <span class='ident'>SQL_CURSOR_SENSITIVITY</span> <span class='op'>=</span> <span class='number'>10001</span>,
-    <span class='ident'>SQL_DESCRIBE_PARAMETER</span> <span class='op'>=</span> <span class='number'>10002</span>,
-    <span class='ident'>SQL_CATALOG_NAME</span> <span class='op'>=</span> <span class='number'>10003</span>,
-    <span class='ident'>SQL_COLLATION_SEQ</span> <span class='op'>=</span> <span class='number'>10004</span>,
-    <span class='ident'>SQL_MAX_IDENTIFIER_LEN</span> <span class='op'>=</span> <span class='number'>10005</span>,
+</pre><pre class="rust ">
+<span class="doccomment">/// Information requested by SQLGetInfo</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">u16</span>)]</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">InfoType</span> {
+    <span class="ident">SQL_MAX_DRIVER_CONNECTIONS</span> <span class="op">=</span> <span class="number">0</span>,
+    <span class="ident">SQL_MAX_CONCURRENT_ACTIVITIES</span> <span class="op">=</span> <span class="number">1</span>,
+    <span class="ident">SQL_DATA_SOURCE_NAME</span> <span class="op">=</span> <span class="number">2</span>,
+    <span class="comment">// SQL_FETCH_DIRECTION = 8, Deprecated in ODBC 3</span>
+    <span class="ident">SQL_SERVER_NAME</span> <span class="op">=</span> <span class="number">13</span>,
+    <span class="ident">SQL_SEARCH_PATTERN_ESCAPE</span> <span class="op">=</span> <span class="number">14</span>,
+    <span class="ident">SQL_DBMS_NAME</span> <span class="op">=</span> <span class="number">17</span>,
+    <span class="ident">SQL_DBMS_VER</span> <span class="op">=</span> <span class="number">18</span>,
+    <span class="ident">SQL_ACCESSIBLE_TABLES</span> <span class="op">=</span> <span class="number">19</span>,
+    <span class="ident">SQL_ACCESSIBLE_PROCEDURES</span> <span class="op">=</span> <span class="number">20</span>,
+    <span class="ident">SQL_CURSOR_COMMIT_BEHAVIOR</span> <span class="op">=</span> <span class="number">23</span>,
+    <span class="ident">SQL_DATA_SOURCE_READ_ONLY</span> <span class="op">=</span> <span class="number">25</span>,
+    <span class="ident">SQL_DEFAULT_TXN_ISOLATION</span> <span class="op">=</span> <span class="number">26</span>,
+    <span class="ident">SQL_IDENTIFIER_CASE</span> <span class="op">=</span> <span class="number">28</span>,
+    <span class="ident">SQL_IDENTIFIER_QUOTE_CHAR</span> <span class="op">=</span> <span class="number">29</span>,
+    <span class="ident">SQL_MAX_COLUMN_NAME_LEN</span> <span class="op">=</span> <span class="number">30</span>,
+    <span class="ident">SQL_MAX_CURSOR_NAME_LEN</span> <span class="op">=</span> <span class="number">31</span>,
+    <span class="ident">SQL_MAX_SCHEMA_NAME_LEN</span> <span class="op">=</span> <span class="number">32</span>,
+    <span class="ident">SQL_MAX_CATALOG_NAME_LEN</span> <span class="op">=</span> <span class="number">34</span>,
+    <span class="ident">SQL_MAX_TABLE_NAME_LEN</span> <span class="op">=</span> <span class="number">35</span>,
+    <span class="comment">// SQL_SCROLL_CONCURRENCY = 43, deprecated in ODBC 3</span>
+    <span class="ident">SQL_TRANSACTION_CAPABLE</span> <span class="op">=</span> <span class="number">46</span>,
+    <span class="ident">SQL_USER_NAME</span> <span class="op">=</span> <span class="number">47</span>,
+    <span class="ident">SQL_TRANSACTION_ISOLATION_OPTION</span> <span class="op">=</span> <span class="number">72</span>,
+    <span class="ident">SQL_INTEGRITY</span> <span class="op">=</span> <span class="number">73</span>,
+    <span class="ident">SQL_GETDATA_EXTENSIONS</span> <span class="op">=</span> <span class="number">81</span>,
+    <span class="ident">SQL_NULL_COLLATION</span> <span class="op">=</span> <span class="number">85</span>,
+    <span class="ident">SQL_ALTER_TABLE</span> <span class="op">=</span> <span class="number">86</span>,
+    <span class="ident">SQL_ORDER_BY_COLUMNS_IN_SELECT</span> <span class="op">=</span> <span class="number">90</span>,
+    <span class="ident">SQL_SPECIAL_CHARACTERS</span> <span class="op">=</span> <span class="number">94</span>,
+    <span class="ident">SQL_MAX_COLUMNS_IN_GROUP_BY</span> <span class="op">=</span> <span class="number">97</span>,
+    <span class="ident">SQL_MAX_COLUMNS_IN_INDEX</span> <span class="op">=</span> <span class="number">98</span>,
+    <span class="ident">SQL_MAX_COLUMNS_IN_ORDER_BY</span> <span class="op">=</span> <span class="number">99</span>,
+    <span class="ident">SQL_MAX_COLUMNS_IN_SELECT</span> <span class="op">=</span> <span class="number">100</span>,
+    <span class="ident">SQL_MAX_COLUMNS_IN_TABLE</span> <span class="op">=</span> <span class="number">101</span>,
+    <span class="ident">SQL_MAX_INDEX_SIZE</span> <span class="op">=</span> <span class="number">102</span>,
+    <span class="ident">SQL_MAX_ROW_SIZE</span> <span class="op">=</span> <span class="number">104</span>,
+    <span class="ident">SQL_MAX_STATEMENT_LEN</span> <span class="op">=</span> <span class="number">105</span>,
+    <span class="ident">SQL_MAX_TABLES_IN_SELECT</span> <span class="op">=</span> <span class="number">106</span>,
+    <span class="ident">SQL_MAX_USER_NAME_LEN</span> <span class="op">=</span> <span class="number">107</span>,
+    <span class="ident">SQL_OUTER_JOIN_CAPABILITIES</span> <span class="op">=</span> <span class="number">115</span>,
+    <span class="ident">SQL_XOPEN_CLI_YEAR</span> <span class="op">=</span> <span class="number">10000</span>,
+    <span class="ident">SQL_CURSOR_SENSITIVITY</span> <span class="op">=</span> <span class="number">10001</span>,
+    <span class="ident">SQL_DESCRIBE_PARAMETER</span> <span class="op">=</span> <span class="number">10002</span>,
+    <span class="ident">SQL_CATALOG_NAME</span> <span class="op">=</span> <span class="number">10003</span>,
+    <span class="ident">SQL_COLLATION_SEQ</span> <span class="op">=</span> <span class="number">10004</span>,
+    <span class="ident">SQL_MAX_IDENTIFIER_LEN</span> <span class="op">=</span> <span class="number">10005</span>,
 }
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>InfoType</span>::<span class='kw-2'>*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">InfoType</span>::<span class="kw-2">*</span>;
 </pre>
 </section>
     <section id='search' class="content hidden"></section>

@@ -17,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -43,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1">  1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -319,281 +319,281 @@
 <span id="274">274</span>
 <span id="275">275</span>
 <span id="276">276</span>
-</pre><pre class='rust '>
-<span class='kw'>use</span> <span class='kw'>super</span>::{<span class='ident'>Environment</span>, <span class='prelude-ty'>Result</span>, <span class='ident'>GetDiagRec</span>, <span class='ident'>Version3</span>};
-<span class='kw'>use</span> {<span class='ident'>ffi</span>, <span class='ident'>Raii</span>, <span class='ident'>Handle</span>, <span class='ident'>Return</span>, <span class='ident'>as_out_buffer</span>, <span class='ident'>as_buffer_length</span>};
-<span class='kw'>use</span> <span class='ident'>ffi</span>::{<span class='ident'>SQLDataSources</span>, <span class='ident'>SQLDrivers</span>, <span class='ident'>SQLRETURN</span>, <span class='ident'>SQLHENV</span>, <span class='ident'>SQLSMALLINT</span>, <span class='ident'>SQLCHAR</span>, <span class='ident'>FetchOrientation</span>};
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>HashMap</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>str</span>::<span class='ident'>from_utf8</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>max</span>;
+</pre><pre class="rust ">
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Environment</span>, <span class="prelude-ty">Result</span>, <span class="ident">GetDiagRec</span>, <span class="ident">Version3</span>};
+<span class="kw">use</span> {<span class="ident">ffi</span>, <span class="ident">Raii</span>, <span class="ident">Handle</span>, <span class="ident">Return</span>, <span class="ident">as_out_buffer</span>, <span class="ident">as_buffer_length</span>};
+<span class="kw">use</span> <span class="ident">ffi</span>::{<span class="ident">SQLDataSources</span>, <span class="ident">SQLDrivers</span>, <span class="ident">SQLRETURN</span>, <span class="ident">SQLHENV</span>, <span class="ident">SQLSMALLINT</span>, <span class="ident">SQLCHAR</span>, <span class="ident">FetchOrientation</span>};
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">from_utf8</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">max</span>;
 
-<span class='doccomment'>/// Holds name and description of a datasource</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// Can be obtained via `Environment::data_sources`</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>DataSourceInfo</span> {
-    <span class='doccomment'>/// Name of the data source</span>
-    <span class='kw'>pub</span> <span class='ident'>server_name</span>: <span class='ident'>String</span>,
-    <span class='doccomment'>/// Description of the data source</span>
-    <span class='kw'>pub</span> <span class='ident'>driver</span>: <span class='ident'>String</span>,
+<span class="doccomment">/// Holds name and description of a datasource</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Can be obtained via `Environment::data_sources`</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DataSourceInfo</span> {
+    <span class="doccomment">/// Name of the data source</span>
+    <span class="kw">pub</span> <span class="ident">server_name</span>: <span class="ident">String</span>,
+    <span class="doccomment">/// Description of the data source</span>
+    <span class="kw">pub</span> <span class="ident">driver</span>: <span class="ident">String</span>,
 }
 
-<span class='doccomment'>/// Struct holding information available on a driver.</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// Can be obtained via `Environment::drivers`</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>DriverInfo</span> {
-    <span class='doccomment'>/// Name of the odbc driver</span>
-    <span class='kw'>pub</span> <span class='ident'>description</span>: <span class='ident'>String</span>,
-    <span class='doccomment'>/// List of attributes of the odbc driver</span>
-    <span class='kw'>pub</span> <span class='ident'>attributes</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span>,
+<span class="doccomment">/// Struct holding information available on a driver.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Can be obtained via `Environment::drivers`</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DriverInfo</span> {
+    <span class="doccomment">/// Name of the odbc driver</span>
+    <span class="kw">pub</span> <span class="ident">description</span>: <span class="ident">String</span>,
+    <span class="doccomment">/// List of attributes of the odbc driver</span>
+    <span class="kw">pub</span> <span class="ident">attributes</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span>,
 }
 
-<span class='kw'>type</span> <span class='ident'>SqlInfoMethod</span> <span class='op'>=</span> <span class='kw'>fn</span>(<span class='kw-2'>&amp;</span><span class='ident'>Raii</span><span class='op'>&lt;</span><span class='ident'>ffi</span>::<span class='ident'>Env</span><span class='op'>&gt;</span>, <span class='ident'>ffi</span>::<span class='ident'>FetchOrientation</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>u8</span>], <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>u8</span>])
-                        <span class='op'>-&gt;</span> <span class='ident'>Return</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>i16</span>, <span class='ident'>i16</span>)<span class='op'>&gt;&gt;</span>;
+<span class="kw">type</span> <span class="ident">SqlInfoMethod</span> <span class="op">=</span> <span class="kw">fn</span>(<span class="kw-2">&amp;</span><span class="ident">Raii</span><span class="op">&lt;</span><span class="ident">ffi</span>::<span class="ident">Env</span><span class="op">&gt;</span>, <span class="ident">ffi</span>::<span class="ident">FetchOrientation</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>], <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>])
+                        <span class="op">-&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">i16</span>, <span class="ident">i16</span>)<span class="op">&gt;&gt;</span>;
 
-<span class='kw'>impl</span> <span class='ident'>Environment</span><span class='op'>&lt;</span><span class='ident'>Version3</span><span class='op'>&gt;</span> {
-    <span class='doccomment'>/// Called by drivers to pares list of attributes</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Key value pairs are seperated by `\0`. Key and value are seperated by `=`</span>
-    <span class='kw'>fn</span> <span class='ident'>parse_attributes</span>(<span class='ident'>attributes</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span> {
-        <span class='ident'>attributes</span>.<span class='ident'>split</span>(<span class='string'>&#39;\0&#39;</span>)
-            .<span class='ident'>take_while</span>(<span class='op'>|</span><span class='ident'>kv_str</span><span class='op'>|</span> <span class='kw-2'>*</span><span class='ident'>kv_str</span> <span class='op'>!=</span> <span class='ident'>String</span>::<span class='ident'>new</span>())
-            .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>kv_str</span><span class='op'>|</span> {
-                <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>iter</span> <span class='op'>=</span> <span class='ident'>kv_str</span>.<span class='ident'>split</span>(<span class='string'>&#39;=&#39;</span>);
-                <span class='kw'>let</span> <span class='ident'>key</span> <span class='op'>=</span> <span class='ident'>iter</span>.<span class='ident'>next</span>().<span class='ident'>unwrap</span>();
-                <span class='kw'>let</span> <span class='ident'>value</span> <span class='op'>=</span> <span class='ident'>iter</span>.<span class='ident'>next</span>().<span class='ident'>unwrap</span>();
-                (<span class='ident'>key</span>.<span class='ident'>to_string</span>(), <span class='ident'>value</span>.<span class='ident'>to_string</span>())
+<span class="kw">impl</span> <span class="ident">Environment</span><span class="op">&lt;</span><span class="ident">Version3</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// Called by drivers to pares list of attributes</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Key value pairs are seperated by `\0`. Key and value are seperated by `=`</span>
+    <span class="kw">fn</span> <span class="ident">parse_attributes</span>(<span class="ident">attributes</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span> {
+        <span class="ident">attributes</span>.<span class="ident">split</span>(<span class="string">&#39;\0&#39;</span>)
+            .<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">kv_str</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">kv_str</span> <span class="op">!=</span> <span class="ident">String</span>::<span class="ident">new</span>())
+            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">kv_str</span><span class="op">|</span> {
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">kv_str</span>.<span class="ident">split</span>(<span class="string">&#39;=&#39;</span>);
+                <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
+                <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
+                (<span class="ident">key</span>.<span class="ident">to_string</span>(), <span class="ident">value</span>.<span class="ident">to_string</span>())
             })
-            .<span class='ident'>collect</span>()
+            .<span class="ident">collect</span>()
     }
 
-    <span class='doccomment'>/// Stores all driver description and attributes in a Vec</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>drivers</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>DriverInfo</span><span class='op'>&gt;&gt;</span> {
-        <span class='comment'>// Iterate twice, once for reading the maximum required buffer lengths so we can read</span>
-        <span class='comment'>// everything without truncating and a second time for actually storing the values</span>
-        <span class='comment'>// alloc_info iterates ones over every driver to obtain the requiered buffer sizes</span>
-        <span class='kw'>let</span> (<span class='ident'>max_desc</span>, <span class='ident'>max_attr</span>, <span class='ident'>num_drivers</span>) <span class='op'>=</span>
-            <span class='self'>self</span>.<span class='ident'>alloc_info</span>(<span class='ident'>Raii</span>::<span class='ident'>drivers</span>, <span class='ident'>ffi</span>::<span class='ident'>SQL_FETCH_FIRST</span>)<span class='question-mark'>?</span>;
+    <span class="doccomment">/// Stores all driver description and attributes in a Vec</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">drivers</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">DriverInfo</span><span class="op">&gt;&gt;</span> {
+        <span class="comment">// Iterate twice, once for reading the maximum required buffer lengths so we can read</span>
+        <span class="comment">// everything without truncating and a second time for actually storing the values</span>
+        <span class="comment">// alloc_info iterates ones over every driver to obtain the requiered buffer sizes</span>
+        <span class="kw">let</span> (<span class="ident">max_desc</span>, <span class="ident">max_attr</span>, <span class="ident">num_drivers</span>) <span class="op">=</span>
+            <span class="self">self</span>.<span class="ident">alloc_info</span>(<span class="ident">Raii</span>::<span class="ident">drivers</span>, <span class="ident">ffi</span>::<span class="ident">SQL_FETCH_FIRST</span>)<span class="question-mark">?</span>;
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>driver_list</span> <span class='op'>=</span> <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>num_drivers</span>);
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>description_buffer</span> <span class='op'>=</span> <span class='macro'>vec</span><span class='macro'>!</span>[<span class='number'>0</span>; (<span class='ident'>max_desc</span> <span class='op'>+</span> <span class='number'>1</span>) <span class='kw'>as</span> <span class='ident'>usize</span>];
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>attribute_buffer</span> <span class='op'>=</span> <span class='macro'>vec</span><span class='macro'>!</span>[<span class='number'>0</span>; (<span class='ident'>max_attr</span> <span class='op'>+</span> <span class='number'>1</span>) <span class='kw'>as</span> <span class='ident'>usize</span>];
-        <span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>((<span class='ident'>desc</span>, <span class='ident'>attr</span>)) <span class='op'>=</span>
-            <span class='self'>self</span>.<span class='ident'>get_info</span>(<span class='ident'>Raii</span>::<span class='ident'>drivers</span>,
-                          <span class='ident'>ffi</span>::<span class='ident'>SQL_FETCH_NEXT</span>,
-                          <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>description_buffer</span>,
-                          <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>attribute_buffer</span>)<span class='question-mark'>?</span> {
-            <span class='ident'>driver_list</span>.<span class='ident'>push</span>(<span class='ident'>DriverInfo</span> {
-                <span class='ident'>description</span>: <span class='ident'>desc</span>.<span class='ident'>to_owned</span>(),
-                <span class='ident'>attributes</span>: <span class='self'>Self</span>::<span class='ident'>parse_attributes</span>(<span class='ident'>attr</span>),
-            })
-        }
-        <span class='prelude-val'>Ok</span>(<span class='ident'>driver_list</span>)
-    }
-
-    <span class='doccomment'>/// Stores all data source server names and descriptions in a Vec</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>data_sources</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>DataSourceInfo</span><span class='op'>&gt;&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>data_sources_impl</span>(<span class='ident'>ffi</span>::<span class='ident'>SQL_FETCH_FIRST</span>)
-    }
-
-    <span class='doccomment'>/// Stores all sytem data source server names and descriptions in a Vec</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>system_data_sources</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>DataSourceInfo</span><span class='op'>&gt;&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>data_sources_impl</span>(<span class='ident'>ffi</span>::<span class='ident'>SQL_FETCH_FIRST_SYSTEM</span>)
-    }
-
-    <span class='doccomment'>/// Stores all user data source server names and descriptions in a Vec</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>user_data_sources</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>DataSourceInfo</span><span class='op'>&gt;&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>data_sources_impl</span>(<span class='ident'>ffi</span>::<span class='ident'>SQL_FETCH_FIRST_USER</span>)
-    }
-
-    <span class='doccomment'>/// Use SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or</span>
-    <span class='doccomment'>/// system data sources</span>
-    <span class='kw'>fn</span> <span class='ident'>data_sources_impl</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>direction</span>: <span class='ident'>ffi</span>::<span class='ident'>FetchOrientation</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>DataSourceInfo</span><span class='op'>&gt;&gt;</span> {
-
-        <span class='comment'>// alloc_info iterates ones over every datasource to obtain the requiered buffer sizes</span>
-        <span class='kw'>let</span> (<span class='ident'>max_name</span>, <span class='ident'>max_desc</span>, <span class='ident'>num_sources</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>alloc_info</span>(<span class='ident'>Raii</span>::<span class='ident'>data_sources</span>, <span class='ident'>direction</span>)<span class='question-mark'>?</span>;
-
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>source_list</span> <span class='op'>=</span> <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>num_sources</span>);
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>name_buffer</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;</span> <span class='op'>=</span> (<span class='number'>0</span>..(<span class='ident'>max_name</span> <span class='op'>+</span> <span class='number'>1</span>)).<span class='ident'>map</span>(<span class='op'>|</span>_<span class='op'>|</span> <span class='number'>0u8</span>).<span class='ident'>collect</span>();
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>description_buffer</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;</span> <span class='op'>=</span> (<span class='number'>0</span>..(<span class='ident'>max_desc</span> <span class='op'>+</span> <span class='number'>1</span>)).<span class='ident'>map</span>(<span class='op'>|</span>_<span class='op'>|</span> <span class='number'>0u8</span>).<span class='ident'>collect</span>();
-
-        <span class='comment'>// Before we call SQLDataSources with SQL_FETCH_NEXT, we have to call it with either</span>
-        <span class='comment'>// SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or</span>
-        <span class='comment'>// system data sources</span>
-        <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>((<span class='ident'>name</span>, <span class='ident'>desc</span>)) <span class='op'>=</span>
-            <span class='self'>self</span>.<span class='ident'>get_info</span>(<span class='ident'>Raii</span>::<span class='ident'>data_sources</span>,
-                          <span class='ident'>direction</span>,
-                          <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>name_buffer</span>,
-                          <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>description_buffer</span>)<span class='question-mark'>?</span> {
-            <span class='ident'>source_list</span>.<span class='ident'>push</span>(<span class='ident'>DataSourceInfo</span> {
-                <span class='ident'>server_name</span>: <span class='ident'>name</span>.<span class='ident'>to_owned</span>(),
-                <span class='ident'>driver</span>: <span class='ident'>desc</span>.<span class='ident'>to_owned</span>(),
-            })
-        } <span class='kw'>else</span> {
-            <span class='kw'>return</span> <span class='prelude-val'>Ok</span>(<span class='ident'>source_list</span>);
-        }
-
-        <span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>((<span class='ident'>name</span>, <span class='ident'>desc</span>)) <span class='op'>=</span>
-            <span class='self'>self</span>.<span class='ident'>get_info</span>(<span class='ident'>Raii</span>::<span class='ident'>data_sources</span>,
-                          <span class='ident'>ffi</span>::<span class='ident'>SQL_FETCH_NEXT</span>,
-                          <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>name_buffer</span>,
-                          <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>description_buffer</span>)<span class='question-mark'>?</span> {
-            <span class='ident'>source_list</span>.<span class='ident'>push</span>(<span class='ident'>DataSourceInfo</span> {
-                <span class='ident'>server_name</span>: <span class='ident'>name</span>.<span class='ident'>to_owned</span>(),
-                <span class='ident'>driver</span>: <span class='ident'>desc</span>.<span class='ident'>to_owned</span>(),
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">driver_list</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">num_drivers</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">description_buffer</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="number">0</span>; (<span class="ident">max_desc</span> <span class="op">+</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">usize</span>];
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">attribute_buffer</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="number">0</span>; (<span class="ident">max_attr</span> <span class="op">+</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">usize</span>];
+        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">desc</span>, <span class="ident">attr</span>)) <span class="op">=</span>
+            <span class="self">self</span>.<span class="ident">get_info</span>(<span class="ident">Raii</span>::<span class="ident">drivers</span>,
+                          <span class="ident">ffi</span>::<span class="ident">SQL_FETCH_NEXT</span>,
+                          <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">description_buffer</span>,
+                          <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">attribute_buffer</span>)<span class="question-mark">?</span> {
+            <span class="ident">driver_list</span>.<span class="ident">push</span>(<span class="ident">DriverInfo</span> {
+                <span class="ident">description</span>: <span class="ident">desc</span>.<span class="ident">to_owned</span>(),
+                <span class="ident">attributes</span>: <span class="self">Self</span>::<span class="ident">parse_attributes</span>(<span class="ident">attr</span>),
             })
         }
-        <span class='prelude-val'>Ok</span>(<span class='ident'>source_list</span>)
+        <span class="prelude-val">Ok</span>(<span class="ident">driver_list</span>)
     }
 
-    <span class='doccomment'>/// Calls either SQLDrivers or SQLDataSources with the two given buffers and parses the result</span>
-    <span class='doccomment'>/// into a `(&amp;str,&amp;str)`</span>
-    <span class='kw'>fn</span> <span class='ident'>get_info</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
-                        <span class='ident'>f</span>: <span class='ident'>SqlInfoMethod</span>,
-                        <span class='ident'>direction</span>: <span class='ident'>ffi</span>::<span class='ident'>FetchOrientation</span>,
-                        <span class='ident'>buf1</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> [<span class='ident'>u8</span>],
-                        <span class='ident'>buf2</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;b</span> <span class='kw-2'>mut</span> [<span class='ident'>u8</span>])
-                        <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>str</span>, <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;b</span> <span class='ident'>str</span>)<span class='op'>&gt;&gt;</span> {
+    <span class="doccomment">/// Stores all data source server names and descriptions in a Vec</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">data_sources</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">DataSourceInfo</span><span class="op">&gt;&gt;</span> {
+        <span class="self">self</span>.<span class="ident">data_sources_impl</span>(<span class="ident">ffi</span>::<span class="ident">SQL_FETCH_FIRST</span>)
+    }
 
-        <span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>f</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>raii</span>, <span class='ident'>direction</span>, <span class='ident'>buf1</span>, <span class='ident'>buf2</span>);
-        <span class='kw'>match</span> <span class='ident'>result</span>.<span class='ident'>into_result</span>(<span class='self'>self</span>)<span class='question-mark'>?</span> {
-            <span class='prelude-val'>Some</span>((<span class='ident'>len1</span>, <span class='ident'>len2</span>)) <span class='op'>=&gt;</span> {
-                <span class='prelude-val'>Ok</span>(<span class='prelude-val'>Some</span>((<span class='ident'>from_utf8</span>(<span class='kw-2'>&amp;</span><span class='ident'>buf1</span>[<span class='number'>0</span>..(<span class='ident'>len1</span> <span class='kw'>as</span> <span class='ident'>usize</span>)]).<span class='ident'>unwrap</span>(),
-                         <span class='ident'>from_utf8</span>(<span class='kw-2'>&amp;</span><span class='ident'>buf2</span>[<span class='number'>0</span>..(<span class='ident'>len2</span> <span class='kw'>as</span> <span class='ident'>usize</span>)]).<span class='ident'>unwrap</span>())))
+    <span class="doccomment">/// Stores all sytem data source server names and descriptions in a Vec</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">system_data_sources</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">DataSourceInfo</span><span class="op">&gt;&gt;</span> {
+        <span class="self">self</span>.<span class="ident">data_sources_impl</span>(<span class="ident">ffi</span>::<span class="ident">SQL_FETCH_FIRST_SYSTEM</span>)
+    }
+
+    <span class="doccomment">/// Stores all user data source server names and descriptions in a Vec</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">user_data_sources</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">DataSourceInfo</span><span class="op">&gt;&gt;</span> {
+        <span class="self">self</span>.<span class="ident">data_sources_impl</span>(<span class="ident">ffi</span>::<span class="ident">SQL_FETCH_FIRST_USER</span>)
+    }
+
+    <span class="doccomment">/// Use SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or</span>
+    <span class="doccomment">/// system data sources</span>
+    <span class="kw">fn</span> <span class="ident">data_sources_impl</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">direction</span>: <span class="ident">ffi</span>::<span class="ident">FetchOrientation</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">DataSourceInfo</span><span class="op">&gt;&gt;</span> {
+
+        <span class="comment">// alloc_info iterates ones over every datasource to obtain the requiered buffer sizes</span>
+        <span class="kw">let</span> (<span class="ident">max_name</span>, <span class="ident">max_desc</span>, <span class="ident">num_sources</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">alloc_info</span>(<span class="ident">Raii</span>::<span class="ident">data_sources</span>, <span class="ident">direction</span>)<span class="question-mark">?</span>;
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">source_list</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">num_sources</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">name_buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..(<span class="ident">max_name</span> <span class="op">+</span> <span class="number">1</span>)).<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="number">0u8</span>).<span class="ident">collect</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">description_buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..(<span class="ident">max_desc</span> <span class="op">+</span> <span class="number">1</span>)).<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="number">0u8</span>).<span class="ident">collect</span>();
+
+        <span class="comment">// Before we call SQLDataSources with SQL_FETCH_NEXT, we have to call it with either</span>
+        <span class="comment">// SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or</span>
+        <span class="comment">// system data sources</span>
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">name</span>, <span class="ident">desc</span>)) <span class="op">=</span>
+            <span class="self">self</span>.<span class="ident">get_info</span>(<span class="ident">Raii</span>::<span class="ident">data_sources</span>,
+                          <span class="ident">direction</span>,
+                          <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">name_buffer</span>,
+                          <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">description_buffer</span>)<span class="question-mark">?</span> {
+            <span class="ident">source_list</span>.<span class="ident">push</span>(<span class="ident">DataSourceInfo</span> {
+                <span class="ident">server_name</span>: <span class="ident">name</span>.<span class="ident">to_owned</span>(),
+                <span class="ident">driver</span>: <span class="ident">desc</span>.<span class="ident">to_owned</span>(),
+            })
+        } <span class="kw">else</span> {
+            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">source_list</span>);
+        }
+
+        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">name</span>, <span class="ident">desc</span>)) <span class="op">=</span>
+            <span class="self">self</span>.<span class="ident">get_info</span>(<span class="ident">Raii</span>::<span class="ident">data_sources</span>,
+                          <span class="ident">ffi</span>::<span class="ident">SQL_FETCH_NEXT</span>,
+                          <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">name_buffer</span>,
+                          <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">description_buffer</span>)<span class="question-mark">?</span> {
+            <span class="ident">source_list</span>.<span class="ident">push</span>(<span class="ident">DataSourceInfo</span> {
+                <span class="ident">server_name</span>: <span class="ident">name</span>.<span class="ident">to_owned</span>(),
+                <span class="ident">driver</span>: <span class="ident">desc</span>.<span class="ident">to_owned</span>(),
+            })
+        }
+        <span class="prelude-val">Ok</span>(<span class="ident">source_list</span>)
+    }
+
+    <span class="doccomment">/// Calls either SQLDrivers or SQLDataSources with the two given buffers and parses the result</span>
+    <span class="doccomment">/// into a `(&amp;str,&amp;str)`</span>
+    <span class="kw">fn</span> <span class="ident">get_info</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>,
+                        <span class="ident">f</span>: <span class="ident">SqlInfoMethod</span>,
+                        <span class="ident">direction</span>: <span class="ident">ffi</span>::<span class="ident">FetchOrientation</span>,
+                        <span class="ident">buf1</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> [<span class="ident">u8</span>],
+                        <span class="ident">buf2</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="kw-2">mut</span> [<span class="ident">u8</span>])
+                        <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>)<span class="op">&gt;&gt;</span> {
+
+        <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">f</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">raii</span>, <span class="ident">direction</span>, <span class="ident">buf1</span>, <span class="ident">buf2</span>);
+        <span class="kw">match</span> <span class="ident">result</span>.<span class="ident">into_result</span>(<span class="self">self</span>)<span class="question-mark">?</span> {
+            <span class="prelude-val">Some</span>((<span class="ident">len1</span>, <span class="ident">len2</span>)) <span class="op">=&gt;</span> {
+                <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((<span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">buf1</span>[<span class="number">0</span>..(<span class="ident">len1</span> <span class="kw">as</span> <span class="ident">usize</span>)]).<span class="ident">unwrap</span>(),
+                         <span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">buf2</span>[<span class="number">0</span>..(<span class="ident">len2</span> <span class="kw">as</span> <span class="ident">usize</span>)]).<span class="ident">unwrap</span>())))
             }
-            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='prelude-val'>None</span>),
+            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
         }
     }
 
-    <span class='doccomment'>/// Finds the maximum size required for description buffers</span>
-    <span class='kw'>fn</span> <span class='ident'>alloc_info</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
-                  <span class='ident'>f</span>: <span class='ident'>SqlInfoMethod</span>,
-                  <span class='ident'>direction</span>: <span class='ident'>ffi</span>::<span class='ident'>FetchOrientation</span>)
-                  <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(<span class='ident'>ffi</span>::<span class='ident'>SQLSMALLINT</span>, <span class='ident'>ffi</span>::<span class='ident'>SQLSMALLINT</span>, <span class='ident'>usize</span>)<span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>string_buf1</span> <span class='op'>=</span> [<span class='number'>0</span>; <span class='number'>0</span>];
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>string_buf2</span> <span class='op'>=</span> [<span class='number'>0</span>; <span class='number'>0</span>];
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>max1</span> <span class='op'>=</span> <span class='number'>0</span>;
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>max2</span> <span class='op'>=</span> <span class='number'>0</span>;
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>count</span> <span class='op'>=</span> <span class='number'>0</span>;
+    <span class="doccomment">/// Finds the maximum size required for description buffers</span>
+    <span class="kw">fn</span> <span class="ident">alloc_info</span>(<span class="kw-2">&amp;</span><span class="self">self</span>,
+                  <span class="ident">f</span>: <span class="ident">SqlInfoMethod</span>,
+                  <span class="ident">direction</span>: <span class="ident">ffi</span>::<span class="ident">FetchOrientation</span>)
+                  <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>, <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>, <span class="ident">usize</span>)<span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">string_buf1</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">0</span>];
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">string_buf2</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">0</span>];
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">max1</span> <span class="op">=</span> <span class="number">0</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">max2</span> <span class="op">=</span> <span class="number">0</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">count</span> <span class="op">=</span> <span class="number">0</span>;
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>f</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>raii</span>, <span class='ident'>direction</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>string_buf1</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>string_buf2</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">f</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">raii</span>, <span class="ident">direction</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">string_buf1</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">string_buf2</span>);
 
-        <span class='kw'>loop</span> {
+        <span class="kw">loop</span> {
 
-            <span class='kw'>match</span> <span class='ident'>result</span> {
-                <span class='ident'>Return</span>::<span class='ident'>Success</span>(<span class='prelude-val'>Some</span>((<span class='ident'>buf1_length_out</span>, <span class='ident'>buf2_length_out</span>))) <span class='op'>|</span>
-                <span class='ident'>Return</span>::<span class='ident'>SuccessWithInfo</span>(<span class='prelude-val'>Some</span>((<span class='ident'>buf1_length_out</span>, <span class='ident'>buf2_length_out</span>))) <span class='op'>=&gt;</span> {
-                    <span class='ident'>count</span> <span class='op'>+=</span> <span class='number'>1</span>;
-                    <span class='ident'>max1</span> <span class='op'>=</span> <span class='ident'>max</span>(<span class='ident'>max1</span>, <span class='ident'>buf1_length_out</span>);
-                    <span class='ident'>max2</span> <span class='op'>=</span> <span class='ident'>max</span>(<span class='ident'>max2</span>, <span class='ident'>buf2_length_out</span>);
+            <span class="kw">match</span> <span class="ident">result</span> {
+                <span class="ident">Return</span>::<span class="ident">Success</span>(<span class="prelude-val">Some</span>((<span class="ident">buf1_length_out</span>, <span class="ident">buf2_length_out</span>))) <span class="op">|</span>
+                <span class="ident">Return</span>::<span class="ident">SuccessWithInfo</span>(<span class="prelude-val">Some</span>((<span class="ident">buf1_length_out</span>, <span class="ident">buf2_length_out</span>))) <span class="op">=&gt;</span> {
+                    <span class="ident">count</span> <span class="op">+=</span> <span class="number">1</span>;
+                    <span class="ident">max1</span> <span class="op">=</span> <span class="ident">max</span>(<span class="ident">max1</span>, <span class="ident">buf1_length_out</span>);
+                    <span class="ident">max2</span> <span class="op">=</span> <span class="ident">max</span>(<span class="ident">max2</span>, <span class="ident">buf2_length_out</span>);
                 }
-                <span class='ident'>Return</span>::<span class='ident'>Success</span>(<span class='prelude-val'>None</span>) <span class='op'>|</span>
-                <span class='ident'>Return</span>::<span class='ident'>SuccessWithInfo</span>(<span class='prelude-val'>None</span>) <span class='op'>=&gt;</span> <span class='kw'>break</span>,
-                <span class='ident'>Return</span>::<span class='ident'>Error</span> <span class='op'>=&gt;</span> {
-                    <span class='kw'>let</span> <span class='ident'>diag</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_diag_rec</span>(<span class='number'>1</span>).<span class='ident'>unwrap</span>();
-                    <span class='macro'>error</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>diag</span>);
-                    <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>diag</span>);
+                <span class="ident">Return</span>::<span class="ident">Success</span>(<span class="prelude-val">None</span>) <span class="op">|</span>
+                <span class="ident">Return</span>::<span class="ident">SuccessWithInfo</span>(<span class="prelude-val">None</span>) <span class="op">=&gt;</span> <span class="kw">break</span>,
+                <span class="ident">Return</span>::<span class="ident">Error</span> <span class="op">=&gt;</span> {
+                    <span class="kw">let</span> <span class="ident">diag</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_diag_rec</span>(<span class="number">1</span>).<span class="ident">unwrap</span>();
+                    <span class="macro">error</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">diag</span>);
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">diag</span>);
                 }
             }
 
-            <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>f</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>raii</span>,
-                       <span class='ident'>ffi</span>::<span class='ident'>SQL_FETCH_NEXT</span>,
-                       <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>string_buf1</span>,
-                       <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>string_buf2</span>)
+            <span class="ident">result</span> <span class="op">=</span> <span class="ident">f</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">raii</span>,
+                       <span class="ident">ffi</span>::<span class="ident">SQL_FETCH_NEXT</span>,
+                       <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">string_buf1</span>,
+                       <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">string_buf2</span>)
         }
 
-        <span class='prelude-val'>Ok</span>((<span class='ident'>max1</span>, <span class='ident'>max2</span>, <span class='ident'>count</span>))
+        <span class="prelude-val">Ok</span>((<span class="ident">max1</span>, <span class="ident">max2</span>, <span class="ident">count</span>))
     }
 }
 
-<span class='kw'>impl</span> <span class='ident'>Raii</span><span class='op'>&lt;</span><span class='ident'>ffi</span>::<span class='ident'>Env</span><span class='op'>&gt;</span> {
-    <span class='doccomment'>/// Iterates over data sources</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// # Arguments</span>
-    <span class='doccomment'>/// * `direction` - Start with SQL_FETCH_FIRST to retrieve all data sources,</span>
-    <span class='doccomment'>///   SQL_FETCH_FIRST_USER for user data sources and SQL_FETCH_FIRST_SYSTEM for system data</span>
-    <span class='doccomment'>///   sources. In each case use SQL_FETCH_NEXT to retrieve the next element</span>
-    <span class='doccomment'>/// * `server_name` - To be filled with the server name</span>
-    <span class='doccomment'>/// * `description` - To be filled with the description</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// # Result</span>
-    <span class='doccomment'>/// The tuple contains the required length of the buffers minus null-termination character.</span>
-    <span class='kw'>fn</span> <span class='ident'>data_sources</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
-                    <span class='ident'>direction</span>: <span class='ident'>FetchOrientation</span>,
-                    <span class='ident'>server_name</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>u8</span>],
-                    <span class='ident'>description</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>u8</span>])
-                    <span class='op'>-&gt;</span> <span class='ident'>Return</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>i16</span>, <span class='ident'>i16</span>)<span class='op'>&gt;&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>impl_data_sources</span>(<span class='ident'>SQLDataSources</span>, <span class='ident'>direction</span>, <span class='ident'>server_name</span>, <span class='ident'>description</span>)
+<span class="kw">impl</span> <span class="ident">Raii</span><span class="op">&lt;</span><span class="ident">ffi</span>::<span class="ident">Env</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// Iterates over data sources</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Arguments</span>
+    <span class="doccomment">/// * `direction` - Start with SQL_FETCH_FIRST to retrieve all data sources,</span>
+    <span class="doccomment">///   SQL_FETCH_FIRST_USER for user data sources and SQL_FETCH_FIRST_SYSTEM for system data</span>
+    <span class="doccomment">///   sources. In each case use SQL_FETCH_NEXT to retrieve the next element</span>
+    <span class="doccomment">/// * `server_name` - To be filled with the server name</span>
+    <span class="doccomment">/// * `description` - To be filled with the description</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Result</span>
+    <span class="doccomment">/// The tuple contains the required length of the buffers minus null-termination character.</span>
+    <span class="kw">fn</span> <span class="ident">data_sources</span>(<span class="kw-2">&amp;</span><span class="self">self</span>,
+                    <span class="ident">direction</span>: <span class="ident">FetchOrientation</span>,
+                    <span class="ident">server_name</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>],
+                    <span class="ident">description</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>])
+                    <span class="op">-&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">i16</span>, <span class="ident">i16</span>)<span class="op">&gt;&gt;</span> {
+        <span class="self">self</span>.<span class="ident">impl_data_sources</span>(<span class="ident">SQLDataSources</span>, <span class="ident">direction</span>, <span class="ident">server_name</span>, <span class="ident">description</span>)
     }
 
-    <span class='kw'>fn</span> <span class='ident'>drivers</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
-               <span class='ident'>direction</span>: <span class='ident'>FetchOrientation</span>,
-               <span class='ident'>description</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>u8</span>],
-               <span class='ident'>attributes</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>u8</span>])
-               <span class='op'>-&gt;</span> <span class='ident'>Return</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>i16</span>, <span class='ident'>i16</span>)<span class='op'>&gt;&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>impl_data_sources</span>(<span class='ident'>SQLDrivers</span>, <span class='ident'>direction</span>, <span class='ident'>description</span>, <span class='ident'>attributes</span>)
+    <span class="kw">fn</span> <span class="ident">drivers</span>(<span class="kw-2">&amp;</span><span class="self">self</span>,
+               <span class="ident">direction</span>: <span class="ident">FetchOrientation</span>,
+               <span class="ident">description</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>],
+               <span class="ident">attributes</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>])
+               <span class="op">-&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">i16</span>, <span class="ident">i16</span>)<span class="op">&gt;&gt;</span> {
+        <span class="self">self</span>.<span class="ident">impl_data_sources</span>(<span class="ident">SQLDrivers</span>, <span class="ident">direction</span>, <span class="ident">description</span>, <span class="ident">attributes</span>)
     }
 
-    <span class='comment'>// this method uses the fact that SQLDataSources and SQLDrivers share the same signature</span>
-    <span class='kw'>fn</span> <span class='ident'>impl_data_sources</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
-                         <span class='ident'>c_function</span>: <span class='ident'>SqlInfoFunction</span>,
-                         <span class='ident'>direction</span>: <span class='ident'>FetchOrientation</span>,
-                         <span class='ident'>server_name</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>u8</span>],
-                         <span class='ident'>description</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>u8</span>])
-                         <span class='op'>-&gt;</span> <span class='ident'>Return</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>i16</span>, <span class='ident'>i16</span>)<span class='op'>&gt;&gt;</span> {
-        <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>server_name_length</span>, <span class='kw-2'>mut</span> <span class='ident'>description_length</span>): (<span class='ident'>i16</span>, <span class='ident'>i16</span>) <span class='op'>=</span> (<span class='number'>0</span>, <span class='number'>0</span>);
-        <span class='kw'>match</span> <span class='kw'>unsafe</span> {
-            <span class='ident'>c_function</span>(<span class='self'>self</span>.<span class='ident'>handle</span>(),
-                       <span class='ident'>direction</span>,
-                       <span class='ident'>as_out_buffer</span>(<span class='ident'>server_name</span>),
-                       <span class='ident'>as_buffer_length</span>(<span class='ident'>server_name</span>.<span class='ident'>len</span>()),
-                       <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>server_name_length</span> <span class='kw'>as</span> <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>i16</span>,
-                       <span class='ident'>as_out_buffer</span>(<span class='ident'>description</span>),
-                       <span class='ident'>as_buffer_length</span>(<span class='ident'>description</span>.<span class='ident'>len</span>()),
-                       <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>description_length</span> <span class='kw'>as</span> <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>i16</span>)
+    <span class="comment">// this method uses the fact that SQLDataSources and SQLDrivers share the same signature</span>
+    <span class="kw">fn</span> <span class="ident">impl_data_sources</span>(<span class="kw-2">&amp;</span><span class="self">self</span>,
+                         <span class="ident">c_function</span>: <span class="ident">SqlInfoFunction</span>,
+                         <span class="ident">direction</span>: <span class="ident">FetchOrientation</span>,
+                         <span class="ident">server_name</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>],
+                         <span class="ident">description</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>])
+                         <span class="op">-&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">i16</span>, <span class="ident">i16</span>)<span class="op">&gt;&gt;</span> {
+        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">server_name_length</span>, <span class="kw-2">mut</span> <span class="ident">description_length</span>): (<span class="ident">i16</span>, <span class="ident">i16</span>) <span class="op">=</span> (<span class="number">0</span>, <span class="number">0</span>);
+        <span class="kw">match</span> <span class="kw">unsafe</span> {
+            <span class="ident">c_function</span>(<span class="self">self</span>.<span class="ident">handle</span>(),
+                       <span class="ident">direction</span>,
+                       <span class="ident">as_out_buffer</span>(<span class="ident">server_name</span>),
+                       <span class="ident">as_buffer_length</span>(<span class="ident">server_name</span>.<span class="ident">len</span>()),
+                       <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">server_name_length</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">i16</span>,
+                       <span class="ident">as_out_buffer</span>(<span class="ident">description</span>),
+                       <span class="ident">as_buffer_length</span>(<span class="ident">description</span>.<span class="ident">len</span>()),
+                       <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">description_length</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">i16</span>)
         } {
-            <span class='ident'>SQLRETURN</span>::<span class='ident'>SQL_SUCCESS</span> <span class='op'>=&gt;</span> {
-                <span class='ident'>Return</span>::<span class='ident'>Success</span>(<span class='prelude-val'>Some</span>((<span class='ident'>server_name_length</span>, <span class='ident'>description_length</span>)))
+            <span class="ident">SQLRETURN</span>::<span class="ident">SQL_SUCCESS</span> <span class="op">=&gt;</span> {
+                <span class="ident">Return</span>::<span class="ident">Success</span>(<span class="prelude-val">Some</span>((<span class="ident">server_name_length</span>, <span class="ident">description_length</span>)))
             }
-            <span class='ident'>SQLRETURN</span>::<span class='ident'>SQL_SUCCESS_WITH_INFO</span> <span class='op'>=&gt;</span> {
-                <span class='ident'>Return</span>::<span class='ident'>SuccessWithInfo</span>(<span class='prelude-val'>Some</span>((<span class='ident'>server_name_length</span>, <span class='ident'>description_length</span>)))
+            <span class="ident">SQLRETURN</span>::<span class="ident">SQL_SUCCESS_WITH_INFO</span> <span class="op">=&gt;</span> {
+                <span class="ident">Return</span>::<span class="ident">SuccessWithInfo</span>(<span class="prelude-val">Some</span>((<span class="ident">server_name_length</span>, <span class="ident">description_length</span>)))
             }
-            <span class='ident'>SQLRETURN</span>::<span class='ident'>SQL_ERROR</span> <span class='op'>=&gt;</span> <span class='ident'>Return</span>::<span class='ident'>Error</span>,
-            <span class='ident'>SQLRETURN</span>::<span class='ident'>SQL_NO_DATA</span> <span class='op'>=&gt;</span> <span class='ident'>Return</span>::<span class='ident'>Success</span>(<span class='prelude-val'>None</span>),
-            _ <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;SQL Data Sources returned unexpected result&quot;</span>),
+            <span class="ident">SQLRETURN</span>::<span class="ident">SQL_ERROR</span> <span class="op">=&gt;</span> <span class="ident">Return</span>::<span class="ident">Error</span>,
+            <span class="ident">SQLRETURN</span>::<span class="ident">SQL_NO_DATA</span> <span class="op">=&gt;</span> <span class="ident">Return</span>::<span class="ident">Success</span>(<span class="prelude-val">None</span>),
+            _ <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;SQL Data Sources returned unexpected result&quot;</span>),
         }
     }
 }
 
-<span class='doccomment'>/// Signature shared by `raw::SQLDrivers` and `ffi::SQLDataSources`</span>
-<span class='kw'>type</span> <span class='ident'>SqlInfoFunction</span> <span class='op'>=</span> <span class='kw'>unsafe</span> <span class='kw'>extern</span> <span class='string'>&quot;C&quot;</span> <span class='kw'>fn</span>(<span class='ident'>SQLHENV</span>,
-                                            <span class='ident'>FetchOrientation</span>,
-                                            <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>SQLCHAR</span>,
-                                            <span class='ident'>SQLSMALLINT</span>,
-                                            <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>SQLSMALLINT</span>,
-                                            <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>SQLCHAR</span>,
-                                            <span class='ident'>SQLSMALLINT</span>,
-                                            <span class='kw-2'>*</span><span class='kw-2'>mut</span> <span class='ident'>SQLSMALLINT</span>)
-                                            <span class='op'>-&gt;</span> <span class='ident'>SQLRETURN</span>;
+<span class="doccomment">/// Signature shared by `raw::SQLDrivers` and `ffi::SQLDataSources`</span>
+<span class="kw">type</span> <span class="ident">SqlInfoFunction</span> <span class="op">=</span> <span class="kw">unsafe</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span>(<span class="ident">SQLHENV</span>,
+                                            <span class="ident">FetchOrientation</span>,
+                                            <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
+                                            <span class="ident">SQLSMALLINT</span>,
+                                            <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
+                                            <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
+                                            <span class="ident">SQLSMALLINT</span>,
+                                            <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>)
+                                            <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
-<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
-<span class='kw'>mod</span> <span class='ident'>test</span> {
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">test</span> {
 
-    <span class='kw'>use</span> <span class='kw'>super</span>::<span class='kw-2'>*</span>;
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>parse_attributes</span>() {
-        <span class='kw'>let</span> <span class='ident'>buffer</span> <span class='op'>=</span> <span class='string'>&quot;APILevel=2\0ConnectFunctions=YYY\0CPTimeout=60\0DriverODBCVer=03.\
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">parse_attributes</span>() {
+        <span class="kw">let</span> <span class="ident">buffer</span> <span class="op">=</span> <span class="string">&quot;APILevel=2\0ConnectFunctions=YYY\0CPTimeout=60\0DriverODBCVer=03.\
                       50\0FileUsage=0\0SQLLevel=1\0UsageCount=1\0\0&quot;</span>;
-        <span class='kw'>let</span> <span class='ident'>attributes</span> <span class='op'>=</span> <span class='ident'>Environment</span>::<span class='ident'>parse_attributes</span>(<span class='ident'>buffer</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>attributes</span>[<span class='string'>&quot;APILevel&quot;</span>], <span class='string'>&quot;2&quot;</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>attributes</span>[<span class='string'>&quot;ConnectFunctions&quot;</span>], <span class='string'>&quot;YYY&quot;</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>attributes</span>[<span class='string'>&quot;CPTimeout&quot;</span>], <span class='string'>&quot;60&quot;</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>attributes</span>[<span class='string'>&quot;DriverODBCVer&quot;</span>], <span class='string'>&quot;03.50&quot;</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>attributes</span>[<span class='string'>&quot;FileUsage&quot;</span>], <span class='string'>&quot;0&quot;</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>attributes</span>[<span class='string'>&quot;SQLLevel&quot;</span>], <span class='string'>&quot;1&quot;</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>attributes</span>[<span class='string'>&quot;UsageCount&quot;</span>], <span class='string'>&quot;1&quot;</span>);
+        <span class="kw">let</span> <span class="ident">attributes</span> <span class="op">=</span> <span class="ident">Environment</span>::<span class="ident">parse_attributes</span>(<span class="ident">buffer</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">attributes</span>[<span class="string">&quot;APILevel&quot;</span>], <span class="string">&quot;2&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">attributes</span>[<span class="string">&quot;ConnectFunctions&quot;</span>], <span class="string">&quot;YYY&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">attributes</span>[<span class="string">&quot;CPTimeout&quot;</span>], <span class="string">&quot;60&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">attributes</span>[<span class="string">&quot;DriverODBCVer&quot;</span>], <span class="string">&quot;03.50&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">attributes</span>[<span class="string">&quot;FileUsage&quot;</span>], <span class="string">&quot;0&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">attributes</span>[<span class="string">&quot;SQLLevel&quot;</span>], <span class="string">&quot;1&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">attributes</span>[<span class="string">&quot;UsageCount&quot;</span>], <span class="string">&quot;1&quot;</span>);
     }
 }
 </pre>

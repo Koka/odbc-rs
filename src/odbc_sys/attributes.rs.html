@@ -17,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -43,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1"> 1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1"> 1</span>
 <span id="2"> 2</span>
 <span id="3"> 3</span>
 <span id="4"> 4</span>
@@ -66,30 +66,30 @@
 <span id="21">21</span>
 <span id="22">22</span>
 <span id="23">23</span>
-</pre><pre class='rust '>
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>os</span>::<span class='ident'>raw</span>::<span class='ident'>c_ulong</span>;
+</pre><pre class="rust ">
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">raw</span>::<span class="ident">c_ulong</span>;
 
-<span class='doccomment'>/// Governs behaviour of EnvironmentAttribute</span>
-<span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>i32</span>)]</span>
-<span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>non_camel_case_types</span>)]</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>, <span class='ident'>Clone</span>, <span class='ident'>Copy</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>EnvironmentAttribute</span> {
-    <span class='ident'>SQL_ATTR_ODBC_VERSION</span> <span class='op'>=</span> <span class='number'>200</span>,
-    <span class='ident'>SQL_ATTR_CONNECTION_POOLING</span> <span class='op'>=</span> <span class='number'>201</span>,
-    <span class='ident'>SQL_ATTR_CP_MATCH</span> <span class='op'>=</span> <span class='number'>202</span>,
-    <span class='comment'>// For private driver manager</span>
-    <span class='ident'>SQL_ATTR_APPLICATION_KEY</span> <span class='op'>=</span> <span class='number'>203</span>,
-    <span class='ident'>SQL_ATTR_OUTPUT_NTS</span> <span class='op'>=</span> <span class='number'>10001</span>,
+<span class="doccomment">/// Governs behaviour of EnvironmentAttribute</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">i32</span>)]</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">EnvironmentAttribute</span> {
+    <span class="ident">SQL_ATTR_ODBC_VERSION</span> <span class="op">=</span> <span class="number">200</span>,
+    <span class="ident">SQL_ATTR_CONNECTION_POOLING</span> <span class="op">=</span> <span class="number">201</span>,
+    <span class="ident">SQL_ATTR_CP_MATCH</span> <span class="op">=</span> <span class="number">202</span>,
+    <span class="comment">// For private driver manager</span>
+    <span class="ident">SQL_ATTR_APPLICATION_KEY</span> <span class="op">=</span> <span class="number">203</span>,
+    <span class="ident">SQL_ATTR_OUTPUT_NTS</span> <span class="op">=</span> <span class="number">10001</span>,
 }
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>EnvironmentAttribute</span>::<span class='kw-2'>*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">EnvironmentAttribute</span>::<span class="kw-2">*</span>;
 
-<span class='comment'>// ODBC verions</span>
-<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>SQL_OV_ODBC2</span>: <span class='ident'>c_ulong</span> <span class='op'>=</span> <span class='number'>2</span>;
-<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>SQL_OV_ODBC3</span>: <span class='ident'>c_ulong</span> <span class='op'>=</span> <span class='number'>3</span>;
-<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;odbc_version_3_80&quot;</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>SQL_OV_ODBC3_80</span>: <span class='ident'>c_ulong</span> <span class='op'>=</span> <span class='number'>380</span>;
-<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;odbc_version_4&quot;</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>SQL_OV_ODBC4</span>: <span class='ident'>c_ulong</span> <span class='op'>=</span> <span class='number'>400</span>;
+<span class="comment">// ODBC verions</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SQL_OV_ODBC2</span>: <span class="ident">c_ulong</span> <span class="op">=</span> <span class="number">2</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SQL_OV_ODBC3</span>: <span class="ident">c_ulong</span> <span class="op">=</span> <span class="number">3</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_3_80&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SQL_OV_ODBC3_80</span>: <span class="ident">c_ulong</span> <span class="op">=</span> <span class="number">380</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SQL_OV_ODBC4</span>: <span class="ident">c_ulong</span> <span class="op">=</span> <span class="number">400</span>;
 </pre>
 </section>
     <section id='search' class="content hidden"></section>
