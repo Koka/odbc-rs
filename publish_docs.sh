@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 PATH=~/.cargo/bin/:$PATH
 git fetch
 git checkout master
@@ -12,7 +13,6 @@ rm -rf ./*
 mv "$TMP_DIR"/* ./
 git add .
 git commit -am "Update docs gh-pages"
-git push
 git checkout master
 rm -rf "$TMP_DIR"
 
