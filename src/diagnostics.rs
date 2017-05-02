@@ -26,6 +26,18 @@ impl DiagnosticRecord {
             message_length: 0,
         }
     }
+    /// get raw state string data.
+    pub fn get_raw_state(&self) -> &[u8] {
+        &self.state
+    }
+    /// get raw diagnostics message for avoiding encoding error.
+    pub fn get_raw_message(&self) -> &[u8] {
+        &self.message[0..self.message_length as usize]
+    }
+    /// get native odbc error number
+    pub fn get_native_error(&self) -> i32 {
+        self.native_error
+    }
 }
 
 impl fmt::Display for DiagnosticRecord {
