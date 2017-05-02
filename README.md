@@ -6,7 +6,7 @@ If you're looking for raw ODBC FFI bindings check [odbc-sys](https://github.com/
 
 [![https://travis-ci.org/Koka/odbc-rs](https://travis-ci.org/Koka/odbc-rs.svg?branch=master)](https://travis-ci.org/Koka/odbc-rs)
 [![Build status](https://ci.appveyor.com/api/projects/status/45ovhoic0wg7mnv5/branch/master?svg=true)](https://ci.appveyor.com/project/Koka/odbc-rs/branch/master)
-[![https://crates.io/crates/odbc](https://meritbadge.herokuapp.com/odbc#nocache7)](https://crates.io/crates/odbc)
+[![https://crates.io/crates/odbc](https://meritbadge.herokuapp.com/odbc#nocache72)](https://crates.io/crates/odbc)
 [![Coverage Status](https://coveralls.io/repos/github/Koka/odbc-rs/badge.svg)](https://coveralls.io/github/Koka/odbc-rs)
 [![Docs](https://docs.rs/odbc/badge.svg)](https://docs.rs/odbc)
 
