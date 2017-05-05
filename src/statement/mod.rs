@@ -53,6 +53,15 @@ pub struct Cursor<'a, 'b: 'a, 'c: 'a, S: 'a> {
     buffer: Vec<u8>
 }
 
+#[derive(Debug)]
+pub struct ColumnDescriptor {
+    pub name: String,
+    pub data_type: ffi::SqlDataType,
+    pub column_size: Option<u64>,
+    pub decimal_digits: Option<u16>,
+    pub nullable: Option<bool>
+}
+
 impl<'a, 'b, S, R> Handle for Statement<'a, 'b, S, R> {
     type To = ffi::Stmt;
     unsafe fn handle(&self) -> ffi::SQLHSTMT {
@@ -104,6 +113,8 @@ impl<'a, 'b, S> Statement<'a, 'b, S, HasResult> {
     pub fn num_result_cols(&self) -> Result<i16> {
         self.raii.num_result_cols().into_result(self)
     }
+
+    pub fn describe_col(&self, idx: u16) -> Result<ColumnDescriptor> { self.raii.describe_col(idx).into_result(self) }
 
     /// Fetches the next rowset of data from the result set and returns data for all bound columns.
     pub fn fetch<'c>(&'c mut self) -> Result<Option<Cursor<'c, 'a, 'b, S>>> {
@@ -170,6 +181,55 @@ impl Raii<ffi::Stmt> {
                 r => panic!("SQLNumResultCols returned unexpected result: {:?}", r),
             }
         }
+    }
+
+    fn describe_col(&self, idx: u16) -> Return<ColumnDescriptor> {
+        let mut name_buffer = vec![0u8; 512];
+        let mut name_length: ffi::SQLSMALLINT = 0;
+        let mut data_type: ffi::SqlDataType = ffi::SqlDataType::SQL_UNKNOWN_TYPE;
+        let mut column_size: ffi::SQLULEN = 0;
+        let mut decimal_digits: ffi::SQLSMALLINT = 0;
+        let mut nullable: ffi::SQLSMALLINT = 0;
+        unsafe {
+            match ffi::SQLDescribeCol(self.handle(),
+                                      idx,
+                                      name_buffer.as_mut_ptr(),
+                                      name_buffer.len() as ffi::SQLSMALLINT,
+                                      &mut name_length as *mut ffi::SQLSMALLINT,
+                                      &mut data_type as *mut ffi::SqlDataType,
+                                      &mut column_size as *mut ffi::SQLULEN,
+                                      &mut decimal_digits as *mut ffi::SQLSMALLINT,
+                                      &mut nullable as *mut ffi::SQLSMALLINT
+            ) {
+                SQL_SUCCESS => Return::Success(ColumnDescriptor {
+                    name: ::std::str::from_utf8(&name_buffer[..(name_length as usize)]).unwrap().to_owned(),
+                    data_type: data_type,
+                    column_size: if column_size == 0 { None } else { Some(column_size) },
+                    decimal_digits: if decimal_digits == 0 { None } else { Some(decimal_digits as u16) },
+                    nullable: match nullable {
+                        2 /*ffi::SQL_NULLABLE_UNKNOWN*/ => None,
+                        1 /*ffi::SQL_NULLABLE*/ => Some(true),
+                        0 /*ffi::SQL_NO_NULLS*/ => Some(false),
+                        n =>  panic!("SQLDescribeCol returned unexpected nullable value: {:?}", n)
+                    }
+                }),
+                SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(ColumnDescriptor {
+                    name: ::std::str::from_utf8(&name_buffer[..(name_length as usize)]).unwrap().to_owned(),
+                    data_type: data_type,
+                    column_size: if column_size == 0 { None } else { Some(column_size) },
+                    decimal_digits: if decimal_digits == 0 { None } else { Some(decimal_digits as u16) },
+                    nullable: match nullable {
+                        2 /*ffi::SQL_NULLABLE_UNKNOWN*/ => None,
+                        1 /*ffi::SQL_NULLABLE*/ => Some(true),
+                        0 /*ffi::SQL_NO_NULLS*/ => Some(false),
+                        n =>  panic!("SQLDescribeCol returned unexpected nullable value: {:?}", n)
+                    }
+                }),
+                SQL_ERROR => Return::Error,
+                r => panic!("SQLDescribeCol returned unexpected result: {:?}", r),
+            }
+        }
+
     }
 
     fn exec_direct(&mut self, statement_text: &str) -> Return<bool> {
