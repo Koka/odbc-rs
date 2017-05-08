@@ -3,28 +3,27 @@ extern crate odbc;
 extern crate env_logger;
 extern crate chrono;
 
-use std::fmt;
 use odbc::*;
 use chrono::prelude::*;
 
-// We need to define own type here as rust won't allow to implement remote trait for remote type, so we make a type local for this crate.
-struct MyDateTime(DateTime<Local>);
+trait Extract{
+    fn extract<T>(&mut self, index: u16) -> Option<T> where T: MySupportedType;
+}
 
-impl fmt::Display for MyDateTime {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "MyDateTime {}", self.0)
+impl<'a, S> Extract for Cursor<'a,'a,'a, S>{
+    fn extract<T>(&mut self, index: u16) -> Option<T> where T: MySupportedType{
+        MySupportedType::extract_from(self, index)
     }
 }
 
-impl <'a> OdbcType<'a> for MyDateTime {
-    fn c_data_type() -> ffi::SqlCDataType {
-        ffi::SQL_C_CHAR
-    }
+trait MySupportedType where Self: Sized{
+    fn extract_from<'a,S>(cursor: &mut odbc::Cursor<'a,'a,'a, S>, index: u16) -> Option<Self>;
+}
 
-    fn convert(buffer: &'a [u8]) -> Self {
-        let str = std::str::from_utf8(buffer).unwrap();
-        let dt = Local.datetime_from_str(str, "%Y-%m-%d %H:%M:%S%.f").unwrap();
-        MyDateTime(dt)
+impl MySupportedType for DateTime<Local>{
+    fn extract_from<'a,S>(cursor: &mut odbc::Cursor<'a,'a,'a, S>, index: u16) -> Option<Self>{
+        cursor.get_data(index).expect("Can't get column")
+            .map(|datetime : String| Local.datetime_from_str(&datetime, "%Y-%m-%d %H:%M:%S%.f").unwrap())
     }
 }
 
@@ -33,7 +32,7 @@ fn main() {
     println!("Success: {}", test_me().unwrap().expect("No result!"))
 }
 
-fn test_me() -> std::result::Result<Option<MyDateTime>, DiagnosticRecord> {
+fn test_me() -> std::result::Result<Option<DateTime<Local>>, DiagnosticRecord> {
     let env = Environment::new().expect("Can't create ODBC environment").set_odbc_version_3()?;
     let conn = DataSource::with_parent(&env)?.connect("PostgreSQL", "postgres", "postgres")?;
     let result = Statement::with_parent(&conn)?.exec_direct("select current_timestamp")?;
@@ -43,10 +42,7 @@ fn test_me() -> std::result::Result<Option<MyDateTime>, DiagnosticRecord> {
     if let Data(mut stmt) = result {
         val = stmt.fetch()
             .expect("Can't get cursor")
-            .and_then(|mut cursor| {
-                cursor.get_data::<MyDateTime>(1)
-                    .expect("Can't get column")
-            })
+            .and_then(|mut cursor| cursor.extract(1))
     };
 
     Ok(val)
