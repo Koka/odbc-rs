@@ -6,6 +6,7 @@ mod prepare;
 pub use self::output::Output;
 use {ffi, DataSource, Return, Result, Raii, Handle, Connected};
 use ffi::SQLRETURN::*;
+use ffi::Nullable;
 use std::marker::PhantomData;
 pub use self::types::OdbcType;
 
@@ -53,7 +54,7 @@ pub struct Cursor<'a, 'b: 'a, 'c: 'a, S: 'a> {
     buffer: Vec<u8>
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ColumnDescriptor {
     pub name: String,
     pub data_type: ffi::SqlDataType,
@@ -114,6 +115,7 @@ impl<'a, 'b, S> Statement<'a, 'b, S, HasResult> {
         self.raii.num_result_cols().into_result(self)
     }
 
+    /// Returns description struct for result set column with a given index. Note: indexing is starting from 1.
     pub fn describe_col(&self, idx: u16) -> Result<ColumnDescriptor> { self.raii.describe_col(idx).into_result(self) }
 
     /// Fetches the next rowset of data from the result set and returns data for all bound columns.
@@ -130,7 +132,7 @@ impl<'a, 'b, S> Statement<'a, 'b, S, HasResult> {
 
     /// Call this method to reuse the statement to execute another query.
     ///
-    /// For many drivers allocating new statemens is expensive. So reusing a `Statement` is usually
+    /// For many drivers allocating new statements is expensive. So reusing a `Statement` is usually
     /// more efficient than freeing an existing and alloctaing a new one. However to reuse a
     /// statement any open result sets must be closed.
     /// Only call this method if you have already read the result set returned by the previous
@@ -184,12 +186,12 @@ impl Raii<ffi::Stmt> {
     }
 
     fn describe_col(&self, idx: u16) -> Return<ColumnDescriptor> {
-        let mut name_buffer = vec![0u8; 512];
+        let mut name_buffer:[u8; 512] = [0; 512];
         let mut name_length: ffi::SQLSMALLINT = 0;
         let mut data_type: ffi::SqlDataType = ffi::SqlDataType::SQL_UNKNOWN_TYPE;
         let mut column_size: ffi::SQLULEN = 0;
         let mut decimal_digits: ffi::SQLSMALLINT = 0;
-        let mut nullable: ffi::SQLSMALLINT = 0;
+        let mut nullable: Nullable = Nullable::SQL_NULLABLE_UNKNOWN;
         unsafe {
             match ffi::SQLDescribeCol(self.handle(),
                                       idx,
@@ -199,7 +201,7 @@ impl Raii<ffi::Stmt> {
                                       &mut data_type as *mut ffi::SqlDataType,
                                       &mut column_size as *mut ffi::SQLULEN,
                                       &mut decimal_digits as *mut ffi::SQLSMALLINT,
-                                      &mut nullable as *mut ffi::SQLSMALLINT
+                                      &mut nullable as *mut ffi::Nullable
             ) {
                 SQL_SUCCESS => Return::Success(ColumnDescriptor {
                     name: ::std::str::from_utf8(&name_buffer[..(name_length as usize)]).unwrap().to_owned(),
@@ -207,10 +209,9 @@ impl Raii<ffi::Stmt> {
                     column_size: if column_size == 0 { None } else { Some(column_size) },
                     decimal_digits: if decimal_digits == 0 { None } else { Some(decimal_digits as u16) },
                     nullable: match nullable {
-                        2 /*ffi::SQL_NULLABLE_UNKNOWN*/ => None,
-                        1 /*ffi::SQL_NULLABLE*/ => Some(true),
-                        0 /*ffi::SQL_NO_NULLS*/ => Some(false),
-                        n =>  panic!("SQLDescribeCol returned unexpected nullable value: {:?}", n)
+                        Nullable::SQL_NULLABLE_UNKNOWN => None,
+                        Nullable::SQL_NULLABLE => Some(true),
+                        Nullable::SQL_NO_NULLS => Some(false)
                     }
                 }),
                 SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(ColumnDescriptor {
@@ -219,10 +220,9 @@ impl Raii<ffi::Stmt> {
                     column_size: if column_size == 0 { None } else { Some(column_size) },
                     decimal_digits: if decimal_digits == 0 { None } else { Some(decimal_digits as u16) },
                     nullable: match nullable {
-                        2 /*ffi::SQL_NULLABLE_UNKNOWN*/ => None,
-                        1 /*ffi::SQL_NULLABLE*/ => Some(true),
-                        0 /*ffi::SQL_NO_NULLS*/ => Some(false),
-                        n =>  panic!("SQLDescribeCol returned unexpected nullable value: {:?}", n)
+                        Nullable::SQL_NULLABLE_UNKNOWN => None,
+                        Nullable::SQL_NULLABLE => Some(true),
+                        Nullable::SQL_NO_NULLS => Some(false)
                     }
                 }),
                 SQL_ERROR => Return::Error,

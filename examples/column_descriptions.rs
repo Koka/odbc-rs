@@ -16,7 +16,7 @@ fn test_me() -> std::result::Result<(), DiagnosticRecord> {
 
     if let Data(stmt) = result {
         for i in 1..5 {
-            let val = stmt.describe_col(i).expect("Unable to get column description");
+            let val = stmt.describe_col(i)?;
             println!("Column {}: {:?}", i, val)
         }
     };
