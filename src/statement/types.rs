@@ -3,19 +3,18 @@ use std::str::from_utf8;
 use std::slice::from_raw_parts;
 use std::mem::size_of;
 
-pub trait OdbcType<'a>: Sized {
+pub unsafe trait OdbcType<'a>: Sized {
+
     fn c_data_type() -> ffi::SqlCDataType;
-    fn convert(_: &'a [u8]) -> Self {
-        unreachable!()
-    }
-    fn column_size(&self) -> ffi::SQLULEN { unreachable!() }
-    fn value_ptr(&self) -> ffi::SQLPOINTER { unreachable!() }
+    fn convert(_: &'a [u8]) -> Self;
+    fn column_size(&self) -> ffi::SQLULEN;
+    fn value_ptr(&self) -> ffi::SQLPOINTER;
     fn decimal_digits(&self) -> ffi::SQLSMALLINT {
         0
     }
 }
 
-impl<'a> OdbcType<'a> for String {
+unsafe impl<'a> OdbcType<'a> for String {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_CHAR
     }
@@ -35,7 +34,7 @@ impl<'a> OdbcType<'a> for String {
     }
 }
 
-impl<'a> OdbcType<'a> for &'a str {
+unsafe impl<'a> OdbcType<'a> for &'a str {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_CHAR
     }
@@ -62,7 +61,7 @@ fn convert_primitive<T>(buf: &[u8]) -> T
     }
 }
 
-impl<'a> OdbcType<'a> for u8 {
+unsafe impl<'a> OdbcType<'a> for u8 {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_UTINYINT
     }
@@ -75,7 +74,7 @@ impl<'a> OdbcType<'a> for u8 {
     fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
-impl<'a> OdbcType<'a> for i8 {
+unsafe impl<'a> OdbcType<'a> for i8 {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_STINYINT
     }
@@ -88,7 +87,7 @@ impl<'a> OdbcType<'a> for i8 {
     fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
-impl<'a> OdbcType<'a> for i16 {
+unsafe impl<'a> OdbcType<'a> for i16 {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_SSHORT
     }
@@ -101,7 +100,7 @@ impl<'a> OdbcType<'a> for i16 {
     fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
-impl<'a> OdbcType<'a> for u16 {
+unsafe impl<'a> OdbcType<'a> for u16 {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_USHORT
     }
@@ -114,7 +113,7 @@ impl<'a> OdbcType<'a> for u16 {
     fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
-impl<'a> OdbcType<'a> for i32 {
+unsafe impl<'a> OdbcType<'a> for i32 {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_SLONG
     }
@@ -127,7 +126,7 @@ impl<'a> OdbcType<'a> for i32 {
     fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
-impl<'a> OdbcType<'a> for u32 {
+unsafe impl<'a> OdbcType<'a> for u32 {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_ULONG
     }
@@ -140,7 +139,7 @@ impl<'a> OdbcType<'a> for u32 {
     fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
-impl<'a> OdbcType<'a> for i64 {
+unsafe impl<'a> OdbcType<'a> for i64 {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_SBIGINT
     }
@@ -153,7 +152,7 @@ impl<'a> OdbcType<'a> for i64 {
     fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
-impl<'a> OdbcType<'a> for u64 {
+unsafe impl<'a> OdbcType<'a> for u64 {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_UBIGINT
     }
@@ -166,7 +165,7 @@ impl<'a> OdbcType<'a> for u64 {
     fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
-impl<'a> OdbcType<'a> for f32 {
+unsafe impl<'a> OdbcType<'a> for f32 {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_FLOAT
     }
@@ -179,7 +178,7 @@ impl<'a> OdbcType<'a> for f32 {
     fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
 
-impl<'a> OdbcType<'a> for f64 {
+unsafe impl<'a> OdbcType<'a> for f64 {
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_DOUBLE
     }
