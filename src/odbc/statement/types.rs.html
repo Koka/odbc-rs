@@ -235,26 +235,24 @@
 <span id="190">190</span>
 <span id="191">191</span>
 <span id="192">192</span>
-<span id="193">193</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="ident">ffi</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">from_utf8</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">slice</span>::<span class="ident">from_raw_parts</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">size_of</span>;
 
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>: <span class="ident">Sized</span> {
+<span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">trait</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>: <span class="ident">Sized</span> {
+
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span>;
-    <span class="kw">fn</span> <span class="ident">convert</span>(_: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="macro">unreachable</span><span class="macro">!</span>()
-    }
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> { <span class="macro">unreachable</span><span class="macro">!</span>() }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> { <span class="macro">unreachable</span><span class="macro">!</span>() }
+    <span class="kw">fn</span> <span class="ident">convert</span>(_: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>;
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>;
     <span class="kw">fn</span> <span class="ident">decimal_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span> {
         <span class="number">0</span>
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">String</span> {
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">String</span> {
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_CHAR</span>
     }
@@ -274,7 +272,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span> {
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span> {
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_CHAR</span>
     }
@@ -301,7 +299,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u8</span> {
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u8</span> {
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_UTINYINT</span>
     }
@@ -314,7 +312,7 @@
     <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> { <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">i8</span> {
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">i8</span> {
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_STINYINT</span>
     }
@@ -327,7 +325,7 @@
     <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> { <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">i16</span> {
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">i16</span> {
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_SSHORT</span>
     }
@@ -340,7 +338,7 @@
     <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> { <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u16</span> {
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u16</span> {
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_USHORT</span>
     }
@@ -353,7 +351,7 @@
     <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> { <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">i32</span> {
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">i32</span> {
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_SLONG</span>
     }
@@ -366,7 +364,7 @@
     <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> { <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u32</span> {
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u32</span> {
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_ULONG</span>
     }
@@ -379,7 +377,7 @@
     <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> { <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">i64</span> {
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">i64</span> {
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_SBIGINT</span>
     }
@@ -392,7 +390,7 @@
     <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> { <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u64</span> {
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u64</span> {
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_UBIGINT</span>
     }
@@ -405,7 +403,7 @@
     <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> { <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">f32</span> {
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">f32</span> {
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_FLOAT</span>
     }
@@ -418,7 +416,7 @@
     <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> { <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">f64</span> {
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">f64</span> {
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_DOUBLE</span>
     }

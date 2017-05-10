@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#1-378' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#1-411' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>ODBC types those representation is compatible with the ODBC C API.</p>
 
 <p>This layer has not been created using automatic code generation. It is incomplete, i.e. it does
@@ -115,6 +115,13 @@ in the cargo.toml</p>
                                   title='enum odbc_sys::InputOutput'>InputOutput</a></td>
                            <td class='docblock-short'>
                                 <p>Used by <code>SQLBindParameter</code>.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.Nullable.html"
+                                  title='enum odbc_sys::Nullable'>Nullable</a></td>
+                           <td class='docblock-short'>
+                                <p>Used by <code>SQLDescribeCol</code>.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -233,6 +240,13 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLBindCol.html"
+                                  title='fn odbc_sys::SQLBindCol'>SQLBindCol</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Binds application data bufferst to columns in the result set.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class="fn" href="fn.SQLBindParameter.html"
                                   title='fn odbc_sys::SQLBindParameter'>SQLBindParameter</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
@@ -261,6 +275,14 @@ status, transaction state, and error information.</p>
                            <td class='docblock-short'>
                                 <p>Returns information about a data source. This function is implemented only by the Driver
 Manager.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLDescribeCol.html"
+                                  title='fn odbc_sys::SQLDescribeCol'>SQLDescribeCol</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the result descriptor for one column in the result set — column name, type, column
+size, decimal digits, and nullability.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>

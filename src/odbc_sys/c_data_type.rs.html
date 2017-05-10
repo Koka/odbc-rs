@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.2.8/src/c_data_type.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.3.0/src/c_data_type.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>c_data_type.rs.html -- source</title>
@@ -109,6 +109,8 @@
 <span id="64">64</span>
 <span id="65">65</span>
 <span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
 </pre><pre class="rust ">
 <span class="doccomment">/// The C data type is specified in the SQLBindCol and SQLGetData functions with the TargetType</span>
 <span class="doccomment">/// argument and in the SQLBindParameter function with the ValueType argument.</span>
@@ -128,6 +130,8 @@
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_3_50&quot;</span>)]</span>
     <span class="ident">SQL_C_GUID</span> <span class="op">=</span> <span class="op">-</span> <span class="number">11</span>,
+
+    <span class="ident">SQL_C_WCHAR</span> <span class="op">=</span> <span class="op">-</span><span class="number">8</span>,
 
     <span class="ident">SQL_C_BIT</span> <span class="op">=</span> <span class="op">-</span><span class="number">7</span>,
     <span class="comment">// deprecated</span>

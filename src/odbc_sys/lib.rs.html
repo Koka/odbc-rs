@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.2.8/src/lib.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.3.0/src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
@@ -421,6 +421,39 @@
 <span id="376">376</span>
 <span id="377">377</span>
 <span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! ODBC types those representation is compatible with the ODBC C API.</span>
 <span class="doccomment">//!</span>
@@ -438,6 +471,7 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">attributes</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">c_data_type</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">input_output</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">nullable</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">raw</span>::<span class="ident">c_void</span>;
 
 <span class="kw">mod</span> <span class="ident">sqlreturn</span>;
@@ -446,6 +480,7 @@
 <span class="kw">mod</span> <span class="ident">attributes</span>;
 <span class="kw">mod</span> <span class="ident">c_data_type</span>;
 <span class="kw">mod</span> <span class="ident">input_output</span>;
+<span class="kw">mod</span> <span class="ident">nullable</span>;
 
 <span class="comment">//These types can never be instantiated in Rust code.</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Obj</span> {}
@@ -799,6 +834,37 @@
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, or `SQL_INVALID_HANDLE`.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLFreeStmt</span>(<span class="ident">hstmt</span>: <span class="ident">SQLHSTMT</span>, <span class="ident">option</span>: <span class="ident">FreeStmtOption</span>) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+
+    <span class="doccomment">/// Binds application data bufferst to columns in the result set.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Returns</span>
+    <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, or `SQL_INVALID_HANDLE`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLBindCol</span>(<span class="ident">hstmt</span>: <span class="ident">SQLHSTMT</span>,
+                      <span class="ident">col_number</span>: <span class="ident">SQLUSMALLINT</span>,
+                      <span class="ident">target_type</span>: <span class="ident">SqlCDataType</span>,
+                      <span class="ident">target_value</span>: <span class="ident">SQLPOINTER</span>,
+                      <span class="ident">buffer_length</span>: <span class="ident">SQLLEN</span>,
+                      <span class="ident">length_or_indicatior</span> : <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLLEN</span>)
+                      <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+
+    <span class="doccomment">/// Returns the result descriptor for one column in the result set — column name, type, column</span>
+    <span class="doccomment">/// size, decimal digits, and nullability.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This information also is available in the fields of the IRD.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Returns</span>
+    <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_STILL_EXECUTING`, `SQL_ERROR`, or</span>
+    <span class="doccomment">/// `SQL_INVALID_HANDLE`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLDescribeCol</span>(<span class="ident">hstmt</span>: <span class="ident">SQLHSTMT</span>,
+                          <span class="ident">col_number</span>: <span class="ident">SQLUSMALLINT</span>,
+                          <span class="ident">col_name</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
+                          <span class="ident">buffer_length</span>: <span class="ident">SQLSMALLINT</span>,
+                          <span class="ident">name_length</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
+                          <span class="ident">data_type</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SqlDataType</span>,
+                          <span class="ident">col_size</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLULEN</span>,
+                          <span class="ident">decimal_digits</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
+                          <span class="ident">nullable</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">Nullable</span>)
+                          <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 }
 </pre>
 </section>
