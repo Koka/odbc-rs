@@ -6,6 +6,7 @@ mod prepare;
 pub use self::output::Output;
 use {ffi, DataSource, Return, Result, Raii, Handle, Connected};
 use ffi::SQLRETURN::*;
+use ffi::Nullable;
 use std::marker::PhantomData;
 pub use self::types::OdbcType;
 
@@ -51,6 +52,15 @@ pub struct Statement<'a, 'b, S, R> {
 pub struct Cursor<'a, 'b: 'a, 'c: 'a, S: 'a> {
     stmt: &'a mut Statement<'b, 'c, S, HasResult>,
     buffer: Vec<u8>
+}
+
+#[derive(Debug, Clone)]
+pub struct ColumnDescriptor {
+    pub name: String,
+    pub data_type: ffi::SqlDataType,
+    pub column_size: Option<u64>,
+    pub decimal_digits: Option<u16>,
+    pub nullable: Option<bool>
 }
 
 impl<'a, 'b, S, R> Handle for Statement<'a, 'b, S, R> {
@@ -105,6 +115,9 @@ impl<'a, 'b, S> Statement<'a, 'b, S, HasResult> {
         self.raii.num_result_cols().into_result(self)
     }
 
+    /// Returns description struct for result set column with a given index. Note: indexing is starting from 1.
+    pub fn describe_col(&self, idx: u16) -> Result<ColumnDescriptor> { self.raii.describe_col(idx).into_result(self) }
+
     /// Fetches the next rowset of data from the result set and returns data for all bound columns.
     pub fn fetch<'c>(&'c mut self) -> Result<Option<Cursor<'c, 'a, 'b, S>>> {
         if self.raii.fetch().into_result(self)? {
@@ -119,7 +132,7 @@ impl<'a, 'b, S> Statement<'a, 'b, S, HasResult> {
 
     /// Call this method to reuse the statement to execute another query.
     ///
-    /// For many drivers allocating new statemens is expensive. So reusing a `Statement` is usually
+    /// For many drivers allocating new statements is expensive. So reusing a `Statement` is usually
     /// more efficient than freeing an existing and alloctaing a new one. However to reuse a
     /// statement any open result sets must be closed.
     /// Only call this method if you have already read the result set returned by the previous
@@ -170,6 +183,53 @@ impl Raii<ffi::Stmt> {
                 r => panic!("SQLNumResultCols returned unexpected result: {:?}", r),
             }
         }
+    }
+
+    fn describe_col(&self, idx: u16) -> Return<ColumnDescriptor> {
+        let mut name_buffer:[u8; 512] = [0; 512];
+        let mut name_length: ffi::SQLSMALLINT = 0;
+        let mut data_type: ffi::SqlDataType = ffi::SqlDataType::SQL_UNKNOWN_TYPE;
+        let mut column_size: ffi::SQLULEN = 0;
+        let mut decimal_digits: ffi::SQLSMALLINT = 0;
+        let mut nullable: Nullable = Nullable::SQL_NULLABLE_UNKNOWN;
+        unsafe {
+            match ffi::SQLDescribeCol(self.handle(),
+                                      idx,
+                                      name_buffer.as_mut_ptr(),
+                                      name_buffer.len() as ffi::SQLSMALLINT,
+                                      &mut name_length as *mut ffi::SQLSMALLINT,
+                                      &mut data_type as *mut ffi::SqlDataType,
+                                      &mut column_size as *mut ffi::SQLULEN,
+                                      &mut decimal_digits as *mut ffi::SQLSMALLINT,
+                                      &mut nullable as *mut ffi::Nullable
+            ) {
+                SQL_SUCCESS => Return::Success(ColumnDescriptor {
+                    name: ::std::str::from_utf8(&name_buffer[..(name_length as usize)]).unwrap().to_owned(),
+                    data_type: data_type,
+                    column_size: if column_size == 0 { None } else { Some(column_size) },
+                    decimal_digits: if decimal_digits == 0 { None } else { Some(decimal_digits as u16) },
+                    nullable: match nullable {
+                        Nullable::SQL_NULLABLE_UNKNOWN => None,
+                        Nullable::SQL_NULLABLE => Some(true),
+                        Nullable::SQL_NO_NULLS => Some(false)
+                    }
+                }),
+                SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(ColumnDescriptor {
+                    name: ::std::str::from_utf8(&name_buffer[..(name_length as usize)]).unwrap().to_owned(),
+                    data_type: data_type,
+                    column_size: if column_size == 0 { None } else { Some(column_size) },
+                    decimal_digits: if decimal_digits == 0 { None } else { Some(decimal_digits as u16) },
+                    nullable: match nullable {
+                        Nullable::SQL_NULLABLE_UNKNOWN => None,
+                        Nullable::SQL_NULLABLE => Some(true),
+                        Nullable::SQL_NO_NULLS => Some(false)
+                    }
+                }),
+                SQL_ERROR => Return::Error,
+                r => panic!("SQLDescribeCol returned unexpected result: {:?}", r),
+            }
+        }
+
     }
 
     fn exec_direct(&mut self, statement_text: &str) -> Return<bool> {
