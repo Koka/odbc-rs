@@ -1,4 +1,5 @@
-use {ffi, Raii, Return, Handle, Statement, Result, Prepared, Allocated, NoResult, ResultSetState};
+use {ffi, ColumnDescriptor, Raii, Return, Handle, Statement, Result, Prepared, Allocated,
+     NoResult, ResultSetState};
 
 impl<'a, 'b> Statement<'a, 'b, Allocated, NoResult> {
     /// Prepares a statement for execution. Executing a prepared statement is faster than directly
@@ -43,6 +44,19 @@ impl<'a, 'b> Statement<'a, 'b, Allocated, NoResult> {
 }
 
 impl<'a, 'b> Statement<'a, 'b, Prepared, NoResult> {
+    /// The number of columns in a result set
+    ///
+    /// Can be called successfully only when the statement is in the prepared, executed, or
+    /// positioned state. If the statement does not return columns the result will be 0.
+    pub fn num_result_cols(&self) -> Result<i16> {
+        self.raii.num_result_cols().into_result(self)
+    }
+
+    /// Returns description struct for result set column with a given index. Note: indexing is starting from 1.
+    pub fn describe_col(&self, idx: u16) -> Result<ColumnDescriptor> {
+        self.raii.describe_col(idx).into_result(self)
+    }
+
     /// Executes a prepared statement.
     pub fn execute(mut self) -> Result<ResultSetState<'a, 'b, Prepared>> {
         if self.raii.execute().into_result(&mut self)? {
@@ -56,10 +70,10 @@ impl<'a, 'b> Statement<'a, 'b, Prepared, NoResult> {
 impl Raii<ffi::Stmt> {
     fn prepare(&mut self, sql_text: &str) -> Return<()> {
         match unsafe {
-            ffi::SQLPrepare(self.handle(),
-                            sql_text.as_bytes().as_ptr(),
-                            sql_text.as_bytes().len() as ffi::SQLINTEGER)
-        } {
+                  ffi::SQLPrepare(self.handle(),
+                                  sql_text.as_bytes().as_ptr(),
+                                  sql_text.as_bytes().len() as ffi::SQLINTEGER)
+              } {
             ffi::SQL_SUCCESS => Return::Success(()),
             ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
             ffi::SQL_ERROR => Return::Error,
