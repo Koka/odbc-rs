@@ -57,6 +57,8 @@ impl<'a, S: DataSourceState> Drop for DataSource<'a, S> {
     }
 }
 
+unsafe impl<'a, S: Send + DataSourceState> Send for DataSource<'a, S> {}
+
 impl<'a, S: DataSourceState> DataSource<'a, S> {
     /// Deconstruct this Connection into its constituent parts.
     fn deconstruct(self) -> Raii<ffi::Dbc> {
