@@ -62,7 +62,7 @@ impl Raii<ffi::Stmt> {
                 parameter_index,
                 ffi::SQL_PARAM_INPUT,
                 T::c_data_type(),
-                ffi::SQL_UNKNOWN_TYPE,
+                T::sql_data_type(),
                 value.column_size(),
                 value.decimal_digits(),
                 value.value_ptr(),
