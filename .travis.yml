@@ -23,13 +23,12 @@ services:
 before_script:
  - psql -c 'create database travis_ci_test;' -U postgres
  - export ODBCINI=${PWD}/travis/odbc.ini
- - pip install 'travis-cargo<0.2' --user
+ - cargo install cargo-travis
  - export PATH=$HOME/.cargo/bin:$HOME/.local/bin:$PATH
 script:
- - travis-cargo build
- - travis-cargo test -- --verbose --features travis
+ - cargo test --verbose --features travis
 after_success:
- - travis-cargo coveralls --no-sudo --verify
+ - cargo coveralls
 env:
  - global:
    - RUST_BACKTRACE=1
