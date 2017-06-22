@@ -27,9 +27,9 @@ before_script:
  - export PATH=$HOME/.cargo/bin:$HOME/.local/bin:$PATH
 script:
  - travis-cargo build
- - travis-cargo test --verbose --features travis
+ - travis-cargo test -- --verbose --features travis
 after_success:
- - travis-cargo coveralls --no-sudo
+ - travis-cargo coveralls --no-sudo --verify
 env:
  - global:
    - RUST_BACKTRACE=1
