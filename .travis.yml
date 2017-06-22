@@ -18,18 +18,18 @@ addons:
      - unixodbc-dev
      - odbc-postgresql
      - libsqliteodbc
-     - libssl-dev
 services:
  - postgresql
 before_script:
  - psql -c 'create database travis_ci_test;' -U postgres
  - export ODBCINI=${PWD}/travis/odbc.ini
- - cargo install cargo-travis
+ - pip install 'travis-cargo<0.2' --user
  - export PATH=$HOME/.cargo/bin:$HOME/.local/bin:$PATH
 script:
- - cargo test --verbose --features travis
+ - travis-cargo build
+ - travis-cargo test --verbose --features travis
 after_success:
- - cargo coveralls
+ - travis-cargo coveralls --no-sudo
 env:
  - global:
    - RUST_BACKTRACE=1
