@@ -18,6 +18,8 @@ addons:
      - unixodbc-dev
      - odbc-postgresql
      - libsqliteodbc
+    sources:
+     - kalakris-cmake
 services:
  - postgresql
 before_script:
