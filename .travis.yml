@@ -18,6 +18,7 @@ addons:
      - unixodbc-dev
      - odbc-postgresql
      - libsqliteodbc
+     - libssl-dev
 services:
  - postgresql
 before_script:
