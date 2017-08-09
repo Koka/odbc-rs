@@ -16,8 +16,9 @@ macro_rules! test_type {
         let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
         let stmt = Statement::with_parent(&conn).unwrap();
         let stmt = stmt.bind_parameter(1, $e).unwrap();
-        if let Ok(Data(mut cursor)) = stmt.exec_direct($c){
-            if let Some(_) = cursor.fetch().unwrap(){
+        if let Ok(Data(mut stmt)) = stmt.exec_direct($c){
+            if let Some(_) = stmt.fetch().unwrap(){
+                //DO NOTHING
             } else{
                 panic!("Result set has been empty");
             }
