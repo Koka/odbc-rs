@@ -56,18 +56,19 @@ impl Raii<ffi::Stmt> {
         where T: OdbcType<'c>,
               T: ?Sized
     {
+        let mut len_buf_ptr = vec![value.column_size() as ffi::SQLLEN];
         match unsafe {
             ffi::SQLBindParameter(
                 self.handle(),
                 parameter_index,
                 ffi::SQL_PARAM_INPUT,
                 T::c_data_type(),
-                ffi::SQL_UNKNOWN_TYPE,
+                T::sql_data_type(),
                 value.column_size(),
                 value.decimal_digits(),
                 value.value_ptr(),
                 0, // buffer length
-                &(value.column_size() as ffi::SQLLEN) as * const ffi::SQLLEN as * mut ffi::SQLLEN// str len or ind ptr
+                len_buf_ptr.as_mut_ptr() as * mut ffi::SQLLEN// str len or ind ptr
             )
         } {
             ffi::SQL_SUCCESS => Return::Success(()),

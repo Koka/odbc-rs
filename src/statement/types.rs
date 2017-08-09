@@ -4,7 +4,7 @@ use std::slice::from_raw_parts;
 use std::mem::size_of;
 
 pub unsafe trait OdbcType<'a>: Sized {
-
+    fn sql_data_type() -> ffi::SqlDataType;
     fn c_data_type() -> ffi::SqlCDataType;
     fn convert(_: &'a [u8]) -> Self;
     fn column_size(&self) -> ffi::SQLULEN;
@@ -15,6 +15,7 @@ pub unsafe trait OdbcType<'a>: Sized {
 }
 
 unsafe impl<'a> OdbcType<'a> for String {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_VARCHAR }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_CHAR
     }
@@ -35,6 +36,7 @@ unsafe impl<'a> OdbcType<'a> for String {
 }
 
 unsafe impl<'a> OdbcType<'a> for &'a str {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_VARCHAR }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_CHAR
     }
@@ -62,6 +64,7 @@ fn convert_primitive<T>(buf: &[u8]) -> T
 }
 
 unsafe impl<'a> OdbcType<'a> for u8 {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_SMALLINT }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_UTINYINT
     }
@@ -75,6 +78,7 @@ unsafe impl<'a> OdbcType<'a> for u8 {
 }
 
 unsafe impl<'a> OdbcType<'a> for i8 {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_SMALLINT }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_STINYINT
     }
@@ -88,6 +92,7 @@ unsafe impl<'a> OdbcType<'a> for i8 {
 }
 
 unsafe impl<'a> OdbcType<'a> for i16 {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_SMALLINT }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_SSHORT
     }
@@ -101,6 +106,7 @@ unsafe impl<'a> OdbcType<'a> for i16 {
 }
 
 unsafe impl<'a> OdbcType<'a> for u16 {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_SMALLINT }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_USHORT
     }
@@ -114,6 +120,7 @@ unsafe impl<'a> OdbcType<'a> for u16 {
 }
 
 unsafe impl<'a> OdbcType<'a> for i32 {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_INTEGER }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_SLONG
     }
@@ -127,6 +134,7 @@ unsafe impl<'a> OdbcType<'a> for i32 {
 }
 
 unsafe impl<'a> OdbcType<'a> for u32 {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_INTEGER }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_ULONG
     }
@@ -140,6 +148,7 @@ unsafe impl<'a> OdbcType<'a> for u32 {
 }
 
 unsafe impl<'a> OdbcType<'a> for i64 {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_INTEGER }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_SBIGINT
     }
@@ -153,6 +162,7 @@ unsafe impl<'a> OdbcType<'a> for i64 {
 }
 
 unsafe impl<'a> OdbcType<'a> for u64 {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_INTEGER }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_UBIGINT
     }
@@ -166,6 +176,7 @@ unsafe impl<'a> OdbcType<'a> for u64 {
 }
 
 unsafe impl<'a> OdbcType<'a> for f32 {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_FLOAT }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_FLOAT
     }
@@ -179,6 +190,7 @@ unsafe impl<'a> OdbcType<'a> for f32 {
 }
 
 unsafe impl<'a> OdbcType<'a> for f64 {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_DOUBLE }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_DOUBLE
     }
