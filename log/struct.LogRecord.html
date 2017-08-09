@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         <a href='../log/index.html'><img src='https://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png' alt='logo' width='100'></a>
-        <p class='location'><a href='index.html'>log</a></p><script>window.sidebarCurrent = {name: 'LogRecord', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct LogRecord</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>log</a></p><script>window.sidebarCurrent = {name: 'LogRecord', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -48,9 +48,10 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/log/lib.rs.html#494-498' title='goto source code'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct LogRecord&lt;'a&gt; { /* fields omitted */ }</pre><div class='docblock'><p>The &quot;payload&quot; of a log message.</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class="struct" href="../log/struct.LogRecord.html" title="struct log::LogRecord">LogRecord</a>&lt;'a&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/log/lib.rs.html#500-525' title='goto source code'>[src]</a></span></h3>
+               </span><a class='srclink' href='../src/log/lib.rs.html#518-522' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct LogRecord&lt;'a&gt; { /* fields omitted */ }</pre><div class='docblock'><p>The &quot;payload&quot; of a log message. This structure is primarily used as a
+parameter in the <a href="trait.Log.html"><code>log</code></a> method of the <a href="trait.Log.html"><code>Log</code></a> trait.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class="struct" href="../log/struct.LogRecord.html" title="struct log::LogRecord">LogRecord</a>&lt;'a&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/log/lib.rs.html#524-549' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.args' class="method"><span id='args.v' class='invisible'><code>fn <a href='#method.args' class='fnname'>args</a>(&amp;self) -&gt; &amp;<a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Arguments.html" title="struct core::fmt::Arguments">Arguments</a>&lt;'a&gt;</code></span></h4>
 <div class='docblock'><p>The message body.</p>
 </div><h4 id='method.metadata' class="method"><span id='metadata.v' class='invisible'><code>fn <a href='#method.metadata' class='fnname'>metadata</a>(&amp;self) -&gt; &amp;<a class="struct" href="../log/struct.LogMetadata.html" title="struct log::LogMetadata">LogMetadata</a></code></span></h4>
@@ -61,6 +62,9 @@
 <div class='docblock'><p>The verbosity level of the message.</p>
 </div><h4 id='method.target' class="method"><span id='target.v' class='invisible'><code>fn <a href='#method.target' class='fnname'>target</a>(&amp;self) -&gt; &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a></code></span></h4>
 <div class='docblock'><p>The name of the target of the directive.</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../log/struct.LogRecord.html" title="struct log::LogRecord">LogRecord</a>&lt;'a&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/log/lib.rs.html#517' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter.</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 
@@ -118,7 +122,6 @@
         window.rootPath = "../";
         window.currentCrate = "log";
     </script>
-    <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>
 </body>

@@ -48,8 +48,8 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#337' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub unsafe extern fn SQLCloseCursor(hstmt: <a class="type" href="../odbc_sys/type.SQLHSTMT.html" title="type odbc_sys::SQLHSTMT">SQLHSTMT</a>) -&gt; <a class="enum" href="../odbc_sys/enum.SQLRETURN.html" title="enum odbc_sys::SQLRETURN">SQLRETURN</a></pre><div class='docblock'><p>Closes a cursor that has been opened on a statement and discards pending results.</p>
+               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#346' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub unsafe extern &quot;C&quot; fn SQLCloseCursor(hstmt: <a class="type" href="../odbc_sys/type.SQLHSTMT.html" title="type odbc_sys::SQLHSTMT">SQLHSTMT</a>) -&gt; <a class="enum" href="../odbc_sys/enum.SQLRETURN.html" title="enum odbc_sys::SQLRETURN">SQLRETURN</a></pre><div class='docblock'><p>Closes a cursor that has been opened on a statement and discards pending results.</p>
 
 <h1 id='returns' class='section-header'><a href='#returns'>Returns</a></h1>
 <p><code>SQL_SUCCESS</code>, <code>SQL_SUCCESS_WITH_INFO</code>, <code>SQL_ERROR</code> or <code>SQL_INVALID_HANDLE</code></p>
@@ -110,7 +110,6 @@
         window.rootPath = "../";
         window.currentCrate = "odbc_sys";
     </script>
-    <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>
 </body>

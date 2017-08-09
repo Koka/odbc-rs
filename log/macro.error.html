@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/log/macros.rs.html#37-44' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/log/macros.rs.html#67-74' title='goto source code'>[src]</a></span></h1>
 <pre class="rust macro">
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">error</span> {
     (<span class="ident">target</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> { ... };
@@ -57,6 +57,13 @@
 <div class='docblock'><p>Logs a message at the error level.</p>
 
 <p>Logging at this level is disabled if the <code>max_level_off</code> feature is present.</p>
+
+<h1 id='examples' class='section-header'><a href='#examples'>Examples</a></h1>
+<pre class="rust rust-example-rendered">
+<span class="kw">let</span> (<span class="ident">err_info</span>, <span class="ident">port</span>) <span class="op">=</span> (<span class="string">&quot;No connection&quot;</span>, <span class="number">22</span>);
+
+<span class="macro">error</span><span class="macro">!</span>(<span class="string">&quot;Error: {} on port {}&quot;</span>, <span class="ident">err_info</span>, <span class="ident">port</span>);
+<span class="macro">error</span><span class="macro">!</span>(<span class="ident">target</span>: <span class="string">&quot;app_events&quot;</span>, <span class="string">&quot;App Error: {}, Port: {}&quot;</span>, <span class="ident">err_info</span>, <span class="number">22</span>);</pre>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -114,7 +121,6 @@
         window.rootPath = "../";
         window.currentCrate = "log";
     </script>
-    <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>
 </body>

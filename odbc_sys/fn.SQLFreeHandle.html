@@ -48,8 +48,8 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#170' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub unsafe extern fn SQLFreeHandle(handle_type: <a class="enum" href="../odbc_sys/enum.HandleType.html" title="enum odbc_sys::HandleType">HandleType</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; handle: <a class="type" href="../odbc_sys/type.SQLHANDLE.html" title="type odbc_sys::SQLHANDLE">SQLHANDLE</a>)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <a class="enum" href="../odbc_sys/enum.SQLRETURN.html" title="enum odbc_sys::SQLRETURN">SQLRETURN</a></pre><div class='docblock'><p>Frees resources associated with a specific environment, connection, statement, or
+               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#179' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub unsafe extern &quot;C&quot; fn SQLFreeHandle(<br>&nbsp;&nbsp;&nbsp;&nbsp;handle_type: <a class="enum" href="../odbc_sys/enum.HandleType.html" title="enum odbc_sys::HandleType">HandleType</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;handle: <a class="type" href="../odbc_sys/type.SQLHANDLE.html" title="type odbc_sys::SQLHANDLE">SQLHANDLE</a><br>) -&gt; <a class="enum" href="../odbc_sys/enum.SQLRETURN.html" title="enum odbc_sys::SQLRETURN">SQLRETURN</a></pre><div class='docblock'><p>Frees resources associated with a specific environment, connection, statement, or
 descriptor handle.</p>
 
 <p>If <code>SQL_ERRQR</code> is returned the handle is still valid.</p>
@@ -113,7 +113,6 @@ descriptor handle.</p>
         window.rootPath = "../";
         window.currentCrate = "odbc_sys";
     </script>
-    <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>
 </body>

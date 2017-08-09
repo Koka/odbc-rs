@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='index.html'>odbc_sys</a></p><script>window.sidebarCurrent = {name: 'FreeStmtOption', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Enum FreeStmtOption</p><div class="block items"><ul><li><a href="#variants">Variants</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>odbc_sys</a></p><script>window.sidebarCurrent = {name: 'FreeStmtOption', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -48,14 +48,14 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#77-98' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#77-97' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'><div class="docblock attributes">#[repr(u16)]
 </div>pub enum FreeStmtOption {
     SQL_CLOSE,
     SQL_UNBIND,
     SQL_RESET_PARAMS,
 }</pre><div class='docblock'><p>SQL Free Statement options</p>
-</div><h2 class='variants'>Variants</h2>
+</div><h2 id='variants' class='variants'>Variants</h2>
 <span id='variant.SQL_CLOSE' class='variant'><span id='SQL_CLOSE.v' class='invisible'><code>SQL_CLOSE</code></span></span><div class='docblock'><p>Closes the cursor associated with StatementHandle (if one was defined) and discards all
 pending results. The application can reopen this cursor later by executing a SELECT
 statement again with the same or different parameter values. If no cursor is open, this
@@ -143,7 +143,6 @@ will affect the bindings of all the statements that share the descriptor.</p>
         window.rootPath = "../";
         window.currentCrate = "odbc_sys";
     </script>
-    <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>
 </body>

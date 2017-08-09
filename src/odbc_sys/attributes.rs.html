@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.3.0/src/attributes.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.5.0/src/attributes.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>attributes.rs.html -- source</title>
@@ -66,8 +66,22 @@
 <span id="21">21</span>
 <span id="22">22</span>
 <span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
 </pre><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">raw</span>::<span class="ident">c_ulong</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">raw</span>::{<span class="ident">c_void</span>, <span class="ident">c_ulong</span>};
 
 <span class="doccomment">/// Governs behaviour of EnvironmentAttribute</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">i32</span>)]</span>
@@ -81,15 +95,29 @@
     <span class="ident">SQL_ATTR_APPLICATION_KEY</span> <span class="op">=</span> <span class="number">203</span>,
     <span class="ident">SQL_ATTR_OUTPUT_NTS</span> <span class="op">=</span> <span class="number">10001</span>,
 }
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">EnvironmentAttribute</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">EnvironmentAttribute</span>::<span class="kw-2">*</span>;
 
-<span class="comment">// ODBC verions</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SQL_OV_ODBC2</span>: <span class="ident">c_ulong</span> <span class="op">=</span> <span class="number">2</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SQL_OV_ODBC3</span>: <span class="ident">c_ulong</span> <span class="op">=</span> <span class="number">3</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_3_80&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SQL_OV_ODBC3_80</span>: <span class="ident">c_ulong</span> <span class="op">=</span> <span class="number">380</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SQL_OV_ODBC4</span>: <span class="ident">c_ulong</span> <span class="op">=</span> <span class="number">400</span>;
+<span class="doccomment">/// ODBC verions</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Used in conjunction with `SQL_ATTR_ODBC_VERSION` and `SQLSetEnvAttr` to declare the ODBC</span>
+<span class="doccomment">/// version used by the application.</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">OdbcVersion</span> {
+    <span class="ident">SQL_OV_ODBC2</span> <span class="op">=</span> <span class="number">2</span>,
+    <span class="ident">SQL_OV_ODBC3</span> <span class="op">=</span> <span class="number">3</span>,
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_3_80&quot;</span>)]</span>
+    <span class="ident">SQL_OV_ODBC3_80</span> <span class="op">=</span> <span class="number">380</span>,
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span>
+    <span class="ident">SQL_OV_ODBC4</span> <span class="op">=</span> <span class="number">400</span>,
+}
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">OdbcVersion</span>::<span class="kw-2">*</span>;
+
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">OdbcVersion</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">source</span>: <span class="ident">OdbcVersion</span>) <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span> {
+        <span class="ident">source</span> <span class="kw">as</span> <span class="ident">c_ulong</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>
+    }
+}
 </pre>
 </section>
     <section id='search' class="content hidden"></section>
@@ -148,7 +176,6 @@
         window.rootPath = "../../";
         window.currentCrate = "odbc_sys";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     <script defer src="../../search-index.js"></script>
 </body>

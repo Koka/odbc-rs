@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.3.0/src/sqlreturn.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.5.0/src/sqlreturn.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>sqlreturn.rs.html -- source</title>
@@ -103,12 +103,14 @@
 <span id="58">58</span>
 <span id="59">59</span>
 <span id="60">60</span>
+<span id="61">61</span>
 </pre><pre class="rust ">
 <span class="doccomment">/// Indicates the overall success or failure of the function</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Each function in ODBC returns a code, known as its return code, which indicates the overall</span>
 <span class="doccomment">/// success or failure of the function. Program logic is generally based on return codes.</span>
-<span class="doccomment">/// See [ODBC reference](https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/return-codes-odbc)</span>
+<span class="doccomment">/// See [ODBC reference][1]</span>
+<span class="doccomment">/// [1]: https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/return-codes-odbc</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">i16</span>)]</span>
 <span class="attribute">#[<span class="ident">must_use</span>]</span>
@@ -222,7 +224,6 @@
         window.rootPath = "../../";
         window.currentCrate = "odbc_sys";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     <script defer src="../../search-index.js"></script>
 </body>

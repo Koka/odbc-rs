@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/log/macros.rs.html#18-31' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/log/macros.rs.html#35-48' title='goto source code'>[src]</a></span></h1>
 <pre class="rust macro">
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">log</span> {
     (<span class="ident">target</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">lvl</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>:<span class="ident">tt</span>)<span class="op">+</span>) <span class="op">=&gt;</span> { ... };
@@ -61,6 +61,17 @@ based argument list.</p>
 
 <p>The <code>max_level_*</code> features can be used to statically disable logging at
 various levels.</p>
+
+<h1 id='examples' class='section-header'><a href='#examples'>Examples</a></h1>
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">log</span>::<span class="ident">LogLevel</span>;
+
+<span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> (<span class="number">42</span>, <span class="string">&quot;Forty-two&quot;</span>);
+<span class="kw">let</span> <span class="ident">private_data</span> <span class="op">=</span> <span class="string">&quot;private&quot;</span>;
+
+<span class="macro">log</span><span class="macro">!</span>(<span class="ident">LogLevel</span>::<span class="ident">Error</span>, <span class="string">&quot;Received errors: {}, {}&quot;</span>, <span class="ident">data</span>.<span class="number">0</span>, <span class="ident">data</span>.<span class="number">1</span>);
+<span class="macro">log</span><span class="macro">!</span>(<span class="ident">target</span>: <span class="string">&quot;app_events&quot;</span>, <span class="ident">LogLevel</span>::<span class="ident">Warn</span>, <span class="string">&quot;App warning: {}, {}, {}&quot;</span>, 
+    <span class="ident">data</span>.<span class="number">0</span>, <span class="ident">data</span>.<span class="number">1</span>, <span class="ident">private_data</span>);</pre>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -118,7 +129,6 @@ various levels.</p>
         window.rootPath = "../";
         window.currentCrate = "log";
     </script>
-    <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>
 </body>

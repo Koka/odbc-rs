@@ -64,7 +64,7 @@
 <span id="19">19</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Raii</span>, <span class="ident">ffi</span>, <span class="ident">Return</span>, <span class="ident">Handle</span>};
-<span class="kw">use</span> <span class="ident">std</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">raw</span>::{<span class="ident">c_void</span>, <span class="ident">c_ulong</span>};
 
 <span class="kw">impl</span> <span class="ident">Raii</span><span class="op">&lt;</span><span class="ident">ffi</span>::<span class="ident">Env</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_odbc_version_3</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
@@ -72,7 +72,7 @@
         <span class="kw">match</span> <span class="kw">unsafe</span> {
             <span class="ident">ffi</span>::<span class="ident">SQLSetEnvAttr</span>(<span class="self">self</span>.<span class="ident">handle</span>(),
                                <span class="ident">ffi</span>::<span class="ident">SQL_ATTR_ODBC_VERSION</span>,
-                               <span class="ident">ffi</span>::<span class="ident">SQL_OV_ODBC3</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">raw</span>::<span class="ident">c_void</span>,
+                               <span class="ident">ffi</span>::<span class="ident">SQL_OV_ODBC3</span> <span class="kw">as</span> <span class="ident">c_ulong</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>,
                                <span class="number">0</span>)
         } {
             <span class="ident">ffi</span>::<span class="ident">SQL_SUCCESS</span> <span class="op">=&gt;</span> <span class="ident">Return</span>::<span class="ident">Success</span>(()),
@@ -140,7 +140,6 @@
         window.rootPath = "../../../";
         window.currentCrate = "odbc";
     </script>
-    <script src="../../../jquery.js"></script>
     <script src="../../../main.js"></script>
     <script defer src="../../../search-index.js"></script>
 </body>

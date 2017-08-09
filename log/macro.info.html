@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/log/macros.rs.html#74-81' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/log/macros.rs.html#132-139' title='goto source code'>[src]</a></span></h1>
 <pre class="rust macro">
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">info</span> {
     (<span class="ident">target</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> { ... };
@@ -63,6 +63,14 @@ present: <code>max_level_off</code>, <code>max_level_error</code>, or <code>max_
 logging at this level is also disabled if any of the following features are
 present: <code>release_max_level_off</code>, <code>release_max_level_error</code>, or
 <code>release_max_level_warn</code>.</p>
+
+<h1 id='examples' class='section-header'><a href='#examples'>Examples</a></h1>
+<pre class="rust rust-example-rendered">
+<span class="kw">let</span> <span class="ident">conn_info</span> <span class="op">=</span> <span class="ident">Connection</span> { <span class="ident">port</span>: <span class="number">40</span>, <span class="ident">speed</span>: <span class="number">3.20</span> };
+
+<span class="macro">info</span><span class="macro">!</span>(<span class="string">&quot;Connected to port {} at {} Mb/s&quot;</span>, <span class="ident">conn_info</span>.<span class="ident">port</span>, <span class="ident">conn_info</span>.<span class="ident">speed</span>);
+<span class="macro">info</span><span class="macro">!</span>(<span class="ident">target</span>: <span class="string">&quot;connection_events&quot;</span>, <span class="string">&quot;Successfull connection, port: {}, speed: {}&quot;</span>,
+      <span class="ident">conn_info</span>.<span class="ident">port</span>, <span class="ident">conn_info</span>.<span class="ident">speed</span>);</pre>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -120,7 +128,6 @@ present: <code>release_max_level_off</code>, <code>release_max_level_error</code
         window.rootPath = "../";
         window.currentCrate = "log";
     </script>
-    <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>
 </body>
