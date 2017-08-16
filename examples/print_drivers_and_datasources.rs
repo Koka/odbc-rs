@@ -16,7 +16,7 @@ fn print_drivers_and_datasources() -> odbc::Result<()> {
     env_logger::init().unwrap();
 
     let env = Environment::new().unwrap();
-    let env3 = env.set_odbc_version_3()?;
+    let mut env3 = env.set_odbc_version_3()?;
 
     println!("Driver list:");
     for driver_info in env3.drivers()? {

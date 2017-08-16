@@ -193,7 +193,7 @@ fn prepared_execution() {
 #[test]
 fn list_drivers() {
     let environment = Environment::new().unwrap();
-    let environment = environment.set_odbc_version_3().unwrap();
+    let mut environment = environment.set_odbc_version_3().unwrap();
     let drivers = environment.drivers()
         .expect("Drivers can be iterated over");
     println!("{:?}", drivers);
@@ -206,7 +206,7 @@ fn list_drivers() {
 #[test]
 fn list_data_sources() {
     let environment = Environment::new().unwrap();
-    let environment = environment.set_odbc_version_3().unwrap();
+    let mut environment = environment.set_odbc_version_3().unwrap();
     let sources = environment.data_sources()
         .expect("Data sources can be iterated over");
     println!("{:?}", sources);
@@ -226,7 +226,7 @@ fn list_data_sources() {
 #[test]
 fn list_user_data_sources() {
     let environment = Environment::new().unwrap();
-    let environment = environment.set_odbc_version_3().unwrap();
+    let mut environment = environment.set_odbc_version_3().unwrap();
     let sources = environment.user_data_sources()
         .expect("Data sources can be iterated over");
     println!("{:?}", sources);
@@ -246,7 +246,7 @@ fn list_user_data_sources() {
 #[test]
 fn list_system_data_sources() {
     let environment = Environment::new().unwrap();
-    let environment = environment.set_odbc_version_3().unwrap();
+    let mut environment = environment.set_odbc_version_3().unwrap();
     let sources = environment.system_data_sources()
         .expect("Data sources can be iterated over");
     println!("{:?}", sources);
