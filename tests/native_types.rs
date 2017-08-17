@@ -86,3 +86,8 @@ fn _f32() {
 fn _f64() {
     test_type!(f64, C, 3.14)
 }
+
+#[test]
+fn _u8vector() {
+    test_type!(Vec<u8>, A, String::from("Привет, мир!").into_bytes())
+}
