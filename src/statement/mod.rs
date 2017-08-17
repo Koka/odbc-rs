@@ -58,7 +58,7 @@ pub struct Cursor<'a, 'b: 'a, 'c: 'a, S: 'a> {
 pub struct ColumnDescriptor {
     pub name: String,
     pub data_type: ffi::SqlDataType,
-    pub column_size: Option<u64>,
+    pub column_size: Option<ffi::SQLULEN>,
     pub decimal_digits: Option<u16>,
     pub nullable: Option<bool>
 }

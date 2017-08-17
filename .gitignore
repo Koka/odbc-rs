@@ -17,7 +17,7 @@ Cargo.lock
 .idea/
 
 # Visual Studio Code
-./vscode/*
+.vscode
 
 # Files for local test execution
 ./local/test.db
