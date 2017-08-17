@@ -88,6 +88,6 @@ fn _f64() {
 }
 
 #[test]
-fn _string() {
+fn _u8vector() {
     test_type!(Vec<u8>, A, String::from("Hello, World!"))
 }
