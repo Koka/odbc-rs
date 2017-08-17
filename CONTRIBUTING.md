@@ -11,6 +11,6 @@ Thanks for using this project.
 #### If you have a feature proposal or want to contribute
 
 - Post your proposal on the issue tracker so we can review it together. Some proposals may not be a good fit for the project.
-- Contribute a PR.
+- Contribute a PR (don't forget to write all necessary tests, please).
 - Respond to code review.
 - Watch the PR be merged.
