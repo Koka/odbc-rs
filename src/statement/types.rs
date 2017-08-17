@@ -202,3 +202,22 @@ unsafe impl<'a> OdbcType<'a> for f64 {
     fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
     fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
 }
+
+unsafe impl<'a> OdbcType<'a> for Vec<u8> {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_VARCHAR }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_CHAR
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        buffer.to_vec()
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        self.len() as ffi::SQLULEN
+    }
+
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self.as_ptr() as *const Self as ffi::SQLPOINTER
+    }
+}
