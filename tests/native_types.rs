@@ -89,5 +89,5 @@ fn _f64() {
 
 #[test]
 fn _u8vector() {
-    test_type!(Vec<u8>, A, String::from("Hello, World!").into_bytes())
+    test_type!(Vec<u8>, A, String::from("Привет, мир!").into_bytes())
 }
