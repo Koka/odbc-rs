@@ -214,7 +214,7 @@ unsafe impl<'a> OdbcType<'a> for Vec<u8> {
     }
 
     fn column_size(&self) -> ffi::SQLULEN {
-        std::cmp::min(self.len(), SQLULEN::max_value() as usize) as ffi::SQLULEN
+        std::cmp::min(self.len(), ffi::SQLULEN::max_value() as usize) as ffi::SQLULEN
     }
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
