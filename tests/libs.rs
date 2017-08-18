@@ -198,7 +198,7 @@ fn list_drivers() {
         .expect("Drivers can be iterated over");
     println!("{:?}", drivers);
 
-    let expected = ["PostgreSQL ANSI", "PostgreSQL Unicode", "SQLite", "SQLite3"];
+    let expected = ["SQLite", "SQLite3", "PostgreSQL ANSI", "PostgreSQL Unicode"];
     assert!(drivers.iter().map(|d| &d.description).eq(expected.iter()));
 }
 
