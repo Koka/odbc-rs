@@ -26,9 +26,9 @@
 
 #[macro_use]
 extern crate log;
+extern crate odbc_safe;
 
 pub mod ffi;
-mod safe;
 mod odbc_object;
 mod raii;
 mod diagnostics;
@@ -39,6 +39,7 @@ mod statement;
 use odbc_object::OdbcObject;
 use raii::Raii;
 use result::{Return, into_result, try_into_option};
+use odbc_safe as safe;
 pub use diagnostics::{DiagnosticRecord, GetDiagRec};
 pub use result::{Result, EnvAllocError};
 pub use environment::*;
