@@ -26,7 +26,6 @@ services:
 before_script:
  - psql -c 'create database travis_ci_test;' -U postgres
  - export ODBCINI=${PWD}/travis/odbc.ini
- - cargo install cargo-travis
  - export PATH=$HOME/.cargo/bin:$HOME/.local/bin:$PATH
 script:
  - cargo test --verbose --features travis
