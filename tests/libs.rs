@@ -198,8 +198,10 @@ fn list_drivers() {
         .expect("Drivers can be iterated over");
     println!("{:?}", drivers);
 
-    let expected = ["SQLite", "SQLite3", "PostgreSQL ANSI", "PostgreSQL Unicode"];
-    assert!(drivers.iter().map(|d| &d.description).eq(expected.iter()));
+    let expected = ["PostgreSQL ANSI", "PostgreSQL Unicode", "SQLite", "SQLite3"];
+    let mut actual : Vec<_> = drivers.iter().map(|d| &d.description).collect();
+    actual.sort();
+    assert_eq!(actual, expected);
 }
 
 #[cfg_attr(not(feature = "travis"), ignore)]
