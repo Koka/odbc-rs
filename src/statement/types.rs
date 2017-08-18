@@ -218,6 +218,9 @@ unsafe impl<'a> OdbcType<'a> for Vec<u8> {
     }
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
-        self.as_ptr() as *const Self as ffi::SQLPOINTER
+        match self.len() {
+            0 => ::std::ptr::null_mut() as ffi::SQLPOINTER,
+            _ => self.as_ptr() as *const Self as ffi::SQLPOINTER,
+        }
     }
 }
