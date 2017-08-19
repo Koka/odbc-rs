@@ -1,14 +1,14 @@
 //! Contains test for all types supporting `get_data`
 //!
 //! These tests assume there is a Stage table with a Varchar in 'A', an Integer in 'B', a Real
-//! in 'C' and Null in 'D'
+//! in 'C' and empty string in 'D'
 extern crate odbc;
 use odbc::*;
 
 const A: &'static str = "SELECT A FROM TEST_TYPES;";
 const B: &'static str = "SELECT B FROM TEST_TYPES;";
 const C: &'static str = "SELECT C FROM TEST_TYPES;";
-const D: &'static str = "SELECT NULL FROM TEST_TYPES;";
+const D: &'static str = "SELECT '' FROM TEST_TYPES;";
 
 macro_rules! test_type {
     ($t:ty, $c:expr, $e:expr) => ({
@@ -94,6 +94,6 @@ fn _u8vector() {
 }
 
 #[test]
-fn _u8vector_null() {
+fn _u8vector_empty() {
     test_type!(Vec<u8>, D, Vec::<u8>::new())
 }
