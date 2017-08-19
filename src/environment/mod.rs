@@ -1,29 +1,26 @@
 //! Implements the ODBC Environment
-mod set_version;
 mod list_data_sources;
 pub use self::list_data_sources::{DataSourceInfo, DriverInfo};
-use super::{Result, Return, ffi, GetDiagRec, Raii, Handle, EnvAllocError};
-use std::marker::PhantomData;
+use super::{ffi, into_result, safe, try_into_option, EnvAllocError, GetDiagRec, Handle, Result};
 use std;
 
 /// Environment state used to represent that no odbc version has been set.
-pub enum NoVersion {}
+pub type NoVersion = safe::NoVersion;
 /// Environment state used to represent that environment has been set to odbc version 3
-pub enum Version3 {}
+pub type Version3 = safe::Odbc3;
 
 /// Handle to an ODBC Environment
 ///
 /// Creating an instance of this type is the first thing you do then using ODBC. The environment
 /// must outlive all connections created with it.
 pub struct Environment<V> {
-    raii: Raii<ffi::Env>,
-    state: PhantomData<V>,
+    safe: safe::Environment<V>,
 }
 
 impl<V> Handle for Environment<V> {
     type To = ffi::Env;
     unsafe fn handle(&self) -> ffi::SQLHENV {
-        self.raii.handle()
+        self.safe.as_raw()
     }
 }
 
@@ -46,21 +43,13 @@ impl Environment<NoVersion> {
     /// ```
     pub fn new() -> std::result::Result<Environment<NoVersion>, EnvAllocError> {
 
-        match unsafe { Raii::new() } {
-            Return::Success(env) => {
-                Ok(Environment {
-                    raii: env,
-                    state: PhantomData,
-                })
+        match safe::Environment::new() {
+            safe::Success(safe) => Ok(Environment { safe }),
+            safe::Info(safe) => {
+                warn!("{}", safe.get_diag_rec(1).unwrap());
+                Ok(Environment { safe })
             }
-            Return::SuccessWithInfo(env) => {
-                warn!("{}", env.get_diag_rec(1).unwrap());
-                Ok(Environment {
-                    raii: env,
-                    state: PhantomData,
-                })
-            }
-            Return::Error => Err(EnvAllocError),
+            safe::Error(()) => Err(EnvAllocError),
         }
     }
 
@@ -77,11 +66,15 @@ impl Environment<NoVersion> {
     ///     Ok(())
     /// }
     /// ```
-    pub fn set_odbc_version_3(mut self) -> Result<Environment<Version3>> {
-        self.raii.set_odbc_version_3().into_result(&self)?;
-        Ok(Environment {
-            raii: self.raii,
-            state: PhantomData,
-        })
+    pub fn set_odbc_version_3(self) -> Result<Environment<Version3>> {
+        let env = into_result(self.safe.declare_version_3())?;
+        Ok(Environment { safe: env })
+    }
+}
+
+impl<V> Handle for safe::Environment<V> {
+    type To = ffi::Env;
+    unsafe fn handle(&self) -> ffi::SQLHENV {
+        self.as_raw()
     }
 }

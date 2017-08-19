@@ -1,6 +1,5 @@
-use super::{Environment, Result, GetDiagRec, Version3};
-use {ffi, Raii, Handle, Return, as_out_buffer, as_buffer_length};
-use ffi::{SQLDataSources, SQLDrivers, SQLRETURN, SQLHENV, SQLSMALLINT, SQLCHAR, FetchOrientation};
+use super::{safe, try_into_option, Environment, GetDiagRec, Result, Version3};
+use ffi;
 use std::collections::HashMap;
 use std::str::from_utf8;
 use std::cmp::max;
@@ -27,15 +26,20 @@ pub struct DriverInfo {
     pub attributes: HashMap<String, String>,
 }
 
-type SqlInfoMethod = fn(&Raii<ffi::Env>, ffi::FetchOrientation, &mut [u8], &mut [u8])
-                        -> Return<Option<(i16, i16)>>;
+type SqlInfoMethod = fn(
+    &mut safe::Environment<safe::Odbc3>,
+    ffi::FetchOrientation,
+    &mut [u8],
+    &mut [u8],
+) -> safe::ReturnOption<(i16, i16)>;
 
 impl Environment<Version3> {
     /// Called by drivers to pares list of attributes
     ///
     /// Key value pairs are seperated by `\0`. Key and value are seperated by `=`
     fn parse_attributes(attributes: &str) -> HashMap<String, String> {
-        attributes.split('\0')
+        attributes
+            .split('\0')
             .take_while(|kv_str| *kv_str != String::new())
             .map(|kv_str| {
                 let mut iter = kv_str.split('=');
@@ -47,21 +51,22 @@ impl Environment<Version3> {
     }
 
     /// Stores all driver description and attributes in a Vec
-    pub fn drivers(&self) -> Result<Vec<DriverInfo>> {
+    pub fn drivers(&mut self) -> Result<Vec<DriverInfo>> {
         // Iterate twice, once for reading the maximum required buffer lengths so we can read
         // everything without truncating and a second time for actually storing the values
         // alloc_info iterates ones over every driver to obtain the requiered buffer sizes
         let (max_desc, max_attr, num_drivers) =
-            self.alloc_info(Raii::drivers, ffi::SQL_FETCH_FIRST)?;
+            self.alloc_info(safe::Environment::drivers, ffi::SQL_FETCH_FIRST)?;
 
         let mut driver_list = Vec::with_capacity(num_drivers);
         let mut description_buffer = vec![0; (max_desc + 1) as usize];
         let mut attribute_buffer = vec![0; (max_attr + 1) as usize];
-        while let Some((desc, attr)) =
-            self.get_info(Raii::drivers,
-                          ffi::SQL_FETCH_NEXT,
-                          &mut description_buffer,
-                          &mut attribute_buffer)? {
+        while let Some((desc, attr)) = self.get_info(
+            safe::Environment::drivers,
+            ffi::SQL_FETCH_NEXT,
+            &mut description_buffer,
+            &mut attribute_buffer,
+        )? {
             driver_list.push(DriverInfo {
                 description: desc.to_owned(),
                 attributes: Self::parse_attributes(attr),
@@ -71,26 +76,30 @@ impl Environment<Version3> {
     }
 
     /// Stores all data source server names and descriptions in a Vec
-    pub fn data_sources(&self) -> Result<Vec<DataSourceInfo>> {
+    pub fn data_sources(&mut self) -> Result<Vec<DataSourceInfo>> {
         self.data_sources_impl(ffi::SQL_FETCH_FIRST)
     }
 
     /// Stores all sytem data source server names and descriptions in a Vec
-    pub fn system_data_sources(&self) -> Result<Vec<DataSourceInfo>> {
+    pub fn system_data_sources(&mut self) -> Result<Vec<DataSourceInfo>> {
         self.data_sources_impl(ffi::SQL_FETCH_FIRST_SYSTEM)
     }
 
     /// Stores all user data source server names and descriptions in a Vec
-    pub fn user_data_sources(&self) -> Result<Vec<DataSourceInfo>> {
+    pub fn user_data_sources(&mut self) -> Result<Vec<DataSourceInfo>> {
         self.data_sources_impl(ffi::SQL_FETCH_FIRST_USER)
     }
 
     /// Use SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or
     /// system data sources
-    fn data_sources_impl(&self, direction: ffi::FetchOrientation) -> Result<Vec<DataSourceInfo>> {
+    fn data_sources_impl(
+        &mut self,
+        direction: ffi::FetchOrientation,
+    ) -> Result<Vec<DataSourceInfo>> {
 
         // alloc_info iterates ones over every datasource to obtain the requiered buffer sizes
-        let (max_name, max_desc, num_sources) = self.alloc_info(Raii::data_sources, direction)?;
+        let (max_name, max_desc, num_sources) =
+            self.alloc_info(safe::Environment::data_sources, direction)?;
 
         let mut source_list = Vec::with_capacity(num_sources);
         let mut name_buffer: Vec<_> = (0..(max_name + 1)).map(|_| 0u8).collect();
@@ -99,11 +108,12 @@ impl Environment<Version3> {
         // Before we call SQLDataSources with SQL_FETCH_NEXT, we have to call it with either
         // SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or
         // system data sources
-        if let Some((name, desc)) =
-            self.get_info(Raii::data_sources,
-                          direction,
-                          &mut name_buffer,
-                          &mut description_buffer)? {
+        if let Some((name, desc)) = self.get_info(
+            safe::Environment::data_sources,
+            direction,
+            &mut name_buffer,
+            &mut description_buffer,
+        )? {
             source_list.push(DataSourceInfo {
                 server_name: name.to_owned(),
                 driver: desc.to_owned(),
@@ -112,11 +122,12 @@ impl Environment<Version3> {
             return Ok(source_list);
         }
 
-        while let Some((name, desc)) =
-            self.get_info(Raii::data_sources,
-                          ffi::SQL_FETCH_NEXT,
-                          &mut name_buffer,
-                          &mut description_buffer)? {
+        while let Some((name, desc)) = self.get_info(
+            safe::Environment::data_sources,
+            ffi::SQL_FETCH_NEXT,
+            &mut name_buffer,
+            &mut description_buffer,
+        )? {
             source_list.push(DataSourceInfo {
                 server_name: name.to_owned(),
                 driver: desc.to_owned(),
@@ -127,133 +138,71 @@ impl Environment<Version3> {
 
     /// Calls either SQLDrivers or SQLDataSources with the two given buffers and parses the result
     /// into a `(&str,&str)`
-    fn get_info<'a, 'b>(&self,
-                        f: SqlInfoMethod,
-                        direction: ffi::FetchOrientation,
-                        buf1: &'a mut [u8],
-                        buf2: &'b mut [u8])
-                        -> Result<Option<(&'a str, &'b str)>> {
+    fn get_info<'a, 'b>(
+        &mut self,
+        f: SqlInfoMethod,
+        direction: ffi::FetchOrientation,
+        buf1: &'a mut [u8],
+        buf2: &'b mut [u8],
+    ) -> Result<Option<(&'a str, &'b str)>> {
 
-        let result = f(&self.raii, direction, buf1, buf2);
-        match result.into_result(self)? {
-            Some((len1, len2)) => {
-                Ok(Some((from_utf8(&buf1[0..(len1 as usize)]).unwrap(),
-                         from_utf8(&buf2[0..(len2 as usize)]).unwrap())))
-            }
+        let result = f(&mut self.safe, direction, buf1, buf2);
+        match try_into_option(result, self)? {
+            Some((len1, len2)) => Ok(Some((
+                from_utf8(&buf1[0..(len1 as usize)]).unwrap(),
+                from_utf8(&buf2[0..(len2 as usize)]).unwrap(),
+            ))),
             None => Ok(None),
         }
     }
 
     /// Finds the maximum size required for description buffers
-    fn alloc_info(&self,
-                  f: SqlInfoMethod,
-                  direction: ffi::FetchOrientation)
-                  -> Result<(ffi::SQLSMALLINT, ffi::SQLSMALLINT, usize)> {
+    fn alloc_info(
+        &mut self,
+        f: SqlInfoMethod,
+        direction: ffi::FetchOrientation,
+    ) -> Result<(ffi::SQLSMALLINT, ffi::SQLSMALLINT, usize)> {
         let mut string_buf1 = [0; 0];
         let mut string_buf2 = [0; 0];
         let mut max1 = 0;
         let mut max2 = 0;
         let mut count = 0;
 
-        let mut result = f(&self.raii, direction, &mut string_buf1, &mut string_buf2);
+        let mut result = f(
+            &mut self.safe,
+            direction,
+            &mut string_buf1,
+            &mut string_buf2,
+        );
 
         loop {
 
             match result {
-                Return::Success(Some((buf1_length_out, buf2_length_out))) |
-                Return::SuccessWithInfo(Some((buf1_length_out, buf2_length_out))) => {
+                safe::ReturnOption::Success((buf1_length_out, buf2_length_out)) |
+                safe::ReturnOption::Info((buf1_length_out, buf2_length_out)) => {
                     count += 1;
                     max1 = max(max1, buf1_length_out);
                     max2 = max(max2, buf2_length_out);
                 }
-                Return::Success(None) |
-                Return::SuccessWithInfo(None) => break,
-                Return::Error => {
+                safe::ReturnOption::NoData(()) => break,
+                safe::ReturnOption::Error(()) => {
                     let diag = self.get_diag_rec(1).unwrap();
                     error!("{}", diag);
                     return Err(diag);
                 }
             }
 
-            result = f(&self.raii,
-                       ffi::SQL_FETCH_NEXT,
-                       &mut string_buf1,
-                       &mut string_buf2)
+            result = f(
+                &mut self.safe,
+                ffi::SQL_FETCH_NEXT,
+                &mut string_buf1,
+                &mut string_buf2,
+            )
         }
 
         Ok((max1, max2, count))
     }
 }
-
-impl Raii<ffi::Env> {
-    /// Iterates over data sources
-    ///
-    /// # Arguments
-    /// * `direction` - Start with SQL_FETCH_FIRST to retrieve all data sources,
-    ///   SQL_FETCH_FIRST_USER for user data sources and SQL_FETCH_FIRST_SYSTEM for system data
-    ///   sources. In each case use SQL_FETCH_NEXT to retrieve the next element
-    /// * `server_name` - To be filled with the server name
-    /// * `description` - To be filled with the description
-    ///
-    /// # Result
-    /// The tuple contains the required length of the buffers minus null-termination character.
-    fn data_sources(&self,
-                    direction: FetchOrientation,
-                    server_name: &mut [u8],
-                    description: &mut [u8])
-                    -> Return<Option<(i16, i16)>> {
-        self.impl_data_sources(SQLDataSources, direction, server_name, description)
-    }
-
-    fn drivers(&self,
-               direction: FetchOrientation,
-               description: &mut [u8],
-               attributes: &mut [u8])
-               -> Return<Option<(i16, i16)>> {
-        self.impl_data_sources(SQLDrivers, direction, description, attributes)
-    }
-
-    // this method uses the fact that SQLDataSources and SQLDrivers share the same signature
-    fn impl_data_sources(&self,
-                         c_function: SqlInfoFunction,
-                         direction: FetchOrientation,
-                         server_name: &mut [u8],
-                         description: &mut [u8])
-                         -> Return<Option<(i16, i16)>> {
-        let (mut server_name_length, mut description_length): (i16, i16) = (0, 0);
-        match unsafe {
-            c_function(self.handle(),
-                       direction,
-                       as_out_buffer(server_name),
-                       as_buffer_length(server_name.len()),
-                       &mut server_name_length as *mut i16,
-                       as_out_buffer(description),
-                       as_buffer_length(description.len()),
-                       &mut description_length as *mut i16)
-        } {
-            SQLRETURN::SQL_SUCCESS => {
-                Return::Success(Some((server_name_length, description_length)))
-            }
-            SQLRETURN::SQL_SUCCESS_WITH_INFO => {
-                Return::SuccessWithInfo(Some((server_name_length, description_length)))
-            }
-            SQLRETURN::SQL_ERROR => Return::Error,
-            SQLRETURN::SQL_NO_DATA => Return::Success(None),
-            _ => panic!("SQL Data Sources returned unexpected result"),
-        }
-    }
-}
-
-/// Signature shared by `raw::SQLDrivers` and `ffi::SQLDataSources`
-type SqlInfoFunction = unsafe extern "C" fn(SQLHENV,
-                                            FetchOrientation,
-                                            *mut SQLCHAR,
-                                            SQLSMALLINT,
-                                            *mut SQLSMALLINT,
-                                            *mut SQLCHAR,
-                                            SQLSMALLINT,
-                                            *mut SQLSMALLINT)
-                                            -> SQLRETURN;
 
 #[cfg(test)]
 mod test {
