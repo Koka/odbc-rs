@@ -26,6 +26,7 @@
 
 #[macro_use]
 extern crate log;
+extern crate odbc_safe;
 
 pub mod ffi;
 mod odbc_object;
@@ -37,8 +38,8 @@ mod data_source;
 mod statement;
 use odbc_object::OdbcObject;
 use raii::Raii;
-use result::Return;
-use std::ptr::null_mut;
+use result::{Return, into_result, try_into_option};
+use odbc_safe as safe;
 pub use diagnostics::{DiagnosticRecord, GetDiagRec};
 pub use result::{Result, EnvAllocError};
 pub use environment::*;
@@ -50,21 +51,4 @@ pub trait Handle {
     type To;
     /// Returns a valid handle to the odbc type.
     unsafe fn handle(&self) -> *mut Self::To;
-}
-
-fn as_out_buffer(buffer: &mut [u8]) -> *mut u8 {
-    if buffer.len() == 0 {
-        null_mut()
-    } else {
-        buffer.as_mut_ptr()
-    }
-}
-
-fn as_buffer_length(n: usize) -> ffi::SQLSMALLINT {
-    use std;
-    if n > std::i16::MAX as usize {
-        std::i16::MAX
-    } else {
-        n as i16
-    }
 }
