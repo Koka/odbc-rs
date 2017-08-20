@@ -29,13 +29,15 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
     /// #   Ok(())
     /// # }
     /// ```
-    pub fn bind_parameter<'c, T>(mut self,
-                                 parameter_index: u16,
-                                 value: &'c T)
-                                 -> Result<Statement<'a, 'c, S, R>>
-        where T: OdbcType<'c>,
-              T: ?Sized,
-              'b: 'c
+    pub fn bind_parameter<'c, T>(
+        mut self,
+        parameter_index: u16,
+        value: &'c T,
+    ) -> Result<Statement<'a, 'c, S, R>>
+    where
+        T: OdbcType<'c>,
+        T: ?Sized,
+        'b: 'c,
     {
         self.raii
             .bind_input_parameter(parameter_index, value)
@@ -53,8 +55,9 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
 
 impl Raii<ffi::Stmt> {
     fn bind_input_parameter<'c, T>(&mut self, parameter_index: u16, value: &'c T) -> Return<()>
-        where T: OdbcType<'c>,
-              T: ?Sized
+    where
+        T: OdbcType<'c>,
+        T: ?Sized,
     {
         let mut len_buf_ptr = vec![value.column_size() as ffi::SQLLEN];
         match unsafe {
@@ -68,7 +71,7 @@ impl Raii<ffi::Stmt> {
                 value.decimal_digits(),
                 value.value_ptr(),
                 0, // buffer length
-                len_buf_ptr.as_mut_ptr() as * mut ffi::SQLLEN// str len or ind ptr
+                len_buf_ptr.as_mut_ptr() as *mut ffi::SQLLEN, // str len or ind ptr
             )
         } {
             ffi::SQL_SUCCESS => Return::Success(()),

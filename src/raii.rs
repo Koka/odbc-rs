@@ -49,12 +49,10 @@ impl<T: OdbcObject> Raii<T> {
                 &mut handle as *mut ffi::SQLHANDLE,
             )
         } {
-            ffi::SQL_SUCCESS => Return::Success(Raii {
-                handle: handle as *mut T,
-            }),
-            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(Raii {
-                handle: handle as *mut T,
-            }),
+            ffi::SQL_SUCCESS => Return::Success(Raii { handle: handle as *mut T }),
+            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(
+                Raii { handle: handle as *mut T },
+            ),
             ffi::SQL_ERROR => Return::Error,
             _ => panic!("SQLAllocHandle returned unexpected result"),
         }

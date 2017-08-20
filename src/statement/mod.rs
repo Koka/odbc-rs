@@ -51,7 +51,7 @@ pub struct Statement<'a, 'b, S, R> {
 /// Used to retrieve data from the fields of a query result
 pub struct Cursor<'a, 'b: 'a, 'c: 'a, S: 'a> {
     stmt: &'a mut Statement<'b, 'c, S, HasResult>,
-    buffer: Vec<u8>
+    buffer: Vec<u8>,
 }
 
 #[derive(Debug, Clone)]
@@ -60,7 +60,7 @@ pub struct ColumnDescriptor {
     pub data_type: ffi::SqlDataType,
     pub column_size: Option<ffi::SQLULEN>,
     pub decimal_digits: Option<u16>,
-    pub nullable: Option<bool>
+    pub nullable: Option<bool>,
 }
 
 impl<'a, 'b, S, R> Handle for Statement<'a, 'b, S, R> {
@@ -116,7 +116,9 @@ impl<'a, 'b, S> Statement<'a, 'b, S, HasResult> {
     }
 
     /// Returns description struct for result set column with a given index. Note: indexing is starting from 1.
-    pub fn describe_col(&self, idx: u16) -> Result<ColumnDescriptor> { self.raii.describe_col(idx).into_result(self) }
+    pub fn describe_col(&self, idx: u16) -> Result<ColumnDescriptor> {
+        self.raii.describe_col(idx).into_result(self)
+    }
 
     /// Fetches the next rowset of data from the result set and returns data for all bound columns.
     pub fn fetch<'c>(&'c mut self) -> Result<Option<Cursor<'c, 'a, 'b, S>>> {
@@ -166,7 +168,8 @@ impl<'a, 'b, S> Statement<'a, 'b, S, HasResult> {
 impl<'a, 'b, 'c, S> Cursor<'a, 'b, 'c, S> {
     /// Retrieves data for a single column in the result set
     pub fn get_data<'d, T>(&'d mut self, col_or_param_num: u16) -> Result<Option<T>>
-        where T: Output<'d>
+    where
+        T: Output<'d>,
     {
         T::get_data(&mut self.stmt.raii, col_or_param_num, &mut self.buffer).into_result(self.stmt)
     }
@@ -186,44 +189,65 @@ impl Raii<ffi::Stmt> {
     }
 
     fn describe_col(&self, idx: u16) -> Return<ColumnDescriptor> {
-        let mut name_buffer:[u8; 512] = [0; 512];
+        let mut name_buffer: [u8; 512] = [0; 512];
         let mut name_length: ffi::SQLSMALLINT = 0;
         let mut data_type: ffi::SqlDataType = ffi::SqlDataType::SQL_UNKNOWN_TYPE;
         let mut column_size: ffi::SQLULEN = 0;
         let mut decimal_digits: ffi::SQLSMALLINT = 0;
         let mut nullable: Nullable = Nullable::SQL_NULLABLE_UNKNOWN;
         unsafe {
-            match ffi::SQLDescribeCol(self.handle(),
-                                      idx,
-                                      name_buffer.as_mut_ptr(),
-                                      name_buffer.len() as ffi::SQLSMALLINT,
-                                      &mut name_length as *mut ffi::SQLSMALLINT,
-                                      &mut data_type as *mut ffi::SqlDataType,
-                                      &mut column_size as *mut ffi::SQLULEN,
-                                      &mut decimal_digits as *mut ffi::SQLSMALLINT,
-                                      &mut nullable as *mut ffi::Nullable
+            match ffi::SQLDescribeCol(
+                self.handle(),
+                idx,
+                name_buffer.as_mut_ptr(),
+                name_buffer.len() as ffi::SQLSMALLINT,
+                &mut name_length as *mut ffi::SQLSMALLINT,
+                &mut data_type as *mut ffi::SqlDataType,
+                &mut column_size as *mut ffi::SQLULEN,
+                &mut decimal_digits as *mut ffi::SQLSMALLINT,
+                &mut nullable as *mut ffi::Nullable,
             ) {
                 SQL_SUCCESS => Return::Success(ColumnDescriptor {
-                    name: ::std::str::from_utf8(&name_buffer[..(name_length as usize)]).unwrap().to_owned(),
+                    name: ::std::str::from_utf8(&name_buffer[..(name_length as usize)])
+                        .unwrap()
+                        .to_owned(),
                     data_type: data_type,
-                    column_size: if column_size == 0 { None } else { Some(column_size) },
-                    decimal_digits: if decimal_digits == 0 { None } else { Some(decimal_digits as u16) },
+                    column_size: if column_size == 0 {
+                        None
+                    } else {
+                        Some(column_size)
+                    },
+                    decimal_digits: if decimal_digits == 0 {
+                        None
+                    } else {
+                        Some(decimal_digits as u16)
+                    },
                     nullable: match nullable {
                         Nullable::SQL_NULLABLE_UNKNOWN => None,
                         Nullable::SQL_NULLABLE => Some(true),
-                        Nullable::SQL_NO_NULLS => Some(false)
-                    }
+                        Nullable::SQL_NO_NULLS => Some(false),
+                    },
                 }),
                 SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(ColumnDescriptor {
-                    name: ::std::str::from_utf8(&name_buffer[..(name_length as usize)]).unwrap().to_owned(),
+                    name: ::std::str::from_utf8(&name_buffer[..(name_length as usize)])
+                        .unwrap()
+                        .to_owned(),
                     data_type: data_type,
-                    column_size: if column_size == 0 { None } else { Some(column_size) },
-                    decimal_digits: if decimal_digits == 0 { None } else { Some(decimal_digits as u16) },
+                    column_size: if column_size == 0 {
+                        None
+                    } else {
+                        Some(column_size)
+                    },
+                    decimal_digits: if decimal_digits == 0 {
+                        None
+                    } else {
+                        Some(decimal_digits as u16)
+                    },
                     nullable: match nullable {
                         Nullable::SQL_NULLABLE_UNKNOWN => None,
                         Nullable::SQL_NULLABLE => Some(true),
-                        Nullable::SQL_NO_NULLS => Some(false)
-                    }
+                        Nullable::SQL_NO_NULLS => Some(false),
+                    },
                 }),
                 SQL_ERROR => Return::Error,
                 r => panic!("SQLDescribeCol returned unexpected result: {:?}", r),
@@ -238,9 +262,11 @@ impl Raii<ffi::Stmt> {
             panic!("Statement text too long");
         }
         match unsafe {
-            ffi::SQLExecDirect(self.handle(),
-                               statement_text.as_ptr(),
-                               length as ffi::SQLINTEGER)
+            ffi::SQLExecDirect(
+                self.handle(),
+                statement_text.as_ptr(),
+                length as ffi::SQLINTEGER,
+            )
         } {
             ffi::SQL_SUCCESS => Return::Success(true),
             ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(true),
@@ -268,15 +294,17 @@ impl Raii<ffi::Stmt> {
         let table_name = "";
         let table_type = "TABLE";
         unsafe {
-            match ffi::SQLTables(self.handle(),
-                                 catalog_name.as_ptr(),
-                                 catalog_name.as_bytes().len() as ffi::SQLSMALLINT,
-                                 schema_name.as_ptr(),
-                                 schema_name.as_bytes().len() as ffi::SQLSMALLINT,
-                                 table_name.as_ptr(),
-                                 table_name.as_bytes().len() as ffi::SQLSMALLINT,
-                                 table_type.as_ptr(),
-                                 table_type.as_bytes().len() as ffi::SQLSMALLINT) {
+            match ffi::SQLTables(
+                self.handle(),
+                catalog_name.as_ptr(),
+                catalog_name.as_bytes().len() as ffi::SQLSMALLINT,
+                schema_name.as_ptr(),
+                schema_name.as_bytes().len() as ffi::SQLSMALLINT,
+                table_name.as_ptr(),
+                table_name.as_bytes().len() as ffi::SQLSMALLINT,
+                table_type.as_ptr(),
+                table_type.as_bytes().len() as ffi::SQLSMALLINT,
+            ) {
                 SQL_SUCCESS => Return::Success(()),
                 SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
                 SQL_ERROR => Return::Error,

@@ -74,7 +74,10 @@ fn test_connection_string() {
 #[test]
 fn test_direct_select() {
     let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
-    let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
+    let conn = DataSource::with_parent(&env)
+        .unwrap()
+        .connect("TestDataSource", "", "")
+        .unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
     let mut stmt = match stmt.exec_direct("SELECT TITLE, YEAR FROM MOVIES ORDER BY YEAR")
@@ -100,14 +103,16 @@ fn test_direct_select() {
     }
 
     let check = actual ==
-                vec![Movie {
-                         title: "2001: A Space Odyssey".to_owned(),
-                         year: 1968,
-                     },
-                     Movie {
-                         title: "Jurassic Park".to_owned(),
-                         year: 1993,
-                     }];
+        vec![
+            Movie {
+                title: "2001: A Space Odyssey".to_owned(),
+                year: 1968,
+            },
+            Movie {
+                title: "Jurassic Park".to_owned(),
+                year: 1993,
+            },
+        ];
 
     println!("test_direct_select query result: {:?}", actual);
 
@@ -117,10 +122,14 @@ fn test_direct_select() {
 #[test]
 fn reuse_statement() {
     let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
-    let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
+    let conn = DataSource::with_parent(&env)
+        .unwrap()
+        .connect("TestDataSource", "", "")
+        .unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
-    let stmt = match stmt.exec_direct("CREATE TABLE STAGE (A VARCHAR, B VARCHAR);").unwrap() {
+    let stmt = match stmt.exec_direct("CREATE TABLE STAGE (A VARCHAR, B VARCHAR);")
+        .unwrap() {
         Data(stmt) => stmt.close_cursor().unwrap(), //A result set has been returned, we need to close it.
         NoData(stmt) => stmt,
     };
@@ -132,7 +141,7 @@ fn reuse_statement() {
     if let Data(mut stmt) = stmt.exec_direct("SELECT A, B FROM STAGE;").unwrap() {
         {
             let mut cursor = stmt.fetch().unwrap().unwrap();
-            assert_eq!(cursor.get_data::<String>(1).unwrap().unwrap(),"Hello");
+            assert_eq!(cursor.get_data::<String>(1).unwrap().unwrap(), "Hello");
             assert_eq!(cursor.get_data::<String>(2).unwrap().unwrap(), "World");
         }
         let stmt = stmt.close_cursor().unwrap();
@@ -145,14 +154,22 @@ fn reuse_statement() {
 #[test]
 fn execution_with_parameter() {
     let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
-    let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
+    let conn = DataSource::with_parent(&env)
+        .unwrap()
+        .connect("TestDataSource", "", "")
+        .unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
     let param = 1968;
     let stmt = stmt.bind_parameter(1, &param).unwrap();
 
-    if let Data(mut stmt) = stmt.exec_direct("SELECT TITLE FROM MOVIES WHERE YEAR = ?").unwrap() {
+    if let Data(mut stmt) = stmt.exec_direct("SELECT TITLE FROM MOVIES WHERE YEAR = ?")
+        .unwrap()
+    {
         let mut cursor = stmt.fetch().unwrap().unwrap();
-        assert_eq!(cursor.get_data::<String>(1).unwrap().unwrap(), "2001: A Space Odyssey");
+        assert_eq!(
+            cursor.get_data::<String>(1).unwrap().unwrap(),
+            "2001: A Space Odyssey"
+        );
     } else {
         panic!("SELECT statement returned no result set")
     };
@@ -161,14 +178,19 @@ fn execution_with_parameter() {
 #[test]
 fn prepared_execution() {
     let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
-    let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
+    let conn = DataSource::with_parent(&env)
+        .unwrap()
+        .connect("TestDataSource", "", "")
+        .unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
-    let stmt = stmt.prepare("SELECT TITLE FROM MOVIES WHERE YEAR = ?").unwrap();
+    let stmt = stmt.prepare("SELECT TITLE FROM MOVIES WHERE YEAR = ?")
+        .unwrap();
 
-    fn execute_query<'a>(year: u16,
-                         expected: &str,
-                         stmt: Statement<'a, 'a, Prepared, NoResult>)
-                         -> Result<Statement<'a, 'a, Prepared, NoResult>> {
+    fn execute_query<'a>(
+        year: u16,
+        expected: &str,
+        stmt: Statement<'a, 'a, Prepared, NoResult>,
+    ) -> Result<Statement<'a, 'a, Prepared, NoResult>> {
         let stmt = stmt.bind_parameter(1, &year)?;
         let stmt = if let Data(mut stmt) = stmt.execute()? {
             {
@@ -194,12 +216,11 @@ fn prepared_execution() {
 fn list_drivers() {
     let environment = Environment::new().unwrap();
     let mut environment = environment.set_odbc_version_3().unwrap();
-    let drivers = environment.drivers()
-        .expect("Drivers can be iterated over");
+    let drivers = environment.drivers().expect("Drivers can be iterated over");
     println!("{:?}", drivers);
 
     let expected = ["PostgreSQL ANSI", "PostgreSQL Unicode", "SQLite", "SQLite3"];
-    let mut actual : Vec<_> = drivers.iter().map(|d| &d.description).collect();
+    let mut actual: Vec<_> = drivers.iter().map(|d| &d.description).collect();
     actual.sort();
     assert_eq!(actual, expected);
 }
@@ -209,18 +230,21 @@ fn list_drivers() {
 fn list_data_sources() {
     let environment = Environment::new().unwrap();
     let mut environment = environment.set_odbc_version_3().unwrap();
-    let sources = environment.data_sources()
-        .expect("Data sources can be iterated over");
+    let sources = environment.data_sources().expect(
+        "Data sources can be iterated over",
+    );
     println!("{:?}", sources);
 
-    let expected = [DataSourceInfo {
-                        server_name: "PostgreSQL".to_owned(),
-                        driver: "PostgreSQL Unicode".to_owned(),
-                    },
-                    DataSourceInfo {
-                        server_name: "TestDataSource".to_owned(),
-                        driver: "SQLite3".to_owned(),
-                    }];
+    let expected = [
+        DataSourceInfo {
+            server_name: "PostgreSQL".to_owned(),
+            driver: "PostgreSQL Unicode".to_owned(),
+        },
+        DataSourceInfo {
+            server_name: "TestDataSource".to_owned(),
+            driver: "SQLite3".to_owned(),
+        },
+    ];
     assert!(sources.iter().eq(expected.iter()));
 }
 
@@ -229,18 +253,21 @@ fn list_data_sources() {
 fn list_user_data_sources() {
     let environment = Environment::new().unwrap();
     let mut environment = environment.set_odbc_version_3().unwrap();
-    let sources = environment.user_data_sources()
-        .expect("Data sources can be iterated over");
+    let sources = environment.user_data_sources().expect(
+        "Data sources can be iterated over",
+    );
     println!("{:?}", sources);
 
-    let expected = [DataSourceInfo {
-                        server_name: "PostgreSQL".to_owned(),
-                        driver: "PostgreSQL Unicode".to_owned(),
-                    },
-                    DataSourceInfo {
-                        server_name: "TestDataSource".to_owned(),
-                        driver: "SQLite3".to_owned(),
-                    }];
+    let expected = [
+        DataSourceInfo {
+            server_name: "PostgreSQL".to_owned(),
+            driver: "PostgreSQL Unicode".to_owned(),
+        },
+        DataSourceInfo {
+            server_name: "TestDataSource".to_owned(),
+            driver: "SQLite3".to_owned(),
+        },
+    ];
     assert!(sources.iter().eq(expected.iter()));
 }
 
@@ -249,8 +276,9 @@ fn list_user_data_sources() {
 fn list_system_data_sources() {
     let environment = Environment::new().unwrap();
     let mut environment = environment.set_odbc_version_3().unwrap();
-    let sources = environment.system_data_sources()
-        .expect("Data sources can be iterated over");
+    let sources = environment.system_data_sources().expect(
+        "Data sources can be iterated over",
+    );
     println!("{:?}", sources);
 
     let expected: [DataSourceInfo; 0] = [];

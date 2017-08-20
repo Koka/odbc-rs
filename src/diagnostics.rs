@@ -18,7 +18,6 @@ pub struct DiagnosticRecord {
 }
 
 impl DiagnosticRecord {
-
     /// get raw state string data.
     pub fn get_raw_state(&self) -> &[u8] {
         &self.state
@@ -86,13 +85,13 @@ where
     fn get_diag_rec(&self, record_number: i16) -> Option<(DiagnosticRecord)> {
         use safe::ReturnOption::*;
         let mut message = [0; 512];
-        match self.diagnostics(record_number, &mut message){
+        match self.diagnostics(record_number, &mut message) {
             Success(result) | Info(result) => {
-                Some(DiagnosticRecord{
+                Some(DiagnosticRecord {
                     state: result.state,
                     native_error: result.native_error,
                     message_length: result.text_length,
-                    message
+                    message,
                 })
             }
             NoData(()) => None,
