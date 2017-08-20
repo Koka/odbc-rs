@@ -1,4 +1,4 @@
-use super::{ffi, Handle, OdbcObject};
+use super::{ffi, safe};
 use std::fmt;
 use std::ffi::CStr;
 use std::error::Error;
@@ -18,14 +18,7 @@ pub struct DiagnosticRecord {
 }
 
 impl DiagnosticRecord {
-    fn new() -> DiagnosticRecord {
-        DiagnosticRecord {
-            state: [0u8; ffi::SQL_SQLSTATE_SIZE + 1],
-            message: [0u8; ffi::SQL_MAX_MESSAGE_LENGTH as usize],
-            native_error: 0,
-            message_length: 0,
-        }
-    }
+
     /// get raw state string data.
     pub fn get_raw_state(&self) -> &[u8] {
         &self.state
@@ -86,35 +79,24 @@ pub trait GetDiagRec {
     fn get_diag_rec(&self, record_number: i16) -> Option<DiagnosticRecord>;
 }
 
-impl<H> GetDiagRec for H
+impl<D> GetDiagRec for D
 where
-    H: Handle,
-    H::To: OdbcObject,
+    D: safe::Diagnostics,
 {
     fn get_diag_rec(&self, record_number: i16) -> Option<(DiagnosticRecord)> {
-        let mut result = DiagnosticRecord::new();
-
-        match unsafe {
-            ffi::SQLGetDiagRec(
-                H::To::handle_type(),
-                self.handle() as ffi::SQLHANDLE,
-                record_number,
-                result.state.as_mut_ptr(),
-                &mut result.native_error as *mut ffi::SQLINTEGER,
-                result.message.as_mut_ptr(),
-                ffi::SQL_MAX_MESSAGE_LENGTH,
-                &mut result.message_length as *mut ffi::SQLSMALLINT,
-            )
-        } {
-            ffi::SQL_SUCCESS => Some(result),
-            ffi::SQL_NO_DATA => None,
-            ffi::SQL_SUCCESS_WITH_INFO => Some(result),
-            ffi::SQL_ERROR => if record_number > 0 {
-                panic!("SQLGetDiagRec returned SQL_ERROR")
-            } else {
-                panic!("record number start at 1 has been {}", record_number)
-            },
-            _ => panic!("SQLGetDiag returned unexpected result"),
+        use safe::ReturnOption::*;
+        let mut message = [0; 512];
+        match self.diagnostics(record_number, &mut message){
+            Success(result) | Info(result) => {
+                Some(DiagnosticRecord{
+                    state: result.state,
+                    native_error: result.native_error,
+                    message_length: result.text_length,
+                    message
+                })
+            }
+            NoData(()) => None,
+            Error(()) => panic!("Diagnostics returned error for record number {}. Record numbers have to be at least 1.", record_number),
         }
     }
 }
@@ -123,6 +105,17 @@ where
 mod test {
 
     use super::*;
+
+    impl DiagnosticRecord {
+        fn new() -> DiagnosticRecord {
+            DiagnosticRecord {
+                state: [0u8; ffi::SQL_SQLSTATE_SIZE + 1],
+                message: [0u8; ffi::SQL_MAX_MESSAGE_LENGTH as usize],
+                native_error: 0,
+                message_length: 0,
+            }
+        }
+    }
 
     #[test]
     fn formatting() {

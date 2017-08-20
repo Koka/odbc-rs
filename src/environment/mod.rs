@@ -72,9 +72,12 @@ impl Environment<NoVersion> {
     }
 }
 
-impl<V> Handle for safe::Environment<V> {
-    type To = ffi::Env;
-    unsafe fn handle(&self) -> ffi::SQLHENV {
-        self.as_raw()
+unsafe impl<V> safe::Handle for Environment<V> {
+    fn handle(&self) -> ffi::SQLHANDLE {
+        self.safe.as_raw() as ffi::SQLHANDLE
+    }
+
+    fn handle_type() -> ffi::HandleType {
+        ffi::SQL_HANDLE_ENV
     }
 }

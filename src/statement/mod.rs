@@ -4,7 +4,7 @@ mod input;
 mod output;
 mod prepare;
 pub use self::output::Output;
-use {ffi, DataSource, Return, Result, Raii, Handle, Connected};
+use {ffi, safe, DataSource, Return, Result, Raii, Handle, Connected};
 use ffi::SQLRETURN::*;
 use ffi::Nullable;
 use std::marker::PhantomData;
@@ -294,5 +294,15 @@ impl Raii<ffi::Stmt> {
                 r => panic!("unexpected return value from SQLCloseCursor: {:?}", r),
             }
         }
+    }
+}
+
+unsafe impl<'con, 'param, C, P> safe::Handle for Statement<'con, 'param, C, P> {
+    fn handle(&self) -> ffi::SQLHANDLE {
+        <Raii<ffi::Stmt> as safe::Handle>::handle(&self.raii)
+    }
+
+    fn handle_type() -> ffi::HandleType {
+        ffi::SQL_HANDLE_STMT
     }
 }
