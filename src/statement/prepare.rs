@@ -70,10 +70,12 @@ impl<'a, 'b> Statement<'a, 'b, Prepared, NoResult> {
 impl Raii<ffi::Stmt> {
     fn prepare(&mut self, sql_text: &str) -> Return<()> {
         match unsafe {
-                  ffi::SQLPrepare(self.handle(),
-                                  sql_text.as_bytes().as_ptr(),
-                                  sql_text.as_bytes().len() as ffi::SQLINTEGER)
-              } {
+            ffi::SQLPrepare(
+                self.handle(),
+                sql_text.as_bytes().as_ptr(),
+                sql_text.as_bytes().len() as ffi::SQLINTEGER,
+            )
+        } {
             ffi::SQL_SUCCESS => Return::Success(()),
             ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
             ffi::SQL_ERROR => Return::Error,

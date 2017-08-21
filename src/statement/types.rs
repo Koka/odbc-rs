@@ -15,15 +15,15 @@ pub unsafe trait OdbcType<'a>: Sized {
 }
 
 unsafe impl<'a> OdbcType<'a> for String {
-    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_VARCHAR }
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_VARCHAR
+    }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_CHAR
     }
 
     fn convert(buffer: &'a [u8]) -> Self {
-        from_utf8(buffer)
-            .unwrap()
-            .to_owned()
+        from_utf8(buffer).unwrap().to_owned()
     }
 
     fn column_size(&self) -> ffi::SQLULEN {
@@ -36,14 +36,15 @@ unsafe impl<'a> OdbcType<'a> for String {
 }
 
 unsafe impl<'a> OdbcType<'a> for &'a str {
-    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_VARCHAR }
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_VARCHAR
+    }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_CHAR
     }
 
     fn convert(buffer: &'a [u8]) -> Self {
-        from_utf8(buffer)
-            .unwrap()
+        from_utf8(buffer).unwrap()
     }
 
     fn column_size(&self) -> ffi::SQLULEN {
@@ -56,15 +57,16 @@ unsafe impl<'a> OdbcType<'a> for &'a str {
 }
 
 fn convert_primitive<T>(buf: &[u8]) -> T
-    where T: Copy
+where
+    T: Copy,
 {
-    unsafe {
-        from_raw_parts(buf.as_ptr() as *const T, 1)[0]
-    }
+    unsafe { from_raw_parts(buf.as_ptr() as *const T, 1)[0] }
 }
 
 unsafe impl<'a> OdbcType<'a> for u8 {
-    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_SMALLINT }
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_SMALLINT
+    }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_UTINYINT
     }
@@ -73,12 +75,18 @@ unsafe impl<'a> OdbcType<'a> for u8 {
         convert_primitive(buffer)
     }
 
-    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
-    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for i8 {
-    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_SMALLINT }
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_SMALLINT
+    }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_STINYINT
     }
@@ -87,12 +95,18 @@ unsafe impl<'a> OdbcType<'a> for i8 {
         convert_primitive(buffer)
     }
 
-    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
-    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for i16 {
-    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_SMALLINT }
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_SMALLINT
+    }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_SSHORT
     }
@@ -101,12 +115,18 @@ unsafe impl<'a> OdbcType<'a> for i16 {
         convert_primitive(buffer)
     }
 
-    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
-    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for u16 {
-    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_SMALLINT }
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_SMALLINT
+    }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_USHORT
     }
@@ -115,12 +135,18 @@ unsafe impl<'a> OdbcType<'a> for u16 {
         convert_primitive(buffer)
     }
 
-    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
-    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for i32 {
-    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_INTEGER }
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_INTEGER
+    }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_SLONG
     }
@@ -129,12 +155,18 @@ unsafe impl<'a> OdbcType<'a> for i32 {
         convert_primitive(buffer)
     }
 
-    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
-    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for u32 {
-    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_INTEGER }
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_INTEGER
+    }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_ULONG
     }
@@ -143,12 +175,18 @@ unsafe impl<'a> OdbcType<'a> for u32 {
         convert_primitive(buffer)
     }
 
-    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
-    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for i64 {
-    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_INTEGER }
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_INTEGER
+    }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_SBIGINT
     }
@@ -157,12 +195,18 @@ unsafe impl<'a> OdbcType<'a> for i64 {
         convert_primitive(buffer)
     }
 
-    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
-    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for u64 {
-    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_INTEGER }
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_INTEGER
+    }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_UBIGINT
     }
@@ -171,12 +215,18 @@ unsafe impl<'a> OdbcType<'a> for u64 {
         convert_primitive(buffer)
     }
 
-    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
-    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for f32 {
-    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_FLOAT }
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_FLOAT
+    }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_FLOAT
     }
@@ -185,12 +235,18 @@ unsafe impl<'a> OdbcType<'a> for f32 {
         convert_primitive(buffer)
     }
 
-    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
-    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for f64 {
-    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_DOUBLE }
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_DOUBLE
+    }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_DOUBLE
     }
@@ -199,6 +255,10 @@ unsafe impl<'a> OdbcType<'a> for f64 {
         convert_primitive(buffer)
     }
 
-    fn column_size(&self) -> ffi::SQLULEN { size_of::<Self>() as ffi::SQLULEN }
-    fn value_ptr(&self) -> ffi::SQLPOINTER { self as *const Self as ffi::SQLPOINTER }
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
 }

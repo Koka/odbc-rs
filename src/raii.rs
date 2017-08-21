@@ -1,4 +1,4 @@
-use super::{ffi, GetDiagRec, Handle, OdbcObject, Return};
+use super::{ffi, safe, GetDiagRec, Handle, OdbcObject, Return};
 use std::ptr::null_mut;
 
 /// Wrapper around handle types which ensures the wrapped value is always valid.
@@ -13,6 +13,16 @@ impl<T: OdbcObject> Handle for Raii<T> {
     type To = T;
     unsafe fn handle(&self) -> *mut T {
         self.handle
+    }
+}
+
+unsafe impl<T: OdbcObject> safe::Handle for Raii<T> {
+    fn handle(&self) -> ffi::SQLHANDLE {
+        self.handle as ffi::SQLHANDLE
+    }
+
+    fn handle_type() -> ffi::HandleType {
+        T::handle_type()
     }
 }
 
@@ -39,12 +49,10 @@ impl<T: OdbcObject> Raii<T> {
                 &mut handle as *mut ffi::SQLHANDLE,
             )
         } {
-            ffi::SQL_SUCCESS => Return::Success(Raii {
-                handle: handle as *mut T,
-            }),
-            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(Raii {
-                handle: handle as *mut T,
-            }),
+            ffi::SQL_SUCCESS => Return::Success(Raii { handle: handle as *mut T }),
+            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(
+                Raii { handle: handle as *mut T },
+            ),
             ffi::SQL_ERROR => Return::Error,
             _ => panic!("SQLAllocHandle returned unexpected result"),
         }

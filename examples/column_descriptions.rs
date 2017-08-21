@@ -10,9 +10,17 @@ fn main() {
 }
 
 fn test_me() -> std::result::Result<(), DiagnosticRecord> {
-    let env = Environment::new().expect("Can't create ODBC environment").set_odbc_version_3()?;
-    let conn = DataSource::with_parent(&env)?.connect("PostgreSQL", "postgres", "postgres")?;
-    let result = Statement::with_parent(&conn)?.exec_direct("select '1' as str, 1 as num, current_timestamp as timestamp, null as nul, true as boolean")?;
+    let env = Environment::new()
+        .expect("Can't create ODBC environment")
+        .set_odbc_version_3()?;
+    let conn = DataSource::with_parent(&env)?.connect(
+        "PostgreSQL",
+        "postgres",
+        "postgres",
+    )?;
+    let result = Statement::with_parent(&conn)?.exec_direct(
+        "select '1' as str, 1 as num, current_timestamp as timestamp, null as nul, true as boolean",
+    )?;
 
     if let Data(stmt) = result {
         for i in 1..5 {

@@ -26,12 +26,11 @@ pub struct DriverInfo {
     pub attributes: HashMap<String, String>,
 }
 
-type SqlInfoMethod = fn(
-    &mut safe::Environment<safe::Odbc3>,
-    ffi::FetchOrientation,
-    &mut [u8],
-    &mut [u8],
-) -> safe::ReturnOption<(i16, i16)>;
+type SqlInfoMethod = fn(&mut safe::Environment<safe::Odbc3>,
+                        ffi::FetchOrientation,
+                        &mut [u8],
+                        &mut [u8])
+                        -> safe::ReturnOption<(i16, i16)>;
 
 impl Environment<Version3> {
     /// Called by drivers to pares list of attributes
@@ -55,18 +54,22 @@ impl Environment<Version3> {
         // Iterate twice, once for reading the maximum required buffer lengths so we can read
         // everything without truncating and a second time for actually storing the values
         // alloc_info iterates ones over every driver to obtain the requiered buffer sizes
-        let (max_desc, max_attr, num_drivers) =
-            self.alloc_info(safe::Environment::drivers, ffi::SQL_FETCH_FIRST)?;
+        let (max_desc, max_attr, num_drivers) = self.alloc_info(
+            safe::Environment::drivers,
+            ffi::SQL_FETCH_FIRST,
+        )?;
 
         let mut driver_list = Vec::with_capacity(num_drivers);
         let mut description_buffer = vec![0; (max_desc + 1) as usize];
         let mut attribute_buffer = vec![0; (max_attr + 1) as usize];
-        while let Some((desc, attr)) = self.get_info(
-            safe::Environment::drivers,
-            ffi::SQL_FETCH_NEXT,
-            &mut description_buffer,
-            &mut attribute_buffer,
-        )? {
+        while let Some((desc, attr)) =
+            self.get_info(
+                safe::Environment::drivers,
+                ffi::SQL_FETCH_NEXT,
+                &mut description_buffer,
+                &mut attribute_buffer,
+            )?
+        {
             driver_list.push(DriverInfo {
                 description: desc.to_owned(),
                 attributes: Self::parse_attributes(attr),
@@ -108,12 +111,14 @@ impl Environment<Version3> {
         // Before we call SQLDataSources with SQL_FETCH_NEXT, we have to call it with either
         // SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or
         // system data sources
-        if let Some((name, desc)) = self.get_info(
-            safe::Environment::data_sources,
-            direction,
-            &mut name_buffer,
-            &mut description_buffer,
-        )? {
+        if let Some((name, desc)) =
+            self.get_info(
+                safe::Environment::data_sources,
+                direction,
+                &mut name_buffer,
+                &mut description_buffer,
+            )?
+        {
             source_list.push(DataSourceInfo {
                 server_name: name.to_owned(),
                 driver: desc.to_owned(),
@@ -122,12 +127,14 @@ impl Environment<Version3> {
             return Ok(source_list);
         }
 
-        while let Some((name, desc)) = self.get_info(
-            safe::Environment::data_sources,
-            ffi::SQL_FETCH_NEXT,
-            &mut name_buffer,
-            &mut description_buffer,
-        )? {
+        while let Some((name, desc)) =
+            self.get_info(
+                safe::Environment::data_sources,
+                ffi::SQL_FETCH_NEXT,
+                &mut name_buffer,
+                &mut description_buffer,
+            )?
+        {
             source_list.push(DataSourceInfo {
                 server_name: name.to_owned(),
                 driver: desc.to_owned(),
