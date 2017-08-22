@@ -145,7 +145,7 @@ impl<'a, 'b, S> Statement<'a, 'b, S, HasResult> {
     /// ```
     /// # use odbc::*;
     /// # fn reuse () -> Result<()> {
-    /// let env = Environment::new().unwrap().set_odbc_version_3()?;
+    /// let env = create_environment_v3().map_err(|e| e.unwrap())?;
     /// let conn = DataSource::with_parent(&env)?.connect("TestDataSource", "", "")?;
     /// let stmt = Statement::with_parent(&conn)?;
     /// let stmt = match stmt.exec_direct("CREATE TABLE STAGE (A TEXT, B TEXT);")?{
