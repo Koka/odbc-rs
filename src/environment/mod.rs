@@ -23,7 +23,8 @@ impl<V> Handle for Environment<V> {
 }
 
 impl<V: safe::Version> Environment<V> {
-    /// Creates an ODBC Environment and declares specifaciton of `V` are used
+    /// Creates an ODBC Environment and declares specifaciton of `V` are used. You can use the
+    /// shorthand `create_environment_v3()` instead.
     ///
     /// # Example
     /// ```
@@ -35,7 +36,14 @@ impl<V: safe::Version> Environment<V> {
     /// }
     /// ```
     ///
-    /// You can use the shorthand `create_environment_v3()` instead.
+    /// # Return
+    ///
+    /// While most functions in this crate return a `DiagnosticRecord` in the event of an Error the
+    /// creation of an environment is special. Since `DiagnosticRecord`s are created using the
+    /// environment, at least its allocation has to be successful to obtain one. If the allocation
+    /// fails it is sadly not possible to receive further Diagnostics. Setting an unsupported version
+    /// may however result in an ordinary `Some(DiagnosticRecord)`.
+    /// ```
     pub fn new() -> std::result::Result<Environment<V>, Option<DiagnosticRecord>> {
         let safe = match safe::Environment::new() {
             safe::Success(v) => v,
@@ -71,6 +79,14 @@ unsafe impl<V> safe::Handle for Environment<V> {
 ///     Ok(())
 /// }
 /// ```
+///
+/// # Return
+///
+/// While most functions in this crate return a `DiagnosticRecord` in the event of an Error the
+/// creation of an environment is special. Since `DiagnosticRecord`s are created using the
+/// environment, at least its allocation has to be successful to obtain one. If the allocation
+/// fails it is sadly not possible to receive further Diagnostics. Setting an unsupported version
+/// may however result in an ordinary `Some(DiagnosticRecord)`.
 pub fn create_environment_v3()
     -> std::result::Result<Environment<Version3>, Option<DiagnosticRecord>>
 {
