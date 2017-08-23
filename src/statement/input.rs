@@ -17,7 +17,7 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
     /// ```
     /// # use odbc::*;
     /// # fn do_odbc_stuff() -> std::result::Result<(), Box<std::error::Error>> {
-    /// let env = Environment::new()?.set_odbc_version_3()?;
+    /// let env = create_environment_v3().map_err(|e| e.unwrap())?;
     /// let conn = DataSource::with_parent(&env)?.connect("TestDataSource", "", "")?;
     /// let stmt = Statement::with_parent(&conn)?;
     /// let param = 1968;

@@ -1,11 +1,9 @@
 //! Implements the ODBC Environment
 mod list_data_sources;
 pub use self::list_data_sources::{DataSourceInfo, DriverInfo};
-use super::{ffi, into_result, safe, try_into_option, EnvAllocError, GetDiagRec, Handle, Result};
+use super::{ffi, into_result, safe, try_into_option, DiagnosticRecord, GetDiagRec, Handle, Result};
 use std;
 
-/// Environment state used to represent that no odbc version has been set.
-pub type NoVersion = safe::NoVersion;
 /// Environment state used to represent that environment has been set to odbc version 3
 pub type Version3 = safe::Odbc3;
 
@@ -24,51 +22,39 @@ impl<V> Handle for Environment<V> {
     }
 }
 
-impl Environment<NoVersion> {
-    /// Allocates a new ODBC Environment
-    ///
-    /// After creation the `Environment` is in the `NoVersion` state. To do something with it you
-    /// need to set the ODBC Version using `set_odbc_version_3`.
+impl<V: safe::Version> Environment<V> {
+    /// Creates an ODBC Environment and declares specifaciton of `V` are used. You can use the
+    /// shorthand `create_environment_v3()` instead.
     ///
     /// # Example
     /// ```
-    /// # use odbc::*;
-    /// let env = match Environment::new(){
-    ///     // Successful creation of Environment
-    ///     Ok(env) => env,
-    ///     // Sadly, we do not know the reason for failure, because there is no `Environment` to
-    ///     // to get the `DiagnosticRecord` from.
-    ///     Err(EnvAllocError) => panic!("Could not create an ODBC Environment."),
-    /// };
-    /// ```
-    pub fn new() -> std::result::Result<Environment<NoVersion>, EnvAllocError> {
-
-        match safe::Environment::new() {
-            safe::Success(safe) => Ok(Environment { safe }),
-            safe::Info(safe) => {
-                warn!("{}", safe.get_diag_rec(1).unwrap());
-                Ok(Environment { safe })
-            }
-            safe::Error(()) => Err(EnvAllocError),
-        }
-    }
-
-    /// Tells the driver(s) that we will use features of up to ODBC version 3
-    ///
-    /// The first thing to do with an ODBC `Environment` is to set a version.
-    ///
-    /// # Example
-    /// ```
-    /// fn do_database_stuff() -> std::result::Result<(), Box<std::error::Error>> {
-    ///     use odbc::*;
-    ///     let env = Environment::new()?.set_odbc_version_3()?; // first thing to do
+    /// use odbc::*;
+    /// fn do_database_stuff() -> std::result::Result<(), Option<DiagnosticRecord>> {
+    ///     let env : Environment<Version3> = Environment::new()?; // first thing to do
     ///     // ...
     ///     Ok(())
     /// }
     /// ```
-    pub fn set_odbc_version_3(self) -> Result<Environment<Version3>> {
-        let env = into_result(self.safe.declare_version_3())?;
-        Ok(Environment { safe: env })
+    ///
+    /// # Return
+    ///
+    /// While most functions in this crate return a `DiagnosticRecord` in the event of an Error the
+    /// creation of an environment is special. Since `DiagnosticRecord`s are created using the
+    /// environment, at least its allocation has to be successful to obtain one. If the allocation
+    /// fails it is sadly not possible to receive further Diagnostics. Setting an unsupported version
+    /// may however result in an ordinary `Some(DiagnosticRecord)`.
+    /// ```
+    pub fn new() -> std::result::Result<Environment<V>, Option<DiagnosticRecord>> {
+        let safe = match safe::Environment::new() {
+            safe::Success(v) => v,
+            safe::Info(v) => {
+                warn!("{}", v.get_diag_rec(1).unwrap());
+                v
+            }
+            safe::Error(()) => return Err(None),
+        };
+        let safe = into_result(safe.declare_version())?;
+        Ok(Environment { safe })
     }
 }
 
@@ -80,4 +66,29 @@ unsafe impl<V> safe::Handle for Environment<V> {
     fn handle_type() -> ffi::HandleType {
         ffi::SQL_HANDLE_ENV
     }
+}
+
+/// Creates an ODBC Environment and declares specifaciton of version 3.0 are used
+///
+/// # Example
+/// ```
+/// use odbc::*;
+/// fn do_database_stuff() -> std::result::Result<(), Option<DiagnosticRecord>> {
+///     let env = create_environment_v3()?; // first thing to do
+///     // ...
+///     Ok(())
+/// }
+/// ```
+///
+/// # Return
+///
+/// While most functions in this crate return a `DiagnosticRecord` in the event of an Error the
+/// creation of an environment is special. Since `DiagnosticRecord`s are created using the
+/// environment, at least its allocation has to be successful to obtain one. If the allocation
+/// fails it is sadly not possible to receive further Diagnostics. Setting an unsupported version
+/// may however result in an ordinary `Some(DiagnosticRecord)`.
+pub fn create_environment_v3()
+    -> std::result::Result<Environment<Version3>, Option<DiagnosticRecord>>
+{
+    Environment::new()
 }

@@ -41,7 +41,7 @@ use raii::Raii;
 use result::{Return, into_result, try_into_option};
 use odbc_safe as safe;
 pub use diagnostics::{DiagnosticRecord, GetDiagRec};
-pub use result::{Result, EnvAllocError};
+pub use result::Result;
 pub use environment::*;
 pub use data_source::{DataSource, Connected, Disconnected};
 pub use statement::*;

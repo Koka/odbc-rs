@@ -4,8 +4,7 @@ use odbc::*;
 #[test]
 fn list_tables() {
 
-    let env = Environment::new().unwrap();
-    let env = env.set_odbc_version_3().unwrap();
+    let env = create_environment_v3().unwrap();
     let ds = DataSource::with_parent(&env).unwrap();
     let ds = ds.connect("TestDataSource", "", "").unwrap();
     // scope is required (for now) to close statement before disconnecting
@@ -20,8 +19,7 @@ fn list_tables() {
 #[test]
 fn not_read_only() {
 
-    let env = Environment::new().unwrap();
-    let env = env.set_odbc_version_3().unwrap();
+    let env = create_environment_v3().unwrap();
     let conn = DataSource::with_parent(&env).unwrap();
     let conn = conn.connect("TestDataSource", "", "").unwrap();
 
@@ -32,8 +30,7 @@ fn not_read_only() {
 #[test]
 fn implicit_disconnect() {
 
-    let env = Environment::new().unwrap();
-    let env = env.set_odbc_version_3().unwrap();
+    let env = create_environment_v3().unwrap();
     let conn = DataSource::with_parent(&env).unwrap();
     conn.connect("TestDataSource", "", "").unwrap();
 
@@ -52,8 +49,7 @@ fn invalid_connection_string() {
             found, and no default driver specified"
     };
 
-    let environment = Environment::new().unwrap();
-    let environment = environment.set_odbc_version_3().unwrap();
+    let environment = create_environment_v3().unwrap();
     let conn = DataSource::with_parent(&environment).unwrap();
     let result = conn.connect_with_connection_string("bla");
     let message = format!("{}", result.err().unwrap());
@@ -63,8 +59,7 @@ fn invalid_connection_string() {
 #[test]
 fn test_connection_string() {
 
-    let environment = Environment::new().unwrap();
-    let environment = environment.set_odbc_version_3().unwrap();
+    let environment = create_environment_v3().unwrap();
     let conn = DataSource::with_parent(&environment).unwrap();
     let conn = conn.connect_with_connection_string("dsn=TestDataSource;Uid=;Pwd=;")
         .unwrap();
@@ -73,7 +68,7 @@ fn test_connection_string() {
 
 #[test]
 fn test_direct_select() {
-    let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
+    let env = create_environment_v3().unwrap();
     let conn = DataSource::with_parent(&env)
         .unwrap()
         .connect("TestDataSource", "", "")
@@ -121,7 +116,7 @@ fn test_direct_select() {
 
 #[test]
 fn reuse_statement() {
-    let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
+    let env = create_environment_v3().unwrap();
     let conn = DataSource::with_parent(&env)
         .unwrap()
         .connect("TestDataSource", "", "")
@@ -153,7 +148,7 @@ fn reuse_statement() {
 
 #[test]
 fn execution_with_parameter() {
-    let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
+    let env = create_environment_v3().unwrap();
     let conn = DataSource::with_parent(&env)
         .unwrap()
         .connect("TestDataSource", "", "")
@@ -177,7 +172,7 @@ fn execution_with_parameter() {
 
 #[test]
 fn prepared_execution() {
-    let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
+    let env = create_environment_v3().unwrap();
     let conn = DataSource::with_parent(&env)
         .unwrap()
         .connect("TestDataSource", "", "")
@@ -214,8 +209,7 @@ fn prepared_execution() {
 #[cfg_attr(not(feature = "travis"), ignore)]
 #[test]
 fn list_drivers() {
-    let environment = Environment::new().unwrap();
-    let mut environment = environment.set_odbc_version_3().unwrap();
+    let mut environment = create_environment_v3().unwrap();
     let drivers = environment.drivers().expect("Drivers can be iterated over");
     println!("{:?}", drivers);
 
@@ -228,8 +222,7 @@ fn list_drivers() {
 #[cfg_attr(not(feature = "travis"), ignore)]
 #[test]
 fn list_data_sources() {
-    let environment = Environment::new().unwrap();
-    let mut environment = environment.set_odbc_version_3().unwrap();
+    let mut environment = create_environment_v3().unwrap();
     let sources = environment.data_sources().expect(
         "Data sources can be iterated over",
     );
@@ -251,8 +244,7 @@ fn list_data_sources() {
 #[cfg_attr(not(feature = "travis"), ignore)]
 #[test]
 fn list_user_data_sources() {
-    let environment = Environment::new().unwrap();
-    let mut environment = environment.set_odbc_version_3().unwrap();
+    let mut environment = create_environment_v3().unwrap();
     let sources = environment.user_data_sources().expect(
         "Data sources can be iterated over",
     );
@@ -274,8 +266,7 @@ fn list_user_data_sources() {
 #[cfg_attr(not(feature = "travis"), ignore)]
 #[test]
 fn list_system_data_sources() {
-    let environment = Environment::new().unwrap();
-    let mut environment = environment.set_odbc_version_3().unwrap();
+    let mut environment = create_environment_v3().unwrap();
     let sources = environment.system_data_sources().expect(
         "Data sources can be iterated over",
     );

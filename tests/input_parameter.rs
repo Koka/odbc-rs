@@ -12,7 +12,7 @@ const C: &'static str = "SELECT C FROM TEST_TYPES WHERE C = ?;";
 macro_rules! test_type {
     ($c:expr, $e:expr) => ({
 
-        let env = Environment::new().unwrap().set_odbc_version_3().unwrap();
+        let env = create_environment_v3().unwrap();
         let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
         let stmt = Statement::with_parent(&conn).unwrap();
         let stmt = stmt.bind_parameter(1, $e).unwrap();

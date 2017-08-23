@@ -12,7 +12,7 @@ impl<'a, 'b> Statement<'a, 'b, Allocated, NoResult> {
     /// ```rust
     /// # use odbc::*;
     /// # fn doc() -> Result<()>{
-    /// let env = Environment::new().unwrap().set_odbc_version_3()?;
+    /// let env = create_environment_v3().map_err(|e| e.unwrap())?;
     /// let conn = DataSource::with_parent(&env)?.connect("TestDataSource", "", "")?;
     /// let stmt = Statement::with_parent(&conn)?;
     /// let mut stmt = stmt.prepare("SELECT TITLE FROM MOVIES WHERE YEAR = ?")?;

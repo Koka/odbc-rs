@@ -46,9 +46,9 @@ fn main() {
 }
 
 fn test_me() -> std::result::Result<Option<DateTime<Local>>, DiagnosticRecord> {
-    let env = Environment::new()
-        .expect("Can't create ODBC environment")
-        .set_odbc_version_3()?;
+    let env = create_environment_v3().map_err(|e| {
+        e.expect("Can't create ODBC environment")
+    })?;
     let conn = DataSource::with_parent(&env)?.connect(
         "PostgreSQL",
         "postgres",
