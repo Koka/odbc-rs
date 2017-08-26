@@ -43,7 +43,7 @@ use odbc_safe as safe;
 pub use diagnostics::{DiagnosticRecord, GetDiagRec};
 pub use result::Result;
 pub use environment::*;
-pub use data_source::{DataSource, Connected, Disconnected};
+pub use data_source::{DataSource, Connected, Unconnected};
 pub use statement::*;
 
 /// Reflects the ability of a type to expose a valid handle

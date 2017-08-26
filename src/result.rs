@@ -103,3 +103,33 @@ where
         }
     }
 }
+
+// temporary glue code to odbc-safe
+pub fn into_result_with<D, T, E>(diag: &D, ret: safe::Return<T, E>) -> Result<T>
+where
+    D: GetDiagRec,
+{
+    match ret {
+        safe::Return::Success(value) => Ok(value),
+        safe::Return::Info(value) => {
+            let mut i = 1;
+            while let Some(diag_rec) = diag.get_diag_rec(i) {
+                warn!("{}", diag_rec);
+                i += 1;
+            }
+            Ok(value)
+        }
+        safe::Return::Error(_) => {
+            // Return the first record
+            let diag_rec = diag.get_diag_rec(1).unwrap();
+            error!("{}", diag_rec);
+            let mut i = 2;
+            // log the rest
+            while let Some(diag_rec) = diag.get_diag_rec(i) {
+                error!("{}", diag_rec);
+                i += 1;
+            }
+            Err(diag_rec)
+        }
+    }
+}

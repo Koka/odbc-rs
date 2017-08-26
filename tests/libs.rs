@@ -21,9 +21,9 @@ fn not_read_only() {
 
     let env = create_environment_v3().unwrap();
     let conn = DataSource::with_parent(&env).unwrap();
-    let conn = conn.connect("TestDataSource", "", "").unwrap();
+    let mut conn = conn.connect("TestDataSource", "", "").unwrap();
 
-    assert!(!conn.read_only().unwrap());
+    assert!(!conn.is_read_only().unwrap());
     conn.disconnect().unwrap();
 }
 

@@ -56,6 +56,10 @@ impl<V: safe::Version> Environment<V> {
         let safe = into_result(safe.declare_version())?;
         Ok(Environment { safe })
     }
+
+    pub(crate) fn as_safe(&self) -> &safe::Environment<V> {
+        &self.safe
+    }
 }
 
 unsafe impl<V> safe::Handle for Environment<V> {

@@ -27,7 +27,7 @@ fn connect() -> std::result::Result<(), DiagnosticRecord> {
     execute_statement(&conn)
 }
 
-fn execute_statement(conn: &DataSource<Connected>) -> Result<()> {
+fn execute_statement<'env>(conn: &DataSource<'env, Connected<'env>>) -> Result<()> {
     let stmt = Statement::with_parent(conn)?;
 
     let mut sql_text = String::new();
