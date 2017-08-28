@@ -17,17 +17,16 @@ fn main() {
 fn connect() -> std::result::Result<(), DiagnosticRecord> {
 
     let env = create_environment_v3().map_err(|e| e.unwrap())?;
-    let conn = DataSource::with_parent(&env)?;
 
     let mut buffer = String::new();
     println!("Please enter connection string: ");
     io::stdin().read_line(&mut buffer).unwrap();
 
-    let conn = conn.connect_with_connection_string(&buffer)?;
+    let conn = env.connect_with_connection_string(&buffer)?;
     execute_statement(&conn)
 }
 
-fn execute_statement<'env>(conn: &DataSource<'env, Connected<'env>>) -> Result<()> {
+fn execute_statement<'env>(conn: &DataSource<'env>) -> Result<()> {
     let stmt = Statement::with_parent(conn)?;
 
     let mut sql_text = String::new();

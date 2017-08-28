@@ -13,61 +13,41 @@ pub use odbc_safe::Unconnected;
 /// compile time. Every new `DataSource` starts out as `Unconnected`. To do execute a query it
 /// needs to be connected. You can achieve this by calling e.g. `connect` and capture the result in
 /// a new binding which will be of type `DataSource::<Connected>`.
-pub struct DataSource<'env, S>
-where
-    S: safe::HDbcWrapper<'env>,
-{
-    safe: safe::DataSource<'env, S>,
+pub struct DataSource<'env> {
+    safe: safe::Connection<'env>,
 }
 
-impl<'env, S> Handle for DataSource<'env, S>
-where
-    S: safe::HDbcWrapper<'env>,
-{
+impl<'env> Handle for DataSource<'env> {
     type To = ffi::Dbc;
     unsafe fn handle(&self) -> ffi::SQLHDBC {
         self.safe.as_raw()
     }
 }
 
-impl<'env> DataSource<'env, Unconnected<'env>> {
-    /// Allocate an ODBC data source
-    ///
-    /// # Arguments
-    /// * `env` - Environment used to allocate the data source handle.
-    pub fn with_parent(env: &'env Environment<Version3>) -> Result<DataSource<'env, Unconnected>> {
-        let safe = into_result_with(env, safe::DataSource::with_parent(env.as_safe()))?;
-        let data_source = DataSource { safe };
-
-        Ok(data_source)
-    }
-
+impl Environment<Version3> {
     /// Connects to an ODBC data source
     ///
     /// # Arguments
     /// * `dsn` - Data source name configured in the `odbc.ini` file
     /// * `usr` - User identifier
     /// * `pwd` - Authentication (usually password)
-    pub fn connect(
-        self,
-        dsn: &str,
-        usr: &str,
-        pwd: &str,
-    ) -> Result<DataSource<'env, Connected<'env>>> {
-        let safe = into_result(self.safe.connect(dsn, usr, pwd))?;
+    pub fn connect<'env>(&'env self, dsn: &str, usr: &str, pwd: &str) -> Result<DataSource<'env>> {
+        let safe = into_result_with(self, safe::DataSource::with_parent(self.as_safe()))?;
+        let safe = into_result(safe.connect(dsn, usr, pwd))?;
         Ok(DataSource { safe })
     }
 
-    pub fn connect_with_connection_string(
-        self,
+    pub fn connect_with_connection_string<'env>(
+        &'env self,
         connection_str: &str,
-    ) -> Result<DataSource<'env, Connected<'env>>> {
-        let safe = into_result(self.safe.connect_with_connection_string(connection_str))?;
+    ) -> Result<DataSource<'env>> {
+        let safe = into_result_with(self, safe::DataSource::with_parent(self.as_safe()))?;
+        let safe = into_result(safe.connect_with_connection_string(connection_str))?;
         Ok(DataSource { safe })
     }
 }
 
-impl<'env> DataSource<'env, Connected<'env>> {
+impl<'env> DataSource<'env> {
     /// `true` if the data source is set to READ ONLY mode, `false` otherwise.
     ///
     /// This characteristic pertains only to the data source itself; it is not characteristic of
@@ -81,16 +61,13 @@ impl<'env> DataSource<'env, Connected<'env>> {
 
     /// Closes the connection to the DataSource. If not called explicitly this the disconnect will
     /// be invoked by `drop()`
-    pub fn disconnect(self) -> Result<DataSource<'env, Unconnected<'env>>> {
-        let safe = into_result(self.safe.disconnect())?;
-        Ok(DataSource { safe })
+    pub fn disconnect(self) -> Result<()> {
+        into_result(self.safe.disconnect())?;
+        Ok(())
     }
 }
 
-unsafe impl<'env, S> safe::Handle for DataSource<'env, S>
-where
-    S: safe::HDbcWrapper<'env>,
-{
+unsafe impl<'env> safe::Handle for DataSource<'env> {
     fn handle(&self) -> ffi::SQLHANDLE {
         self.safe.as_raw() as ffi::SQLHANDLE
     }

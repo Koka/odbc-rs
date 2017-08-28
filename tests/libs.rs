@@ -5,8 +5,7 @@ use odbc::*;
 fn list_tables() {
 
     let env = create_environment_v3().unwrap();
-    let ds = DataSource::with_parent(&env).unwrap();
-    let ds = ds.connect("TestDataSource", "", "").unwrap();
+    let ds = env.connect("TestDataSource", "", "").unwrap();
     // scope is required (for now) to close statement before disconnecting
     {
         let statement = Statement::with_parent(&ds).unwrap();
@@ -20,8 +19,7 @@ fn list_tables() {
 fn not_read_only() {
 
     let env = create_environment_v3().unwrap();
-    let conn = DataSource::with_parent(&env).unwrap();
-    let mut conn = conn.connect("TestDataSource", "", "").unwrap();
+    let mut conn = env.connect("TestDataSource", "", "").unwrap();
 
     assert!(!conn.is_read_only().unwrap());
     conn.disconnect().unwrap();
@@ -31,8 +29,7 @@ fn not_read_only() {
 fn implicit_disconnect() {
 
     let env = create_environment_v3().unwrap();
-    let conn = DataSource::with_parent(&env).unwrap();
-    conn.connect("TestDataSource", "", "").unwrap();
+    env.connect("TestDataSource", "", "").unwrap();
 
     // if there would be no implicit disconnect, all the drops would panic with function sequence
     // error
@@ -50,8 +47,7 @@ fn invalid_connection_string() {
     };
 
     let environment = create_environment_v3().unwrap();
-    let conn = DataSource::with_parent(&environment).unwrap();
-    let result = conn.connect_with_connection_string("bla");
+    let result = environment.connect_with_connection_string("bla");
     let message = format!("{}", result.err().unwrap());
     assert_eq!(expected, message);
 }
@@ -60,8 +56,8 @@ fn invalid_connection_string() {
 fn test_connection_string() {
 
     let environment = create_environment_v3().unwrap();
-    let conn = DataSource::with_parent(&environment).unwrap();
-    let conn = conn.connect_with_connection_string("dsn=TestDataSource;Uid=;Pwd=;")
+    let conn = environment
+        .connect_with_connection_string("dsn=TestDataSource;Uid=;Pwd=;")
         .unwrap();
     conn.disconnect().unwrap();
 }
@@ -69,10 +65,7 @@ fn test_connection_string() {
 #[test]
 fn test_direct_select() {
     let env = create_environment_v3().unwrap();
-    let conn = DataSource::with_parent(&env)
-        .unwrap()
-        .connect("TestDataSource", "", "")
-        .unwrap();
+    let conn = env.connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
     let mut stmt = match stmt.exec_direct("SELECT TITLE, YEAR FROM MOVIES ORDER BY YEAR")
@@ -117,10 +110,7 @@ fn test_direct_select() {
 #[test]
 fn reuse_statement() {
     let env = create_environment_v3().unwrap();
-    let conn = DataSource::with_parent(&env)
-        .unwrap()
-        .connect("TestDataSource", "", "")
-        .unwrap();
+    let conn = env.connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
     let stmt = match stmt.exec_direct("CREATE TABLE STAGE (A VARCHAR, B VARCHAR);")
@@ -149,10 +139,7 @@ fn reuse_statement() {
 #[test]
 fn execution_with_parameter() {
     let env = create_environment_v3().unwrap();
-    let conn = DataSource::with_parent(&env)
-        .unwrap()
-        .connect("TestDataSource", "", "")
-        .unwrap();
+    let conn = env.connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
     let param = 1968;
     let stmt = stmt.bind_parameter(1, &param).unwrap();
@@ -173,10 +160,7 @@ fn execution_with_parameter() {
 #[test]
 fn prepared_execution() {
     let env = create_environment_v3().unwrap();
-    let conn = DataSource::with_parent(&env)
-        .unwrap()
-        .connect("TestDataSource", "", "")
-        .unwrap();
+    let conn = env.connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
     let stmt = stmt.prepare("SELECT TITLE FROM MOVIES WHERE YEAR = ?")
         .unwrap();
