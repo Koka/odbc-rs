@@ -2,28 +2,19 @@
 use super::{ffi, safe, Environment, Handle, Result, Version3};
 use super::result::{into_result, into_result_with};
 
-/// DataSource state used to represent a connection to a data source.
-pub use odbc_safe::Connected;
-/// DataSource state used to represent a data source handle which not connected to a data source.
-pub use odbc_safe::Unconnected;
-
 /// Represents a connection to an ODBC data source
-///
-/// A `DataSource` is in one of two states `Connected` or `Unconnected`. These are known at
-/// compile time. Every new `DataSource` starts out as `Unconnected`. To do execute a query it
-/// needs to be connected. You can achieve this by calling e.g. `connect` and capture the result in
-/// a new binding which will be of type `DataSource::<Connected>`.
-pub struct DataSource<'env> {
+pub struct Connection<'env> {
     safe: safe::Connection<'env>,
 }
 
-impl<'env> Handle for DataSource<'env> {
+impl<'env> Handle for Connection<'env> {
     type To = ffi::Dbc;
     unsafe fn handle(&self) -> ffi::SQLHDBC {
         self.safe.as_raw()
     }
 }
 
+// Place Constructors into environment, to make them easier to discover
 impl Environment<Version3> {
     /// Connects to an ODBC data source
     ///
@@ -31,23 +22,27 @@ impl Environment<Version3> {
     /// * `dsn` - Data source name configured in the `odbc.ini` file
     /// * `usr` - User identifier
     /// * `pwd` - Authentication (usually password)
-    pub fn connect<'env>(&'env self, dsn: &str, usr: &str, pwd: &str) -> Result<DataSource<'env>> {
+    pub fn connect<'env>(&'env self, dsn: &str, usr: &str, pwd: &str) -> Result<Connection<'env>> {
         let safe = into_result_with(self, safe::DataSource::with_parent(self.as_safe()))?;
         let safe = into_result(safe.connect(dsn, usr, pwd))?;
-        Ok(DataSource { safe })
+        Ok(Connection { safe })
     }
 
+    /// Connects to an ODBC data source using a connection string
+    ///
+    /// See [SQLDriverConnect][1] for the syntax.
+    /// [1]: https://docs.microsoft.com/en-us/sql/odbc/reference/syntax/sqldriverconnect-function
     pub fn connect_with_connection_string<'env>(
         &'env self,
         connection_str: &str,
-    ) -> Result<DataSource<'env>> {
+    ) -> Result<Connection<'env>> {
         let safe = into_result_with(self, safe::DataSource::with_parent(self.as_safe()))?;
         let safe = into_result(safe.connect_with_connection_string(connection_str))?;
-        Ok(DataSource { safe })
+        Ok(Connection { safe })
     }
 }
 
-impl<'env> DataSource<'env> {
+impl<'env> Connection<'env> {
     /// `true` if the data source is set to READ ONLY mode, `false` otherwise.
     ///
     /// This characteristic pertains only to the data source itself; it is not characteristic of
@@ -55,19 +50,22 @@ impl<'env> DataSource<'env> {
     /// with a data source that is read-only. If a driver is read-only, all of its data sources
     /// must be read-only.
     pub fn is_read_only(&mut self) -> Result<bool> {
+        // The mutability on is_read_only is really an eyesore. Not only to clippy. But we would
+        // have to introduce a cell around `self.safe`, and be careful not to change essential
+        // state in the error path. For now the trouble does not seem worth it.
         let ret = self.safe.is_read_only();
         into_result_with(&self.safe, ret)
     }
 
-    /// Closes the connection to the DataSource. If not called explicitly this the disconnect will
-    /// be invoked by `drop()`
+    /// Closes the connection to the data source. If not called explicitly the disconnect will be
+    /// invoked implicitly by `drop()`
     pub fn disconnect(self) -> Result<()> {
         into_result(self.safe.disconnect())?;
         Ok(())
     }
 }
 
-unsafe impl<'env> safe::Handle for DataSource<'env> {
+unsafe impl<'env> safe::Handle for Connection<'env> {
     fn handle(&self) -> ffi::SQLHANDLE {
         self.safe.as_raw() as ffi::SQLHANDLE
     }

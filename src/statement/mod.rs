@@ -4,7 +4,7 @@ mod input;
 mod output;
 mod prepare;
 pub use self::output::Output;
-use {ffi, safe, DataSource, Return, Result, Raii, Handle};
+use {ffi, safe, Connection, Return, Result, Raii, Handle};
 use ffi::SQLRETURN::*;
 use ffi::Nullable;
 use std::marker::PhantomData;
@@ -41,7 +41,7 @@ pub struct Statement<'con, 'b, S, R> {
     raii: Raii<ffi::Stmt>,
     // we use phantom data to tell the borrow checker that we need to keep the data source alive
     // for the lifetime of the statement
-    parent: PhantomData<&'con DataSource<'con>>,
+    parent: PhantomData<&'con Connection<'con>>,
     state: PhantomData<S>,
     // Indicates wether there is an open result set or not associated with this statement.
     result: PhantomData<R>,
@@ -83,7 +83,7 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
 }
 
 impl<'a, 'b, 'env> Statement<'a, 'b, Allocated, NoResult> {
-    pub fn with_parent(ds: &'a DataSource<'env>) -> Result<Self> {
+    pub fn with_parent(ds: &'a Connection<'env>) -> Result<Self> {
         let raii = Raii::with_parent(ds).into_result(ds)?;
         Ok(Self::with_raii(raii))
     }
