@@ -18,10 +18,10 @@ macro_rules! test_type {
             if let Ok(Some(mut row)) = cursor.fetch(){
                 let value : $t = row.get_data(1).unwrap().unwrap();
                 assert_eq!(value, $e);
-            } else{
+            } else {
                 panic!("Result set has been empty");
             }
-        }else{
+        } else {
             panic!("SELECT did not return result set");
         }
     })

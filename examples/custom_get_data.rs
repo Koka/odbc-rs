@@ -25,11 +25,11 @@ trait MySupportedType
 where
     Self: Sized,
 {
-    fn extract_from<'a, S>(cursor: &mut odbc::Cursor<'a, 'a, 'a, S>, index: u16) -> Option<Self>;
+    fn extract_from<'a, 'con, S>(cursor: &mut odbc::Cursor<'a, 'con, 'con, S>, index: u16) -> Option<Self>;
 }
 
 impl MySupportedType for DateTime<Local> {
-    fn extract_from<'a, S>(cursor: &mut odbc::Cursor<'a, 'a, 'a, S>, index: u16) -> Option<Self> {
+    fn extract_from<'a, 'con, S>(cursor: &mut odbc::Cursor<'a, 'con, 'con, S>, index: u16) -> Option<Self> {
         cursor.get_data(index).expect("Can't get column").map(
             |datetime: String| {
                 Local
@@ -54,19 +54,18 @@ fn test_me() -> std::result::Result<Option<DateTime<Local>>, DiagnosticRecord> {
         "postgres",
         "postgres",
     )?;
-    let result = Statement::with_parent(&conn)?.exec_direct(
+    let mut result = Statement::with_parent(&conn)?.exec_direct(
         "select current_timestamp",
     )?;
 
-    let mut val = None;
-
-    if let Data(mut stmt) = result {
-        val = stmt.fetch().expect("Can't get cursor").and_then(
+    if let &mut Data(ref mut stmt) = &mut result {
+        let val = stmt.fetch().expect("Can't get cursor").and_then(
             |mut cursor| {
                 cursor.extract(1)
             },
-        )
-    };
-
-    Ok(val)
+        );
+        Ok(val)
+    } else {
+        Ok(None)
+    }
 }

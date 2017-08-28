@@ -37,11 +37,11 @@ pub enum ResultSetState<'a, 'b, S> {
 pub use ResultSetState::*;
 
 /// A `Statement` can be used to execute queries and retrieves results.
-pub struct Statement<'a, 'b, S, R> {
+pub struct Statement<'con, 'b, S, R> {
     raii: Raii<ffi::Stmt>,
     // we use phantom data to tell the borrow checker that we need to keep the data source alive
     // for the lifetime of the statement
-    parent: PhantomData<&'a DataSource<'a, Connected>>,
+    parent: PhantomData<&'con DataSource<'con, Connected<'con>>>,
     state: PhantomData<S>,
     // Indicates wether there is an open result set or not associated with this statement.
     result: PhantomData<R>,
@@ -82,8 +82,8 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
     }
 }
 
-impl<'a, 'b> Statement<'a, 'b, Allocated, NoResult> {
-    pub fn with_parent(ds: &'a DataSource<Connected>) -> Result<Self> {
+impl<'a, 'b, 'env> Statement<'a, 'b, Allocated, NoResult> {
+    pub fn with_parent(ds: &'a DataSource<'env, Connected<'env>>) -> Result<Self> {
         let raii = Raii::with_parent(ds).into_result(ds)?;
         Ok(Self::with_raii(raii))
     }
