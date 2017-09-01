@@ -326,11 +326,10 @@ impl Raii<ffi::Stmt> {
 }
 
 unsafe impl<'con, 'param, C, P> safe::Handle for Statement<'con, 'param, C, P> {
+
+    const HANDLE_TYPE : ffi::HandleType = ffi::SQL_HANDLE_STMT;
+
     fn handle(&self) -> ffi::SQLHANDLE {
         <Raii<ffi::Stmt> as safe::Handle>::handle(&self.raii)
-    }
-
-    fn handle_type() -> ffi::HandleType {
-        ffi::SQL_HANDLE_STMT
     }
 }

@@ -66,11 +66,9 @@ impl<'env> Connection<'env> {
 }
 
 unsafe impl<'env> safe::Handle for Connection<'env> {
+    const HANDLE_TYPE: ffi::HandleType = ffi::SQL_HANDLE_DBC;
+
     fn handle(&self) -> ffi::SQLHANDLE {
         self.safe.as_raw() as ffi::SQLHANDLE
-    }
-
-    fn handle_type() -> ffi::HandleType {
-        ffi::SQL_HANDLE_DBC
     }
 }
