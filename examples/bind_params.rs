@@ -11,10 +11,10 @@ fn main() {
 
 fn test_me() -> std::result::Result<(), DiagnosticRecord> {
     let env = create_environment_v3().expect("Can't create ODBC environment");
-    let conn = DataSource::with_parent(&env)?
-        .connect("PostgreSQL", "postgres", "postgres")?;
-    let stmt = Statement::with_parent(&conn)?
-        .prepare("select version() where ? = ?")?;
+    let conn = env.connect("PostgreSQL", "postgres", "postgres")?;
+    let stmt = Statement::with_parent(&conn)?.prepare(
+        "select version() where ? = ?",
+    )?;
 
     let param = "FOOBAR";
 

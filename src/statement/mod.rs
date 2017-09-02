@@ -4,7 +4,7 @@ mod input;
 mod output;
 mod prepare;
 pub use self::output::Output;
-use {ffi, safe, DataSource, Return, Result, Raii, Handle, Connected};
+use {ffi, safe, Connection, Return, Result, Raii, Handle};
 use ffi::SQLRETURN::*;
 use ffi::Nullable;
 use std::marker::PhantomData;
@@ -41,7 +41,7 @@ pub struct Statement<'con, 'b, S, R> {
     raii: Raii<ffi::Stmt>,
     // we use phantom data to tell the borrow checker that we need to keep the data source alive
     // for the lifetime of the statement
-    parent: PhantomData<&'con DataSource<'con, Connected<'con>>>,
+    parent: PhantomData<&'con Connection<'con>>,
     state: PhantomData<S>,
     // Indicates wether there is an open result set or not associated with this statement.
     result: PhantomData<R>,
@@ -83,7 +83,7 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
 }
 
 impl<'a, 'b, 'env> Statement<'a, 'b, Allocated, NoResult> {
-    pub fn with_parent(ds: &'a DataSource<'env, Connected<'env>>) -> Result<Self> {
+    pub fn with_parent(ds: &'a Connection<'env>) -> Result<Self> {
         let raii = Raii::with_parent(ds).into_result(ds)?;
         Ok(Self::with_raii(raii))
     }
@@ -146,7 +146,7 @@ impl<'a, 'b, S> Statement<'a, 'b, S, HasResult> {
     /// # use odbc::*;
     /// # fn reuse () -> Result<()> {
     /// let env = create_environment_v3().map_err(|e| e.unwrap())?;
-    /// let conn = DataSource::with_parent(&env)?.connect("TestDataSource", "", "")?;
+    /// let conn = env.connect("TestDataSource", "", "")?;
     /// let stmt = Statement::with_parent(&conn)?;
     /// let stmt = match stmt.exec_direct("CREATE TABLE STAGE (A TEXT, B TEXT);")?{
     ///     // Some drivers will return an empty result set. We need to close it before we can use
@@ -326,11 +326,10 @@ impl Raii<ffi::Stmt> {
 }
 
 unsafe impl<'con, 'param, C, P> safe::Handle for Statement<'con, 'param, C, P> {
+
+    const HANDLE_TYPE : ffi::HandleType = ffi::SQL_HANDLE_STMT;
+
     fn handle(&self) -> ffi::SQLHANDLE {
         <Raii<ffi::Stmt> as safe::Handle>::handle(&self.raii)
-    }
-
-    fn handle_type() -> ffi::HandleType {
-        ffi::SQL_HANDLE_STMT
     }
 }

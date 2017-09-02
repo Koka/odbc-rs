@@ -17,18 +17,16 @@ impl<T: OdbcObject> Handle for Raii<T> {
 }
 
 unsafe impl<T: OdbcObject> safe::Handle for Raii<T> {
+    const HANDLE_TYPE: ffi::HandleType = T::HANDLE_TYPE;
+
     fn handle(&self) -> ffi::SQLHANDLE {
         self.handle as ffi::SQLHANDLE
-    }
-
-    fn handle_type() -> ffi::HandleType {
-        T::handle_type()
     }
 }
 
 impl<T: OdbcObject> Drop for Raii<T> {
     fn drop(&mut self) {
-        match unsafe { ffi::SQLFreeHandle(T::handle_type(), self.handle() as ffi::SQLHANDLE) } {
+        match unsafe { ffi::SQLFreeHandle(T::HANDLE_TYPE, self.handle() as ffi::SQLHANDLE) } {
             ffi::SQL_SUCCESS => (),
             ffi::SQL_ERROR => error!("Error freeing handle: {}", self.get_diag_rec(1).unwrap()),
             _ => panic!("Unexepected return value of SQLFreeHandle"),
@@ -44,15 +42,17 @@ impl<T: OdbcObject> Raii<T> {
         let mut handle: ffi::SQLHANDLE = null_mut();
         match unsafe {
             ffi::SQLAllocHandle(
-                T::handle_type(),
+                T::HANDLE_TYPE,
                 parent.handle() as ffi::SQLHANDLE,
                 &mut handle as *mut ffi::SQLHANDLE,
             )
         } {
-            ffi::SQL_SUCCESS => Return::Success(Raii { handle: handle as *mut T }),
-            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(
-                Raii { handle: handle as *mut T },
-            ),
+            ffi::SQL_SUCCESS => Return::Success(Raii {
+                handle: handle as *mut T,
+            }),
+            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(Raii {
+                handle: handle as *mut T,
+            }),
             ffi::SQL_ERROR => Return::Error,
             _ => panic!("SQLAllocHandle returned unexpected result"),
         }

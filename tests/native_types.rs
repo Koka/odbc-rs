@@ -12,7 +12,7 @@ const C: &'static str = "SELECT C FROM TEST_TYPES;";
 macro_rules! test_type {
     ($t:ty, $c:expr, $e:expr) => ({
         let env = create_environment_v3().unwrap();
-        let conn = DataSource::with_parent(&env).unwrap().connect("TestDataSource", "", "").unwrap();
+        let conn = env.connect("TestDataSource", "", "").unwrap();
         let stmt = Statement::with_parent(&conn).unwrap();
         if let Ok(Data(mut cursor)) = stmt.exec_direct($c){
             if let Ok(Some(mut row)) = cursor.fetch(){

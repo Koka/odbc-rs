@@ -13,11 +13,7 @@ fn test_me() -> std::result::Result<(), DiagnosticRecord> {
     let env = create_environment_v3().map_err(|e| {
         e.expect("Can't create ODBC environment")
     })?;
-    let conn = DataSource::with_parent(&env)?.connect(
-        "PostgreSQL",
-        "postgres",
-        "postgres",
-    )?;
+    let conn = env.connect("PostgreSQL", "postgres", "postgres")?;
     let result = Statement::with_parent(&conn)?.exec_direct(
         "select '1' as str, 1 as num, current_timestamp as timestamp, null as nul, true as boolean",
     )?;

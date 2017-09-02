@@ -25,11 +25,17 @@ trait MySupportedType
 where
     Self: Sized,
 {
-    fn extract_from<'a, 'con, S>(cursor: &mut odbc::Cursor<'a, 'con, 'con, S>, index: u16) -> Option<Self>;
+    fn extract_from<'a, 'con, S>(
+        cursor: &mut odbc::Cursor<'a, 'con, 'con, S>,
+        index: u16,
+    ) -> Option<Self>;
 }
 
 impl MySupportedType for DateTime<Local> {
-    fn extract_from<'a, 'con, S>(cursor: &mut odbc::Cursor<'a, 'con, 'con, S>, index: u16) -> Option<Self> {
+    fn extract_from<'a, 'con, S>(
+        cursor: &mut odbc::Cursor<'a, 'con, 'con, S>,
+        index: u16,
+    ) -> Option<Self> {
         cursor.get_data(index).expect("Can't get column").map(
             |datetime: String| {
                 Local
@@ -49,11 +55,7 @@ fn test_me() -> std::result::Result<Option<DateTime<Local>>, DiagnosticRecord> {
     let env = create_environment_v3().map_err(|e| {
         e.expect("Can't create ODBC environment")
     })?;
-    let conn = DataSource::with_parent(&env)?.connect(
-        "PostgreSQL",
-        "postgres",
-        "postgres",
-    )?;
+    let conn = env.connect("PostgreSQL", "postgres", "postgres")?;
     let mut result = Statement::with_parent(&conn)?.exec_direct(
         "select current_timestamp",
     )?;
