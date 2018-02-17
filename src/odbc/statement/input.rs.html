@@ -132,6 +132,9 @@
 <span id="87">87</span>
 <span id="88">88</span>
 <span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> {<span class="ident">ffi</span>, <span class="ident">Return</span>, <span class="prelude-ty">Result</span>, <span class="ident">Raii</span>, <span class="ident">Handle</span>, <span class="ident">Statement</span>};
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">types</span>::<span class="ident">OdbcType</span>;
@@ -152,8 +155,8 @@
     <span class="doccomment">/// ```</span>
     <span class="doccomment">/// # use odbc::*;</span>
     <span class="doccomment">/// # fn do_odbc_stuff() -&gt; std::result::Result&lt;(), Box&lt;std::error::Error&gt;&gt; {</span>
-    <span class="doccomment">/// let env = Environment::new()?.set_odbc_version_3()?;</span>
-    <span class="doccomment">/// let conn = DataSource::with_parent(&amp;env)?.connect(&quot;TestDataSource&quot;, &quot;&quot;, &quot;&quot;)?;</span>
+    <span class="doccomment">/// let env = create_environment_v3().map_err(|e| e.unwrap())?;</span>
+    <span class="doccomment">/// let conn = env.connect(&quot;TestDataSource&quot;, &quot;&quot;, &quot;&quot;)?;</span>
     <span class="doccomment">/// let stmt = Statement::with_parent(&amp;conn)?;</span>
     <span class="doccomment">/// let param = 1968;</span>
     <span class="doccomment">/// let stmt = stmt.bind_parameter(1, &amp;param)?;</span>
@@ -164,13 +167,15 @@
     <span class="doccomment">/// #   Ok(())</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bind_parameter</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>,
-                                 <span class="ident">parameter_index</span>: <span class="ident">u16</span>,
-                                 <span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;c</span> <span class="ident">T</span>)
-                                 <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;c</span>, <span class="ident">S</span>, <span class="ident">R</span><span class="op">&gt;&gt;</span>
-        <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
-              <span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span>,
-              <span class="lifetime">&#39;b</span>: <span class="lifetime">&#39;c</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bind_parameter</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">T</span><span class="op">&gt;</span>(
+        <span class="kw-2">mut</span> <span class="self">self</span>,
+        <span class="ident">parameter_index</span>: <span class="ident">u16</span>,
+        <span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;c</span> <span class="ident">T</span>,
+    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;c</span>, <span class="ident">S</span>, <span class="ident">R</span><span class="op">&gt;&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">T</span>: <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
+        <span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span>,
+        <span class="lifetime">&#39;b</span>: <span class="lifetime">&#39;c</span>,
     {
         <span class="self">self</span>.<span class="ident">raii</span>
             .<span class="ident">bind_input_parameter</span>(<span class="ident">parameter_index</span>, <span class="ident">value</span>)
@@ -188,8 +193,9 @@
 
 <span class="kw">impl</span> <span class="ident">Raii</span><span class="op">&lt;</span><span class="ident">ffi</span>::<span class="ident">Stmt</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">bind_input_parameter</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">parameter_index</span>: <span class="ident">u16</span>, <span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;c</span> <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
-              <span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span>
+    <span class="kw">where</span>
+        <span class="ident">T</span>: <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>,
+        <span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span>,
     {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">len_buf_ptr</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">value</span>.<span class="ident">column_size</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLLEN</span>];
         <span class="kw">match</span> <span class="kw">unsafe</span> {
@@ -203,7 +209,7 @@
                 <span class="ident">value</span>.<span class="ident">decimal_digits</span>(),
                 <span class="ident">value</span>.<span class="ident">value_ptr</span>(),
                 <span class="number">0</span>, <span class="comment">// buffer length</span>
-                <span class="ident">len_buf_ptr</span>.<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="op">*</span> <span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">SQLLEN</span><span class="comment">// str len or ind ptr</span>
+                <span class="ident">len_buf_ptr</span>.<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">SQLLEN</span>, <span class="comment">// str len or ind ptr</span>
             )
         } {
             <span class="ident">ffi</span>::<span class="ident">SQL_SUCCESS</span> <span class="op">=&gt;</span> <span class="ident">Return</span>::<span class="ident">Success</span>(()),

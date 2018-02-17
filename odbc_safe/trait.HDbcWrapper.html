@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `HDbcWrapper` trait in crate `odbc_safe`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, HDbcWrapper">
+
+    <title>odbc_safe::HDbcWrapper - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc trait">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Trait HDbcWrapper</p><div class="block items"><ul><li><a href="#associated-types">Associated Types</a></li><li><a href="#required-methods">Required Methods</a></li><li><a href="#implementors">Implementors</a></li></ul></div><p class='location'><a href='index.html'>odbc_safe</a></p><script>window.sidebarCurrent = {name: 'HDbcWrapper', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>odbc_safe</a>::<wbr><a class="trait" href=''>HDbcWrapper</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/odbc_safe/data_source/hdbc_wrapper.rs.html#8-15' title='goto source code'>[src]</a></span></h1>
+<pre class='rust trait'>pub trait HDbcWrapper&lt;'env&gt;: <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/deref/trait.DerefMut.html" title="trait core::ops::deref::DerefMut">DerefMut</a>&lt;Target = HDbc&lt;'env&gt;&gt; {
+    type <a href='#associatedtype.Handle' class="type">Handle</a>: <a class="trait" href="../odbc_safe/trait.HDbcWrapper.html" title="trait odbc_safe::HDbcWrapper">HDbcWrapper</a>&lt;'env&gt;;
+    fn <a href='#tymethod.into_hdbc' class='fnname'>into_hdbc</a>(self) -&gt; HDbc&lt;'env&gt;;
+<div class='item-spacer'></div>    fn <a href='#tymethod.from_hdbc' class='fnname'>from_hdbc</a>(handle: HDbc&lt;'env&gt;) -&gt; Self::<a class="type" href="../odbc_safe/trait.HDbcWrapper.html#associatedtype.Handle" title="type odbc_safe::HDbcWrapper::Handle">Handle</a>;
+}</pre><div class='docblock'><p>Implemented by <code>Connected</code> and <code>Unconnected</code>.</p>
+
+<p>There are two implementations of this trait. These two implementations only decide wether or
+not a <code>disconnect</code> should be executed on drop. This trait allows to handle them both in generic
+code and makes them syntactically very similar to a direct use of <code>HDbc</code>.</p>
+</div>
+            <h2 id='associated-types' class='small-section-header'>
+              Associated Types<a href='#associated-types' class='anchor'></a>
+            </h2>
+            <div class='methods'>
+        <h3 id='associatedtype.Handle' class='method'><span id='Handle.t' class='invisible'><code>type <a href='#associatedtype.Handle' class="type">Handle</a>: <a class="trait" href="../odbc_safe/trait.HDbcWrapper.html" title="trait odbc_safe::HDbcWrapper">HDbcWrapper</a>&lt;'env&gt;</code></span></h3><div class='docblock'><p>Type to a handle, which also must implement this trait.</p>
+</div></div>
+            <h2 id='required-methods' class='small-section-header'>
+              Required Methods<a href='#required-methods' class='anchor'></a>
+            </h2>
+            <div class='methods'>
+        <h3 id='tymethod.into_hdbc' class='method'><span id='into_hdbc.v' class='invisible'><code>fn <a href='#tymethod.into_hdbc' class='fnname'>into_hdbc</a>(self) -&gt; HDbc&lt;'env&gt;</code></span></h3><div class='docblock'><p>Release ownership of the internal Connection Handle</p>
+</div><h3 id='tymethod.from_hdbc' class='method'><span id='from_hdbc.v' class='invisible'><code>fn <a href='#tymethod.from_hdbc' class='fnname'>from_hdbc</a>(handle: HDbc&lt;'env&gt;) -&gt; Self::<a class="type" href="../odbc_safe/trait.HDbcWrapper.html#associatedtype.Handle" title="type odbc_safe::HDbcWrapper::Handle">Handle</a></code></span></h3><div class='docblock'><p>Construction from a Connection Handle</p>
+</div></div>
+        <h2 id='implementors' class='small-section-header'>
+          Implementors<a href='#implementors' class='anchor'></a>
+        </h2>
+        <ul class='item-list' id='implementors-list'>
+    <li><div class='out-of-band'><a class='srclink' href='../src/odbc_safe/data_source/connected.rs.html#46-56' title='goto source code'>[src]</a></div><code>impl&lt;'env&gt; HDbcWrapper&lt;'env&gt; for <a class="struct" href="../odbc_safe/struct.Connected.html" title="struct odbc_safe::Connected">Connected</a>&lt;'env&gt;<span class="where fmt-newline">  type <a href='#associatedtype.Handle' class="type">Handle</a> = <a class="struct" href="../odbc_safe/struct.Connected.html" title="struct odbc_safe::Connected">Connected</a>&lt;'env&gt;;</span></code></li>
+<li><div class='out-of-band'><a class='srclink' href='../src/odbc_safe/data_source/unconnected.rs.html#21-31' title='goto source code'>[src]</a></div><code>impl&lt;'env&gt; HDbcWrapper&lt;'env&gt; for <a class="struct" href="../odbc_safe/struct.Unconnected.html" title="struct odbc_safe::Unconnected">Unconnected</a>&lt;'env&gt;<span class="where fmt-newline">  type <a href='#associatedtype.Handle' class="type">Handle</a> = <a class="struct" href="../odbc_safe/struct.Unconnected.html" title="struct odbc_safe::Unconnected">Unconnected</a>&lt;'env&gt;;</span></code></li>
+</ul><script type="text/javascript" async
+                         src="../implementors/odbc_safe/trait.HDbcWrapper.js">
+                 </script></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "odbc_safe";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

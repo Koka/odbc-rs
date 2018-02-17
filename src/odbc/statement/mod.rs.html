@@ -341,6 +341,43 @@
 <span id="296">296</span>
 <span id="297">297</span>
 <span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
 </pre><pre class="rust ">
 
 <span class="kw">mod</span> <span class="ident">types</span>;
@@ -348,7 +385,7 @@
 <span class="kw">mod</span> <span class="ident">output</span>;
 <span class="kw">mod</span> <span class="ident">prepare</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">output</span>::<span class="ident">Output</span>;
-<span class="kw">use</span> {<span class="ident">ffi</span>, <span class="ident">DataSource</span>, <span class="ident">Return</span>, <span class="prelude-ty">Result</span>, <span class="ident">Raii</span>, <span class="ident">Handle</span>, <span class="ident">Connected</span>};
+<span class="kw">use</span> {<span class="ident">ffi</span>, <span class="ident">safe</span>, <span class="ident">Connection</span>, <span class="ident">Return</span>, <span class="prelude-ty">Result</span>, <span class="ident">Raii</span>, <span class="ident">Handle</span>};
 <span class="kw">use</span> <span class="ident">ffi</span>::<span class="ident">SQLRETURN</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">ffi</span>::<span class="ident">Nullable</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
@@ -381,11 +418,11 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">ResultSetState</span>::<span class="kw-2">*</span>;
 
 <span class="doccomment">/// A `Statement` can be used to execute queries and retrieves results.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>, <span class="ident">S</span>, <span class="ident">R</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;con</span>, <span class="lifetime">&#39;b</span>, <span class="ident">S</span>, <span class="ident">R</span><span class="op">&gt;</span> {
     <span class="ident">raii</span>: <span class="ident">Raii</span><span class="op">&lt;</span><span class="ident">ffi</span>::<span class="ident">Stmt</span><span class="op">&gt;</span>,
     <span class="comment">// we use phantom data to tell the borrow checker that we need to keep the data source alive</span>
     <span class="comment">// for the lifetime of the statement</span>
-    <span class="ident">parent</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">DataSource</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">Connected</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">parent</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;con</span> <span class="ident">Connection</span><span class="op">&lt;</span><span class="lifetime">&#39;con</span><span class="op">&gt;&gt;</span>,
     <span class="ident">state</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>,
     <span class="comment">// Indicates wether there is an open result set or not associated with this statement.</span>
     <span class="ident">result</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>,
@@ -395,16 +432,16 @@
 <span class="doccomment">/// Used to retrieve data from the fields of a query result</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Cursor</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>: <span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;c</span>: <span class="lifetime">&#39;a</span>, <span class="ident">S</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="ident">stmt</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="lifetime">&#39;c</span>, <span class="ident">S</span>, <span class="ident">HasResult</span><span class="op">&gt;</span>,
-    <span class="ident">buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>
+    <span class="ident">buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ColumnDescriptor</span> {
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">data_type</span>: <span class="ident">ffi</span>::<span class="ident">SqlDataType</span>,
-    <span class="kw">pub</span> <span class="ident">column_size</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">column_size</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ffi</span>::<span class="ident">SQLULEN</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">decimal_digits</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">nullable</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="ident">nullable</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>, <span class="ident">S</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="ident">Handle</span> <span class="kw">for</span> <span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>, <span class="ident">S</span>, <span class="ident">R</span><span class="op">&gt;</span> {
@@ -426,8 +463,8 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> <span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>, <span class="ident">Allocated</span>, <span class="ident">NoResult</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_parent</span>(<span class="ident">ds</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">DataSource</span><span class="op">&lt;</span><span class="ident">Connected</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>, <span class="lifetime">&#39;env</span><span class="op">&gt;</span> <span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>, <span class="ident">Allocated</span>, <span class="ident">NoResult</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_parent</span>(<span class="ident">ds</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Connection</span><span class="op">&lt;</span><span class="lifetime">&#39;env</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">raii</span> <span class="op">=</span> <span class="ident">Raii</span>::<span class="ident">with_parent</span>(<span class="ident">ds</span>).<span class="ident">into_result</span>(<span class="ident">ds</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="self">Self</span>::<span class="ident">with_raii</span>(<span class="ident">raii</span>))
     }
@@ -460,7 +497,9 @@
     }
 
     <span class="doccomment">/// Returns description struct for result set column with a given index. Note: indexing is starting from 1.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">describe_col</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">idx</span>: <span class="ident">u16</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ColumnDescriptor</span><span class="op">&gt;</span> { <span class="self">self</span>.<span class="ident">raii</span>.<span class="ident">describe_col</span>(<span class="ident">idx</span>).<span class="ident">into_result</span>(<span class="self">self</span>) }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">describe_col</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">idx</span>: <span class="ident">u16</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ColumnDescriptor</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">raii</span>.<span class="ident">describe_col</span>(<span class="ident">idx</span>).<span class="ident">into_result</span>(<span class="self">self</span>)
+    }
 
     <span class="doccomment">/// Fetches the next rowset of data from the result set and returns data for all bound columns.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">fetch</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;c</span> <span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Cursor</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span> {
@@ -487,8 +526,8 @@
     <span class="doccomment">/// ```</span>
     <span class="doccomment">/// # use odbc::*;</span>
     <span class="doccomment">/// # fn reuse () -&gt; Result&lt;()&gt; {</span>
-    <span class="doccomment">/// let env = Environment::new().unwrap().set_odbc_version_3()?;</span>
-    <span class="doccomment">/// let conn = DataSource::with_parent(&amp;env)?.connect(&quot;TestDataSource&quot;, &quot;&quot;, &quot;&quot;)?;</span>
+    <span class="doccomment">/// let env = create_environment_v3().map_err(|e| e.unwrap())?;</span>
+    <span class="doccomment">/// let conn = env.connect(&quot;TestDataSource&quot;, &quot;&quot;, &quot;&quot;)?;</span>
     <span class="doccomment">/// let stmt = Statement::with_parent(&amp;conn)?;</span>
     <span class="doccomment">/// let stmt = match stmt.exec_direct(&quot;CREATE TABLE STAGE (A TEXT, B TEXT);&quot;)?{</span>
     <span class="doccomment">///     // Some drivers will return an empty result set. We need to close it before we can use</span>
@@ -510,7 +549,8 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>, <span class="lifetime">&#39;c</span>, <span class="ident">S</span><span class="op">&gt;</span> <span class="ident">Cursor</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>, <span class="lifetime">&#39;c</span>, <span class="ident">S</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Retrieves data for a single column in the result set</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_data</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;d</span> <span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">col_or_param_num</span>: <span class="ident">u16</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>
-        <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Output</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">T</span>: <span class="ident">Output</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>,
     {
         <span class="ident">T</span>::<span class="ident">get_data</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">stmt</span>.<span class="ident">raii</span>, <span class="ident">col_or_param_num</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">buffer</span>).<span class="ident">into_result</span>(<span class="self">self</span>.<span class="ident">stmt</span>)
     }
@@ -530,44 +570,65 @@
     }
 
     <span class="kw">fn</span> <span class="ident">describe_col</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">idx</span>: <span class="ident">u16</span>) <span class="op">-&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span><span class="ident">ColumnDescriptor</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">name_buffer</span>:[<span class="ident">u8</span>; <span class="number">512</span>] <span class="op">=</span> [<span class="number">0</span>; <span class="number">512</span>];
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">name_buffer</span>: [<span class="ident">u8</span>; <span class="number">512</span>] <span class="op">=</span> [<span class="number">0</span>; <span class="number">512</span>];
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">name_length</span>: <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data_type</span>: <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> <span class="op">=</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span>::<span class="ident">SQL_UNKNOWN_TYPE</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">column_size</span>: <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">decimal_digits</span>: <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">nullable</span>: <span class="ident">Nullable</span> <span class="op">=</span> <span class="ident">Nullable</span>::<span class="ident">SQL_NULLABLE_UNKNOWN</span>;
         <span class="kw">unsafe</span> {
-            <span class="kw">match</span> <span class="ident">ffi</span>::<span class="ident">SQLDescribeCol</span>(<span class="self">self</span>.<span class="ident">handle</span>(),
-                                      <span class="ident">idx</span>,
-                                      <span class="ident">name_buffer</span>.<span class="ident">as_mut_ptr</span>(),
-                                      <span class="ident">name_buffer</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
-                                      <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">name_length</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
-                                      <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">data_type</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span>,
-                                      <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">column_size</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>,
-                                      <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">decimal_digits</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
-                                      <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">nullable</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">Nullable</span>
+            <span class="kw">match</span> <span class="ident">ffi</span>::<span class="ident">SQLDescribeCol</span>(
+                <span class="self">self</span>.<span class="ident">handle</span>(),
+                <span class="ident">idx</span>,
+                <span class="ident">name_buffer</span>.<span class="ident">as_mut_ptr</span>(),
+                <span class="ident">name_buffer</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
+                <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">name_length</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
+                <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">data_type</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span>,
+                <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">column_size</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>,
+                <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">decimal_digits</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
+                <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">nullable</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">Nullable</span>,
             ) {
                 <span class="ident">SQL_SUCCESS</span> <span class="op">=&gt;</span> <span class="ident">Return</span>::<span class="ident">Success</span>(<span class="ident">ColumnDescriptor</span> {
-                    <span class="ident">name</span>: ::<span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">name_buffer</span>[..(<span class="ident">name_length</span> <span class="kw">as</span> <span class="ident">usize</span>)]).<span class="ident">unwrap</span>().<span class="ident">to_owned</span>(),
+                    <span class="ident">name</span>: ::<span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">name_buffer</span>[..(<span class="ident">name_length</span> <span class="kw">as</span> <span class="ident">usize</span>)])
+                        .<span class="ident">unwrap</span>()
+                        .<span class="ident">to_owned</span>(),
                     <span class="ident">data_type</span>: <span class="ident">data_type</span>,
-                    <span class="ident">column_size</span>: <span class="kw">if</span> <span class="ident">column_size</span> <span class="op">==</span> <span class="number">0</span> { <span class="prelude-val">None</span> } <span class="kw">else</span> { <span class="prelude-val">Some</span>(<span class="ident">column_size</span>) },
-                    <span class="ident">decimal_digits</span>: <span class="kw">if</span> <span class="ident">decimal_digits</span> <span class="op">==</span> <span class="number">0</span> { <span class="prelude-val">None</span> } <span class="kw">else</span> { <span class="prelude-val">Some</span>(<span class="ident">decimal_digits</span> <span class="kw">as</span> <span class="ident">u16</span>) },
+                    <span class="ident">column_size</span>: <span class="kw">if</span> <span class="ident">column_size</span> <span class="op">==</span> <span class="number">0</span> {
+                        <span class="prelude-val">None</span>
+                    } <span class="kw">else</span> {
+                        <span class="prelude-val">Some</span>(<span class="ident">column_size</span>)
+                    },
+                    <span class="ident">decimal_digits</span>: <span class="kw">if</span> <span class="ident">decimal_digits</span> <span class="op">==</span> <span class="number">0</span> {
+                        <span class="prelude-val">None</span>
+                    } <span class="kw">else</span> {
+                        <span class="prelude-val">Some</span>(<span class="ident">decimal_digits</span> <span class="kw">as</span> <span class="ident">u16</span>)
+                    },
                     <span class="ident">nullable</span>: <span class="kw">match</span> <span class="ident">nullable</span> {
                         <span class="ident">Nullable</span>::<span class="ident">SQL_NULLABLE_UNKNOWN</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
                         <span class="ident">Nullable</span>::<span class="ident">SQL_NULLABLE</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="bool-val">true</span>),
-                        <span class="ident">Nullable</span>::<span class="ident">SQL_NO_NULLS</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="bool-val">false</span>)
-                    }
+                        <span class="ident">Nullable</span>::<span class="ident">SQL_NO_NULLS</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
+                    },
                 }),
                 <span class="ident">SQL_SUCCESS_WITH_INFO</span> <span class="op">=&gt;</span> <span class="ident">Return</span>::<span class="ident">SuccessWithInfo</span>(<span class="ident">ColumnDescriptor</span> {
-                    <span class="ident">name</span>: ::<span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">name_buffer</span>[..(<span class="ident">name_length</span> <span class="kw">as</span> <span class="ident">usize</span>)]).<span class="ident">unwrap</span>().<span class="ident">to_owned</span>(),
+                    <span class="ident">name</span>: ::<span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">name_buffer</span>[..(<span class="ident">name_length</span> <span class="kw">as</span> <span class="ident">usize</span>)])
+                        .<span class="ident">unwrap</span>()
+                        .<span class="ident">to_owned</span>(),
                     <span class="ident">data_type</span>: <span class="ident">data_type</span>,
-                    <span class="ident">column_size</span>: <span class="kw">if</span> <span class="ident">column_size</span> <span class="op">==</span> <span class="number">0</span> { <span class="prelude-val">None</span> } <span class="kw">else</span> { <span class="prelude-val">Some</span>(<span class="ident">column_size</span>) },
-                    <span class="ident">decimal_digits</span>: <span class="kw">if</span> <span class="ident">decimal_digits</span> <span class="op">==</span> <span class="number">0</span> { <span class="prelude-val">None</span> } <span class="kw">else</span> { <span class="prelude-val">Some</span>(<span class="ident">decimal_digits</span> <span class="kw">as</span> <span class="ident">u16</span>) },
+                    <span class="ident">column_size</span>: <span class="kw">if</span> <span class="ident">column_size</span> <span class="op">==</span> <span class="number">0</span> {
+                        <span class="prelude-val">None</span>
+                    } <span class="kw">else</span> {
+                        <span class="prelude-val">Some</span>(<span class="ident">column_size</span>)
+                    },
+                    <span class="ident">decimal_digits</span>: <span class="kw">if</span> <span class="ident">decimal_digits</span> <span class="op">==</span> <span class="number">0</span> {
+                        <span class="prelude-val">None</span>
+                    } <span class="kw">else</span> {
+                        <span class="prelude-val">Some</span>(<span class="ident">decimal_digits</span> <span class="kw">as</span> <span class="ident">u16</span>)
+                    },
                     <span class="ident">nullable</span>: <span class="kw">match</span> <span class="ident">nullable</span> {
                         <span class="ident">Nullable</span>::<span class="ident">SQL_NULLABLE_UNKNOWN</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
                         <span class="ident">Nullable</span>::<span class="ident">SQL_NULLABLE</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="bool-val">true</span>),
-                        <span class="ident">Nullable</span>::<span class="ident">SQL_NO_NULLS</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="bool-val">false</span>)
-                    }
+                        <span class="ident">Nullable</span>::<span class="ident">SQL_NO_NULLS</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
+                    },
                 }),
                 <span class="ident">SQL_ERROR</span> <span class="op">=&gt;</span> <span class="ident">Return</span>::<span class="ident">Error</span>,
                 <span class="ident">r</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;SQLDescribeCol returned unexpected result: {:?}&quot;</span>, <span class="ident">r</span>),
@@ -582,9 +643,11 @@
             <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Statement text too long&quot;</span>);
         }
         <span class="kw">match</span> <span class="kw">unsafe</span> {
-            <span class="ident">ffi</span>::<span class="ident">SQLExecDirect</span>(<span class="self">self</span>.<span class="ident">handle</span>(),
-                               <span class="ident">statement_text</span>.<span class="ident">as_ptr</span>(),
-                               <span class="ident">length</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLINTEGER</span>)
+            <span class="ident">ffi</span>::<span class="ident">SQLExecDirect</span>(
+                <span class="self">self</span>.<span class="ident">handle</span>(),
+                <span class="ident">statement_text</span>.<span class="ident">as_ptr</span>(),
+                <span class="ident">length</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLINTEGER</span>,
+            )
         } {
             <span class="ident">ffi</span>::<span class="ident">SQL_SUCCESS</span> <span class="op">=&gt;</span> <span class="ident">Return</span>::<span class="ident">Success</span>(<span class="bool-val">true</span>),
             <span class="ident">ffi</span>::<span class="ident">SQL_SUCCESS_WITH_INFO</span> <span class="op">=&gt;</span> <span class="ident">Return</span>::<span class="ident">SuccessWithInfo</span>(<span class="bool-val">true</span>),
@@ -612,15 +675,17 @@
         <span class="kw">let</span> <span class="ident">table_name</span> <span class="op">=</span> <span class="string">&quot;&quot;</span>;
         <span class="kw">let</span> <span class="ident">table_type</span> <span class="op">=</span> <span class="string">&quot;TABLE&quot;</span>;
         <span class="kw">unsafe</span> {
-            <span class="kw">match</span> <span class="ident">ffi</span>::<span class="ident">SQLTables</span>(<span class="self">self</span>.<span class="ident">handle</span>(),
-                                 <span class="ident">catalog_name</span>.<span class="ident">as_ptr</span>(),
-                                 <span class="ident">catalog_name</span>.<span class="ident">as_bytes</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
-                                 <span class="ident">schema_name</span>.<span class="ident">as_ptr</span>(),
-                                 <span class="ident">schema_name</span>.<span class="ident">as_bytes</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
-                                 <span class="ident">table_name</span>.<span class="ident">as_ptr</span>(),
-                                 <span class="ident">table_name</span>.<span class="ident">as_bytes</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
-                                 <span class="ident">table_type</span>.<span class="ident">as_ptr</span>(),
-                                 <span class="ident">table_type</span>.<span class="ident">as_bytes</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>) {
+            <span class="kw">match</span> <span class="ident">ffi</span>::<span class="ident">SQLTables</span>(
+                <span class="self">self</span>.<span class="ident">handle</span>(),
+                <span class="ident">catalog_name</span>.<span class="ident">as_ptr</span>(),
+                <span class="ident">catalog_name</span>.<span class="ident">as_bytes</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
+                <span class="ident">schema_name</span>.<span class="ident">as_ptr</span>(),
+                <span class="ident">schema_name</span>.<span class="ident">as_bytes</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
+                <span class="ident">table_name</span>.<span class="ident">as_ptr</span>(),
+                <span class="ident">table_name</span>.<span class="ident">as_bytes</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
+                <span class="ident">table_type</span>.<span class="ident">as_ptr</span>(),
+                <span class="ident">table_type</span>.<span class="ident">as_bytes</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
+            ) {
                 <span class="ident">SQL_SUCCESS</span> <span class="op">=&gt;</span> <span class="ident">Return</span>::<span class="ident">Success</span>(()),
                 <span class="ident">SQL_SUCCESS_WITH_INFO</span> <span class="op">=&gt;</span> <span class="ident">Return</span>::<span class="ident">SuccessWithInfo</span>(()),
                 <span class="ident">SQL_ERROR</span> <span class="op">=&gt;</span> <span class="ident">Return</span>::<span class="ident">Error</span>,
@@ -638,6 +703,15 @@
                 <span class="ident">r</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unexpected return value from SQLCloseCursor: {:?}&quot;</span>, <span class="ident">r</span>),
             }
         }
+    }
+}
+
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;con</span>, <span class="lifetime">&#39;param</span>, <span class="ident">C</span>, <span class="ident">P</span><span class="op">&gt;</span> <span class="ident">safe</span>::<span class="ident">Handle</span> <span class="kw">for</span> <span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;con</span>, <span class="lifetime">&#39;param</span>, <span class="ident">C</span>, <span class="ident">P</span><span class="op">&gt;</span> {
+
+    <span class="kw">const</span> <span class="ident">HANDLE_TYPE</span> : <span class="ident">ffi</span>::<span class="ident">HandleType</span> <span class="op">=</span> <span class="ident">ffi</span>::<span class="ident">SQL_HANDLE_STMT</span>;
+
+    <span class="kw">fn</span> <span class="ident">handle</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLHANDLE</span> {
+        <span class="op">&lt;</span><span class="ident">Raii</span><span class="op">&lt;</span><span class="ident">ffi</span>::<span class="ident">Stmt</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">safe</span>::<span class="ident">Handle</span><span class="op">&gt;</span>::<span class="ident">handle</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">raii</span>)
     }
 }
 </pre>

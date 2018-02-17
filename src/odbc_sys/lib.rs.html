@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.5.0/src/lib.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.5.4/src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
@@ -463,6 +463,97 @@
 <span id="418">418</span>
 <span id="419">419</span>
 <span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! ODBC types those representation is compatible with the ODBC C API.</span>
 <span class="doccomment">//!</span>
@@ -547,14 +638,14 @@
     <span class="doccomment">/// option has no effect for the application. `SQLCloseCursor` can also be called to close a</span>
     <span class="doccomment">/// cursor.</span>
     <span class="ident">SQL_CLOSE</span> <span class="op">=</span> <span class="number">0</span>,
+    <span class="comment">// SQL_DROP = 1, is deprecated in favour of SQLFreeHandle</span>
     <span class="doccomment">/// Sets the `SQL_DESC_COUNT` field of the ARD to 0, releasing all column buffers bound by</span>
     <span class="doccomment">/// `SQLBindCol` for the given StatementHandle. This does not unbind the bookmark column; to do</span>
     <span class="doccomment">/// that, the `SQL_DESC_DATA_PTR` field of the ARD for the bookmark column is set to NULL.</span>
     <span class="doccomment">/// Notice that if this operation is performed on an explicitly allocated descriptor that is</span>
     <span class="doccomment">/// shared by more than one statement, the operation will affect the bindings of all statements</span>
     <span class="doccomment">/// that share the descriptor.</span>
-    <span class="ident">SQL_UNBIND</span> <span class="op">=</span> <span class="number">1</span>,
-    <span class="comment">//SQL_DROP = 2,</span>
+    <span class="ident">SQL_UNBIND</span> <span class="op">=</span> <span class="number">2</span>,
     <span class="doccomment">/// Sets the `SQL_DESC_COUNT` field of the APD to 0, releasing all parameter buffers set by</span>
     <span class="doccomment">/// `SQLBindParameter` for the given StatementHandle. If this operation is performed on an</span>
     <span class="doccomment">/// explicitly allocated descriptor that is shared by more than one statement, this operation</span>
@@ -579,14 +670,10 @@
     <span class="ident">SQL_DOUBLE</span> <span class="op">=</span> <span class="number">8</span>,
     <span class="ident">SQL_DATETIME</span> <span class="op">=</span> <span class="number">9</span>,
     <span class="ident">SQL_VARCHAR</span> <span class="op">=</span> <span class="number">12</span>,
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span>
-    <span class="ident">SQL_UDT</span> <span class="op">=</span> <span class="number">17</span>,
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span>
-    <span class="ident">SQL_ROW</span> <span class="op">=</span> <span class="number">19</span>,
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span>
-    <span class="ident">SQL_ARRAY</span> <span class="op">=</span> <span class="number">50</span>,
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span>
-    <span class="ident">SQL_MULTISET</span> <span class="op">=</span> <span class="number">55</span>,
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span> <span class="ident">SQL_UDT</span> <span class="op">=</span> <span class="number">17</span>,
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span> <span class="ident">SQL_ROW</span> <span class="op">=</span> <span class="number">19</span>,
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span> <span class="ident">SQL_ARRAY</span> <span class="op">=</span> <span class="number">50</span>,
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span> <span class="ident">SQL_MULTISET</span> <span class="op">=</span> <span class="number">55</span>,
 
     <span class="comment">//SQL extended datatypes:</span>
     <span class="ident">SQL_EXT_LONGVARCHAR</span> <span class="op">=</span> <span class="op">-</span><span class="number">1</span>,
@@ -624,17 +711,65 @@
 }
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">SqlDriverConnectOption</span>::<span class="kw-2">*</span>;
 
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">windows</span>, <span class="ident">link</span>(<span class="ident">name</span><span class="op">=</span><span class="string">&quot;odbc32&quot;</span>))]</span>
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">link</span>(<span class="ident">name</span><span class="op">=</span><span class="string">&quot;odbc&quot;</span>))]</span>
+<span class="doccomment">/// Statement attributes for `SQLSetStmtAttr`</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">i32</span>)]</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SqlStatementAttribute</span> {
+    <span class="ident">SQL_ATTR_PARAM_BIND_TYPE</span> <span class="op">=</span> <span class="number">18</span>,
+    <span class="ident">SQL_ATTR_PARAMSET_SIZE</span> <span class="op">=</span> <span class="number">22</span>,
+    <span class="ident">SQL_ATTR_ROW_BIND_TYPE</span> <span class="op">=</span> <span class="number">5</span>,
+    <span class="ident">SQL_ATTR_ROW_ARRAY_SIZE</span> <span class="op">=</span> <span class="number">27</span>,
+    <span class="ident">SQL_ATTR_ROWS_FETCHED_PTR</span> <span class="op">=</span> <span class="number">26</span>,
+}
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">SqlStatementAttribute</span>::<span class="kw-2">*</span>;
+
+<span class="doccomment">/// Connection attributes for `SQLSetConnectAttr`</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">i32</span>)]</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SqlConnectionAttribute</span> {
+    <span class="ident">SQL_ATTR_ACCESS_MODE</span> <span class="op">=</span> <span class="number">101</span>,
+    <span class="ident">SQL_ATTR_AUTOCOMMIT</span> <span class="op">=</span> <span class="number">102</span>,
+    <span class="ident">SQL_ATTR_LOGIN_TIMEOUT</span> <span class="op">=</span> <span class="number">103</span>,
+    <span class="ident">SQL_ATTR_TRACE</span> <span class="op">=</span> <span class="number">104</span>,
+    <span class="ident">SQL_ATTR_TRACEFILE</span> <span class="op">=</span> <span class="number">105</span>,
+    <span class="ident">SQL_ATTR_TRANSLATE_LIB</span> <span class="op">=</span> <span class="number">106</span>,
+    <span class="ident">SQL_ATTR_TRANSLATE_OPTION</span> <span class="op">=</span> <span class="number">107</span>,
+    <span class="ident">SQL_ATTR_TXN_ISOLATION</span> <span class="op">=</span> <span class="number">108</span>,
+    <span class="ident">SQL_ATTR_CURRENT_CATALOG</span> <span class="op">=</span> <span class="number">109</span>,
+    <span class="ident">SQL_ATTR_ODBC_CURSORS</span> <span class="op">=</span> <span class="number">110</span>,
+    <span class="ident">SQL_ATTR_QUIET_MODE</span> <span class="op">=</span> <span class="number">111</span>,
+    <span class="ident">SQL_ATTR_PACKET_SIZE</span> <span class="op">=</span> <span class="number">112</span>,
+    <span class="ident">SQL_ATTR_CONNECTION_TIMEOUT</span> <span class="op">=</span> <span class="number">113</span>,
+    <span class="ident">SQL_ATTR_DISCONNECT_BEHAVIOR</span> <span class="op">=</span> <span class="number">114</span>,
+    <span class="ident">SQL_ATTR_ENLIST_IN_DTC</span> <span class="op">=</span> <span class="number">1207</span>,
+    <span class="ident">SQL_ATTR_ENLIST_IN_XA</span> <span class="op">=</span> <span class="number">1208</span>,
+}
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">SqlConnectionAttribute</span>::<span class="kw-2">*</span>;
+
+<span class="doccomment">/// Completion types for `SQLEndTrans`</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">i16</span>)]</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SqlCompletionType</span> {
+    <span class="ident">SQL_COMMIT</span> <span class="op">=</span> <span class="number">0</span>,
+    <span class="ident">SQL_ROLLBACK</span> <span class="op">=</span> <span class="number">1</span>,
+}
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">SqlCompletionType</span>::<span class="kw-2">*</span>;
+
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">windows</span>, <span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;odbc32&quot;</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;odbc&quot;</span>))]</span>
 <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> {
     <span class="doccomment">/// Allocates an environment, connection, statement, or descriptor handle.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, or `SQL_INVALID_HANDLE`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLAllocHandle</span>(<span class="ident">handle_type</span>: <span class="ident">HandleType</span>,
-                          <span class="ident">input_handle</span>: <span class="ident">SQLHANDLE</span>,
-                          <span class="ident">output_Handle</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLHANDLE</span>)
-                          <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLAllocHandle</span>(
+        <span class="ident">handle_type</span>: <span class="ident">HandleType</span>,
+        <span class="ident">input_handle</span>: <span class="ident">SQLHANDLE</span>,
+        <span class="ident">output_Handle</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLHANDLE</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// Frees resources associated with a specific environment, connection, statement, or</span>
     <span class="doccomment">/// descriptor handle.</span>
@@ -648,11 +783,12 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, or `SQL_INVALID_HANDLE`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLSetEnvAttr</span>(<span class="ident">environment_handle</span>: <span class="ident">SQLHENV</span>,
-                         <span class="ident">attribute</span>: <span class="ident">EnvironmentAttribute</span>,
-                         <span class="ident">value</span>: <span class="ident">SQLPOINTER</span>,
-                         <span class="ident">string_length</span>: <span class="ident">SQLINTEGER</span>)
-                         <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLSetEnvAttr</span>(
+        <span class="ident">environment_handle</span>: <span class="ident">SQLHENV</span>,
+        <span class="ident">attribute</span>: <span class="ident">EnvironmentAttribute</span>,
+        <span class="ident">value</span>: <span class="ident">SQLPOINTER</span>,
+        <span class="ident">string_length</span>: <span class="ident">SQLINTEGER</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// Closes the connection associated with a specific connection handle.</span>
     <span class="doccomment">///</span>
@@ -666,15 +802,16 @@
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, or `SQL_INVALID_HANDLE`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLGetDiagRec</span>(<span class="ident">handle_type</span>: <span class="ident">HandleType</span>,
-                         <span class="ident">handle</span>: <span class="ident">SQLHANDLE</span>,
-                         <span class="ident">RecNumber</span>: <span class="ident">SQLSMALLINT</span>,
-                         <span class="ident">state</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
-                         <span class="ident">native_error_ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLINTEGER</span>,
-                         <span class="ident">message_text</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
-                         <span class="ident">buffer_length</span>: <span class="ident">SQLSMALLINT</span>,
-                         <span class="ident">text_length_ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>)
-                         <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLGetDiagRec</span>(
+        <span class="ident">handle_type</span>: <span class="ident">HandleType</span>,
+        <span class="ident">handle</span>: <span class="ident">SQLHANDLE</span>,
+        <span class="ident">RecNumber</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">state</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">native_error_ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLINTEGER</span>,
+        <span class="ident">message_text</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">buffer_length</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">text_length_ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// Executes a preparable statement, using the current values of the parameter marker variables</span>
     <span class="doccomment">/// if any parameters exist in the statement. This is the fastest way to submit an SQL</span>
@@ -683,28 +820,31 @@
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_NEED_DATA`, `SQL_STILL_EXECUTING`, `SQL_ERROR`</span>
     <span class="doccomment">/// , `SQL_NO_DATA`, `SQL_INVALID_HANDLE`, or `SQL_PARAM_DATA_AVAILABLE`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLExecDirect</span>(<span class="ident">statement_handle</span>: <span class="ident">SQLHSTMT</span>,
-                         <span class="ident">statement_text</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
-                         <span class="ident">text_length</span>: <span class="ident">SQLINTEGER</span>)
-                         <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLExecDirect</span>(
+        <span class="ident">statement_handle</span>: <span class="ident">SQLHSTMT</span>,
+        <span class="ident">statement_text</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">text_length</span>: <span class="ident">SQLINTEGER</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// Returns the number of columns in a result set</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, `SQL_INVALID_HANDLE` or</span>
     <span class="doccomment">/// `SQL_STILL_EXECUTING`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLNumResultCols</span>(<span class="ident">statement_handle</span>: <span class="ident">SQLHSTMT</span>,
-                            <span class="ident">column_count_ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>)
-                            <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLNumResultCols</span>(
+        <span class="ident">statement_handle</span>: <span class="ident">SQLHSTMT</span>,
+        <span class="ident">column_count_ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="comment">// Can be used since odbc version 3.8 to stream results</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLGetData</span>(<span class="ident">statement_handle</span>: <span class="ident">SQLHSTMT</span>,
-                      <span class="ident">col_or_param_num</span>: <span class="ident">SQLUSMALLINT</span>,
-                      <span class="ident">target_type</span>: <span class="ident">SqlCDataType</span>,
-                      <span class="ident">target_value_ptr</span>: <span class="ident">SQLPOINTER</span>,
-                      <span class="ident">buffer_length</span>: <span class="ident">SQLLEN</span>,
-                      <span class="ident">str_len_or_ind_ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLLEN</span>)
-                      <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLGetData</span>(
+        <span class="ident">statement_handle</span>: <span class="ident">SQLHSTMT</span>,
+        <span class="ident">col_or_param_num</span>: <span class="ident">SQLUSMALLINT</span>,
+        <span class="ident">target_type</span>: <span class="ident">SqlCDataType</span>,
+        <span class="ident">target_value_ptr</span>: <span class="ident">SQLPOINTER</span>,
+        <span class="ident">buffer_length</span>: <span class="ident">SQLLEN</span>,
+        <span class="ident">str_len_or_ind_ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLLEN</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// SQLFetch fetches the next rowset of data from the result set and returns data for all bound</span>
     <span class="doccomment">/// columns.</span>
@@ -718,12 +858,13 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, or `SQL_INVALID_HANDLE`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLGetInfo</span>(<span class="ident">connection_handle</span>: <span class="ident">SQLHDBC</span>,
-                      <span class="ident">info_type</span>: <span class="ident">InfoType</span>,
-                      <span class="ident">info_value_ptr</span>: <span class="ident">SQLPOINTER</span>,
-                      <span class="ident">buffer_length</span>: <span class="ident">SQLSMALLINT</span>,
-                      <span class="ident">string_length_ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>)
-                      <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLGetInfo</span>(
+        <span class="ident">connection_handle</span>: <span class="ident">SQLHDBC</span>,
+        <span class="ident">info_type</span>: <span class="ident">InfoType</span>,
+        <span class="ident">info_value_ptr</span>: <span class="ident">SQLPOINTER</span>,
+        <span class="ident">buffer_length</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">string_length_ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// SQLConnect establishes connections to a driver and a data source. The connection handle</span>
     <span class="doccomment">/// references storage of all information about the connection to the data source, including</span>
@@ -732,14 +873,15 @@
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, `SQL_INVALID_HANDLE`, or</span>
     <span class="doccomment">/// `SQL_STILL_EXECUTING`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLConnect</span>(<span class="ident">connection_handle</span>: <span class="ident">SQLHDBC</span>,
-                      <span class="ident">server_name</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
-                      <span class="ident">name_length_1</span>: <span class="ident">SQLSMALLINT</span>,
-                      <span class="ident">user_name</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
-                      <span class="ident">name_length_2</span>: <span class="ident">SQLSMALLINT</span>,
-                      <span class="ident">authentication</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
-                      <span class="ident">name_length_3</span>: <span class="ident">SQLSMALLINT</span>)
-                      <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLConnect</span>(
+        <span class="ident">connection_handle</span>: <span class="ident">SQLHDBC</span>,
+        <span class="ident">server_name</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">name_length_1</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">user_name</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">name_length_2</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">authentication</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">name_length_3</span>: <span class="ident">SQLSMALLINT</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// Returns the list of table, catalog, or schema names, and table types, stored in a specific</span>
     <span class="doccomment">/// data source. The driver returns the information as a result set</span>
@@ -747,31 +889,33 @@
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, `SQL_INVALID_HANDLE`, or</span>
     <span class="doccomment">/// `SQL_STILL_EXECUTING`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLTables</span>(<span class="ident">statement_handle</span>: <span class="ident">SQLHSTMT</span>,
-                     <span class="ident">catalog_name</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
-                     <span class="ident">name_length_1</span>: <span class="ident">SQLSMALLINT</span>,
-                     <span class="ident">schema_name</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
-                     <span class="ident">name_length_2</span>: <span class="ident">SQLSMALLINT</span>,
-                     <span class="ident">table_name</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
-                     <span class="ident">name_length_3</span>: <span class="ident">SQLSMALLINT</span>,
-                     <span class="ident">TableType</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
-                     <span class="ident">name_length_4</span>: <span class="ident">SQLSMALLINT</span>)
-                     <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLTables</span>(
+        <span class="ident">statement_handle</span>: <span class="ident">SQLHSTMT</span>,
+        <span class="ident">catalog_name</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">name_length_1</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">schema_name</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">name_length_2</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">table_name</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">name_length_3</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">TableType</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">name_length_4</span>: <span class="ident">SQLSMALLINT</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// Returns information about a data source. This function is implemented only by the Driver</span>
     <span class="doccomment">/// Manager.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, `SQL_INVALID_HANDLE`, or `SQL_NO_DATA`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLDataSources</span>(<span class="ident">environment_handle</span>: <span class="ident">SQLHENV</span>,
-                          <span class="ident">direction</span>: <span class="ident">FetchOrientation</span>,
-                          <span class="ident">server_name</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
-                          <span class="ident">buffer_length_1</span>: <span class="ident">SQLSMALLINT</span>,
-                          <span class="ident">name_length_1</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
-                          <span class="ident">description</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
-                          <span class="ident">buffer_length_2</span>: <span class="ident">SQLSMALLINT</span>,
-                          <span class="ident">name_length_2</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>)
-                          <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLDataSources</span>(
+        <span class="ident">environment_handle</span>: <span class="ident">SQLHENV</span>,
+        <span class="ident">direction</span>: <span class="ident">FetchOrientation</span>,
+        <span class="ident">server_name</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">buffer_length_1</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">name_length_1</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">description</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">buffer_length_2</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">name_length_2</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// An alternative to `SQLConnect`. It supports data sources that require more connection</span>
     <span class="doccomment">/// information than the three arguments in `SQLConnect`, dialog boxes to prompt the user for</span>
@@ -780,30 +924,32 @@
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, `SQL_INVALID_HANDLE`, `SQL_NO_DATA`,</span>
     <span class="doccomment">/// or `SQL_STILL_EXECUTING`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLDriverConnect</span>(<span class="ident">connection_handle</span>: <span class="ident">SQLHDBC</span>,
-                            <span class="ident">window_handle</span>: <span class="ident">SQLHWND</span>,
-                            <span class="ident">in_connection_string</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
-                            <span class="ident">string_length_1</span>: <span class="ident">SQLSMALLINT</span>,
-                            <span class="ident">out_connection_string</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
-                            <span class="ident">buffer_length</span>: <span class="ident">SQLSMALLINT</span>,
-                            <span class="ident">string_length_2</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
-                            <span class="ident">DriverCompletion</span>: <span class="ident">SqlDriverConnectOption</span>)
-                            <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLDriverConnect</span>(
+        <span class="ident">connection_handle</span>: <span class="ident">SQLHDBC</span>,
+        <span class="ident">window_handle</span>: <span class="ident">SQLHWND</span>,
+        <span class="ident">in_connection_string</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">string_length_1</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">out_connection_string</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">buffer_length</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">string_length_2</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">DriverCompletion</span>: <span class="ident">SqlDriverConnectOption</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// Lists driver descriptions and driver attribute keywords. This function is implemented only</span>
     <span class="doccomment">/// by the Driver Manager.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, `SQL_INVALID_HANDLE`, or `SQL_NO_DATA`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLDrivers</span>(<span class="ident">henv</span>: <span class="ident">SQLHENV</span>,
-                      <span class="ident">direction</span>: <span class="ident">FetchOrientation</span>,
-                      <span class="ident">driver_desc</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
-                      <span class="ident">driver_desc_max</span>: <span class="ident">SQLSMALLINT</span>,
-                      <span class="ident">out_driver_desc</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
-                      <span class="ident">driver_attributes</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
-                      <span class="ident">drvr_attr_max</span>: <span class="ident">SQLSMALLINT</span>,
-                      <span class="ident">out_drvr_attr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>)
-                      <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLDrivers</span>(
+        <span class="ident">henv</span>: <span class="ident">SQLHENV</span>,
+        <span class="ident">direction</span>: <span class="ident">FetchOrientation</span>,
+        <span class="ident">driver_desc</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">driver_desc_max</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">out_driver_desc</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">driver_attributes</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">drvr_attr_max</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">out_drvr_attr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// Closes a cursor that has been opened on a statement and discards pending results.</span>
     <span class="doccomment">///</span>
@@ -815,27 +961,29 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR` or `SQL_INVALID_HANDLE`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLBindParameter</span>(<span class="ident">hstmt</span>: <span class="ident">SQLHSTMT</span>,
-                            <span class="ident">parameter_number</span>: <span class="ident">SQLUSMALLINT</span>,
-                            <span class="ident">input_output_type</span>: <span class="ident">InputOutput</span>,
-                            <span class="ident">value_type</span>: <span class="ident">SqlCDataType</span>,
-                            <span class="ident">parmeter_type</span>: <span class="ident">SqlDataType</span>,
-                            <span class="ident">column_size</span>: <span class="ident">SQLULEN</span>,
-                            <span class="ident">decimal_digits</span>: <span class="ident">SQLSMALLINT</span>,
-                            <span class="ident">parameter_value_ptr</span>: <span class="ident">SQLPOINTER</span>,
-                            <span class="ident">buffer_length</span>: <span class="ident">SQLLEN</span>,
-                            <span class="ident">str_len_or_ind_ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLLEN</span>)
-                            <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLBindParameter</span>(
+        <span class="ident">hstmt</span>: <span class="ident">SQLHSTMT</span>,
+        <span class="ident">parameter_number</span>: <span class="ident">SQLUSMALLINT</span>,
+        <span class="ident">input_output_type</span>: <span class="ident">InputOutput</span>,
+        <span class="ident">value_type</span>: <span class="ident">SqlCDataType</span>,
+        <span class="ident">parmeter_type</span>: <span class="ident">SqlDataType</span>,
+        <span class="ident">column_size</span>: <span class="ident">SQLULEN</span>,
+        <span class="ident">decimal_digits</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">parameter_value_ptr</span>: <span class="ident">SQLPOINTER</span>,
+        <span class="ident">buffer_length</span>: <span class="ident">SQLLEN</span>,
+        <span class="ident">str_len_or_ind_ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLLEN</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// Compiles the statement and generates an access plan.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, `SQL_INVALID_HANDLE`, or</span>
     <span class="doccomment">/// `SQL_STILL_EXECUTING`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLPrepare</span>(<span class="ident">hstmt</span>: <span class="ident">SQLHSTMT</span>,
-                      <span class="ident">statement_text</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
-                      <span class="ident">text_length</span>: <span class="ident">SQLINTEGER</span>)
-                      <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLPrepare</span>(
+        <span class="ident">hstmt</span>: <span class="ident">SQLHSTMT</span>,
+        <span class="ident">statement_text</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">text_length</span>: <span class="ident">SQLINTEGER</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// Executes a prepared statement, using the current values of the parameter marker variables</span>
     <span class="doccomment">/// if any paramater markers exis in the statement.</span>
@@ -857,13 +1005,14 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, or `SQL_INVALID_HANDLE`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLBindCol</span>(<span class="ident">hstmt</span>: <span class="ident">SQLHSTMT</span>,
-                      <span class="ident">col_number</span>: <span class="ident">SQLUSMALLINT</span>,
-                      <span class="ident">target_type</span>: <span class="ident">SqlCDataType</span>,
-                      <span class="ident">target_value</span>: <span class="ident">SQLPOINTER</span>,
-                      <span class="ident">buffer_length</span>: <span class="ident">SQLLEN</span>,
-                      <span class="ident">length_or_indicatior</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLLEN</span>)
-                      <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLBindCol</span>(
+        <span class="ident">hstmt</span>: <span class="ident">SQLHSTMT</span>,
+        <span class="ident">col_number</span>: <span class="ident">SQLUSMALLINT</span>,
+        <span class="ident">target_type</span>: <span class="ident">SqlCDataType</span>,
+        <span class="ident">target_value</span>: <span class="ident">SQLPOINTER</span>,
+        <span class="ident">buffer_length</span>: <span class="ident">SQLLEN</span>,
+        <span class="ident">length_or_indicatior</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLLEN</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// Returns the result descriptor for one column in the result set — column name, type, column</span>
     <span class="doccomment">/// size, decimal digits, and nullability.</span>
@@ -873,16 +1022,49 @@
     <span class="doccomment">/// # Returns</span>
     <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_STILL_EXECUTING`, `SQL_ERROR`, or</span>
     <span class="doccomment">/// `SQL_INVALID_HANDLE`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLDescribeCol</span>(<span class="ident">hstmt</span>: <span class="ident">SQLHSTMT</span>,
-                          <span class="ident">col_number</span>: <span class="ident">SQLUSMALLINT</span>,
-                          <span class="ident">col_name</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
-                          <span class="ident">buffer_length</span>: <span class="ident">SQLSMALLINT</span>,
-                          <span class="ident">name_length</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
-                          <span class="ident">data_type</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SqlDataType</span>,
-                          <span class="ident">col_size</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLULEN</span>,
-                          <span class="ident">decimal_digits</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
-                          <span class="ident">nullable</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">Nullable</span>)
-                          <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLDescribeCol</span>(
+        <span class="ident">hstmt</span>: <span class="ident">SQLHSTMT</span>,
+        <span class="ident">col_number</span>: <span class="ident">SQLUSMALLINT</span>,
+        <span class="ident">col_name</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLCHAR</span>,
+        <span class="ident">buffer_length</span>: <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">name_length</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">data_type</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SqlDataType</span>,
+        <span class="ident">col_size</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLULEN</span>,
+        <span class="ident">decimal_digits</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLSMALLINT</span>,
+        <span class="ident">nullable</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">Nullable</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+
+    <span class="doccomment">/// Sets attributes related to a statement.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Returns</span>
+    <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, or `SQL_INVALID_HANDLE`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLSetStmtAttr</span>(
+        <span class="ident">hstmt</span>: <span class="ident">SQLHSTMT</span>,
+        <span class="ident">attr</span>: <span class="ident">SqlStatementAttribute</span>,
+        <span class="ident">value</span>: <span class="ident">SQLPOINTER</span>,
+        <span class="ident">str_length</span>: <span class="ident">SQLINTEGER</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+
+    <span class="doccomment">/// Sets attributes that govern aspects of connections.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Returns</span>
+    <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, `SQL_INVALID_HANDLE`, or `SQL_STILL_EXECUTING`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLSetConnectAttr</span>(
+        <span class="ident">hdbc</span>: <span class="ident">SQLHDBC</span>,
+        <span class="ident">attr</span>: <span class="ident">SqlConnectionAttribute</span>,
+        <span class="ident">value</span>: <span class="ident">SQLPOINTER</span>,
+        <span class="ident">str_length</span>: <span class="ident">SQLINTEGER</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+
+    <span class="doccomment">/// Requests a commit or rollback operation for all active operations on all statements associated with a handle.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Returns</span>
+    <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_ERROR`, `SQL_INVALID_HANDLE`, or `SQL_STILL_EXECUTING`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLEndTran</span>(
+        <span class="ident">handle_type</span>: <span class="ident">HandleType</span>,
+        <span class="ident">handle</span>: <span class="ident">SQLHANDLE</span>,
+        <span class="ident">completion_type</span>: <span class="ident">SqlCompletionType</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 }
 </pre>
 </section>

@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#1-420' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#1-511' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>ODBC types those representation is compatible with the ODBC C API.</p>
 
 <p>This layer has not been created using automatic code generation. It is incomplete, i.e. it does
@@ -59,7 +59,7 @@ power (all) and safety guarantess(none) as the wrapped C-API.
 ODBC 4.0 is still under development by Microsoft, so these symbols are deactivated by default
 in the cargo.toml</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
-<table><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.SqlCDataType.html" title="enum odbc_sys::SqlCDataType">SQL_C_ULONG</a> as SQL_C_BOOKMARK;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.FreeStmtOption.html" title="enum odbc_sys::FreeStmtOption">FreeStmtOption</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlDataType.html" title="enum odbc_sys::SqlDataType">SqlDataType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.HandleType.html" title="enum odbc_sys::HandleType">HandleType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlDriverConnectOption.html" title="enum odbc_sys::SqlDriverConnectOption">SqlDriverConnectOption</a>::*;</code></td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SQLRETURN.html" title="enum odbc_sys::SQLRETURN">SQLRETURN</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.InfoType.html" title="enum odbc_sys::InfoType">InfoType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.FetchOrientation.html" title="enum odbc_sys::FetchOrientation">FetchOrientation</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.EnvironmentAttribute.html" title="enum odbc_sys::EnvironmentAttribute">EnvironmentAttribute</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.OdbcVersion.html" title="enum odbc_sys::OdbcVersion">OdbcVersion</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlCDataType.html" title="enum odbc_sys::SqlCDataType">SqlCDataType</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.SqlCDataType.html" title="enum odbc_sys::SqlCDataType">SQL_C_ULONG</a> as SQL_C_BOOKMARK;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.InputOutput.html" title="enum odbc_sys::InputOutput">InputOutput</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.Nullable.html" title="enum odbc_sys::Nullable">Nullable</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.FreeStmtOption.html" title="enum odbc_sys::FreeStmtOption">FreeStmtOption</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlDataType.html" title="enum odbc_sys::SqlDataType">SqlDataType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.HandleType.html" title="enum odbc_sys::HandleType">HandleType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlDriverConnectOption.html" title="enum odbc_sys::SqlDriverConnectOption">SqlDriverConnectOption</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlStatementAttribute.html" title="enum odbc_sys::SqlStatementAttribute">SqlStatementAttribute</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlConnectionAttribute.html" title="enum odbc_sys::SqlConnectionAttribute">SqlConnectionAttribute</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlCompletionType.html" title="enum odbc_sys::SqlCompletionType">SqlCompletionType</a>::*;</code></td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class="enum" href="enum.Dbc.html"
@@ -154,6 +154,20 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SqlCompletionType.html"
+                                  title='enum odbc_sys::SqlCompletionType'>SqlCompletionType</a></td>
+                           <td class='docblock-short'>
+                                <p>Completion types for <code>SQLEndTrans</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SqlConnectionAttribute.html"
+                                  title='enum odbc_sys::SqlConnectionAttribute'>SqlConnectionAttribute</a></td>
+                           <td class='docblock-short'>
+                                <p>Connection attributes for <code>SQLSetConnectAttr</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class="enum" href="enum.SqlDataType.html"
                                   title='enum odbc_sys::SqlDataType'>SqlDataType</a></td>
                            <td class='docblock-short'>
@@ -165,6 +179,13 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                                   title='enum odbc_sys::SqlDriverConnectOption'>SqlDriverConnectOption</a></td>
                            <td class='docblock-short'>
                                 <p>Options for <code>SQLDriverConnect</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SqlStatementAttribute.html"
+                                  title='enum odbc_sys::SqlStatementAttribute'>SqlStatementAttribute</a></td>
+                           <td class='docblock-short'>
+                                <p>Statement attributes for <code>SQLSetStmtAttr</code></p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -296,6 +317,13 @@ by the Driver Manager.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLEndTran.html"
+                                  title='fn odbc_sys::SQLEndTran'>SQLEndTran</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Requests a commit or rollback operation for all active operations on all statements associated with a handle.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class="fn" href="fn.SQLExecDirect.html"
                                   title='fn odbc_sys::SQLExecDirect'>SQLExecDirect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
@@ -374,10 +402,24 @@ warning, and status information.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLSetConnectAttr.html"
+                                  title='fn odbc_sys::SQLSetConnectAttr'>SQLSetConnectAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Sets attributes that govern aspects of connections.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class="fn" href="fn.SQLSetEnvAttr.html"
                                   title='fn odbc_sys::SQLSetEnvAttr'>SQLSetEnvAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Sets attributes that govern aspects of environments</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLSetStmtAttr.html"
+                                  title='fn odbc_sys::SQLSetStmtAttr'>SQLSetStmtAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Sets attributes related to a statement.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
