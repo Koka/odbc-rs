@@ -9,6 +9,7 @@ If you're looking for raw ODBC FFI bindings check [odbc-sys](https://github.com/
 [![https://crates.io/crates/odbc](https://meritbadge.herokuapp.com/odbc#nocache8)](https://crates.io/crates/odbc)
 [![Coverage Status](https://coveralls.io/repos/github/Koka/odbc-rs/badge.svg)](https://coveralls.io/github/Koka/odbc-rs)
 [![Docs](https://docs.rs/odbc/badge.svg)](https://docs.rs/odbc)
+[![Join the chat at https://gitter.im/odbc-rs/odbc](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/odbc-rs/odbc)
 
 Docs are also available [here](http://koka.github.io/odbc-rs/odbc/)
 
