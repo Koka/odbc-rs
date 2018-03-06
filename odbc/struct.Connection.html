@@ -28,8 +28,9 @@
     
 
     <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Struct Connection</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>odbc</a></p><script>window.sidebarCurrent = {name: 'Connection', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct Connection</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.is_read_only">is_read_only</a><a href="#method.disconnect">disconnect</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Handle">Handle</a></div></div><p class='location'><a href='index.html'>odbc</a></p><script>window.sidebarCurrent = {name: 'Connection', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <nav class="sub">
@@ -62,7 +63,7 @@
 the driver that enables access to the data source. A driver that is read/write can be used
 with a data source that is read-only. If a driver is read-only, all of its data sources
 must be read-only.</p>
-</div><h4 id='method.disconnect' class="method"><span id='disconnect.v' class='invisible'><code>pub fn <a href='#method.disconnect' class='fnname'>disconnect</a>(self) -&gt; <a class="type" href="../odbc/type.Result.html" title="type odbc::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/connection.rs.html#62-65' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.disconnect' class="method"><span id='disconnect.v' class='invisible'><code>pub fn <a href='#method.disconnect' class='fnname'>disconnect</a>(self) -&gt; <a class="type" href="../odbc/type.Result.html" title="type odbc::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/connection.rs.html#62-65' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Closes the connection to the data source. If not called explicitly the disconnect will be
 invoked implicitly by <code>drop()</code></p>
 </div></div>
@@ -97,13 +98,15 @@ invoked implicitly by <code>drop()</code></p>
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

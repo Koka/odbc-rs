@@ -28,8 +28,9 @@
     
 
     <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Struct Statement</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>odbc_safe</a></p><script>window.sidebarCurrent = {name: 'Statement', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct Statement</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.as_raw">as_raw</a><a href="#method.bind_input_parameter">bind_input_parameter</a><a href="#method.bind_col">bind_col</a><a href="#method.reset_parameters">reset_parameters</a><a href="#method.reset_columns">reset_columns</a><a href="#method.num_result_cols">num_result_cols</a><a href="#method.fetch">fetch</a><a href="#method.close_cursor">close_cursor</a><a href="#method.describe_col">describe_col</a><a href="#method.with_parent">with_parent</a><a href="#method.prepare">prepare</a><a href="#method.exec_direct">exec_direct</a><a href="#method.describe_col">describe_col</a><a href="#method.execute">execute</a><a href="#method.get_data">get_data</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-Diagnostics">Diagnostics</a></div></div><p class='location'><a href='index.html'>odbc_safe</a></p><script>window.sidebarCurrent = {name: 'Statement', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <nav class="sub">
@@ -162,7 +163,7 @@ See <a href="https://docs.microsoft.com/sql/odbc/reference/develop-app/prepared-
             </h2>
         <h3 id='impl-Debug' class='impl'><span class='in-band'><code>impl&lt;'con, 'param, 'col, C:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a>, A:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a>&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../odbc_safe/struct.Statement.html" title="struct odbc_safe::Statement">Statement</a>&lt;'con, 'param, 'col, C, A&gt;</code><a href='#impl-Debug' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc_safe/statement.rs.html#26' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc_safe/statement.rs.html#26' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Formats the value using the given formatter.</p>
+<div class='docblock'><p>Formats the value using the given formatter. <a href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt">Read more</a></p>
 </div></div><h3 id='impl-Diagnostics' class='impl'><span class='in-band'><code>impl&lt;'con, 'param, 'col, C&gt; <a class="trait" href="../odbc_safe/trait.Diagnostics.html" title="trait odbc_safe::Diagnostics">Diagnostics</a> for <a class="struct" href="../odbc_safe/struct.Statement.html" title="struct odbc_safe::Statement">Statement</a>&lt;'con, 'param, 'col, C&gt;</code><a href='#impl-Diagnostics' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc_safe/statement.rs.html#376-384' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.diagnostics' class="method"><span id='diagnostics.v' class='invisible'><code>fn <a href='../odbc_safe/trait.Diagnostics.html#tymethod.diagnostics' class='fnname'>diagnostics</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;rec_number: <a class="type" href="../odbc_sys/type.SQLSMALLINT.html" title="type odbc_sys::SQLSMALLINT">SQLSMALLINT</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;message_text: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;mut [</a><a class="type" href="../odbc_sys/type.SQLCHAR.html" title="type odbc_sys::SQLCHAR">SQLCHAR</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a><br>) -&gt; <a class="enum" href="../odbc_safe/enum.ReturnOption.html" title="enum odbc_safe::ReturnOption">ReturnOption</a>&lt;<a class="struct" href="../odbc_safe/struct.DiagResult.html" title="struct odbc_safe::DiagResult">DiagResult</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc_safe/statement.rs.html#377-383' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns the current values of multiple fields of a diagnostic record that contains error,  warning, and status information. <a href="../odbc_safe/trait.Diagnostics.html#tymethod.diagnostics">Read more</a></p>
@@ -183,13 +184,15 @@ See <a href="https://docs.microsoft.com/sql/odbc/reference/develop-app/prepared-
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

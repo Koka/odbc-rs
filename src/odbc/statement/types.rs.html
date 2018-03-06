@@ -28,6 +28,7 @@
     
 
     <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
         
         
     </nav>
@@ -307,11 +308,76 @@
 <span id="262">262</span>
 <span id="263">263</span>
 <span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="ident">ffi</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">from_utf8</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">slice</span>::<span class="ident">from_raw_parts</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">size_of</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ffi</span>::<span class="ident">CString</span>;
 
 <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">trait</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>: <span class="ident">Sized</span> {
     <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span>;
@@ -321,6 +387,69 @@
     <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>;
     <span class="kw">fn</span> <span class="ident">decimal_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span> {
         <span class="number">0</span>
+    }
+}
+
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span>[<span class="ident">u8</span>] {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+        <span class="ident">ffi</span>::<span class="ident">SQL_EXT_VARBINARY</span>
+    }
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+        <span class="ident">ffi</span>::<span class="ident">SQL_C_BINARY</span>
+    }
+
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="ident">buffer</span>
+    }
+
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+        <span class="self">self</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
+    }
+
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+        <span class="self">self</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
+    }
+}
+
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+        <span class="ident">ffi</span>::<span class="ident">SQL_EXT_VARBINARY</span>
+    }
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+        <span class="ident">ffi</span>::<span class="ident">SQL_C_BINARY</span>
+    }
+
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="ident">buffer</span>.<span class="ident">to_vec</span>()
+    }
+
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+        <span class="self">self</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
+    }
+
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+        <span class="self">self</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
+    }
+}
+
+<span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CString</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+        <span class="ident">ffi</span>::<span class="ident">SQL_VARCHAR</span>
+    }
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+        <span class="ident">ffi</span>::<span class="ident">SQL_C_CHAR</span>
+    }
+
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="ident">CString</span>::<span class="ident">new</span>(<span class="ident">buffer</span>).<span class="ident">unwrap</span>()
+    }
+
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+        <span class="self">self</span>.<span class="ident">as_bytes</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
+    }
+
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+        <span class="self">self</span>.<span class="ident">as_bytes</span>().<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
 }
 
@@ -590,13 +719,15 @@
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

@@ -28,8 +28,9 @@
     
 
     <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Trait CDataType</p><div class="block items"><ul><li><a href="#required-methods">Required Methods</a></li><li><a href="#foreign-impls">Implementations on Foreign Types</a></li><li><a href="#implementors">Implementors</a></li></ul></div><p class='location'><a href='index.html'>odbc_safe</a></p><script>window.sidebarCurrent = {name: 'CDataType', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Trait CDataType</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#required-methods">Required Methods</a><div class="sidebar-links"><a href="#tymethod.c_data_type">c_data_type</a><a href="#tymethod.sql_ptr">sql_ptr</a><a href="#tymethod.mut_sql_ptr">mut_sql_ptr</a><a href="#tymethod.buffer_len">buffer_len</a></div><a class="sidebar-title" href="#foreign-impls">Implementations on Foreign Types</a><div class="sidebar-links"><a href="#impl-CDataType">[SQLCHAR]</a><a href="#impl-CDataType">SQLSMALLINT</a><a href="#impl-CDataType">SQLUSMALLINT</a><a href="#impl-CDataType">SQLINTEGER</a><a href="#impl-CDataType">SQLUINTEGER</a><a href="#impl-CDataType">f32</a><a href="#impl-CDataType">f64</a><a href="#impl-CDataType">i8</a><a href="#impl-CDataType">SQLCHAR</a><a href="#impl-CDataType">i64</a><a href="#impl-CDataType">u64</a></div><a class="sidebar-title" href="#implementors">Implementors</a></div><p class='location'><a href='index.html'>odbc_safe</a></p><script>window.sidebarCurrent = {name: 'CDataType', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <nav class="sub">
@@ -65,7 +66,7 @@
 </div><h3 id='tymethod.mut_sql_ptr' class='method'><span id='mut_sql_ptr.v' class='invisible'><code>fn <a href='#tymethod.mut_sql_ptr' class='fnname'>mut_sql_ptr</a>(&amp;mut self) -&gt; <a class="type" href="../odbc_sys/type.SQLPOINTER.html" title="type odbc_sys::SQLPOINTER">SQLPOINTER</a></code></span></h3><div class='docblock'><p>Pointer to the buffer in which should be filled with data.</p>
 </div><h3 id='tymethod.buffer_len' class='method'><span id='buffer_len.v' class='invisible'><code>fn <a href='#tymethod.buffer_len' class='fnname'>buffer_len</a>(&amp;self) -&gt; <a class="type" href="../odbc_sys/type.SQLLEN.html" title="type odbc_sys::SQLLEN">SQLLEN</a></code></span></h3><div class='docblock'><p>Length of the buffer returned by <code>mut_sql_ptr()</code> in bytes.</p>
 </div></div>
-                <h2 id='foreign-impls' class='section-header'>
+                <h2 id='foreign-impls' class='small-section-header'>
                   Implementations on Foreign Types<a href='#foreign-impls' class='anchor'></a>
                 </h2>
             <h3 id='impl-CDataType' class='impl'><span class='in-band'><code>impl <a class="trait" href="../odbc_safe/trait.CDataType.html" title="trait odbc_safe::CDataType">CDataType</a> for <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">[</a><a class="type" href="../odbc_sys/type.SQLCHAR.html" title="type odbc_sys::SQLCHAR">SQLCHAR</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a></code><a href='#impl-CDataType' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc_safe/c_data_type.rs.html#20-44' title='goto source code'>[src]</a></span></h3>
@@ -147,13 +148,15 @@
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

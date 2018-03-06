@@ -28,8 +28,9 @@
     
 
     <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Struct Statement</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>odbc</a></p><script>window.sidebarCurrent = {name: 'Statement', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct Statement</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.bind_parameter">bind_parameter</a><a href="#method.reset_parameters">reset_parameters</a><a href="#method.prepare">prepare</a><a href="#method.num_result_cols">num_result_cols</a><a href="#method.describe_col">describe_col</a><a href="#method.execute">execute</a><a href="#method.with_parent">with_parent</a><a href="#method.tables">tables</a><a href="#method.exec_direct">exec_direct</a><a href="#method.num_result_cols">num_result_cols</a><a href="#method.describe_col">describe_col</a><a href="#method.fetch">fetch</a><a href="#method.close_cursor">close_cursor</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Handle">Handle</a></div></div><p class='location'><a href='index.html'>odbc</a></p><script>window.sidebarCurrent = {name: 'Statement', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <nav class="sub">
@@ -55,7 +56,7 @@
                       Methods<a href='#methods' class='anchor'></a>
                     </h2>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl&lt;'a, 'b, S, R&gt; <a class="struct" href="../odbc/struct.Statement.html" title="struct odbc::Statement">Statement</a>&lt;'a, 'b, S, R&gt;</code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/statement/input.rs.html#4-54' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.bind_parameter' class="method"><span id='bind_parameter.v' class='invisible'><code>pub fn <a href='#method.bind_parameter' class='fnname'>bind_parameter</a>&lt;'c, T:&nbsp;?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;parameter_index: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;value: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;'c </a>T<br>) -&gt; <a class="type" href="../odbc/type.Result.html" title="type odbc::Result">Result</a>&lt;<a class="struct" href="../odbc/struct.Statement.html" title="struct odbc::Statement">Statement</a>&lt;'a, 'c, S, R&gt;&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="../odbc/trait.OdbcType.html" title="trait odbc::OdbcType">OdbcType</a>&lt;'c&gt;,<br>&nbsp;&nbsp;&nbsp;&nbsp;T: ,<br>&nbsp;&nbsp;&nbsp;&nbsp;'b: 'c,&nbsp;</span></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/statement/input.rs.html#32-46' title='goto source code'>[src]</a></span></h4>
+<div class='impl-items'><h4 id='method.bind_parameter' class="method"><span id='bind_parameter.v' class='invisible'><code>pub fn <a href='#method.bind_parameter' class='fnname'>bind_parameter</a>&lt;'c, T&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;parameter_index: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;value: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;'c </a>T<br>) -&gt; <a class="type" href="../odbc/type.Result.html" title="type odbc::Result">Result</a>&lt;<a class="struct" href="../odbc/struct.Statement.html" title="struct odbc::Statement">Statement</a>&lt;'a, 'c, S, R&gt;&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="../odbc/trait.OdbcType.html" title="trait odbc::OdbcType">OdbcType</a>&lt;'c&gt;,<br>&nbsp;&nbsp;&nbsp;&nbsp;T: ?<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html" title="trait core::marker::Sized">Sized</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;'b: 'c,&nbsp;</span></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc/statement/input.rs.html#32-46' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Binds a parameter to a parameter marker in an SQL statement.</p>
 
 <h1 id='result' class='section-header'><a href='#result'>Result</a></h1>
@@ -196,13 +197,15 @@ query, or if you do no not intend to read it.</p>
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
