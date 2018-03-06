@@ -31,32 +31,29 @@ fn main() {
 
 fn connect() -> std::result::Result<(), DiagnosticRecord> {
 
-    let env = create_environment_v3().map_err(|e|
-        e.expect("Failed to allocate ODBC Environment")
-    )?;
-    let conn = DataSource::with_parent(&env3)?;
+    let env = create_environment_v3().map_err(|e| e.unwrap())?;
 
     let mut buffer = String::new();
     println!("Please enter connection string: ");
     io::stdin().read_line(&mut buffer).unwrap();
 
-    let mut conn = conn.connect_with_connection_string(&buffer)?;
-    execute_statement(&mut conn)
+    let conn = env.connect_with_connection_string(&buffer)?;
+    execute_statement(&conn)
 }
 
-fn execute_statement(mut conn: &mut DataSource<Connected>) -> Result<()> {
-    let stmt = Statement::with_parent(&mut conn)?;
+fn execute_statement<'env>(conn: &Connection<'env>) -> Result<()> {
+    let stmt = Statement::with_parent(conn)?;
 
     let mut sql_text = String::new();
     println!("Please enter SQL statement string: ");
     io::stdin().read_line(&mut sql_text).unwrap();
 
-    match stmt.exec_direct(&sql_text)?{
-        Data(mut stmt) =>{
+    match stmt.exec_direct(&sql_text)? {
+        Data(mut stmt) => {
             let cols = stmt.num_result_cols()?;
             while let Some(mut cursor) = stmt.fetch()? {
                 for i in 1..(cols + 1) {
-                    match cursor.get_data::<String>(i as u16)? {
+                    match cursor.get_data::<&str>(i as u16)? {
                         Some(val) => print!(" {}", val),
                         None => print!(" NULL"),
                     }
@@ -64,9 +61,10 @@ fn execute_statement(mut conn: &mut DataSource<Connected>) -> Result<()> {
                 println!("");
             }
         }
-        NoData(_) => println!("Query executed, no data returned")
+        NoData(_) => println!("Query executed, no data returned"),
     }
 
     Ok(())
 }
+
 ```
