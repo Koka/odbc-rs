@@ -1,7 +1,7 @@
 //! Contains test for all types supporting `get_data`
 //!
-//! These tests assume there is a Stage table with a Varchar in 'A', an Integer in 'B' and a Real
-//! in 'C'
+//! These tests assume there is a Stage table with a Varchar in 'A', an Integer in 'B', a Real
+//! in 'C' and empty string in 'D'
 extern crate odbc;
 use odbc::*;
 use std::ffi::CString;
@@ -9,6 +9,7 @@ use std::ffi::CString;
 const A: &'static str = "SELECT A FROM TEST_TYPES;";
 const B: &'static str = "SELECT B FROM TEST_TYPES;";
 const C: &'static str = "SELECT C FROM TEST_TYPES;";
+const D: &'static str = "SELECT '' FROM TEST_TYPES;";
 
 macro_rules! test_type {
     ($t:ty, $c:expr, $e:expr) => ({
@@ -104,4 +105,14 @@ fn _f32() {
 #[test]
 fn _f64() {
     test_type!(f64, C, 3.14)
+}
+
+#[test]
+fn _u8vector() {
+    test_type!(Vec<u8>, A, String::from("Hello, World!").into_bytes())
+}
+
+#[test]
+fn _u8vector_empty() {
+    test_type!(Vec<u8>, D, Vec::<u8>::new())
 }

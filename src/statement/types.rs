@@ -326,3 +326,25 @@ unsafe impl<'a> OdbcType<'a> for f64 {
         self as *const Self as ffi::SQLPOINTER
     }
 }
+
+unsafe impl<'a> OdbcType<'a> for Vec<u8> {
+    fn sql_data_type() -> ffi::SqlDataType { ffi::SQL_EXT_VARBINARY }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_BINARY
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        buffer.to_vec()
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        ::std::cmp::min(self.len(), ffi::SQLULEN::max_value() as usize) as ffi::SQLULEN
+    }
+
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        match self.len() {
+            0 => ::std::ptr::null_mut() as ffi::SQLPOINTER,
+            _ => self.as_ptr() as *const Self as ffi::SQLPOINTER,
+        }
+    }
+}
