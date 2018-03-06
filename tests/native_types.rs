@@ -4,6 +4,7 @@
 //! in 'C'
 extern crate odbc;
 use odbc::*;
+use std::ffi::CString;
 
 const A: &'static str = "SELECT A FROM TEST_TYPES;";
 const B: &'static str = "SELECT B FROM TEST_TYPES;";
@@ -35,6 +36,24 @@ fn _ref_str() {
 #[test]
 fn _string() {
     test_type!(String, A, String::from("Hello, World!"))
+}
+
+#[test]
+fn _c_string() {
+    let buf = "Hello, World!".as_bytes();
+    test_type!(CString, A, CString::new(buf).unwrap())
+}
+
+#[test]
+fn _slice() {
+    let buf = "Hello, World!".as_bytes();
+    test_type!(&[u8], A, buf)
+}
+
+#[test]
+fn _vec() {
+    let buf = "Hello, World!".as_bytes().to_vec();
+    test_type!(Vec<u8>, A, buf)
 }
 
 #[test]

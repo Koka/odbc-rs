@@ -2,6 +2,7 @@ use ffi;
 use std::str::from_utf8;
 use std::slice::from_raw_parts;
 use std::mem::size_of;
+use std::ffi::CString;
 
 pub unsafe trait OdbcType<'a>: Sized {
     fn sql_data_type() -> ffi::SqlDataType;
@@ -11,6 +12,69 @@ pub unsafe trait OdbcType<'a>: Sized {
     fn value_ptr(&self) -> ffi::SQLPOINTER;
     fn decimal_digits(&self) -> ffi::SQLSMALLINT {
         0
+    }
+}
+
+unsafe impl<'a> OdbcType<'a> for &'a[u8] {
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_EXT_VARBINARY
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_BINARY
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        buffer
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        self.len() as ffi::SQLULEN
+    }
+
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self.as_ptr() as *const Self as ffi::SQLPOINTER
+    }
+}
+
+unsafe impl<'a> OdbcType<'a> for Vec<u8> {
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_EXT_VARBINARY
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_BINARY
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        buffer.to_vec()
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        self.len() as ffi::SQLULEN
+    }
+
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self.as_ptr() as *const Self as ffi::SQLPOINTER
+    }
+}
+
+unsafe impl<'a> OdbcType<'a> for CString {
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_VARCHAR
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_CHAR
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        CString::new(buffer).unwrap()
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        self.as_bytes().len() as ffi::SQLULEN
+    }
+
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self.as_bytes().as_ptr() as *const Self as ffi::SQLPOINTER
     }
 }
 

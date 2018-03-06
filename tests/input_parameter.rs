@@ -4,6 +4,7 @@
 //! in 'C'
 extern crate odbc;
 use odbc::*;
+use std::ffi::CString;
 
 const A: &'static str = "SELECT A FROM TEST_TYPES WHERE A = ?;";
 const B: &'static str = "SELECT B FROM TEST_TYPES WHERE B = ?;";
@@ -29,6 +30,22 @@ macro_rules! test_type {
 }
 
 #[test]
+#[ignore]
+fn _slice() {
+    //TODO: ignored due to weird SQLite VARBINARY handling, may be it works in other DBs
+    let param = "Hello, World!".as_bytes();
+    test_type!(A, &param)
+}
+
+#[test]
+#[ignore]
+fn _vec() {
+    //TODO: ignored due to weird SQLite VARBINARY handling, may be it works in other DBs
+    let param = "Hello, World!".as_bytes().to_vec();
+    test_type!(A, &param)
+}
+
+#[test]
 fn _ref_str() {
     let param = "Hello, World!";
     test_type!(A, &param)
@@ -37,6 +54,13 @@ fn _ref_str() {
 #[test]
 fn _string() {
     let param = String::from("Hello, World!");
+    test_type!(A, &param)
+}
+
+#[test]
+fn _c_string() {
+    let buf = "Hello, World!".as_bytes();
+    let param = CString::new(buf).unwrap();
     test_type!(A, &param)
 }
 
