@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-safe-0.4.0/src/diagnostics.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-safe-0.4.1/src/diagnostics.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>diagnostics.rs.html -- source</title>
@@ -150,27 +150,9 @@
 <span id="104">104</span>
 <span id="105">105</span>
 <span id="106">106</span>
-<span id="107">107</span>
-<span id="108">108</span>
-<span id="109">109</span>
-<span id="110">110</span>
-<span id="111">111</span>
-<span id="112">112</span>
-<span id="113">113</span>
-<span id="114">114</span>
-<span id="115">115</span>
-<span id="116">116</span>
-<span id="117">117</span>
-<span id="118">118</span>
-<span id="119">119</span>
-<span id="120">120</span>
-<span id="121">121</span>
-<span id="122">122</span>
-<span id="123">123</span>
-<span id="124">124</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">odbc_sys</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">sys</span>::<span class="kw-2">*</span>;
 <span class="doccomment">/// A buffer large enough to hold an `SOLState` for diagnostics and a terminating zero.</span>
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">State</span> <span class="op">=</span> [<span class="ident">SQLCHAR</span>; <span class="ident">SQL_SQLSTATE_SIZE</span> <span class="op">+</span> <span class="number">1</span>];
 
@@ -188,24 +170,6 @@
     <span class="doccomment">/// `message_text`.</span>
     <span class="kw">pub</span> <span class="ident">text_length</span>: <span class="ident">SQLSMALLINT</span>,
 }
-
-<span class="comment">// /// Returned by `Diagnostics::diagnostics`</span>
-<span class="comment">// #[derive(Debug, Clone, Copy)]</span>
-<span class="comment">// pub enum DiagReturn {</span>
-<span class="comment">//     /// The function successfully returned diagnostic information.</span>
-<span class="comment">//     Success(DiagResult),</span>
-<span class="comment">//     /// The `message_text` buffer was too small to hold the requested diagnostic message. No</span>
-<span class="comment">//     /// diagnostic records were generated. To determine that a truncation occurred, the application</span>
-<span class="comment">//     /// must compare the buffer length to the actual number of bytes available, which is found in</span>
-<span class="comment">//     /// `DiagResult::text_length`</span>
-<span class="comment">//     Info(DiagResult),</span>
-<span class="comment">//     /// `rec_number` was negative or `0`.</span>
-<span class="comment">//     Error,</span>
-<span class="comment">//     /// `rec_number` was greater than the number of diagnostic records that existed for the handle</span>
-<span class="comment">//     /// specified in Handle. The function also returns `NoData` for any positive `rec_number` if</span>
-<span class="comment">//     /// there are no diagnostic records available.</span>
-<span class="comment">//     NoData,</span>
-<span class="comment">// }</span>
 
 <span class="doccomment">/// A type implementing this trait is able to provide diagnostic information regarding the last</span>
 <span class="doccomment">/// method call.</span>

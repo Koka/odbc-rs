@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-safe-0.4.0/src/lib.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-safe-0.4.1/src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
@@ -113,7 +113,7 @@
         <span class="ident">trivial_numeric_casts</span>, <span class="ident">unused_import_braces</span>, <span class="ident">unused_qualifications</span>
 )]</span>
 
-<span class="kw">pub</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">odbc_sys</span>;
+<span class="kw">pub</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">odbc_sys</span> <span class="kw">as</span> <span class="ident">sys</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">c_data_type</span>::<span class="ident">CDataType</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">data_source</span>::{<span class="ident">HDbcWrapper</span>, <span class="ident">DataSource</span>, <span class="ident">Unconnected</span>, <span class="ident">Connected</span>};

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-safe-0.4.0/src/statement.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-safe-0.4.1/src/statement.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>statement.rs.html -- source</title>
@@ -427,10 +427,9 @@
 <span id="381">381</span>
 <span id="382">382</span>
 <span id="383">383</span>
-<span id="384">384</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">odbc_sys</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">sys</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
 
 <span class="doccomment">/// A `Statement` is most easily thought of as an SQL statement, such as</span>
@@ -740,7 +739,6 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;con</span>, <span class="lifetime">&#39;param</span>, <span class="lifetime">&#39;col</span><span class="op">&gt;</span> <span class="ident">Statement</span><span class="op">&lt;</span><span class="lifetime">&#39;con</span>, <span class="lifetime">&#39;param</span>, <span class="lifetime">&#39;col</span>, <span class="ident">NoCursor</span>, <span class="ident">Prepared</span><span class="op">&gt;</span> {
-
     <span class="doccomment">/// Return information about result set column</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// See [SQLDescribeCol Function][1]</span>
@@ -812,7 +810,8 @@
     ) <span class="op">-&gt;</span> <span class="ident">ReturnOption</span><span class="op">&lt;</span><span class="ident">DiagResult</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">handle</span>.<span class="ident">diagnostics</span>(<span class="ident">rec_number</span>, <span class="ident">message_text</span>)
     }
-}</pre>
+}
+</pre>
 </section>
     <section id='search' class="content hidden"></section>
 

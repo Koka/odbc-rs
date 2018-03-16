@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-safe-0.4.0/src/handles/mod.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-safe-0.4.1/src/handles/mod.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>mod.rs.html -- source</title>
@@ -94,7 +94,7 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">henv</span>::<span class="ident">HEnv</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">hstmt</span>::<span class="ident">HStmt</span>;
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">CDataType</span>, <span class="ident">DataType</span>, <span class="ident">Indicator</span>, <span class="ident">OutputBuffer</span>, <span class="ident">Return</span>, <span class="ident">ReturnOption</span>, <span class="ident">SqlStr</span>};
-<span class="kw">use</span> <span class="ident">odbc_sys</span>::{<span class="ident">HandleType</span>, <span class="ident">SQLHANDLE</span>};
+<span class="kw">use</span> <span class="ident">sys</span>::{<span class="ident">HandleType</span>, <span class="ident">SQLHANDLE</span>};
 
 <span class="kw">mod</span> <span class="ident">henv</span>;
 <span class="kw">mod</span> <span class="ident">hdbc</span>;

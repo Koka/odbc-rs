@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.5.4/src/lib.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.6.0/src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
@@ -555,6 +555,16 @@
 <span id="509">509</span>
 <span id="510">510</span>
 <span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! ODBC types those representation is compatible with the ODBC C API.</span>
 <span class="doccomment">//!</span>
@@ -676,6 +686,13 @@
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span> <span class="ident">SQL_ARRAY</span> <span class="op">=</span> <span class="number">50</span>,
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span> <span class="ident">SQL_MULTISET</span> <span class="op">=</span> <span class="number">55</span>,
 
+    <span class="comment">// one-parameter shortcuts for date/time data types</span>
+    <span class="ident">SQL_DATE</span> <span class="op">=</span> <span class="number">91</span>,
+    <span class="ident">SQL_TIME</span> <span class="op">=</span> <span class="number">92</span>,
+    <span class="ident">SQL_TIMESTAMP</span> <span class="op">=</span> <span class="number">93</span>,
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span> <span class="ident">SQL_TIME_WITH_TIMEZONE</span> <span class="op">=</span> <span class="number">94</span>,
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_4&quot;</span>)]</span> <span class="ident">SQL_TIMESTAMP_WITH_TIMEZONE</span> <span class="op">=</span> <span class="number">95</span>,
+
     <span class="comment">//SQL extended datatypes:</span>
     <span class="ident">SQL_EXT_LONGVARCHAR</span> <span class="op">=</span> <span class="op">-</span><span class="number">1</span>,
     <span class="ident">SQL_EXT_BINARY</span> <span class="op">=</span> <span class="op">-</span><span class="number">2</span>,
@@ -684,6 +701,9 @@
     <span class="ident">SQL_EXT_BIGINT</span> <span class="op">=</span> <span class="op">-</span><span class="number">5</span>,
     <span class="ident">SQL_EXT_TINYINT</span> <span class="op">=</span> <span class="op">-</span><span class="number">6</span>,
     <span class="ident">SQL_EXT_BIT</span> <span class="op">=</span> <span class="op">-</span><span class="number">7</span>,
+    <span class="ident">SQL_EXT_WCHAR</span> <span class="op">=</span> <span class="op">-</span><span class="number">8</span>,
+    <span class="ident">SQL_EXT_WVARCHAR</span> <span class="op">=</span> <span class="op">-</span><span class="number">9</span>,
+    <span class="ident">SQL_EXT_WLONGVARCHAR</span> <span class="op">=</span> <span class="op">-</span><span class="number">10</span>,
     <span class="ident">SQL_EXT_GUID</span> <span class="op">=</span> <span class="op">-</span><span class="number">11</span>,
 }
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">SqlDataType</span>::<span class="kw-2">*</span>;
