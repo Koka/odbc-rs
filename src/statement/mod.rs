@@ -46,6 +46,7 @@ pub struct Statement<'con, 'b, S, R> {
     // Indicates wether there is an open result set or not associated with this statement.
     result: PhantomData<R>,
     parameters: PhantomData<&'b [u8]>,
+    param_ind_buffers: Vec<ffi::SQLLEN>,
 }
 
 /// Used to retrieve data from the fields of a query result
@@ -78,6 +79,7 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
             state: PhantomData,
             result: PhantomData,
             parameters: PhantomData,
+            param_ind_buffers: vec![]
         }
     }
 }
