@@ -20,6 +20,8 @@ fn test_me() -> std::result::Result<(), DiagnosticRecord> {
 
     let stmt = stmt.bind_parameter(1, &param)?;
     let stmt = stmt.bind_parameter(2, &param)?;
+    let stmt = stmt.bind_parameter(3, &param)?;
+    let stmt = stmt.bind_parameter(4, &param)?;
 
     let stmt = if let Data(mut stmt) = stmt.execute()? {
         if let Some(mut cursor) = stmt.fetch()? {
