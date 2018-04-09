@@ -10,8 +10,11 @@
     <title>odbc_safe - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -30,9 +33,16 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Crate odbc_safe</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Reexports</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'odbc_safe', ty: 'mod', relpath: '../'};</script></div>
+        <p class='location'>Crate odbc_safe</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'odbc_safe', ty: 'mod', relpath: '../'};</script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -51,25 +61,25 @@
                    </a>
                </span><a class='srclink' href='../src/odbc_safe/lib.rs.html#1-53' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>A crate for writing odbc clients in safe Rust</p>
-
 <p>This crate is only concerned about providing safe bindings to ODBC. It does not try to provide
 convinience or idiomatic usage on top. This is left to higher level crates.</p>
-
-<h1 id='desgin-decisions' class='section-header'><a href='#desgin-decisions'>Desgin decisions:</a></h1>
+<h1 id="desgin-decisions" class="section-header"><a href="#desgin-decisions">Desgin decisions:</a></h1>
 <ul>
 <li>Constructing a child is not considered to mutate the parent. This is necessare so a parent
 handle can be referenced by several child handles.</li>
 <li>Any transition in the ODBC State machine is modelled in the type system. This prevents
-Function Sequence errors. See <a href="https://docs.microsoft.com/sql/odbc/reference/appendixes/appendix-b-odbc-state-transition-tables">ODBC State Transition Tables</a></li>
+Function Sequence errors. See [ODBC State Transition Tables][1]
+[1]: https://docs.microsoft.com/sql/odbc/reference/appendixes/appendix-b-odbc-state-transition-tables</li>
 </ul>
-</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
 <table><tr><td><code>pub extern crate <a class="mod" href="../odbc_sys/index.html" title="mod odbc_sys">odbc_sys</a> as sys;</code></td></tr><tr><td><code>pub use return_::<a class="enum" href="../odbc_safe/enum.Return.html" title="enum odbc_safe::Return">Success</a>;</code></td></tr><tr><td><code>pub use return_::<a class="enum" href="../odbc_safe/enum.Return.html" title="enum odbc_safe::Return">Info</a>;</code></td></tr><tr><td><code>pub use return_::<a class="enum" href="../odbc_safe/enum.Return.html" title="enum odbc_safe::Return">Error</a>;</code></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class="struct" href="struct.Connected.html"
                                   title='struct odbc_safe::Connected'>Connected</a></td>
                            <td class='docblock-short'>
-                                <p>An <code>HDbc</code> with the additional invariant of being &#39;connected&#39;.</p>
+                                <p>An <code>HDbc</code> with the additional invariant of being 'connected'.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -77,6 +87,7 @@ Function Sequence errors. See <a href="https://docs.microsoft.com/sql/odbc/refer
                                   title='struct odbc_safe::DataSource'>DataSource</a></td>
                            <td class='docblock-short'>
                                 <p>A <code>DataSource</code> is used to query and manipulate a data source.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -84,6 +95,7 @@ Function Sequence errors. See <a href="https://docs.microsoft.com/sql/odbc/refer
                                   title='struct odbc_safe::DiagResult'>DiagResult</a></td>
                            <td class='docblock-short'>
                                 <p>Result of <code>Diagnostics::diagnostics</code></p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -91,6 +103,7 @@ Function Sequence errors. See <a href="https://docs.microsoft.com/sql/odbc/refer
                                   title='struct odbc_safe::Environment'>Environment</a></td>
                            <td class='docblock-short'>
                                 <p>An <code>Environment</code> is a global context, in which to access data.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -98,6 +111,7 @@ Function Sequence errors. See <a href="https://docs.microsoft.com/sql/odbc/refer
                                   title='struct odbc_safe::NoVersion'>NoVersion</a></td>
                            <td class='docblock-short'>
                                 <p>Used to indicate that the ODBC environments version is not yet declared</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -105,6 +119,7 @@ Function Sequence errors. See <a href="https://docs.microsoft.com/sql/odbc/refer
                                   title='struct odbc_safe::Odbc3'>Odbc3</a></td>
                            <td class='docblock-short'>
                                 <p>Used to declare ODBC 3 specifications.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -112,6 +127,7 @@ Function Sequence errors. See <a href="https://docs.microsoft.com/sql/odbc/refer
                                   title='struct odbc_safe::Odbc3m8'>Odbc3m8</a></td>
                            <td class='docblock-short'>
                                 <p>Used to declare ODBC 3.8 specifications.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -120,13 +136,15 @@ Function Sequence errors. See <a href="https://docs.microsoft.com/sql/odbc/refer
                            <td class='docblock-short'>
                                 <p>A <code>Statement</code> is most easily thought of as an SQL statement, such as
 <code>SELECT * FROM Employee</code>.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
                            <td><a class="struct" href="struct.Unconnected.html"
                                   title='struct odbc_safe::Unconnected'>Unconnected</a></td>
                            <td class='docblock-short'>
-                                <p>An <code>HDbc</code> with the additional invariant of being &#39;allocated&#39;, but not &#39;connected&#39;.</p>
+                                <p>An <code>HDbc</code> with the additional invariant of being 'allocated', but not 'connected'.</p>
+
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
@@ -135,6 +153,7 @@ Function Sequence errors. See <a href="https://docs.microsoft.com/sql/odbc/refer
                                   title='enum odbc_safe::DataType'>DataType</a></td>
                            <td class='docblock-short'>
                                 <p>Describes a column or parameter type.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -142,6 +161,7 @@ Function Sequence errors. See <a href="https://docs.microsoft.com/sql/odbc/refer
                                   title='enum odbc_safe::Indicator'>Indicator</a></td>
                            <td class='docblock-short'>
                                 <p>Used to indicate the required target buffer length.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -151,6 +171,7 @@ Function Sequence errors. See <a href="https://docs.microsoft.com/sql/odbc/refer
                                 <p>State used by <code>Statement</code>. A statement is likely to enter this state after
 executing e.g. a
 <code>CREATE TABLE</code> statement.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -160,6 +181,7 @@ executing e.g. a
                                 <p>Cursor state of <code>Statement</code>. A statement is likely to enter this state
 after executing e.g a
 <code>SELECT</code> query.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -169,6 +191,7 @@ after executing e.g a
                                 <p>Cursor state of <code>Statement</code>. A statement will enter this state after a
 successful call to
 <code>fetch()</code></p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -178,6 +201,7 @@ successful call to
                                 <p>State used by <code>Statement</code>. A statement will enter this state after a
 successful call to
 <code>prepare()</code>.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -185,6 +209,7 @@ successful call to
                                   title='enum odbc_safe::Return'>Return</a></td>
                            <td class='docblock-short'>
                                 <p>Holds result and indicates the overall success or failure of a function.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -192,6 +217,7 @@ successful call to
                                   title='enum odbc_safe::ReturnOption'>ReturnOption</a></td>
                            <td class='docblock-short'>
                                 <p>Holds result and indicates the overall success or failure of a function.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -200,6 +226,7 @@ successful call to
                            <td class='docblock-short'>
                                 <p>State used by <code>Statement</code>. Indicates that no Access Plan has been created,
 yet.</p>
+
                            </td>
                        </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
 <table>
@@ -207,7 +234,9 @@ yet.</p>
                            <td><a class="trait" href="trait.CDataType.html"
                                   title='trait odbc_safe::CDataType'>CDataType</a></td>
                            <td class='docblock-short'>
-                                <p>See <a href="https://docs.microsoft.com/sql/odbc/reference/develop-app/c-data-types-in-odbc">C Data Types in ODBC</a></p>
+                                <p>See [C Data Types in ODBC][1]
+[1]: https://docs.microsoft.com/sql/odbc/reference/develop-app/c-data-types-in-odbc</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -215,6 +244,7 @@ yet.</p>
                                   title='trait odbc_safe::CursorState'>CursorState</a></td>
                            <td class='docblock-short'>
                                 <p>Implemented by the <code>Open</code> and <code>Positioned</code> states for <code>Statement</code>.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -223,6 +253,7 @@ yet.</p>
                            <td class='docblock-short'>
                                 <p>A type implementing this trait is able to provide diagnostic information regarding the last
 method call.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -230,6 +261,7 @@ method call.</p>
                                   title='trait odbc_safe::HDbcWrapper'>HDbcWrapper</a></td>
                            <td class='docblock-short'>
                                 <p>Implemented by <code>Connected</code> and <code>Unconnected</code>.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -237,6 +269,7 @@ method call.</p>
                                   title='trait odbc_safe::Handle'>Handle</a></td>
                            <td class='docblock-short'>
                                 <p>Basic functionality for all wrappers around ODBC Handles</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -244,6 +277,7 @@ method call.</p>
                                   title='trait odbc_safe::SqlStr'>SqlStr</a></td>
                            <td class='docblock-short'>
                                 <p>A type implementing this trait can be passed as a string argument in API calls</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -251,6 +285,7 @@ method call.</p>
                                   title='trait odbc_safe::Version'>Version</a></td>
                            <td class='docblock-short'>
                                 <p>Type indicates an ODBC Version</p>
+
                            </td>
                        </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
 <table>
@@ -259,6 +294,7 @@ method call.</p>
                                   title='type odbc_safe::Connection'>Connection</a></td>
                            <td class='docblock-short'>
                                 <p><code>Connection</code> can be used as a shorthand for a <code>DataSource</code> in <code>Connected</code> state.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -266,6 +302,7 @@ method call.</p>
                                   title='type odbc_safe::ResultSet'>ResultSet</a></td>
                            <td class='docblock-short'>
                                 <p>Shorthand for <code>Statements</code> in <code>Open</code> state.</p>
+
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>
@@ -280,20 +317,22 @@ method call.</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

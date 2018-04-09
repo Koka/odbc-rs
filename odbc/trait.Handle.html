@@ -10,8 +10,11 @@
     <title>odbc::Handle - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Trait Handle</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#associated-types">Associated Types</a><div class="sidebar-links"><a href="#associatedtype.To">To</a></div><a class="sidebar-title" href="#required-methods">Required Methods</a><div class="sidebar-links"><a href="#tymethod.handle">handle</a></div><a class="sidebar-title" href="#implementors">Implementors</a></div><p class='location'><a href='index.html'>odbc</a></p><script>window.sidebarCurrent = {name: 'Handle', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -72,7 +82,7 @@
         <ul class='item-list' id='implementors-list'>
     <li><div class='out-of-band'><a class='srclink' href='../src/odbc/environment/mod.rs.html#18-23' title='goto source code'>[src]</a></div><code>impl&lt;V&gt; Handle for <a class="struct" href="../odbc/struct.Environment.html" title="struct odbc::Environment">Environment</a>&lt;V&gt;<span class="where fmt-newline">  type <a href='#associatedtype.To' class="type">To</a> = <a class="enum" href="../odbc_sys/enum.Env.html" title="enum odbc_sys::Env">Env</a>;</span></code></li>
 <li><div class='out-of-band'><a class='srclink' href='../src/odbc/connection.rs.html#10-15' title='goto source code'>[src]</a></div><code>impl&lt;'env&gt; Handle for <a class="struct" href="../odbc/struct.Connection.html" title="struct odbc::Connection">Connection</a>&lt;'env&gt;<span class="where fmt-newline">  type <a href='#associatedtype.To' class="type">To</a> = <a class="enum" href="../odbc_sys/enum.Dbc.html" title="enum odbc_sys::Dbc">Dbc</a>;</span></code></li>
-<li><div class='out-of-band'><a class='srclink' href='../src/odbc/statement/mod.rs.html#66-71' title='goto source code'>[src]</a></div><code>impl&lt;'a, 'b, S, R&gt; Handle for <a class="struct" href="../odbc/struct.Statement.html" title="struct odbc::Statement">Statement</a>&lt;'a, 'b, S, R&gt;<span class="where fmt-newline">  type <a href='#associatedtype.To' class="type">To</a> = <a class="enum" href="../odbc_sys/enum.Stmt.html" title="enum odbc_sys::Stmt">Stmt</a>;</span></code></li>
+<li><div class='out-of-band'><a class='srclink' href='../src/odbc/statement/mod.rs.html#67-72' title='goto source code'>[src]</a></div><code>impl&lt;'a, 'b, S, R&gt; Handle for <a class="struct" href="../odbc/struct.Statement.html" title="struct odbc::Statement">Statement</a>&lt;'a, 'b, S, R&gt;<span class="where fmt-newline">  type <a href='#associatedtype.To' class="type">To</a> = <a class="enum" href="../odbc_sys/enum.Stmt.html" title="enum odbc_sys::Stmt">Stmt</a>;</span></code></li>
 </ul><script type="text/javascript" async
                          src="../implementors/odbc/trait.Handle.js">
                  </script></section>
@@ -88,20 +98,22 @@
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

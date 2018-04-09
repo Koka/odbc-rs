@@ -10,8 +10,11 @@
     <title>log::Log - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     <link rel="shortcut icon" href="https://www.rust-lang.org/favicon.ico">
@@ -33,6 +36,13 @@
         <p class='location'>Trait Log</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#required-methods">Required Methods</a><div class="sidebar-links"><a href="#tymethod.enabled">enabled</a><a href="#tymethod.log">log</a></div><a class="sidebar-title" href="#implementors">Implementors</a></div><p class='location'><a href='index.html'>log</a></p><script>window.sidebarCurrent = {name: 'Log', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -61,12 +71,10 @@
             <div class='methods'>
         <h3 id='tymethod.enabled' class='method'><span id='enabled.v' class='invisible'><code>fn <a href='#tymethod.enabled' class='fnname'>enabled</a>(&amp;self, metadata: &amp;<a class="struct" href="../log/struct.LogMetadata.html" title="struct log::LogMetadata">LogMetadata</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h3><div class='docblock'><p>Determines if a log message with the specified metadata would be
 logged.</p>
-
 <p>This is used by the <code>log_enabled!</code> macro to allow callers to avoid
 expensive computation of log message arguments if the message would be
 discarded anyway.</p>
 </div><h3 id='tymethod.log' class='method'><span id='log.v' class='invisible'><code>fn <a href='#tymethod.log' class='fnname'>log</a>(&amp;self, record: &amp;<a class="struct" href="../log/struct.LogRecord.html" title="struct log::LogRecord">LogRecord</a>)</code></span></h3><div class='docblock'><p>Logs the <code>LogRecord</code>.</p>
-
 <p>Note that <code>enabled</code> is <em>not</em> necessarily called before this method.
 Implementations of <code>log</code> should perform all necessary filtering
 internally.</p>
@@ -90,20 +98,22 @@ internally.</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

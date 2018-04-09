@@ -10,8 +10,11 @@
     <title>odbc - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -30,9 +33,16 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Crate odbc</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Reexports</a></li><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'odbc', ty: 'mod', relpath: '../'};</script></div>
+        <p class='location'>Crate odbc</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'odbc', ty: 'mod', relpath: '../'};</script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -50,29 +60,25 @@
                        [<span class='inner'>&#x2212;</span>]
                    </a>
                </span><a class='srclink' href='../src/odbc/lib.rs.html#1-58' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'>
-<h1 id='odbc' class='section-header'><a href='#odbc'>ODBC</a></h1>
+<div class='docblock'><h1 id="odbc" class="section-header"><a href="#odbc">ODBC</a></h1>
 <p>Open Database Connectivity or short ODBC is a low level high performance interface
 introduced by Microsoft to access relational data stores. This crate wraps the raw C interface
 and is intended to be usable in safe and idiomatic Rust.</p>
-
 <p><a href="https://docs.microsoft.com/en-us/sql/odbc/reference/what-is-odbc">What is ODBC?</a></p>
-
-<p><a href="https://docs.microsoft.com/en-us/sql/odbc/reference/odbc-programmer-s-reference">ODBC Programmer&#39;s Reference</a></p>
-
-<h1 id='internal-desgin' class='section-header'><a href='#internal-desgin'>Internal Desgin</a></h1>
+<p>[ODBC Programmer's Reference]
+(https://docs.microsoft.com/en-us/sql/odbc/reference/odbc-programmer-s-reference)</p>
+<h1 id="internal-desgin" class="section-header"><a href="#internal-desgin">Internal Desgin</a></h1>
 <p>While designed as a relatively low level wrapper around ODBC this crate tries to prevent many
 errors at compile time. The borrow checker and the RAII (Resource Acquisition Is
 Initialization) idiom should prevent any occurence of <code>SQL_INVALID_HANDLE</code> in safe code.</p>
-
 <p>Using the type system and the borrow checker this crate ensures that each method call happens
 in a valid state and state transitions are modeled in the type system. This should eliminate
 the possibility of function sequence errors in safe code.</p>
-
-<p><a href="https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/basic-odbc-application-steps">Basic ODBC Application Steps</a></p>
-
-<p><a href="https://docs.microsoft.com/en-us/sql/odbc/reference/appendixes/appendix-b-odbc-state-transition-tables">ODBC State Transitions</a></p>
-</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+<p>[Basic ODBC Application Steps]
+(https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/basic-odbc-application-steps)</p>
+<p>[ODBC State Transitions]
+(https://docs.microsoft.com/en-us/sql/odbc/reference/appendixes/appendix-b-odbc-state-transition-tables)</p>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
 <table><tr><td><code>pub use <a class="enum" href="../odbc/enum.ResultSetState.html" title="enum odbc::ResultSetState">ResultSetState</a>::*;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                        <tr class=' module-item'>
@@ -80,6 +86,7 @@ the possibility of function sequence errors in safe code.</p>
                                   title='mod odbc::ffi'>ffi</a></td>
                            <td class='docblock-short'>
                                 <p>Reexport odbc-sys as ffi</p>
+
                            </td>
                        </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
@@ -95,6 +102,7 @@ the possibility of function sequence errors in safe code.</p>
                                   title='struct odbc::Connection'>Connection</a></td>
                            <td class='docblock-short'>
                                 <p>Represents a connection to an ODBC data source</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -102,6 +110,7 @@ the possibility of function sequence errors in safe code.</p>
                                   title='struct odbc::Cursor'>Cursor</a></td>
                            <td class='docblock-short'>
                                 <p>Used to retrieve data from the fields of a query result</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -109,6 +118,7 @@ the possibility of function sequence errors in safe code.</p>
                                   title='struct odbc::DataSourceInfo'>DataSourceInfo</a></td>
                            <td class='docblock-short'>
                                 <p>Holds name and description of a datasource</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -116,6 +126,7 @@ the possibility of function sequence errors in safe code.</p>
                                   title='struct odbc::DiagnosticRecord'>DiagnosticRecord</a></td>
                            <td class='docblock-short'>
                                 <p>ODBC Diagnostic Record</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -123,6 +134,7 @@ the possibility of function sequence errors in safe code.</p>
                                   title='struct odbc::DriverInfo'>DriverInfo</a></td>
                            <td class='docblock-short'>
                                 <p>Struct holding information available on a driver.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -130,6 +142,7 @@ the possibility of function sequence errors in safe code.</p>
                                   title='struct odbc::Environment'>Environment</a></td>
                            <td class='docblock-short'>
                                 <p>Handle to an ODBC Environment</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -137,6 +150,7 @@ the possibility of function sequence errors in safe code.</p>
                                   title='struct odbc::Statement'>Statement</a></td>
                            <td class='docblock-short'>
                                 <p>A <code>Statement</code> can be used to execute queries and retrieves results.</p>
+
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
@@ -145,6 +159,7 @@ the possibility of function sequence errors in safe code.</p>
                                   title='enum odbc::Allocated'>Allocated</a></td>
                            <td class='docblock-short'>
                                 <p><code>Statement</code> state used to represent a freshly allocated connection</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -153,6 +168,7 @@ the possibility of function sequence errors in safe code.</p>
                            <td class='docblock-short'>
                                 <p><code>Statement</code> state used to represent a statement with a result set cursor. A statement is most
 likely to enter this state after a <code>SELECT</code> query.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -161,6 +177,7 @@ likely to enter this state after a <code>SELECT</code> query.</p>
                            <td class='docblock-short'>
                                 <p><code>Statement</code> state used to represent a statement with no result set. A statement is likely to
 enter this state after executing e.g. a <code>CREATE TABLE</code> statement</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -169,6 +186,7 @@ enter this state after executing e.g. a <code>CREATE TABLE</code> statement</p>
                            <td class='docblock-short'>
                                 <p><code>Statement</code> state used to represent a statement compiled into an access plan. A statement will
 enter this state after a call to <code>Statement::prepared</code></p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -176,6 +194,7 @@ enter this state after a call to <code>Statement::prepared</code></p>
                                   title='enum odbc::ResultSetState'>ResultSetState</a></td>
                            <td class='docblock-short'>
                                 <p>Holds a <code>Statement</code> after execution of a query.Allocated</p>
+
                            </td>
                        </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
 <table>
@@ -185,6 +204,7 @@ enter this state after a call to <code>Statement::prepared</code></p>
                            <td class='docblock-short'>
                                 <p>Allows retriving a diagnostic record, describing errors (or lack thereof) during the last
 operation.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -192,6 +212,7 @@ operation.</p>
                                   title='trait odbc::Handle'>Handle</a></td>
                            <td class='docblock-short'>
                                 <p>Reflects the ability of a type to expose a valid handle</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -206,6 +227,7 @@ operation.</p>
                                   title='trait odbc::Output'>Output</a></td>
                            <td class='docblock-short'>
                                 <p>Indicates that a type can be retrieved using <code>Cursor::get_data</code></p>
+
                            </td>
                        </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
@@ -214,6 +236,7 @@ operation.</p>
                                   title='fn odbc::create_environment_v3'>create_environment_v3</a></td>
                            <td class='docblock-short'>
                                 <p>Creates an ODBC Environment and declares specifaciton of version 3.0 are used</p>
+
                            </td>
                        </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
 <table>
@@ -223,6 +246,7 @@ operation.</p>
                            <td class='docblock-short'>
                                 <p><code>Statement</code> state used to represent a statement with a result set cursor. A statement is most
 likely to enter this state after a <code>SELECT</code> query.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -230,6 +254,7 @@ likely to enter this state after a <code>SELECT</code> query.</p>
                                   title='type odbc::Result'>Result</a></td>
                            <td class='docblock-short'>
                                 <p>Result type returned by most functions in this crate</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -237,6 +262,7 @@ likely to enter this state after a <code>SELECT</code> query.</p>
                                   title='type odbc::Version3'>Version3</a></td>
                            <td class='docblock-short'>
                                 <p>Environment state used to represent that environment has been set to odbc version 3</p>
+
                            </td>
                        </tr></table></section>
     <section id='search' class="content hidden"></section>
@@ -251,20 +277,22 @@ likely to enter this state after a <code>SELECT</code> query.</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

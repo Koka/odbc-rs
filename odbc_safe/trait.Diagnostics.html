@@ -10,8 +10,11 @@
     <title>odbc_safe::Diagnostics - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Trait Diagnostics</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#required-methods">Required Methods</a><div class="sidebar-links"><a href="#tymethod.diagnostics">diagnostics</a></div><a class="sidebar-title" href="#implementors">Implementors</a></div><p class='location'><a href='index.html'>odbc_safe</a></p><script>window.sidebarCurrent = {name: 'Diagnostics', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -60,36 +70,36 @@ method call.</p>
             </h2>
             <div class='methods'>
         <h3 id='tymethod.diagnostics' class='method'><span id='diagnostics.v' class='invisible'><code>fn <a href='#tymethod.diagnostics' class='fnname'>diagnostics</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;rec_number: <a class="type" href="../odbc_sys/type.SQLSMALLINT.html" title="type odbc_sys::SQLSMALLINT">SQLSMALLINT</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;message_text: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;mut [</a><a class="type" href="../odbc_sys/type.SQLCHAR.html" title="type odbc_sys::SQLCHAR">SQLCHAR</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a><br>) -&gt; <a class="enum" href="../odbc_safe/enum.ReturnOption.html" title="enum odbc_safe::ReturnOption">ReturnOption</a>&lt;<a class="struct" href="../odbc_safe/struct.DiagResult.html" title="struct odbc_safe::DiagResult">DiagResult</a>&gt;</code></span></h3><div class='docblock'><p>Returns the current values of multiple fields of a diagnostic record that contains error,
- warning, and status information.</p>
-
-<p># Arguments</p>
-
+warning, and status information.</p>
+<h1 id="arguments" class="section-header"><a href="#arguments">Arguments</a></h1>
 <ul>
 <li><code>rec_number</code> - Indicates the status record from which the application seeks information.
-              Status records are numbered from 1.</li>
-<li><p><code>message_text</code> - Buffer in which to return the diagnostic message text string. If the
-                number of characters to return is greater than the buffer length, the
-                diagnostic message is truncated to <code>max(message_text.len() - 1, 0)</code>. For
-                the format of the string, see <a href="https://docs.microsoft.com/sql/odbc/reference/develop-app/diagnostic-messages">Diagnostic Messages</a></p>
-
-<h1 id='result' class='section-header'><a href='#result'>Result</a></h1>
-<p>`</p></li>
-<li><p><code>Success</code> - The function successfully returned diagnostic information.</p></li>
-<li><p><code>Info</code> - The <code>message_text</code> buffer was too small to hold the requested diagnostic message.
-        No diagnostic records were generated. To determine that a truncation occurred,
-        the application must compare the buffer length to the actual number of bytes
-        available, which is found in <code>DiagResult::text_length</code></p></li>
-<li><p><code>Error</code> - <code>rec_number</code> was negative or <code>0</code>.</p></li>
-<li><p><code>NoData</code> - <code>rec_number</code> was greater than the number of diagnostic records that existed
-          for the specified Handle. The function also returns <code>NoData</code> for any positive
-          <code>rec_number</code> if there are no diagnostic records available.</p></li>
+Status records are numbered from 1.</li>
+<li><code>message_text</code> - Buffer in which to return the diagnostic message text string. If the
+number of characters to return is greater than the buffer length, the
+diagnostic message is truncated to <code>max(message_text.len() - 1, 0)</code>. For
+the format of the string, see [Diagnostic Messages][1]</li>
+</ul>
+<h1 id="result" class="section-header"><a href="#result">Result</a></h1>
+<p>`</p>
+<ul>
+<li><code>Success</code> - The function successfully returned diagnostic information.</li>
+<li><code>Info</code> - The <code>message_text</code> buffer was too small to hold the requested diagnostic message.
+No diagnostic records were generated. To determine that a truncation occurred,
+the application must compare the buffer length to the actual number of bytes
+available, which is found in <code>DiagResult::text_length</code></li>
+<li><code>Error</code> - <code>rec_number</code> was negative or <code>0</code>.</li>
+<li><code>NoData</code> - <code>rec_number</code> was greater than the number of diagnostic records that existed
+for the specified Handle. The function also returns <code>NoData</code> for any positive
+<code>rec_number</code> if there are no diagnostic records available.
+[1]: https://docs.microsoft.com/sql/odbc/reference/develop-app/diagnostic-messages</li>
 </ul>
 </div></div>
         <h2 id='implementors' class='small-section-header'>
           Implementors<a href='#implementors' class='anchor'></a>
         </h2>
         <ul class='item-list' id='implementors-list'>
-    <li><code>impl&lt;H:&nbsp;<a class="trait" href="../odbc_safe/trait.Handle.html" title="trait odbc_safe::Handle">Handle</a>&gt; Diagnostics for H</code></li>
+    <li><div class='out-of-band'><a class='srclink' href='../src/odbc_safe/diagnostics.rs.html#55-89' title='goto source code'>[src]</a></div><code>impl&lt;H:&nbsp;<a class="trait" href="../odbc_safe/trait.Handle.html" title="trait odbc_safe::Handle">Handle</a>&gt; Diagnostics for H</code></li>
 <li><div class='out-of-band'><a class='srclink' href='../src/odbc_safe/diagnostics.rs.html#91-106' title='goto source code'>[src]</a></div><code>impl&lt;S, E&gt; Diagnostics for <a class="enum" href="../odbc_safe/enum.Return.html" title="enum odbc_safe::Return">Return</a>&lt;S, E&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;S: <a class="trait" href="../odbc_safe/trait.Diagnostics.html" title="trait odbc_safe::Diagnostics">Diagnostics</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;E: <a class="trait" href="../odbc_safe/trait.Diagnostics.html" title="trait odbc_safe::Diagnostics">Diagnostics</a>,&nbsp;</span></code></li>
 <li><div class='out-of-band'><a class='srclink' href='../src/odbc_safe/environment.rs.html#141-149' title='goto source code'>[src]</a></div><code>impl&lt;V&gt; Diagnostics for <a class="struct" href="../odbc_safe/struct.Environment.html" title="struct odbc_safe::Environment">Environment</a>&lt;V&gt;</code></li>
 <li><div class='out-of-band'><a class='srclink' href='../src/odbc_safe/data_source/mod.rs.html#173-184' title='goto source code'>[src]</a></div><code>impl&lt;'env, S&gt; Diagnostics for <a class="struct" href="../odbc_safe/struct.DataSource.html" title="struct odbc_safe::DataSource">DataSource</a>&lt;'env, S&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;S: <a class="trait" href="../odbc_safe/trait.HDbcWrapper.html" title="trait odbc_safe::HDbcWrapper">HDbcWrapper</a>&lt;'env&gt;,&nbsp;</span></code></li>
@@ -109,20 +119,22 @@ method call.</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

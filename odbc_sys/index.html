@@ -10,8 +10,11 @@
     <title>odbc_sys - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -30,9 +33,16 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Crate odbc_sys</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Reexports</a></li><li><a href="#enums">Enums</a></li><li><a href="#constants">Constants</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'odbc_sys', ty: 'mod', relpath: '../'};</script></div>
+        <p class='location'>Crate odbc_sys</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#enums">Enums</a></li><li><a href="#constants">Constants</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'odbc_sys', ty: 'mod', relpath: '../'};</script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -51,15 +61,14 @@
                    </a>
                </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#1-521' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>ODBC types those representation is compatible with the ODBC C API.</p>
-
 <p>This layer has not been created using automatic code generation. It is incomplete, i.e. it does
 not contain every symbol or constant defined in the ODBC C headers. Symbols which are
 deprecated since ODBC 3 have been left out intentionally. While some extra type safety has been
-added by grouping some of C&#39;s <code>#define</code> constants into <code>enum</code>-types it mostly offers the same
+added by grouping some of C's <code>#define</code> constants into <code>enum</code>-types it mostly offers the same
 power (all) and safety guarantess(none) as the wrapped C-API.
 ODBC 4.0 is still under development by Microsoft, so these symbols are deactivated by default
 in the cargo.toml</p>
-</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
 <table><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SQLRETURN.html" title="enum odbc_sys::SQLRETURN">SQLRETURN</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.InfoType.html" title="enum odbc_sys::InfoType">InfoType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.FetchOrientation.html" title="enum odbc_sys::FetchOrientation">FetchOrientation</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.EnvironmentAttribute.html" title="enum odbc_sys::EnvironmentAttribute">EnvironmentAttribute</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.OdbcVersion.html" title="enum odbc_sys::OdbcVersion">OdbcVersion</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlCDataType.html" title="enum odbc_sys::SqlCDataType">SqlCDataType</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.SqlCDataType.html" title="enum odbc_sys::SqlCDataType">SQL_C_ULONG</a> as SQL_C_BOOKMARK;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.InputOutput.html" title="enum odbc_sys::InputOutput">InputOutput</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.Nullable.html" title="enum odbc_sys::Nullable">Nullable</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.FreeStmtOption.html" title="enum odbc_sys::FreeStmtOption">FreeStmtOption</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlDataType.html" title="enum odbc_sys::SqlDataType">SqlDataType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.HandleType.html" title="enum odbc_sys::HandleType">HandleType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlDriverConnectOption.html" title="enum odbc_sys::SqlDriverConnectOption">SqlDriverConnectOption</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlStatementAttribute.html" title="enum odbc_sys::SqlStatementAttribute">SqlStatementAttribute</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlConnectionAttribute.html" title="enum odbc_sys::SqlConnectionAttribute">SqlConnectionAttribute</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlCompletionType.html" title="enum odbc_sys::SqlCompletionType">SqlCompletionType</a>::*;</code></td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
                        <tr class=' module-item'>
@@ -81,6 +90,7 @@ in the cargo.toml</p>
                                   title='enum odbc_sys::EnvironmentAttribute'>EnvironmentAttribute</a></td>
                            <td class='docblock-short'>
                                 <p>Governs behaviour of EnvironmentAttribute</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -88,6 +98,7 @@ in the cargo.toml</p>
                                   title='enum odbc_sys::FetchOrientation'>FetchOrientation</a></td>
                            <td class='docblock-short'>
                                 <p>Codes used for FetchOrientation in <code>SQLFetchScroll</code>, <code>SQLDataSources</code> and in <code>SQLDrivers</code></p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -95,6 +106,7 @@ in the cargo.toml</p>
                                   title='enum odbc_sys::FreeStmtOption'>FreeStmtOption</a></td>
                            <td class='docblock-short'>
                                 <p>SQL Free Statement options</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -102,6 +114,7 @@ in the cargo.toml</p>
                                   title='enum odbc_sys::HandleType'>HandleType</a></td>
                            <td class='docblock-short'>
                                 <p>Represented in C headers as SQLSMALLINT</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -109,6 +122,7 @@ in the cargo.toml</p>
                                   title='enum odbc_sys::InfoType'>InfoType</a></td>
                            <td class='docblock-short'>
                                 <p>Information requested by SQLGetInfo</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -116,6 +130,7 @@ in the cargo.toml</p>
                                   title='enum odbc_sys::InputOutput'>InputOutput</a></td>
                            <td class='docblock-short'>
                                 <p>Used by <code>SQLBindParameter</code>.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -123,6 +138,7 @@ in the cargo.toml</p>
                                   title='enum odbc_sys::Nullable'>Nullable</a></td>
                            <td class='docblock-short'>
                                 <p>Used by <code>SQLDescribeCol</code>.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -137,6 +153,7 @@ in the cargo.toml</p>
                                   title='enum odbc_sys::OdbcVersion'>OdbcVersion</a></td>
                            <td class='docblock-short'>
                                 <p>ODBC verions</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -144,6 +161,7 @@ in the cargo.toml</p>
                                   title='enum odbc_sys::SQLRETURN'>SQLRETURN</a></td>
                            <td class='docblock-short'>
                                 <p>Indicates the overall success or failure of the function</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -152,6 +170,7 @@ in the cargo.toml</p>
                            <td class='docblock-short'>
                                 <p>The C data type is specified in the SQLBindCol and SQLGetData functions with the TargetType
 argument and in the SQLBindParameter function with the ValueType argument.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -159,6 +178,7 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                                   title='enum odbc_sys::SqlCompletionType'>SqlCompletionType</a></td>
                            <td class='docblock-short'>
                                 <p>Completion types for <code>SQLEndTrans</code></p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -166,6 +186,7 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                                   title='enum odbc_sys::SqlConnectionAttribute'>SqlConnectionAttribute</a></td>
                            <td class='docblock-short'>
                                 <p>Connection attributes for <code>SQLSetConnectAttr</code></p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -173,6 +194,7 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                                   title='enum odbc_sys::SqlDataType'>SqlDataType</a></td>
                            <td class='docblock-short'>
                                 <p>SQL Data Types</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -180,6 +202,7 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                                   title='enum odbc_sys::SqlDriverConnectOption'>SqlDriverConnectOption</a></td>
                            <td class='docblock-short'>
                                 <p>Options for <code>SQLDriverConnect</code></p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -187,6 +210,7 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                                   title='enum odbc_sys::SqlStatementAttribute'>SqlStatementAttribute</a></td>
                            <td class='docblock-short'>
                                 <p>Statement attributes for <code>SQLSetStmtAttr</code></p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -202,6 +226,7 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                                   title='constant odbc_sys::SQL_MAX_MESSAGE_LENGTH'>SQL_MAX_MESSAGE_LENGTH</a></td>
                            <td class='docblock-short'>
                                 <p>Maximum message length</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -245,6 +270,7 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                                   title='fn odbc_sys::SQLAllocHandle'>SQLAllocHandle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Allocates an environment, connection, statement, or descriptor handle.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -252,6 +278,7 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                                   title='fn odbc_sys::SQLBindCol'>SQLBindCol</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Binds application data bufferst to columns in the result set.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -259,6 +286,7 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                                   title='fn odbc_sys::SQLBindParameter'>SQLBindParameter</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Binds a buffer to a parameter marker in an SQL statement</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -266,6 +294,7 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                                   title='fn odbc_sys::SQLCloseCursor'>SQLCloseCursor</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Closes a cursor that has been opened on a statement and discards pending results.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -275,6 +304,7 @@ argument and in the SQLBindParameter function with the ValueType argument.</p>
                                 <p>SQLConnect establishes connections to a driver and a data source. The connection handle
 references storage of all information about the connection to the data source, including
 status, transaction state, and error information.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -283,6 +313,7 @@ status, transaction state, and error information.</p>
                            <td class='docblock-short'>
                                 <p>Returns information about a data source. This function is implemented only by the Driver
 Manager.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -291,6 +322,7 @@ Manager.</p>
                            <td class='docblock-short'>
                                 <p>Returns the result descriptor for one column in the result set — column name, type, column
 size, decimal digits, and nullability.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -298,6 +330,7 @@ size, decimal digits, and nullability.</p>
                                   title='fn odbc_sys::SQLDisconnect'>SQLDisconnect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Closes the connection associated with a specific connection handle.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -307,6 +340,7 @@ size, decimal digits, and nullability.</p>
                                 <p>An alternative to <code>SQLConnect</code>. It supports data sources that require more connection
 information than the three arguments in <code>SQLConnect</code>, dialog boxes to prompt the user for
 all connection information, and data sources that are not defined in the system information</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -315,6 +349,7 @@ all connection information, and data sources that are not defined in the system 
                            <td class='docblock-short'>
                                 <p>Lists driver descriptions and driver attribute keywords. This function is implemented only
 by the Driver Manager.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -322,6 +357,7 @@ by the Driver Manager.</p>
                                   title='fn odbc_sys::SQLEndTran'>SQLEndTran</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Requests a commit or rollback operation for all active operations on all statements associated with a handle.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -331,6 +367,7 @@ by the Driver Manager.</p>
                                 <p>Executes a preparable statement, using the current values of the parameter marker variables
 if any parameters exist in the statement. This is the fastest way to submit an SQL
 statement for one-time execution</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -339,6 +376,7 @@ statement for one-time execution</p>
                            <td class='docblock-short'>
                                 <p>Executes a prepared statement, using the current values of the parameter marker variables
 if any paramater markers exis in the statement.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -347,6 +385,7 @@ if any paramater markers exis in the statement.</p>
                            <td class='docblock-short'>
                                 <p>SQLFetch fetches the next rowset of data from the result set and returns data for all bound
 columns.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -355,6 +394,7 @@ columns.</p>
                            <td class='docblock-short'>
                                 <p>Frees resources associated with a specific environment, connection, statement, or
 descriptor handle.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -364,6 +404,7 @@ descriptor handle.</p>
                                 <p>Stops processing associated with a specific statement, closes any open cursors associated
 with the statement, discards pending results, or, optionally, frees all resources
 associated with the statement handle.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -379,6 +420,7 @@ associated with the statement handle.</p>
                            <td class='docblock-short'>
                                 <p>Return the current values of multiple fields of a diagnostic record that contains eror,
 warning, and status information.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -386,6 +428,7 @@ warning, and status information.</p>
                                   title='fn odbc_sys::SQLGetInfo'>SQLGetInfo</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Returns general information about the driver and data source associated with a connection</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -393,6 +436,7 @@ warning, and status information.</p>
                                   title='fn odbc_sys::SQLNumResultCols'>SQLNumResultCols</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Returns the number of columns in a result set</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -400,6 +444,7 @@ warning, and status information.</p>
                                   title='fn odbc_sys::SQLPrepare'>SQLPrepare</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Compiles the statement and generates an access plan.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -407,6 +452,7 @@ warning, and status information.</p>
                                   title='fn odbc_sys::SQLSetConnectAttr'>SQLSetConnectAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Sets attributes that govern aspects of connections.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -414,6 +460,7 @@ warning, and status information.</p>
                                   title='fn odbc_sys::SQLSetEnvAttr'>SQLSetEnvAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Sets attributes that govern aspects of environments</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -421,6 +468,7 @@ warning, and status information.</p>
                                   title='fn odbc_sys::SQLSetStmtAttr'>SQLSetStmtAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
                            <td class='docblock-short'>
                                 <p>Sets attributes related to a statement.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -429,6 +477,7 @@ warning, and status information.</p>
                            <td class='docblock-short'>
                                 <p>Returns the list of table, catalog, or schema names, and table types, stored in a specific
 data source. The driver returns the information as a result set</p>
+
                            </td>
                        </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
 <table>
@@ -452,6 +501,7 @@ data source. The driver returns the information as a result set</p>
                            <td class='docblock-short'>
                                 <p>The connection handle references storage of all information about the connection to the data
 source, including status, transaction state, and error information.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -536,20 +586,22 @@ source, including status, transaction state, and error information.</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

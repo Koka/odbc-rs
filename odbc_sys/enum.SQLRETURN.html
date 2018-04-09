@@ -10,8 +10,11 @@
     <title>odbc_sys::SQLRETURN - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Enum SQLRETURN</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#variants">Variants</a><div class="sidebar-links"><a href="#variant.SQL_INVALID_HANDLE">SQL_INVALID_HANDLE</a><a href="#variant.SQL_ERROR">SQL_ERROR</a><a href="#variant.SQL_SUCCESS">SQL_SUCCESS</a><a href="#variant.SQL_SUCCESS_WITH_INFO">SQL_SUCCESS_WITH_INFO</a><a href="#variant.SQL_STILL_EXECUTING">SQL_STILL_EXECUTING</a><a href="#variant.SQL_NEED_DATA">SQL_NEED_DATA</a><a href="#variant.SQL_NO_DATA">SQL_NO_DATA</a><a href="#variant.SQL_PARAM_DATA_AVAILABLE">SQL_PARAM_DATA_AVAILABLE</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-PartialEq">PartialEq</a><a href="#impl-Eq">Eq</a><a href="#impl-Clone">Clone</a><a href="#impl-Copy">Copy</a></div></div><p class='location'><a href='index.html'>odbc_sys</a></p><script>window.sidebarCurrent = {name: 'SQLRETURN', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -62,41 +72,34 @@
     SQL_NO_DATA,
     SQL_PARAM_DATA_AVAILABLE,
 }</pre><div class='docblock'><p>Indicates the overall success or failure of the function</p>
-
 <p>Each function in ODBC returns a code, known as its return code, which indicates the overall
 success or failure of the function. Program logic is generally based on return codes.
-See <a href="https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/return-codes-odbc">ODBC reference</a></p>
+See [ODBC reference][1]
+[1]: https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/return-codes-odbc</p>
 </div><h2 id='variants' class='variants small-section-header'>
                    Variants<a href='#variants' class='anchor'></a></h2>
 <span id="variant.SQL_INVALID_HANDLE" class="variant small-section-header"><a href="#variant.SQL_INVALID_HANDLE" class="anchor field"></a><span id='SQL_INVALID_HANDLE.v' class='invisible'><code>SQL_INVALID_HANDLE</code></span></span><div class='docblock'><p>Function failed due to an invalid environment, connection, statement, or descriptor handle</p>
-
 <p>This indicates a programming error. No additional information is available from
 <code>SQLGetDiagRec</code> or <code>SQLGetDiagField</code>. This code is returned only when the handle is a null
 pointer or is the wrong type, such as when a statement handle is passed for an argument a
 connection handle.</p>
 </div><span id="variant.SQL_ERROR" class="variant small-section-header"><a href="#variant.SQL_ERROR" class="anchor field"></a><span id='SQL_ERROR.v' class='invisible'><code>SQL_ERROR</code></span></span><div class='docblock'><p>Function failed</p>
-
 <p>The application calls <code>SQLGetDiagRec</code> or <code>SQLGetDiagField</code> to retrieve additional
 information. The contents of any output arguments to the function are undefined.</p>
 </div><span id="variant.SQL_SUCCESS" class="variant small-section-header"><a href="#variant.SQL_SUCCESS" class="anchor field"></a><span id='SQL_SUCCESS.v' class='invisible'><code>SQL_SUCCESS</code></span></span><div class='docblock'><p>Function completed successfully</p>
-
 <p>The application calls <code>SQLGetDiagField</code> to retrieve additional information from the header
 record.</p>
 </div><span id="variant.SQL_SUCCESS_WITH_INFO" class="variant small-section-header"><a href="#variant.SQL_SUCCESS_WITH_INFO" class="anchor field"></a><span id='SQL_SUCCESS_WITH_INFO.v' class='invisible'><code>SQL_SUCCESS_WITH_INFO</code></span></span><div class='docblock'><p>Function completed successfully, possibly with a nonfatal error (warning)</p>
-
 <p>The application calls <code>SQLGetDiagRec</code> or <code>SQLGetDiagField</code> to retrieve additional
 information.</p>
 </div><span id="variant.SQL_STILL_EXECUTING" class="variant small-section-header"><a href="#variant.SQL_STILL_EXECUTING" class="anchor field"></a><span id='SQL_STILL_EXECUTING.v' class='invisible'><code>SQL_STILL_EXECUTING</code></span></span><div class='docblock'><p>A function that was started asynchronously is still executing</p>
-
 <p>The application <code>SQLGetDiagRec</code> or <code>SQLGetDiagField</code> to retrieve additional information if
 any.</p>
 </div><span id="variant.SQL_NEED_DATA" class="variant small-section-header"><a href="#variant.SQL_NEED_DATA" class="anchor field"></a><span id='SQL_NEED_DATA.v' class='invisible'><code>SQL_NEED_DATA</code></span></span><div class='docblock'><p>More data is needed</p>
-
 <p>,such as when a parameter data is sent at execution time or additional connection
 information is required. The application calls <code>SQLGetDiagRec</code> or <code>SQLGetDiagField</code> to
 retrieve additional information, if any.</p>
 </div><span id="variant.SQL_NO_DATA" class="variant small-section-header"><a href="#variant.SQL_NO_DATA" class="anchor field"></a><span id='SQL_NO_DATA.v' class='invisible'><code>SQL_NO_DATA</code></span></span><div class='docblock'><p>No more data was available</p>
-
 <p>The application calls <code>SQLGetDiagRec</code> or <code>SQLGetDiagField</code> to retrieve additional
 information. One or more driver-defined status records in class 02xxx may be returned.</p>
 </div><span id="variant.SQL_PARAM_DATA_AVAILABLE" class="variant small-section-header"><a href="#variant.SQL_PARAM_DATA_AVAILABLE" class="anchor field"></a><span id='SQL_PARAM_DATA_AVAILABLE.v' class='invisible'><code>SQL_PARAM_DATA_AVAILABLE</code></span></span>
@@ -131,20 +134,22 @@ information. One or more driver-defined status records in class 02xxx may be ret
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

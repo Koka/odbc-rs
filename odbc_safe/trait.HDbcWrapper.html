@@ -10,8 +10,11 @@
     <title>odbc_safe::HDbcWrapper - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Trait HDbcWrapper</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#associated-types">Associated Types</a><div class="sidebar-links"><a href="#associatedtype.Handle">Handle</a></div><a class="sidebar-title" href="#required-methods">Required Methods</a><div class="sidebar-links"><a href="#tymethod.into_hdbc">into_hdbc</a><a href="#tymethod.from_hdbc">from_hdbc</a></div><a class="sidebar-title" href="#implementors">Implementors</a></div><p class='location'><a href='index.html'>odbc_safe</a></p><script>window.sidebarCurrent = {name: 'HDbcWrapper', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -55,7 +65,6 @@
     fn <a href='#tymethod.into_hdbc' class='fnname'>into_hdbc</a>(self) -&gt; HDbc&lt;'env&gt;;
 <div class='item-spacer'></div>    fn <a href='#tymethod.from_hdbc' class='fnname'>from_hdbc</a>(handle: HDbc&lt;'env&gt;) -&gt; Self::<a class="type" href="../odbc_safe/trait.HDbcWrapper.html#associatedtype.Handle" title="type odbc_safe::HDbcWrapper::Handle">Handle</a>;
 }</pre><div class='docblock'><p>Implemented by <code>Connected</code> and <code>Unconnected</code>.</p>
-
 <p>There are two implementations of this trait. These two implementations only decide wether or
 not a <code>disconnect</code> should be executed on drop. This trait allows to handle them both in generic
 code and makes them syntactically very similar to a direct use of <code>HDbc</code>.</p>
@@ -94,20 +103,22 @@ code and makes them syntactically very similar to a direct use of <code>HDbc</co
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 

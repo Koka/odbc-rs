@@ -10,8 +10,11 @@
     <title>odbc_safe::Environment - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../dark.css">
+    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <script src="../storage.js"></script>
     
 
     
@@ -33,6 +36,13 @@
         <p class='location'>Struct Environment</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.as_raw">as_raw</a><a href="#method.data_sources">data_sources</a><a href="#method.drivers">drivers</a><a href="#method.new">new</a><a href="#method.declare_version">declare_version</a><a href="#method.declare_version_3_8">declare_version_3_8</a><a href="#method.declare_version_3">declare_version_3</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-Diagnostics">Diagnostics</a></div></div><p class='location'><a href='index.html'>odbc_safe</a></p><script>window.sidebarCurrent = {name: 'Environment', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../theme.js"></script>
     <nav class="sub">
         <form class="search-form js-only">
             <div class="search-container">
@@ -51,17 +61,15 @@
                    </a>
                </span><a class='srclink' href='../src/odbc_safe/environment.rs.html#17-22' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Environment&lt;V&gt; { /* fields omitted */ }</pre><div class='docblock'><p>An <code>Environment</code> is a global context, in which to access data.</p>
-
 <p>Associated with an <code>Environment</code> is any information that is global in nature, such as:</p>
-
 <ul>
-<li>The <code>Environment</code>&#39;s state</li>
+<li>The <code>Environment</code>'s state</li>
 <li>The current environment-level diagnostics</li>
 <li>The handles of connections currently allocated on the environment</li>
 <li>The current stetting of each environment attribute</li>
 </ul>
-
-<p>See: <a href="https://docs.microsoft.com/sql/odbc/reference/develop-app/environment-handles">Environment Handles in the ODBC Reference</a></p>
+<p>See: [Environment Handles in the ODBC Reference][1]
+[1]: https://docs.microsoft.com/sql/odbc/reference/develop-app/environment-handles</p>
 </div>
                     <h2 id='methods' class='small-section-header'>
                       Methods<a href='#methods' class='anchor'></a>
@@ -72,51 +80,42 @@
 </div></div><h3 id='impl-1' class='impl'><span class='in-band'><code>impl&lt;V:&nbsp;<a class="trait" href="../odbc_safe/trait.Version.html" title="trait odbc_safe::Version">Version</a>&gt; <a class="struct" href="../odbc_safe/struct.Environment.html" title="struct odbc_safe::Environment">Environment</a>&lt;V&gt;</code><a href='#impl-1' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc_safe/environment.rs.html#39-88' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.data_sources' class="method"><span id='data_sources.v' class='invisible'><code>pub fn <a href='#method.data_sources' class='fnname'>data_sources</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;mut self, <br>&nbsp;&nbsp;&nbsp;&nbsp;direction: <a class="enum" href="../odbc_sys/fetch_orientation/enum.FetchOrientation.html" title="enum odbc_sys::fetch_orientation::FetchOrientation">FetchOrientation</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;server_name: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;mut [</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;description: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;mut [</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a><br>) -&gt; <a class="enum" href="../odbc_safe/enum.ReturnOption.html" title="enum odbc_safe::ReturnOption">ReturnOption</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">(</a><a class="type" href="../odbc_sys/type.SQLSMALLINT.html" title="type odbc_sys::SQLSMALLINT">SQLSMALLINT</a>, <a class="type" href="../odbc_sys/type.SQLSMALLINT.html" title="type odbc_sys::SQLSMALLINT">SQLSMALLINT</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">)</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc_safe/environment.rs.html#56-67' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Fills buffers with information about the available datasources</p>
-
 <p>A 32 / 64 Bit Application will only return information about either 32 or 64 Bit
 DataSources.</p>
-
-<h1 id='returns' class='section-header'><a href='#returns'>Returns</a></h1>
+<h1 id="returns" class="section-header"><a href="#returns">Returns</a></h1>
 <p>(server_name_length, description_length)</p>
-
-<p>See <a href="https://docs.microsoft.com/sql/odbc/reference/syntax/sqldatasources-function">SQLDataSources</a></p>
+<p>See [SQLDataSources][1]
+[1]: https://docs.microsoft.com/sql/odbc/reference/syntax/sqldatasources-function</p>
 </div><h4 id='method.drivers' class="method"><span id='drivers.v' class='invisible'><code>pub fn <a href='#method.drivers' class='fnname'>drivers</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;mut self, <br>&nbsp;&nbsp;&nbsp;&nbsp;direction: <a class="enum" href="../odbc_sys/fetch_orientation/enum.FetchOrientation.html" title="enum odbc_sys::fetch_orientation::FetchOrientation">FetchOrientation</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;description: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;mut [</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;attributes: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;mut [</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a><br>) -&gt; <a class="enum" href="../odbc_safe/enum.ReturnOption.html" title="enum odbc_safe::ReturnOption">ReturnOption</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">(</a><a class="type" href="../odbc_sys/type.SQLSMALLINT.html" title="type odbc_sys::SQLSMALLINT">SQLSMALLINT</a>, <a class="type" href="../odbc_sys/type.SQLSMALLINT.html" title="type odbc_sys::SQLSMALLINT">SQLSMALLINT</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">)</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc_safe/environment.rs.html#80-87' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Fills buffers with information about the available datasources</p>
-
 <p>A 32 / 64 Bit Application will only return information about either 32 or 64 Bit
 DataSources.</p>
-
-<h1 id='returns-1' class='section-header'><a href='#returns-1'>Returns</a></h1>
+<h1 id="returns-1" class="section-header"><a href="#returns-1">Returns</a></h1>
 <p>(description_length, attributes_length)</p>
-
-<p>See <a href="https://docs.microsoft.com/sql/odbc/reference/syntax/sqldrivers-function">SQLDrivers</a></p>
+<p>See [SQLDrivers][1]
+[1]: https://docs.microsoft.com/sql/odbc/reference/syntax/sqldrivers-function</p>
 </div></div><h3 id='impl-2' class='impl'><span class='in-band'><code>impl <a class="struct" href="../odbc_safe/struct.Environment.html" title="struct odbc_safe::Environment">Environment</a>&lt;<a class="struct" href="../odbc_safe/struct.NoVersion.html" title="struct odbc_safe::NoVersion">NoVersion</a>&gt;</code><a href='#impl-2' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc_safe/environment.rs.html#90-139' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>pub fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class="enum" href="../odbc_safe/enum.Return.html" title="enum odbc_safe::Return">Return</a>&lt;Self&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc_safe/environment.rs.html#92-99' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Allocates a new <code>Environment</code></p>
 </div><h4 id='method.declare_version' class="method"><span id='declare_version.v' class='invisible'><code>pub fn <a href='#method.declare_version' class='fnname'>declare_version</a>&lt;V:&nbsp;<a class="trait" href="../odbc_safe/trait.Version.html" title="trait odbc_safe::Version">Version</a>&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;self<br>) -&gt; <a class="enum" href="../odbc_safe/enum.Return.html" title="enum odbc_safe::Return">Return</a>&lt;<a class="struct" href="../odbc_safe/struct.Environment.html" title="struct odbc_safe::Environment">Environment</a>&lt;V&gt;, <a class="struct" href="../odbc_safe/struct.Environment.html" title="struct odbc_safe::Environment">Environment</a>&lt;<a class="struct" href="../odbc_safe/struct.NoVersion.html" title="struct odbc_safe::NoVersion">NoVersion</a>&gt;&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc_safe/environment.rs.html#107-114' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Before an application allocates a connection which specification it follows. Currently
 these bindings only support ODBC 3.x.</p>
-
 <p>It is valid to specify ODBC 3.x even then connecting to an ODBC 2.x driver. Applications
 must however avoid calling 3.x functionality on 2.x drivers. Since drivers are connected at
 runtime, these kind of errors can not be catched by the type system.</p>
 </div><h4 id='method.declare_version_3_8' class="method"><span id='declare_version_3_8.v' class='invisible'><code>pub fn <a href='#method.declare_version_3_8' class='fnname'>declare_version_3_8</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;self<br>) -&gt; <a class="enum" href="../odbc_safe/enum.Return.html" title="enum odbc_safe::Return">Return</a>&lt;<a class="struct" href="../odbc_safe/struct.Environment.html" title="struct odbc_safe::Environment">Environment</a>&lt;<a class="struct" href="../odbc_safe/struct.Odbc3m8.html" title="struct odbc_safe::Odbc3m8">Odbc3m8</a>&gt;, <a class="struct" href="../odbc_safe/struct.Environment.html" title="struct odbc_safe::Environment">Environment</a>&lt;<a class="struct" href="../odbc_safe/struct.NoVersion.html" title="struct odbc_safe::NoVersion">NoVersion</a>&gt;&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc_safe/environment.rs.html#124-126' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Before an application allocates a connection which specification it follows. Currently
 these bindings only support ODBC 3.x.</p>
-
 <p>It is valid to specify ODBC 3.x even then connecting to an ODBC 2.x driver. Applications
 must however avoid calling 3.x functionality on 2.x drivers. Since drivers are connected at
 runtime, these kind of errors can not be catched by the type system.</p>
-
 <p>This method is a shorthand for <code>declare_version::&lt;Odbc3m8&gt;</code>.</p>
 </div><h4 id='method.declare_version_3' class="method"><span id='declare_version_3.v' class='invisible'><code>pub fn <a href='#method.declare_version_3' class='fnname'>declare_version_3</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;self<br>) -&gt; <a class="enum" href="../odbc_safe/enum.Return.html" title="enum odbc_safe::Return">Return</a>&lt;<a class="struct" href="../odbc_safe/struct.Environment.html" title="struct odbc_safe::Environment">Environment</a>&lt;<a class="struct" href="../odbc_safe/struct.Odbc3.html" title="struct odbc_safe::Odbc3">Odbc3</a>&gt;, <a class="struct" href="../odbc_safe/struct.Environment.html" title="struct odbc_safe::Environment">Environment</a>&lt;<a class="struct" href="../odbc_safe/struct.NoVersion.html" title="struct odbc_safe::NoVersion">NoVersion</a>&gt;&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/odbc_safe/environment.rs.html#136-138' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Before an application allocates a connection which specification it follows. Currently
 these bindings only support ODBC 3.x.</p>
-
 <p>It is valid to specify ODBC 3.x even then connecting to an ODBC 2.x driver. Applications
 must however avoid calling 3.x functionality on 2.x drivers. Since drivers are connected at
 runtime, these kind of errors can not be catched by the type system.</p>
-
 <p>This method is a shorthand for <code>declare_version::&lt;Odbc3&gt;</code>.</p>
 </div></div>
             <h2 id='implementations' class='small-section-header'>
@@ -141,20 +140,22 @@ runtime, these kind of errors can not be catched by the type system.</p>
                 <h2>Keyboard Shortcuts</h2>
 
                 <dl>
-                    <dt>?</dt>
+                    <dt><kbd>?</kbd></dt>
                     <dd>Show this help dialog</dd>
-                    <dt>S</dt>
+                    <dt><kbd>S</kbd></dt>
                     <dd>Focus the search field</dd>
-                    <dt>↑</dt>
+                    <dt><kbd>↑</kbd></dt>
                     <dd>Move up in search results</dd>
-                    <dt>↓</dt>
+                    <dt><kbd>↓</kbd></dt>
                     <dd>Move down in search results</dd>
-                    <dt>↹</dt>
+                    <dt><kbd>↹</kbd></dt>
                     <dd>Switch tab</dd>
-                    <dt>&#9166;</dt>
+                    <dt><kbd>&#9166;</kbd></dt>
                     <dd>Go to active search result</dd>
-                    <dt style="width:31px;">+ / -</dt>
-                    <dd>Collapse/expand all sections</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
                 </dl>
             </div>
 
