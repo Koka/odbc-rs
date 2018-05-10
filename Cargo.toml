@@ -21,7 +21,7 @@ odbc-safe = "0.4.1"
 log = "0.3.7"
 
 [dev-dependencies]
-env_logger = "0.3"
+env_logger = "0.5"
 chrono = "0.3"
 
 [badges]
