@@ -18,11 +18,11 @@ travis = []
 [dependencies]
 odbc-sys = "0.6.0"
 odbc-safe = "0.4.1"
-log = "0.3.7"
+log = "0.4.1"
 
 [dev-dependencies]
-env_logger = "0.3"
 chrono = "0.4"
+env_logger = "0.5"
 
 [badges]
 travis-ci = { repository = "Koka/odbc-rs", branch = "master" }
