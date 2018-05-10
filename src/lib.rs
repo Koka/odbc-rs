@@ -8,7 +8,7 @@
 //! [ODBC Programmer's Reference]
 //! (https://docs.microsoft.com/en-us/sql/odbc/reference/odbc-programmer-s-reference)
 //!
-//! # Internal Desgin
+//! # Internal Design
 //!
 //! While designed as a relatively low level wrapper around ODBC this crate tries to prevent many
 //! errors at compile time. The borrow checker and the RAII (Resource Acquisition Is
