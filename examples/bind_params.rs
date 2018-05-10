@@ -5,7 +5,7 @@ extern crate env_logger;
 use odbc::*;
 
 fn main() {
-    env_logger::init().unwrap();
+    env_logger::init();
     test_me().unwrap()
 }
 

@@ -47,7 +47,7 @@ impl MySupportedType for DateTime<Local> {
 }
 
 fn main() {
-    env_logger::init().unwrap();
+    env_logger::init();
     println!("Success: {}", test_me().unwrap().expect("No result!"))
 }
 

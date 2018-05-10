@@ -22,7 +22,7 @@ use std::io;
 
 fn main() {
 
-    env_logger::init().unwrap();
+    env_logger::init();
 
     match connect() {
         Ok(()) => println!("Success"),
