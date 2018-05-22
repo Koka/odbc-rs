@@ -2,7 +2,7 @@
 
 Library for writing [ODBC](https://msdn.microsoft.com/en-us/library/ms710154.aspx) applications in Rust.
 
-If you're looking for raw ODBC FFI bindings check [odbc-sys](https://github.com/pacman82/odbc-sys) crate.
+If you're looking for raw ODBC FFI bindings check [odbc-safe](https://github.com/pacman82/odbc-safe) and [odbc-sys](https://github.com/pacman82/odbc-sys) crate.
 
 [![https://travis-ci.org/Koka/odbc-rs](https://travis-ci.org/Koka/odbc-rs.svg?branch=master)](https://travis-ci.org/Koka/odbc-rs)
 [![Build status](https://ci.appveyor.com/api/projects/status/45ovhoic0wg7mnv5/branch/master?svg=true)](https://ci.appveyor.com/project/Koka/odbc-rs/branch/master)
