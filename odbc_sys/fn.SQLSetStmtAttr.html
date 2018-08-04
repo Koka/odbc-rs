@@ -10,10 +10,11 @@
     <title>odbc_sys::SQLSetStmtAttr - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../dark.css">
-    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
     <script src="../storage.js"></script>
     
 
@@ -33,7 +34,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'><a href='index.html'>odbc_sys</a></p><script>window.sidebarCurrent = {name: 'SQLSetStmtAttr', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <div class="sidebar-elems"><p class='location'><a href='index.html'>odbc_sys</a></p><script>window.sidebarCurrent = {name: 'SQLSetStmtAttr', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <div class="theme-picker">
@@ -54,13 +55,11 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Function <a href='index.html'>odbc_sys</a>::<wbr><a class="fn" href=''>SQLSetStmtAttr</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Function <a href='index.html'>odbc_sys</a>::<wbr><a class="fn" href=''>SQLSetStmtAttr</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#494-499' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub unsafe extern &quot;C&quot; fn SQLSetStmtAttr(<br>&nbsp;&nbsp;&nbsp;&nbsp;hstmt: <a class="type" href="../odbc_sys/type.SQLHSTMT.html" title="type odbc_sys::SQLHSTMT">SQLHSTMT</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;attr: <a class="enum" href="../odbc_sys/enum.SqlStatementAttribute.html" title="enum odbc_sys::SqlStatementAttribute">SqlStatementAttribute</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;value: <a class="type" href="../odbc_sys/type.SQLPOINTER.html" title="type odbc_sys::SQLPOINTER">SQLPOINTER</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;str_length: <a class="type" href="../odbc_sys/type.SQLINTEGER.html" title="type odbc_sys::SQLINTEGER">SQLINTEGER</a><br>) -&gt; <a class="enum" href="../odbc_sys/enum.SQLRETURN.html" title="enum odbc_sys::SQLRETURN">SQLRETURN</a></pre><div class='docblock'><p>Sets attributes related to a statement.</p>
+               </span><a class='srclink' href='../src/odbc_sys/lib.rs.html#1142-1147' title='goto source code'>[src]</a></span></h1><pre class='rust fn'>pub unsafe extern &quot;system&quot; fn SQLSetStmtAttr(<br>&nbsp;&nbsp;&nbsp;&nbsp;hstmt: <a class="type" href="../odbc_sys/type.SQLHSTMT.html" title="type odbc_sys::SQLHSTMT">SQLHSTMT</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;attr: <a class="enum" href="../odbc_sys/enum.SqlStatementAttribute.html" title="enum odbc_sys::SqlStatementAttribute">SqlStatementAttribute</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;value: <a class="type" href="../odbc_sys/type.SQLPOINTER.html" title="type odbc_sys::SQLPOINTER">SQLPOINTER</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;str_length: <a class="type" href="../odbc_sys/type.SQLINTEGER.html" title="type odbc_sys::SQLINTEGER">SQLINTEGER</a><br>) -&gt; <a class="enum" href="../odbc_sys/enum.SQLRETURN.html" title="enum odbc_sys::SQLRETURN">SQLRETURN</a></pre><div class='docblock'><p>Sets attributes related to a statement.</p>
 <h1 id="returns" class="section-header"><a href="#returns">Returns</a></h1>
 <p><code>SQL_SUCCESS</code>, <code>SQL_SUCCESS_WITH_INFO</code>, <code>SQL_ERROR</code>, or <code>SQL_INVALID_HANDLE</code>.</p>
 </div></section>

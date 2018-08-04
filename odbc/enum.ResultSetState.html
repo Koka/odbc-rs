@@ -10,10 +10,11 @@
     <title>odbc::ResultSetState - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../dark.css">
-    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
     <script src="../storage.js"></script>
     
 
@@ -33,7 +34,7 @@
     <nav class="sidebar">
         <div class="sidebar-menu">&#9776;</div>
         
-        <p class='location'>Enum ResultSetState</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#variants">Variants</a><div class="sidebar-links"><a href="#variant.Data">Data</a><a href="#variant.NoData">NoData</a></div></div><p class='location'><a href='index.html'>odbc</a></p><script>window.sidebarCurrent = {name: 'ResultSetState', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
+        <p class='location'>Enum ResultSetState</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#variants">Variants</a><div class="sidebar-links"><a href="#variant.Data">Data</a><a href="#variant.NoData">NoData</a></div><a class="sidebar-title" href="#synthetic-implementations">Auto Trait Implementations</a><div class="sidebar-links"><a href="#impl-Send">!Send</a><a href="#impl-Sync">!Sync</a></div></div><p class='location'><a href='index.html'>odbc</a></p><script>window.sidebarCurrent = {name: 'ResultSetState', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
     </nav>
 
     <div class="theme-picker">
@@ -54,22 +55,30 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Enum <a href='index.html'>odbc</a>::<wbr><a class="enum" href=''>ResultSetState</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Enum <a href='index.html'>odbc</a>::<wbr><a class="enum" href=''>ResultSetState</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/odbc/statement/mod.rs.html#33-36' title='goto source code'>[src]</a></span></h1>
-<pre class='rust enum'>pub enum ResultSetState&lt;'a, 'b, S&gt; {
+               </span><a class='srclink' href='../src/odbc/statement/mod.rs.html#33-36' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust enum'>pub enum ResultSetState&lt;'a, 'b, S&gt; {
     Data(<a class="struct" href="../odbc/struct.Statement.html" title="struct odbc::Statement">Statement</a>&lt;'a, 'b, S, <a class="enum" href="../odbc/enum.HasResult.html" title="enum odbc::HasResult">HasResult</a>&gt;),
     NoData(<a class="struct" href="../odbc/struct.Statement.html" title="struct odbc::Statement">Statement</a>&lt;'a, 'b, S, <a class="enum" href="../odbc/enum.NoResult.html" title="enum odbc::NoResult">NoResult</a>&gt;),
-}</pre><div class='docblock'><p>Holds a <code>Statement</code> after execution of a query.Allocated</p>
+}</pre></div><div class='docblock'><p>Holds a <code>Statement</code> after execution of a query.Allocated</p>
 <p>A executed statement may be in one of two states. Either the statement has yielded a result set
 or not. Keep in mind that some ODBC drivers just yield empty result sets on e.g. <code>INSERT</code>
 Statements</p>
 </div><h2 id='variants' class='variants small-section-header'>
                    Variants<a href='#variants' class='anchor'></a></h2>
-<span id="variant.Data" class="variant small-section-header"><a href="#variant.Data" class="anchor field"></a><span id='Data.v' class='invisible'><code>Data(<a class="struct" href="../odbc/struct.Statement.html" title="struct odbc::Statement">Statement</a>&lt;'a, 'b, S, <a class="enum" href="../odbc/enum.HasResult.html" title="enum odbc::HasResult">HasResult</a>&gt;)</code></span></span><span id="variant.NoData" class="variant small-section-header"><a href="#variant.NoData" class="anchor field"></a><span id='NoData.v' class='invisible'><code>NoData(<a class="struct" href="../odbc/struct.Statement.html" title="struct odbc::Statement">Statement</a>&lt;'a, 'b, S, <a class="enum" href="../odbc/enum.NoResult.html" title="enum odbc::NoResult">NoResult</a>&gt;)</code></span></span></section>
+<span id="variant.Data" class="variant small-section-header"><a href="#variant.Data" class="anchor field"></a><span id='Data.v' class='invisible'><code>Data(<a class="struct" href="../odbc/struct.Statement.html" title="struct odbc::Statement">Statement</a>&lt;'a, 'b, S, <a class="enum" href="../odbc/enum.HasResult.html" title="enum odbc::HasResult">HasResult</a>&gt;)</code></span></span><span id="variant.NoData" class="variant small-section-header"><a href="#variant.NoData" class="anchor field"></a><span id='NoData.v' class='invisible'><code>NoData(<a class="struct" href="../odbc/struct.Statement.html" title="struct odbc::Statement">Statement</a>&lt;'a, 'b, S, <a class="enum" href="../odbc/enum.NoResult.html" title="enum odbc::NoResult">NoResult</a>&gt;)</code></span></span>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+            <div id='implementations-list'>
+        </div>
+                <h2 id='synthetic-implementations' class='small-section-header'>
+                  Auto Trait Implementations<a href='#synthetic-implementations' class='anchor'></a>
+                </h2>
+                <div id='synthetic-implementations-list'>
+            <h3 id='impl-Send' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl&lt;'a, 'b, S&gt; !<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> for <a class="enum" href="../odbc/enum.ResultSetState.html" title="enum odbc::ResultSetState">ResultSetState</a>&lt;'a, 'b, S&gt;</code><a href='#impl-Send' class='anchor'></a></span></td><td><span class='out-of-band'></span></td></tr></tbody></table></h3><div class='impl-items'></div><h3 id='impl-Sync' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl&lt;'a, 'b, S&gt; !<a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sync.html" title="trait core::marker::Sync">Sync</a> for <a class="enum" href="../odbc/enum.ResultSetState.html" title="enum odbc::ResultSetState">ResultSetState</a>&lt;'a, 'b, S&gt;</code><a href='#impl-Sync' class='anchor'></a></span></td><td><span class='out-of-band'></span></td></tr></tbody></table></h3><div class='impl-items'></div></div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>

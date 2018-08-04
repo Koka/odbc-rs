@@ -10,10 +10,11 @@
     <title>odbc - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../dark.css">
-    <link rel="stylesheet" type="text/css" href="../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle">
     <script src="../storage.js"></script>
     
 
@@ -54,20 +55,18 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>odbc</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>odbc</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/odbc/lib.rs.html#1-58' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><h1 id="odbc" class="section-header"><a href="#odbc">ODBC</a></h1>
+               </span><a class='srclink' href='../src/odbc/lib.rs.html#1-58' title='goto source code'>[src]</a></span></h1><div class='docblock'><h1 id="odbc" class="section-header"><a href="#odbc">ODBC</a></h1>
 <p>Open Database Connectivity or short ODBC is a low level high performance interface
 introduced by Microsoft to access relational data stores. This crate wraps the raw C interface
 and is intended to be usable in safe and idiomatic Rust.</p>
 <p><a href="https://docs.microsoft.com/en-us/sql/odbc/reference/what-is-odbc">What is ODBC?</a></p>
 <p>[ODBC Programmer's Reference]
 (https://docs.microsoft.com/en-us/sql/odbc/reference/odbc-programmer-s-reference)</p>
-<h1 id="internal-desgin" class="section-header"><a href="#internal-desgin">Internal Desgin</a></h1>
+<h1 id="internal-design" class="section-header"><a href="#internal-design">Internal Design</a></h1>
 <p>While designed as a relatively low level wrapper around ODBC this crate tries to prevent many
 errors at compile time. The borrow checker and the RAII (Resource Acquisition Is
 Initialization) idiom should prevent any occurence of <code>SQL_INVALID_HANDLE</code> in safe code.</p>

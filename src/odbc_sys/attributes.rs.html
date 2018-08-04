@@ -4,16 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.6.0/src/attributes.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.6.3/src/attributes.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>attributes.rs.html -- source</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle">
     <script src="../../storage.js"></script>
     
 
@@ -91,8 +92,9 @@
 <span id="35">35</span>
 <span id="36">36</span>
 <span id="37">37</span>
+<span id="38">38</span>
 </pre><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">raw</span>::{<span class="ident">c_void</span>, <span class="ident">c_ulong</span>};
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">raw</span>::<span class="ident">c_void</span>;
 
 <span class="doccomment">/// Governs behaviour of EnvironmentAttribute</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">i32</span>)]</span>
@@ -113,6 +115,7 @@
 <span class="doccomment">/// Used in conjunction with `SQL_ATTR_ODBC_VERSION` and `SQLSetEnvAttr` to declare the ODBC</span>
 <span class="doccomment">/// version used by the application.</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">i32</span>)]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">OdbcVersion</span> {
     <span class="ident">SQL_OV_ODBC2</span> <span class="op">=</span> <span class="number">2</span>,
@@ -126,7 +129,7 @@
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">OdbcVersion</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">source</span>: <span class="ident">OdbcVersion</span>) <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span> {
-        <span class="ident">source</span> <span class="kw">as</span> <span class="ident">c_ulong</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>
+        <span class="ident">source</span> <span class="kw">as</span> <span class="ident">i32</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>
     }
 }
 </pre>

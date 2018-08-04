@@ -10,10 +10,11 @@
     <title>list_data_sources.rs.html -- source</title>
 
     <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle">
     <script src="../../../storage.js"></script>
     
 
@@ -394,8 +395,8 @@
             <span class="self">self</span>.<span class="ident">alloc_info</span>(<span class="ident">safe</span>::<span class="ident">Environment</span>::<span class="ident">data_sources</span>, <span class="ident">direction</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">source_list</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">num_sources</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">name_buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..(<span class="ident">max_name</span> <span class="op">+</span> <span class="number">1</span>)).<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="number">0u8</span>).<span class="ident">collect</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">description_buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..(<span class="ident">max_desc</span> <span class="op">+</span> <span class="number">1</span>)).<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="number">0u8</span>).<span class="ident">collect</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">name_buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..(<span class="ident">max_name</span> <span class="op">+</span> <span class="number">1</span>)).<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="number">0u8</span>).<span class="ident">collect</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">description_buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..(<span class="ident">max_desc</span> <span class="op">+</span> <span class="number">1</span>)).<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="number">0u8</span>).<span class="ident">collect</span>();
 
         <span class="comment">// Before we call SQLDataSources with SQL_FETCH_NEXT, we have to call it with either</span>
         <span class="comment">// SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or</span>

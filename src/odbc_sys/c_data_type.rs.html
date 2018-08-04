@@ -4,16 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.6.0/src/c_data_type.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.6.3/src/c_data_type.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>c_data_type.rs.html -- source</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle">
     <script src="../../storage.js"></script>
     
 
@@ -122,7 +123,17 @@
 <span id="66">66</span>
 <span id="67">67</span>
 <span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
 </pre><pre class="rust ">
+<span class="doccomment">/// Extended C Types range 4000 and above. Range of -100 thru 200 is reserved by Driver Manager.</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SQL_C_TYPES_EXTENDED</span>: <span class="ident">i16</span> <span class="op">=</span> <span class="number">0x04000</span>;
+
 <span class="doccomment">/// The C data type is specified in the SQLBindCol and SQLGetData functions with the TargetType</span>
 <span class="doccomment">/// argument and in the SQLBindParameter function with the ValueType argument.</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">i16</span>)]</span>
@@ -134,13 +145,13 @@
     <span class="ident">SQL_C_STINYINT</span> <span class="op">=</span> <span class="op">-</span><span class="number">26</span>,
     <span class="ident">SQL_C_SBIGINT</span> <span class="op">=</span> <span class="op">-</span><span class="number">25</span>,
 
-    <span class="ident">SQL_C_ULONG</span> <span class="op">=</span> <span class="op">-</span> <span class="number">18</span>,
+    <span class="ident">SQL_C_ULONG</span> <span class="op">=</span> <span class="op">-</span><span class="number">18</span>,
     <span class="ident">SQL_C_USHORT</span> <span class="op">=</span> <span class="op">-</span><span class="number">17</span>,
-    <span class="ident">SQL_C_SLONG</span> <span class="op">=</span> <span class="op">-</span> <span class="number">16</span>,
+    <span class="ident">SQL_C_SLONG</span> <span class="op">=</span> <span class="op">-</span><span class="number">16</span>,
     <span class="ident">SQL_C_SSHORT</span> <span class="op">=</span> <span class="op">-</span><span class="number">15</span>,
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;odbc_version_3_50&quot;</span>)]</span>
-    <span class="ident">SQL_C_GUID</span> <span class="op">=</span> <span class="op">-</span> <span class="number">11</span>,
+    <span class="ident">SQL_C_GUID</span> <span class="op">=</span> <span class="op">-</span><span class="number">11</span>,
 
     <span class="ident">SQL_C_WCHAR</span> <span class="op">=</span> <span class="op">-</span><span class="number">8</span>,
 
@@ -184,7 +195,11 @@
     <span class="ident">SQL_C_INTERVAL_HOUR_TO_MINUTE</span> <span class="op">=</span> <span class="number">111</span>,
     <span class="ident">SQL_C_INTERVAL_HOUR_TO_SECOND</span> <span class="op">=</span> <span class="number">112</span>,
     <span class="ident">SQL_C_INTERVAL_MINUTE_TO_SECOND</span> <span class="op">=</span> <span class="number">113</span>,
+
+    <span class="ident">SQL_C_SS_TIME2</span> <span class="op">=</span> <span class="ident">SQL_C_TYPES_EXTENDED</span> <span class="op">+</span> <span class="number">0</span>,
+    <span class="ident">SQL_C_SS_TIMESTAMPOFFSET</span> <span class="op">=</span> <span class="ident">SQL_C_TYPES_EXTENDED</span> <span class="op">+</span> <span class="number">1</span>,
 }
+
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">SqlCDataType</span>::<span class="kw-2">*</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span>

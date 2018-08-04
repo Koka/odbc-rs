@@ -4,16 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.6.0/src/input_output.rs`.">
+    <meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.6.3/src/input_output.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>input_output.rs.html -- source</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle">
     <script src="../../storage.js"></script>
     
 
@@ -73,7 +74,7 @@
 <span id="17">17</span>
 </pre><pre class="rust ">
 <span class="doccomment">/// Used by `SQLBindParameter`.</span>
-<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">u16</span>)]</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">i16</span>)]</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">InputOutput</span> {

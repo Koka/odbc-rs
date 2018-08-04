@@ -10,10 +10,11 @@
     <title>data_type.rs.html -- source</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle">
     <script src="../../storage.js"></script>
     
 
@@ -210,15 +211,15 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sql_data_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">SqlDataType</span> {
         <span class="kw">use</span> <span class="ident">DataType</span>::<span class="kw-2">*</span>;
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Char</span>(_) <span class="op">=&gt;</span> <span class="ident">SQL_CHAR</span>,
-            <span class="ident">Numeric</span>(_, _) <span class="op">=&gt;</span> <span class="ident">SQL_NUMERIC</span>,
-            <span class="ident">Decimal</span>(_, _) <span class="op">=&gt;</span> <span class="ident">SQL_DECIMAL</span>,
+            <span class="ident">Char</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">SQL_CHAR</span>,
+            <span class="ident">Numeric</span>(<span class="kw">_</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">SQL_NUMERIC</span>,
+            <span class="ident">Decimal</span>(<span class="kw">_</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">SQL_DECIMAL</span>,
             <span class="ident">Integer</span> <span class="op">=&gt;</span> <span class="ident">SQL_INTEGER</span>,
             <span class="ident">SmallInt</span> <span class="op">=&gt;</span> <span class="ident">SQL_SMALLINT</span>,
             <span class="ident">Float</span> <span class="op">=&gt;</span> <span class="ident">SQL_FLOAT</span>,
             <span class="ident">Real</span> <span class="op">=&gt;</span> <span class="ident">SQL_REAL</span>,
             <span class="ident">Double</span> <span class="op">=&gt;</span> <span class="ident">SQL_DOUBLE</span>,
-            <span class="ident">Varchar</span>(_) <span class="op">=&gt;</span> <span class="ident">SQL_VARCHAR</span>,
+            <span class="ident">Varchar</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">SQL_VARCHAR</span>,
         }
     }
 
@@ -227,8 +228,8 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">SQLULEN</span> {
         <span class="kw">use</span> <span class="ident">DataType</span>::<span class="kw-2">*</span>;
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Numeric</span>(<span class="ident">precision</span>, _) <span class="op">|</span>
-            <span class="ident">Decimal</span>(<span class="ident">precision</span>, _) <span class="op">=&gt;</span> <span class="ident">precision</span>,
+            <span class="ident">Numeric</span>(<span class="ident">precision</span>, <span class="kw">_</span>) <span class="op">|</span>
+            <span class="ident">Decimal</span>(<span class="ident">precision</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">precision</span>,
             <span class="ident">Integer</span> <span class="op">=&gt;</span> <span class="number">10</span>,
             <span class="ident">SmallInt</span> <span class="op">=&gt;</span> <span class="number">5</span>,
             <span class="ident">Float</span> <span class="op">|</span> <span class="ident">Double</span> <span class="op">=&gt;</span> <span class="number">15</span>,
@@ -242,9 +243,9 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">decimal_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">SQLSMALLINT</span> {
         <span class="kw">use</span> <span class="ident">DataType</span>::<span class="kw-2">*</span>;
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Char</span>(_) <span class="op">|</span> <span class="ident">Integer</span> <span class="op">|</span> <span class="ident">Float</span> <span class="op">|</span> <span class="ident">Real</span> <span class="op">|</span> <span class="ident">Double</span> <span class="op">|</span> <span class="ident">Varchar</span>(_) <span class="op">=&gt;</span> <span class="number">0</span>,
-            <span class="ident">Numeric</span>(_, <span class="ident">scale</span>) <span class="op">|</span>
-            <span class="ident">Decimal</span>(_, <span class="ident">scale</span>) <span class="op">=&gt;</span> <span class="ident">scale</span>,
+            <span class="ident">Char</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">Integer</span> <span class="op">|</span> <span class="ident">Float</span> <span class="op">|</span> <span class="ident">Real</span> <span class="op">|</span> <span class="ident">Double</span> <span class="op">|</span> <span class="ident">Varchar</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="number">0</span>,
+            <span class="ident">Numeric</span>(<span class="kw">_</span>, <span class="ident">scale</span>) <span class="op">|</span>
+            <span class="ident">Decimal</span>(<span class="kw">_</span>, <span class="ident">scale</span>) <span class="op">=&gt;</span> <span class="ident">scale</span>,
             <span class="ident">SmallInt</span> <span class="op">=&gt;</span> <span class="number">5</span>,
         }
     }

@@ -10,10 +10,11 @@
     <title>types.rs.html -- source</title>
 
     <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css"
+          id="mainThemeStyle">
     
     <link rel="stylesheet" type="text/css" href="../../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css" id="themeStyle">
+    <link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle">
     <script src="../../../storage.js"></script>
     
 
@@ -392,7 +393,7 @@
 <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">trait</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>: <span class="ident">Sized</span> {
     <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span>;
     <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span>;
-    <span class="kw">fn</span> <span class="ident">convert</span>(_: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span>;
     <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>;
     <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>;
     <span class="kw">fn</span> <span class="ident">decimal_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span> {
