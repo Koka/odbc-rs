@@ -1,96 +1,87 @@
-//! Implements the ODBC Environment
+
+use std::error::Error;
+use super::{GenericError, safe, SqlString, Connection};
+use std::sync::Mutex;
+use odbc_safe::{Environment, Odbc3, sys, DataSource, Connection as Conn};
+use std::ops::{Deref, DerefMut};
+
 mod list_data_sources;
-pub use self::list_data_sources::{DataSourceInfo, DriverInfo};
-use super::{ffi, into_result, safe, try_into_option, DiagnosticRecord, GetDiagRec, Handle, Result};
-use std;
 
-/// Environment state used to represent that environment has been set to odbc version 3
-pub type Version3 = safe::Odbc3;
+pub struct Env(Environment<Odbc3>);
 
-/// Handle to an ODBC Environment
-///
-/// Creating an instance of this type is the first thing you do then using ODBC. The environment
-/// must outlive all connections created with it.
-pub struct Environment<V> {
-    safe: safe::Environment<V>,
+unsafe impl Send for Env {}
+
+lazy_static! {
+    static ref ODBC_ENV: Mutex<Result<Env, GenericError>> = {
+        Mutex::new(
+            Environment::new().map_error(|_e| GenericError("Failed to obtain ODBC environment".to_owned()))
+                .success()
+                .and_then(
+                    |env| env.declare_version_3().map_error(|_env| GenericError("Failed to obtain ODBC v3 environment".to_owned())).success()
+                ).map(
+                    |env| Env(env)
+                )
+        )
+    };
 }
 
-impl<V> Handle for Environment<V> {
-    type To = ffi::Env;
-    unsafe fn handle(&self) -> ffi::SQLHENV {
-        self.safe.as_raw()
+impl Deref for Env {
+    type Target = Environment<Odbc3>;
+
+    fn deref(&self) -> &<Self as Deref>::Target {
+        &self.0
     }
 }
 
-impl<V: safe::Version> Environment<V> {
-    /// Creates an ODBC Environment and declares specifaciton of `V` are used. You can use the
-    /// shorthand `create_environment_v3()` instead.
-    ///
-    /// # Example
-    /// ```
-    /// use odbc::*;
-    /// fn do_database_stuff() -> std::result::Result<(), Option<DiagnosticRecord>> {
-    ///     let env : Environment<Version3> = Environment::new()?; // first thing to do
-    ///     // ...
-    ///     Ok(())
-    /// }
-    /// ```
-    ///
-    /// # Return
-    ///
-    /// While most functions in this crate return a `DiagnosticRecord` in the event of an Error the
-    /// creation of an environment is special. Since `DiagnosticRecord`s are created using the
-    /// environment, at least its allocation has to be successful to obtain one. If the allocation
-    /// fails it is sadly not possible to receive further Diagnostics. Setting an unsupported version
-    /// may however result in an ordinary `Some(DiagnosticRecord)`.
-    /// ```
-    pub fn new() -> std::result::Result<Environment<V>, Option<DiagnosticRecord>> {
-        let safe = match safe::Environment::new() {
-            safe::Success(v) => v,
-            safe::Info(v) => {
-                warn!("{}", v.get_diag_rec(1).unwrap());
-                v
-            }
-            safe::Error(()) => return Err(None),
-        };
-        let safe = into_result(safe.declare_version())?;
-        Ok(Environment { safe })
-    }
-
-    pub(crate) fn as_safe(&self) -> &safe::Environment<V> {
-        &self.safe
+impl DerefMut for Env {
+    fn deref_mut(&mut self) -> &mut Environment<Odbc3> {
+        &mut self.0
     }
 }
 
-unsafe impl<V> safe::Handle for Environment<V> {
-    const HANDLE_TYPE : ffi::HandleType = ffi::SQL_HANDLE_ENV;
-
-    fn handle(&self) -> ffi::SQLHANDLE {
-        self.safe.as_raw() as ffi::SQLHANDLE
+impl Env {
+    pub fn with_env<F, T>(closure: F) -> Result<T, Box<Error>>
+        where F: FnOnce(&Environment<Odbc3>) -> Result<T, Box<Error>>
+    {
+        let res = ODBC_ENV.lock()?;
+        match *res {
+            Ok(ref env) => closure(&env),
+            Err(ref e) => Err(e.clone().into())
+        }
     }
-}
 
-/// Creates an ODBC Environment and declares specifaciton of version 3.0 are used
-///
-/// # Example
-/// ```
-/// use odbc::*;
-/// fn do_database_stuff() -> std::result::Result<(), Option<DiagnosticRecord>> {
-///     let env = create_environment_v3()?; // first thing to do
-///     // ...
-///     Ok(())
-/// }
-/// ```
-///
-/// # Return
-///
-/// While most functions in this crate return a `DiagnosticRecord` in the event of an Error the
-/// creation of an environment is special. Since `DiagnosticRecord`s are created using the
-/// environment, at least its allocation has to be successful to obtain one. If the allocation
-/// fails it is sadly not possible to receive further Diagnostics. Setting an unsupported version
-/// may however result in an ordinary `Some(DiagnosticRecord)`.
-pub fn create_environment_v3()
-    -> std::result::Result<Environment<Version3>, Option<DiagnosticRecord>>
-{
-    Environment::new()
+    pub fn with_env_mut<F, T>(closure: F) -> Result<T, Box<Error>>
+        where F: FnOnce(&mut Environment<Odbc3>) -> Result<T, Box<Error>>
+    {
+        let mut res = ODBC_ENV.lock()?;
+        match *res {
+            Ok(ref mut env) => closure(env),
+            Err(ref e) => Err(e.clone().into())
+        }
+    }
+
+    pub fn with_connection<S: Into<String>, F, T>(connection_string: S, closure: F) -> Result<T, Box<Error>>
+        where F: FnOnce(Connection) -> Result<T, Box<Error>>
+    {
+        let converted_string = SqlString::from(connection_string)?;
+
+        let res = ODBC_ENV.lock()?;
+        match *res {
+            Ok(ref env) => {
+                let conn: Result<Conn, Box<Error>> = DataSource::with_parent(&env.0)
+                    .map_error(|_err| GenericError("Unable to create connection".to_owned()))
+                    .success()
+                    .and_then(
+                        |ds| ds.connect_with_connection_string(&converted_string)
+                            .map_error(|_err| GenericError("Unable to connect to database".to_owned()))
+                            .success()
+                    );
+
+                let mut conn = Connection::new(conn?);
+
+                closure(conn)
+            },
+            Err(ref e) => Err(e.clone().into())
+        }
+    }
 }

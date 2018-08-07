@@ -24,35 +24,23 @@
 //! [ODBC State Transitions]
 //! (https://docs.microsoft.com/en-us/sql/odbc/reference/appendixes/appendix-b-odbc-state-transition-tables)
 
+//#[macro_use]
+//extern crate log;
+
 #[macro_use]
-extern crate log;
-extern crate odbc_safe;
+extern crate lazy_static;
 
-pub mod ffi;
-
-pub use diagnostics::{DiagnosticRecord, GetDiagRec};
-pub use result::Result;
-pub use environment::*;
-pub use connection::Connection;
-pub use statement::*;
-
-use odbc_object::OdbcObject;
-use raii::Raii;
-use result::{Return, into_result, try_into_option};
+pub extern crate odbc_safe;
 use odbc_safe as safe;
 
-mod odbc_object;
-mod raii;
-mod diagnostics;
-mod result;
 mod environment;
+pub use environment::Env;
+
+mod error;
+pub use error::GenericError;
+
+mod string;
+pub use string::SqlString;
+
 mod connection;
-mod statement;
-
-
-/// Reflects the ability of a type to expose a valid handle
-pub trait Handle {
-    type To;
-    /// Returns a valid handle to the odbc type.
-    unsafe fn handle(&self) -> *mut Self::To;
-}
+pub use connection::{Connection, ResultSet};

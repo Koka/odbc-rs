@@ -1,33 +1,25 @@
-// Use this crate and set environmet variable RUST_LOG=odbc to see ODBC warnings
+// Use this crate and set environment variable RUST_LOG=odbc to see ODBC warnings
 extern crate env_logger;
 extern crate odbc;
+
+use std::error::Error;
 use odbc::*;
 
-fn main() {
-
-    match print_drivers_and_datasources() {
-        Ok(()) => (),
-        Err(err) => println!("{}", err),
-    }
-}
-
-fn print_drivers_and_datasources() -> odbc::Result<()> {
-
+fn main() -> Result<(), Box<Error>> {
     env_logger::init();
 
-    let mut env = create_environment_v3().map_err(|e| e.unwrap())?;
-
     println!("Driver list:");
-    for driver_info in env.drivers()? {
+    for driver_info in Env::drivers()? {
         println!("\nDriver Name: {}", driver_info.description);
         for (key, value) in driver_info.attributes {
-            println!("    {}={}", key, value);
+            println!("\t{} = {}", key, value);
         }
     }
 
     println!("\nDataSource list:");
-    for ds in env.data_sources()? {
-        println!("    {}\n    {}\n\n", ds.server_name, ds.driver);
+    for ds in Env::data_sources()? {
+        println!("\n\t{}: {}", ds.server_name, ds.driver);
     }
+
     Ok(())
 }

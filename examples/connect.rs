@@ -1,53 +1,39 @@
-extern crate odbc;
-// Use this crate and set environmet variable RUST_LOG=odbc to see ODBC warnings
+// Use this crate and set environment variable RUST_LOG=odbc to see ODBC warnings
 extern crate env_logger;
+extern crate odbc;
+
+use std::error::Error;
 use odbc::*;
 use std::io;
+use std::str::from_utf8;
 
-fn main() {
-
+fn main() -> Result<(), Box<Error>> {
     env_logger::init();
-
-    match connect() {
-        Ok(()) => println!("Success"),
-        Err(diag) => println!("Error: {}", diag),
-    }
-}
-
-fn connect() -> std::result::Result<(), DiagnosticRecord> {
-
-    let env = create_environment_v3().map_err(|e| e.unwrap())?;
-
-    let mut buffer = String::new();
-    println!("Please enter connection string: ");
-    io::stdin().read_line(&mut buffer).unwrap();
-
-    let conn = env.connect_with_connection_string(&buffer)?;
-    execute_statement(&conn)
-}
-
-fn execute_statement<'env>(conn: &Connection<'env>) -> Result<()> {
-    let stmt = Statement::with_parent(conn)?;
 
     let mut sql_text = String::new();
     println!("Please enter SQL statement string: ");
-    io::stdin().read_line(&mut sql_text).unwrap();
+    io::stdin().read_line(&mut sql_text)?;
 
-    match stmt.exec_direct(&sql_text)? {
-        Data(mut stmt) => {
-            let cols = stmt.num_result_cols()?;
-            while let Some(mut cursor) = stmt.fetch()? {
-                for i in 1..(cols + 1) {
-                    match cursor.get_data::<&str>(i as u16)? {
-                        Some(val) => print!(" {}", val),
-                        None => print!(" NULL"),
-                    }
-                }
-                println!("");
+    Env::with_connection("DSN=TestDataSource", |conn| {
+        conn.select(sql_text, |result_set| {
+            let mut result_set = result_set.expect("No result set!");
+            let description = result_set.describe_columns()?;
+
+            println!("Columns:");
+            for col in description {
+                print!("{} {:?} {:?}\t", from_utf8(&col.name).unwrap_or("Non UTF-8 string"), col.data_type, col.nullable)
             }
-        }
-        NoData(_) => println!("Query executed, no data returned"),
-    }
+            println!();
 
-    Ok(())
+            println!("Result:");
+            for mut row in result_set.rows()? {
+                for col in 1..(row.length()) {
+                    print!("{:?}\t", row.get_col(col));
+                }
+                println!();
+            }
+
+            Ok(())
+        })
+    })
 }
