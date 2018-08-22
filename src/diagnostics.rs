@@ -1,7 +1,9 @@
 use super::{ffi, safe};
-use std::fmt;
+use std::{fmt, cmp};
 use std::ffi::CStr;
 use std::error::Error;
+
+pub const MAX_DIAGNOSTIC_MESSAGE_SIZE: usize = 1024;
 
 /// ODBC Diagnostic Record
 ///
@@ -11,7 +13,7 @@ pub struct DiagnosticRecord {
     // All elements but the last one, may not be nul. The last one must be nul.
     state: [ffi::SQLCHAR; ffi::SQL_SQLSTATE_SIZE + 1],
     // Must at least contain one nul
-    message: [ffi::SQLCHAR; ffi::SQL_MAX_MESSAGE_LENGTH as usize],
+    message: [ffi::SQLCHAR; MAX_DIAGNOSTIC_MESSAGE_SIZE],
     // The numbers of characters in message not nul
     message_length: ffi::SQLSMALLINT,
     native_error: ffi::SQLINTEGER,
@@ -84,13 +86,14 @@ where
 {
     fn get_diag_rec(&self, record_number: i16) -> Option<(DiagnosticRecord)> {
         use safe::ReturnOption::*;
-        let mut message = [0; 512];
+        let mut message = [0; MAX_DIAGNOSTIC_MESSAGE_SIZE];
         match self.diagnostics(record_number, &mut message) {
             Success(result) | Info(result) => {
+                let message_length = cmp::min(result.text_length, MAX_DIAGNOSTIC_MESSAGE_SIZE as ffi::SQLSMALLINT - 1);
                 Some(DiagnosticRecord {
                     state: result.state,
                     native_error: result.native_error,
-                    message_length: result.text_length,
+                    message_length,
                     message,
                 })
             }
@@ -109,7 +112,7 @@ mod test {
         fn new() -> DiagnosticRecord {
             DiagnosticRecord {
                 state: [0u8; ffi::SQL_SQLSTATE_SIZE + 1],
-                message: [0u8; ffi::SQL_MAX_MESSAGE_LENGTH as usize],
+                message: [0u8; MAX_DIAGNOSTIC_MESSAGE_SIZE],
                 native_error: 0,
                 message_length: 0,
             }
