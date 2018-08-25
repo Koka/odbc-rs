@@ -193,11 +193,16 @@
 <span id="136">136</span>
 <span id="137">137</span>
 <span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">ffi</span>, <span class="ident">safe</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">fmt</span>, <span class="ident">cmp</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ffi</span>::<span class="ident">CStr</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">error</span>::<span class="ident">Error</span>;
+
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MAX_DIAGNOSTIC_MESSAGE_SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">1024</span>;
 
 <span class="doccomment">/// ODBC Diagnostic Record</span>
 <span class="doccomment">///</span>
@@ -207,7 +212,7 @@
     <span class="comment">// All elements but the last one, may not be nul. The last one must be nul.</span>
     <span class="ident">state</span>: [<span class="ident">ffi</span>::<span class="ident">SQLCHAR</span>; <span class="ident">ffi</span>::<span class="ident">SQL_SQLSTATE_SIZE</span> <span class="op">+</span> <span class="number">1</span>],
     <span class="comment">// Must at least contain one nul</span>
-    <span class="ident">message</span>: [<span class="ident">ffi</span>::<span class="ident">SQLCHAR</span>; <span class="ident">ffi</span>::<span class="ident">SQL_MAX_MESSAGE_LENGTH</span> <span class="kw">as</span> <span class="ident">usize</span>],
+    <span class="ident">message</span>: [<span class="ident">ffi</span>::<span class="ident">SQLCHAR</span>; <span class="ident">MAX_DIAGNOSTIC_MESSAGE_SIZE</span>],
     <span class="comment">// The numbers of characters in message not nul</span>
     <span class="ident">message_length</span>: <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
     <span class="ident">native_error</span>: <span class="ident">ffi</span>::<span class="ident">SQLINTEGER</span>,
@@ -280,13 +285,14 @@
 {
     <span class="kw">fn</span> <span class="ident">get_diag_rec</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">record_number</span>: <span class="ident">i16</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">DiagnosticRecord</span>)<span class="op">&gt;</span> {
         <span class="kw">use</span> <span class="ident">safe</span>::<span class="ident">ReturnOption</span>::<span class="kw-2">*</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">message</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">512</span>];
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">message</span> <span class="op">=</span> [<span class="number">0</span>; <span class="ident">MAX_DIAGNOSTIC_MESSAGE_SIZE</span>];
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">diagnostics</span>(<span class="ident">record_number</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">message</span>) {
             <span class="ident">Success</span>(<span class="ident">result</span>) <span class="op">|</span> <span class="ident">Info</span>(<span class="ident">result</span>) <span class="op">=&gt;</span> {
+                <span class="kw">let</span> <span class="ident">message_length</span> <span class="op">=</span> <span class="ident">cmp</span>::<span class="ident">min</span>(<span class="ident">result</span>.<span class="ident">text_length</span>, <span class="ident">MAX_DIAGNOSTIC_MESSAGE_SIZE</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span> <span class="op">-</span> <span class="number">1</span>);
                 <span class="prelude-val">Some</span>(<span class="ident">DiagnosticRecord</span> {
                     <span class="ident">state</span>: <span class="ident">result</span>.<span class="ident">state</span>,
                     <span class="ident">native_error</span>: <span class="ident">result</span>.<span class="ident">native_error</span>,
-                    <span class="ident">message_length</span>: <span class="ident">result</span>.<span class="ident">text_length</span>,
+                    <span class="ident">message_length</span>,
                     <span class="ident">message</span>,
                 })
             }
@@ -305,7 +311,7 @@
         <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">DiagnosticRecord</span> {
             <span class="ident">DiagnosticRecord</span> {
                 <span class="ident">state</span>: [<span class="number">0u8</span>; <span class="ident">ffi</span>::<span class="ident">SQL_SQLSTATE_SIZE</span> <span class="op">+</span> <span class="number">1</span>],
-                <span class="ident">message</span>: [<span class="number">0u8</span>; <span class="ident">ffi</span>::<span class="ident">SQL_MAX_MESSAGE_LENGTH</span> <span class="kw">as</span> <span class="ident">usize</span>],
+                <span class="ident">message</span>: [<span class="number">0u8</span>; <span class="ident">MAX_DIAGNOSTIC_MESSAGE_SIZE</span>],
                 <span class="ident">native_error</span>: <span class="number">0</span>,
                 <span class="ident">message_length</span>: <span class="number">0</span>,
             }

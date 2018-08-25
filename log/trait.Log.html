@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/log/lib.rs.html#922-940' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust trait'>pub trait Log: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sync.html" title="trait core::marker::Sync">Sync</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> {
+               </span><a class='srclink' href='../src/log/lib.rs.html#1022-1040' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class='rust trait'>pub trait Log: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Sync.html" title="trait core::marker::Sync">Sync</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> {
     fn <a href='#tymethod.enabled' class='fnname'>enabled</a>(&amp;self, metadata: &amp;<a class="struct" href="../log/struct.Metadata.html" title="struct log::Metadata">Metadata</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>;
 <div class='item-spacer'></div>    fn <a href='#tymethod.log' class='fnname'>log</a>(&amp;self, record: &amp;<a class="struct" href="../log/struct.Record.html" title="struct log::Record">Record</a>);
 <div class='item-spacer'></div>    fn <a href='#tymethod.flush' class='fnname'>flush</a>(&amp;self);

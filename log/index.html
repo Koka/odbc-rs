@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/log/lib.rs.html#11-1339' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>A lightweight logging facade.</p>
+               </span><a class='srclink' href='../src/log/lib.rs.html#11-1464' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>A lightweight logging facade.</p>
 <p>The <code>log</code> crate provides a single logging API that abstracts over the
 actual logging implementation. Libraries can use the logging API provided
 by this crate, and the consumer of those libraries can choose the logging
@@ -74,8 +74,10 @@ the target to filter requests based on some user configuration.</p>
 <h1 id="use" class="section-header"><a href="#use">Use</a></h1>
 <p>The basic use of the log crate is through the five logging macros: <a href="./macro.error.html"><code>error!</code></a>,
 <a href="./macro.warn.html"><code>warn!</code></a>, <a href="./macro.info.html"><code>info!</code></a>, <a href="./macro.debug.html"><code>debug!</code></a> and <a href="./macro.trace.html"><code>trace!</code></a>
-where <code>error!</code> represents the highest-priority log level, and <code>trace!</code> the lowest.</p>
-<p>Each of these macros accept format strings similarly to <a href="https://doc.rust-lang.org/stable/std/macro.println.html"><code>println!</code></a>.</p>
+where <code>error!</code> represents the highest-priority log messages
+and <code>trace!</code> the lowest. The log messages are filtered by configuring
+the log level to exclude messages with a lower priority.
+Each of these macros accept format strings similarly to <a href="https://doc.rust-lang.org/stable/std/macro.println.html"><code>println!</code></a>.</p>
 <h2 id="in-libraries" class="section-header"><a href="#in-libraries">In libraries</a></h2>
 <p>Libraries should link only to the <code>log</code> crate, and use the provided
 macros to log whatever information will be useful to downstream consumers.</p>
@@ -84,7 +86,7 @@ macros to log whatever information will be useful to downstream consumers.</p>
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">log</span>;
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">shave_the_yak</span>(<span class="ident">yak</span>: <span class="kw-2">&amp;</span><span class="ident">Yak</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">shave_the_yak</span>(<span class="ident">yak</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Yak</span>) {
     <span class="macro">info</span><span class="macro">!</span>(<span class="ident">target</span>: <span class="string">&quot;yak_events&quot;</span>, <span class="string">&quot;Commencing yak shaving for {:?}&quot;</span>, <span class="ident">yak</span>);
 
     <span class="kw">loop</span> {
@@ -163,16 +165,16 @@ logs all messages at the <a href="enum.Level.html"><code>Error</code></a>, <a hr
     <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {}
 }
 </pre>
-<p>Loggers are installed by calling the <a href="fn.set_logger.html"><code>set_logger</code></a> function. It takes a
-closure which is provided a <a href="struct.MaxLevelFilter.html"><code>MaxLevelFilter</code></a> token and returns a
-<a href="trait.Log.html"><code>Log</code></a> trait object. The <a href="struct.MaxLevelFilter.html"><code>MaxLevelFilter</code></a> token controls the global
-maximum log level. The logging facade uses this as an optimization to
-improve performance of log messages at levels that are disabled. In the
-case of our example logger, we'll want to set the maximum log level to
-<a href="enum.Level.html"><code>Info</code></a>, since we ignore any <a href="enum.Level.html"><code>Debug</code></a> or
-<a href="enum.Level.html"><code>Trace</code></a> level log messages. A logging implementation
-should provide a function that wraps a call to <a href="fn.set_logger.html"><code>set_logger</code></a>, handling
-initialization of the logger:</p>
+<p>Loggers are installed by calling the <a href="fn.set_logger.html"><code>set_logger</code></a> function. The maximum
+log level also needs to be adjusted via the <a href="fn.set_max_level.html"><code>set_max_level</code></a> function. The
+logging facade uses this as an optimization to improve performance of log
+messages at levels that are disabled. It's important to set it, as it
+defaults to <a href="enum.LevelFilter.html"><code>Off</code></a>, so no log messages will ever be captured!
+In the case of our example logger, we'll want to set the maximum log level
+to <a href="enum.LevelFilter.html"><code>Info</code></a>, since we ignore any <a href="enum.Level.html"><code>Debug</code></a> or
+<a href="enum.Level.html"><code>Trace</code></a> level log messages. A logging implementation should
+provide a function that wraps a call to <a href="fn.set_logger.html"><code>set_logger</code></a> and
+<a href="fn.set_max_level.html"><code>set_max_level</code></a>, handling initialization of the logger:</p>
 
 <pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">log</span>::{<span class="ident">SetLoggerError</span>, <span class="ident">LevelFilter</span>};
@@ -181,17 +183,21 @@ initialization of the logger:</p>
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">SetLoggerError</span><span class="op">&gt;</span> {
     <span class="ident">log</span>::<span class="ident">set_logger</span>(<span class="kw-2">&amp;</span><span class="ident">LOGGER</span>)
+        .<span class="ident">map</span>(<span class="op">|</span>()<span class="op">|</span> <span class="ident">log</span>::<span class="ident">set_max_level</span>(<span class="ident">LevelFilter</span>::<span class="ident">Info</span>))
 }</pre>
+<p>Implementations that adjust their configurations at runtime should take care
+to adjust the maximum log level as well.</p>
 <h1 id="use-with-std" class="section-header"><a href="#use-with-std">Use with <code>std</code></a></h1>
-<p><code>set_logger</code> requires you to provide a <code>&amp;'static Log</code>, which can be hard if
-your logger depends on some runtime configuration. The <code>set_boxed_logger</code>
-function is available with the <code>std</code> Cargo feature. It is identical to
-<code>set_logger</code> except that it requires you to provide a <code>Box&lt;Log&gt;</code> rather than
-a <code>&amp;'static Log</code>:</p>
+<p><code>set_logger</code> requires you to provide a <code>&amp;'static Log</code>, which can be hard to
+obtain if your logger depends on some runtime configuration. The
+<code>set_boxed_logger</code> function is available with the <code>std</code> Cargo feature. It is
+identical to <code>set_logger</code> except that it takes a <code>Box&lt;Log&gt;</code> rather than a
+<code>&amp;'static Log</code>:</p>
 
 <pre class="rust rust-example-rendered">
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">SetLoggerError</span><span class="op">&gt;</span> {
     <span class="ident">log</span>::<span class="ident">set_boxed_logger</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">SimpleLogger</span>))
+        .<span class="ident">map</span>(<span class="op">|</span>()<span class="op">|</span> <span class="ident">log</span>::<span class="ident">set_max_level</span>(<span class="ident">LevelFilter</span>::<span class="ident">Info</span>))
 }</pre>
 <h1 id="compile-time-filters" class="section-header"><a href="#compile-time-filters">Compile time filters</a></h1>
 <p>Log levels can be statically disabled at compile time via Cargo features. Log invocations at
@@ -214,10 +220,21 @@ builds. The features are:</p>
 </ul>
 <p>These features control the value of the <code>STATIC_MAX_LEVEL</code> constant. The logging macros check
 this value before logging a message. By default, no levels are disabled.</p>
-<p>For example, a crate can disable trace level logs in debug builds and trace, info, and warn
+<p>For example, a crate can disable trace level logs in debug builds and trace, debug, and info
 level logs in release builds with the following configuration:</p>
 <pre><code class="language-toml">[dependencies]
 log = { version = &quot;0.4&quot;, features = [&quot;max_level_debug&quot;, &quot;release_max_level_warn&quot;] }
+</code></pre>
+<h1 id="crate-feature-flags" class="section-header"><a href="#crate-feature-flags">Crate Feature Flags</a></h1>
+<p>The following crate feature flags are avaliable in addition to the filters. They are
+configured in your <code>Cargo.toml</code>.</p>
+<ul>
+<li><code>std</code> allows use of <code>std</code> crate instead of the default <code>core</code>. Enables using <code>std::error</code> and
+<code>set_boxed_logger</code> functionality.</li>
+<li><code>serde</code> enables support for serialization and deserialization of <code>Level</code> and <code>LevelFilter</code>.</li>
+</ul>
+<pre><code class="language-toml">[dependencies]
+log = { version = &quot;0.4&quot;, features = [&quot;std&quot;, &quot;serde&quot;] }
 </code></pre>
 <h1 id="version-compatibility" class="section-header"><a href="#version-compatibility">Version compatibility</a></h1>
 <p>The 0.3 and 0.4 versions of the <code>log</code> crate are almost entirely compatible. Log messages
