@@ -89,7 +89,12 @@ where
         let mut message = [0; MAX_DIAGNOSTIC_MESSAGE_SIZE];
         match self.diagnostics(record_number, &mut message) {
             Success(result) | Info(result) => {
-                let message_length = cmp::min(result.text_length, MAX_DIAGNOSTIC_MESSAGE_SIZE as ffi::SQLSMALLINT - 1);
+                // The message could be larger than the supplied buffer, so we need to limit the message length to the buffer size.
+                let mut message_length = cmp::min(result.text_length, MAX_DIAGNOSTIC_MESSAGE_SIZE as ffi::SQLSMALLINT - 1);
+                // Some drivers pad the message with null-chars (which is still a valid C string, but not a valid Rust string).
+                while message_length > 0 && message[(message_length - 1) as usize] == 0 {
+                    message_length = message_length - 1;
+                }
                 Some(DiagnosticRecord {
                     state: result.state,
                     native_error: result.native_error,
