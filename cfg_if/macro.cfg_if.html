@@ -59,7 +59,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/cfg_if/lib.rs.html#36-61' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class="rust macro">
+               </span><a class='srclink' href='../src/cfg_if/lib.rs.html#36-88' title='goto source code'>[src]</a></span></h1><div class="docblock type-decl"><pre class="rust macro">
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_if</span> {
     ($(
         <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">meta</span>:<span class="ident">meta</span>),<span class="kw-2">*</span>)]</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>:<span class="ident">item</span>)<span class="op">*</span> }
@@ -72,6 +72,9 @@
             <span class="kw">else</span> <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e_met</span>:<span class="ident">meta</span>),<span class="kw-2">*</span>)]</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e_it</span>:<span class="ident">item</span>)<span class="op">*</span> }
         )<span class="op">*</span>
     ) <span class="op">=&gt;</span> { ... };
+    (@<span class="ident">__items</span> ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">not</span>:<span class="ident">meta</span>,)<span class="kw-2">*</span>) ; ) <span class="op">=&gt;</span> { ... };
+    (@<span class="ident">__items</span> ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">not</span>:<span class="ident">meta</span>,)<span class="kw-2">*</span>) ; ( ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">m</span>:<span class="ident">meta</span>),<span class="kw-2">*</span>) ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) ), $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rest</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> { ... };
+    (@<span class="ident">__apply</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">m</span>:<span class="ident">meta</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> { ... };
 }</pre>
 </div></section>
     <section id='search' class="content hidden"></section>
