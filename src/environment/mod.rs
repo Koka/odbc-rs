@@ -48,7 +48,7 @@ impl<V: safe::Version> Environment<V> {
         let safe = match safe::Environment::new() {
             safe::Success(v) => v,
             safe::Info(v) => {
-                warn!("{}", v.get_diag_rec(1).unwrap());
+                warn!("{}", v.get_diag_rec(1).unwrap_or_else(DiagnosticRecord::empty));
                 v
             }
             safe::Error(()) => return Err(None),
