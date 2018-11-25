@@ -1,4 +1,4 @@
-use super::{safe, try_into_option, Environment, GetDiagRec, Result, Version3};
+use super::{safe, try_into_option, Environment, DiagnosticRecord, GetDiagRec, Result, Version3};
 use ffi;
 use std::collections::HashMap;
 use std::str::from_utf8;
@@ -193,7 +193,7 @@ impl Environment<Version3> {
                 }
                 safe::ReturnOption::NoData(()) => break,
                 safe::ReturnOption::Error(()) => {
-                    let diag = self.get_diag_rec(1).unwrap();
+                    let diag = self.get_diag_rec(1).unwrap_or_else(DiagnosticRecord::empty);
                     error!("{}", diag);
                     return Err(diag);
                 }

@@ -27,7 +27,7 @@ impl<T> Return<T> {
             }
             Return::Error => {
                 // Return the first record
-                let diag = odbc_object.get_diag_rec(1).unwrap();
+                let diag = odbc_object.get_diag_rec(1).unwrap_or_else(DiagnosticRecord::empty);
                 error!("{}", diag);
                 let mut i = 2;
                 // log the rest
@@ -60,7 +60,7 @@ where
         safe::ReturnOption::NoData(_) => Ok(None),
         safe::ReturnOption::Error(_) => {
             // Return the first record
-            let diag = handle.get_diag_rec(1).unwrap();
+            let diag = handle.get_diag_rec(1).unwrap_or_else(DiagnosticRecord::empty);
             error!("{}", diag);
             let mut i = 2;
             // log the rest
@@ -91,7 +91,7 @@ where
         }
         safe::Return::Error(value) => {
             // Return the first record
-            let diag = value.get_diag_rec(1).unwrap();
+            let diag = value.get_diag_rec(1).unwrap_or_else(DiagnosticRecord::empty);
             error!("{}", diag);
             let mut i = 2;
             // log the rest
@@ -121,7 +121,7 @@ where
         }
         safe::Return::Error(_) => {
             // Return the first record
-            let diag_rec = diag.get_diag_rec(1).unwrap();
+            let diag_rec = diag.get_diag_rec(1).unwrap_or_else(DiagnosticRecord::empty);
             error!("{}", diag_rec);
             let mut i = 2;
             // log the rest

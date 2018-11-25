@@ -32,6 +32,19 @@ impl DiagnosticRecord {
     pub fn get_native_error(&self) -> i32 {
         self.native_error
     }
+    /// constructs an empty diagnostics message.
+    /// this is needed for errors where the driver doesn't return any diagnostics info.
+    pub fn empty() -> DiagnosticRecord {
+        let message = b"No SQL-driver error information available.";
+        let mut rec = DiagnosticRecord {
+            state: b"HY000\0".clone(),
+            message: [0u8; MAX_DIAGNOSTIC_MESSAGE_SIZE],
+            native_error: -1,
+            message_length: message.len() as ffi::SQLSMALLINT,
+        };
+        rec.message[..message.len()].copy_from_slice(message);
+        rec
+    }
 }
 
 impl fmt::Display for DiagnosticRecord {
