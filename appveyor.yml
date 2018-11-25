@@ -106,8 +106,8 @@ install:
       Write-Host "Installing SQLite ODBC Driver:" -ForegroundColor Magenta
       $sqliteodbc64Path = "$($env:TEMP)\sqliteodbc_w64.exe"
       $sqliteodbc32Path = "$($env:TEMP)\sqliteodbc.exe"
-      (New-Object Net.WebClient).DownloadFile('http://www.ch-werner.de/sqliteodbc/sqliteodbc_w64.exe', $sqliteodbc64Path)
-      (New-Object Net.WebClient).DownloadFile('http://www.ch-werner.de/sqliteodbc/sqliteodbc.exe', $sqliteodbc32Path)
+      (New-Object Net.WebClient).DownloadFile('https://github.com/Koka/odbc-rs/releases/download/fake_release/sqliteodbc_w64.exe', $sqliteodbc64Path)
+      (New-Object Net.WebClient).DownloadFile('https://github.com/Koka/odbc-rs/releases/download/fake_release/sqliteodbc.exe', $sqliteodbc32Path)
       cmd /c start /wait $sqliteodbc64Path /S
       if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
       cmd /c start /wait $sqliteodbc32Path /S
