@@ -201,6 +201,19 @@
 <span id="144">144</span>
 <span id="145">145</span>
 <span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">ffi</span>, <span class="ident">safe</span>};
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">fmt</span>, <span class="ident">cmp</span>};
@@ -235,6 +248,19 @@
     <span class="doccomment">/// get native odbc error number</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_native_error</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">i32</span> {
         <span class="self">self</span>.<span class="ident">native_error</span>
+    }
+    <span class="doccomment">/// constructs an empty diagnostics message.</span>
+    <span class="doccomment">/// this is needed for errors where the driver doesn&#39;t return any diagnostics info.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">empty</span>() <span class="op">-&gt;</span> <span class="ident">DiagnosticRecord</span> {
+        <span class="kw">let</span> <span class="ident">message</span> <span class="op">=</span> <span class="string">b&quot;No SQL-driver error information available.&quot;</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rec</span> <span class="op">=</span> <span class="ident">DiagnosticRecord</span> {
+            <span class="ident">state</span>: <span class="string">b&quot;HY000\0&quot;</span>.<span class="ident">clone</span>(),
+            <span class="ident">message</span>: [<span class="number">0u8</span>; <span class="ident">MAX_DIAGNOSTIC_MESSAGE_SIZE</span>],
+            <span class="ident">native_error</span>: <span class="op">-</span><span class="number">1</span>,
+            <span class="ident">message_length</span>: <span class="ident">message</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
+        };
+        <span class="ident">rec</span>.<span class="ident">message</span>[..<span class="ident">message</span>.<span class="ident">len</span>()].<span class="ident">copy_from_slice</span>(<span class="ident">message</span>);
+        <span class="ident">rec</span>
     }
 }
 

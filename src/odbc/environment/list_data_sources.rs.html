@@ -288,7 +288,7 @@
 <span id="231">231</span>
 <span id="232">232</span>
 </pre><pre class="rust ">
-<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">safe</span>, <span class="ident">try_into_option</span>, <span class="ident">Environment</span>, <span class="ident">GetDiagRec</span>, <span class="prelude-ty">Result</span>, <span class="ident">Version3</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">safe</span>, <span class="ident">try_into_option</span>, <span class="ident">Environment</span>, <span class="ident">DiagnosticRecord</span>, <span class="ident">GetDiagRec</span>, <span class="prelude-ty">Result</span>, <span class="ident">Version3</span>};
 <span class="kw">use</span> <span class="ident">ffi</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">from_utf8</span>;
@@ -483,7 +483,7 @@
                 }
                 <span class="ident">safe</span>::<span class="ident">ReturnOption</span>::<span class="ident">NoData</span>(()) <span class="op">=&gt;</span> <span class="kw">break</span>,
                 <span class="ident">safe</span>::<span class="ident">ReturnOption</span>::<span class="ident">Error</span>(()) <span class="op">=&gt;</span> {
-                    <span class="kw">let</span> <span class="ident">diag</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_diag_rec</span>(<span class="number">1</span>).<span class="ident">unwrap</span>();
+                    <span class="kw">let</span> <span class="ident">diag</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_diag_rec</span>(<span class="number">1</span>).<span class="ident">unwrap_or_else</span>(<span class="ident">DiagnosticRecord</span>::<span class="ident">empty</span>);
                     <span class="macro">error</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">diag</span>);
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">diag</span>);
                 }
