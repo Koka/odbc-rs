@@ -90,6 +90,10 @@ impl<'a, 'b, 'env> Statement<'a, 'b, Allocated, NoResult> {
         Ok(Self::with_raii(raii))
     }
 
+    pub fn affected_row_count(&self) -> Result<ffi::SQLLEN> {
+        self.raii.affected_row_count().into_result(self)
+    }
+
     pub fn tables(mut self) -> Result<Statement<'a, 'b, Executed, HasResult>> {
         self.raii.tables().into_result(&self)?;
         Ok(Statement::with_raii(self.raii))
@@ -109,6 +113,11 @@ impl<'a, 'b, 'env> Statement<'a, 'b, Allocated, NoResult> {
 }
 
 impl<'a, 'b, S> Statement<'a, 'b, S, HasResult> {
+
+    pub fn affected_row_count(&self) -> Result<ffi::SQLLEN> {
+        self.raii.affected_row_count().into_result(self)
+    }
+
     /// The number of columns in a result set
     ///
     /// Can be called successfully only when the statement is in the prepared, executed, or
@@ -178,6 +187,18 @@ impl<'a, 'b, 'c, S> Cursor<'a, 'b, 'c, S> {
 }
 
 impl Raii<ffi::Stmt> {
+    fn affected_row_count(&self) -> Return<ffi::SQLLEN> {
+        let mut count: ffi::SQLLEN = 0;
+        unsafe {
+            match ffi::SQLRowCount(self.handle(), &mut count as *mut ffi::SQLLEN) {
+                SQL_SUCCESS => Return::Success(count),
+                SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(count),
+                SQL_ERROR => Return::Error,
+                r => panic!("SQLRowCount returned unexpected result: {:?}", r),
+            }
+        }
+    }
+
     fn num_result_cols(&self) -> Return<i16> {
         let mut num_cols: ffi::SQLSMALLINT = 0;
         unsafe {
