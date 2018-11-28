@@ -57,6 +57,49 @@ unsafe impl<'a> OdbcType<'a> for Vec<u8> {
     }
 }
 
+unsafe impl<'a> OdbcType<'a> for &'a[u16] {
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_EXT_WVARCHAR
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_WCHAR
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        unsafe { from_raw_parts(buffer.as_ptr() as *const u16, buffer.len() / 2) }
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        self.len() as ffi::SQLULEN
+    }
+
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self.as_ptr() as *const Self as ffi::SQLPOINTER
+    }
+}
+
+unsafe impl<'a> OdbcType<'a> for Vec<u16> {
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_EXT_WVARCHAR
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_WCHAR
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        let buffer = unsafe { from_raw_parts(buffer.as_ptr() as *const u16, buffer.len() / 2) };
+        buffer.to_vec()
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        self.len() as ffi::SQLULEN
+    }
+
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self.as_ptr() as *const Self as ffi::SQLPOINTER
+    }
+}
+
 unsafe impl<'a> OdbcType<'a> for CString {
     fn sql_data_type() -> ffi::SqlDataType {
         ffi::SQL_VARCHAR
