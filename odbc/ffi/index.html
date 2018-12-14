@@ -1,128 +1,952 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `ffi` mod in crate `odbc`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, ffi">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `ffi` mod in crate `odbc`."><meta name="keywords" content="rust, rustlang, rust-lang, ffi"><title>odbc::ffi - Rust</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><p class='location'>Module ffi</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#constants">Constants</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li><li><a href="#unions">Unions</a></li></ul></div><p class='location'><a href='../index.html'>odbc</a></p><script>window.sidebarCurrent = {name: 'ffi', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../../src/odbc/ffi.rs.html#1-3' title='goto source code'>[src]</a></span><span class='in-band'>Module <a href='../index.html'>odbc</a>::<wbr><a class="mod" href=''>ffi</a></span></h1><div class='docblock'><p>Reexport odbc-sys as ffi</p>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SQLGUID.html"
+                                  title='struct odbc::ffi::SQLGUID'>SQLGUID</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SQL_DATE_STRUCT.html"
+                                  title='struct odbc::ffi::SQL_DATE_STRUCT'>SQL_DATE_STRUCT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SQL_DAY_SECOND_STRUCT.html"
+                                  title='struct odbc::ffi::SQL_DAY_SECOND_STRUCT'>SQL_DAY_SECOND_STRUCT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SQL_INTERVAL_STRUCT.html"
+                                  title='struct odbc::ffi::SQL_INTERVAL_STRUCT'>SQL_INTERVAL_STRUCT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SQL_SS_TIME2_STRUCT.html"
+                                  title='struct odbc::ffi::SQL_SS_TIME2_STRUCT'>SQL_SS_TIME2_STRUCT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SQL_SS_TIMESTAMPOFFSET_STRUCT.html"
+                                  title='struct odbc::ffi::SQL_SS_TIMESTAMPOFFSET_STRUCT'>SQL_SS_TIMESTAMPOFFSET_STRUCT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SQL_TIMESTAMP_STRUCT.html"
+                                  title='struct odbc::ffi::SQL_TIMESTAMP_STRUCT'>SQL_TIMESTAMP_STRUCT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SQL_TIME_STRUCT.html"
+                                  title='struct odbc::ffi::SQL_TIME_STRUCT'>SQL_TIME_STRUCT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SQL_YEAR_MONTH_STRUCT.html"
+                                  title='struct odbc::ffi::SQL_YEAR_MONTH_STRUCT'>SQL_YEAR_MONTH_STRUCT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.Dbc.html"
+                                  title='enum odbc::ffi::Dbc'>Dbc</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.Desc.html"
+                                  title='enum odbc::ffi::Desc'>Desc</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.Env.html"
+                                  title='enum odbc::ffi::Env'>Env</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.EnvironmentAttribute.html"
+                                  title='enum odbc::ffi::EnvironmentAttribute'>EnvironmentAttribute</a></td>
+                           <td class='docblock-short'>
+                                <p>Governs behaviour of EnvironmentAttribute</p>
 
-    <title>odbc::ffi - Rust</title>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.FetchOrientation.html"
+                                  title='enum odbc::ffi::FetchOrientation'>FetchOrientation</a></td>
+                           <td class='docblock-short'>
+                                <p>Codes used for FetchOrientation in <code>SQLFetchScroll</code>, <code>SQLDataSources</code> and in <code>SQLDrivers</code></p>
 
-    <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css"
-          id="mainThemeStyle">
-    
-    <link rel="stylesheet" type="text/css" href="../../dark.css">
-    <link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle">
-    <script src="../../storage.js"></script>
-    
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.FreeStmtOption.html"
+                                  title='enum odbc::ffi::FreeStmtOption'>FreeStmtOption</a></td>
+                           <td class='docblock-short'>
+                                <p>SQL Free Statement options</p>
 
-    
-    
-</head>
-<body class="rustdoc mod">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.HandleType.html"
+                                  title='enum odbc::ffi::HandleType'>HandleType</a></td>
+                           <td class='docblock-short'>
+                                <p>Represented in C headers as SQLSMALLINT</p>
 
-    
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.InfoType.html"
+                                  title='enum odbc::ffi::InfoType'>InfoType</a></td>
+                           <td class='docblock-short'>
+                                <p>Information requested by SQLGetInfo</p>
 
-    <nav class="sidebar">
-        <div class="sidebar-menu">&#9776;</div>
-        
-        <p class='location'>Module ffi</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li></ul></div><p class='location'><a href='../index.html'>odbc</a></p><script>window.sidebarCurrent = {name: 'ffi', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div>
-    </nav>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.InputOutput.html"
+                                  title='enum odbc::ffi::InputOutput'>InputOutput</a></td>
+                           <td class='docblock-short'>
+                                <p>Used by <code>SQLBindParameter</code>.</p>
 
-    <div class="theme-picker">
-        <button id="theme-picker" aria-label="Pick another theme!">
-            <img src="../../brush.svg" width="18" alt="Pick another theme!">
-        </button>
-        <div id="theme-choices"></div>
-    </div>
-    <script src="../../theme.js"></script>
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.Nullable.html"
+                                  title='enum odbc::ffi::Nullable'>Nullable</a></td>
+                           <td class='docblock-short'>
+                                <p>Used by <code>SQLDescribeCol</code>.</p>
 
-    <section id='main' class="content"><h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>odbc</a>::<wbr><a class="mod" href=''>ffi</a></span><span class='out-of-band'><span id='render-detail'>
-                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                       [<span class='inner'>&#x2212;</span>]
-                   </a>
-               </span><a class='srclink' href='../../src/odbc/ffi.rs.html#1-3' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Reexport odbc-sys as ffi</p>
-</div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
-<table><tr><td><code>pub use self::<a class="mod" href="../../odbc_sys/index.html" title="mod odbc_sys">odbc_sys</a>::*;</code></td></tr></table></section>
-    <section id='search' class="content hidden"></section>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.Obj.html"
+                                  title='enum odbc::ffi::Obj'>Obj</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.OdbcVersion.html"
+                                  title='enum odbc::ffi::OdbcVersion'>OdbcVersion</a></td>
+                           <td class='docblock-short'>
+                                <p>ODBC verions</p>
 
-    <section class="footer"></section>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SQLINTERVAL.html"
+                                  title='enum odbc::ffi::SQLINTERVAL'>SQLINTERVAL</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SQLRETURN.html"
+                                  title='enum odbc::ffi::SQLRETURN'>SQLRETURN</a></td>
+                           <td class='docblock-short'>
+                                <p>Indicates the overall success or failure of the function</p>
 
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SqlAsyncConnectionBehavior.html"
+                                  title='enum odbc::ffi::SqlAsyncConnectionBehavior'>SqlAsyncConnectionBehavior</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SqlBulkOperation.html"
+                                  title='enum odbc::ffi::SqlBulkOperation'>SqlBulkOperation</a></td>
+                           <td class='docblock-short'>
+                                <p>Supported <code>SQLBulkOperations</code> operations</p>
 
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SqlCDataType.html"
+                                  title='enum odbc::ffi::SqlCDataType'>SqlCDataType</a></td>
+                           <td class='docblock-short'>
+                                <p>The C data type is specified in the SQLBindCol and SQLGetData functions with the TargetType
+argument and in the SQLBindParameter function with the ValueType argument.</p>
 
-                <dl>
-                    <dt><kbd>?</kbd></dt>
-                    <dd>Show this help dialog</dd>
-                    <dt><kbd>S</kbd></dt>
-                    <dd>Focus the search field</dd>
-                    <dt><kbd>↑</kbd></dt>
-                    <dd>Move up in search results</dd>
-                    <dt><kbd>↓</kbd></dt>
-                    <dd>Move down in search results</dd>
-                    <dt><kbd>↹</kbd></dt>
-                    <dd>Switch tab</dd>
-                    <dt><kbd>&#9166;</kbd></dt>
-                    <dd>Go to active search result</dd>
-                    <dt><kbd>+</kbd></dt>
-                    <dd>Expand all sections</dd>
-                    <dt><kbd>-</kbd></dt>
-                    <dd>Collapse all sections</dd>
-                </dl>
-            </div>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SqlCompletionType.html"
+                                  title='enum odbc::ffi::SqlCompletionType'>SqlCompletionType</a></td>
+                           <td class='docblock-short'>
+                                <p>Completion types for <code>SQLEndTrans</code></p>
 
-            <div class="infos">
-                <h2>Search Tricks</h2>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SqlConnectionAttribute.html"
+                                  title='enum odbc::ffi::SqlConnectionAttribute'>SqlConnectionAttribute</a></td>
+                           <td class='docblock-short'>
+                                <p>Connection attributes for <code>SQLSetConnectAttr</code></p>
 
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SqlDataType.html"
+                                  title='enum odbc::ffi::SqlDataType'>SqlDataType</a></td>
+                           <td class='docblock-short'>
+                                <p>SQL Data Types</p>
 
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SqlDriverConnectOption.html"
+                                  title='enum odbc::ffi::SqlDriverConnectOption'>SqlDriverConnectOption</a></td>
+                           <td class='docblock-short'>
+                                <p>Options for <code>SQLDriverConnect</code></p>
 
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SqlDynamicDiagnosticIdentifier.html"
+                                  title='enum odbc::ffi::SqlDynamicDiagnosticIdentifier'>SqlDynamicDiagnosticIdentifier</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SqlHeaderDiagnosticIdentifier.html"
+                                  title='enum odbc::ffi::SqlHeaderDiagnosticIdentifier'>SqlHeaderDiagnosticIdentifier</a></td>
+                           <td class='docblock-short'>
+                                <p><code>DiagIdentifier</code> for <code>SQLGetDiagField</code></p>
 
-    
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SqlStatementAttribute.html"
+                                  title='enum odbc::ffi::SqlStatementAttribute'>SqlStatementAttribute</a></td>
+                           <td class='docblock-short'>
+                                <p>Statement attributes for <code>SQLSetStmtAttr</code></p>
 
-    <script>
-        window.rootPath = "../../";
-        window.currentCrate = "odbc";
-    </script>
-    <script src="../../main.js"></script>
-    <script defer src="../../search-index.js"></script>
-</body>
-</html>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.Stmt.html"
+                                  title='enum odbc::ffi::Stmt'>Stmt</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.SQL_C_TYPES_EXTENDED.html"
+                                  title='constant odbc::ffi::SQL_C_TYPES_EXTENDED'>SQL_C_TYPES_EXTENDED</a></td>
+                           <td class='docblock-short'>
+                                <p>Extended C Types range 4000 and above. Range of -100 thru 200 is reserved by Driver Manager.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.SQL_MAX_MESSAGE_LENGTH.html"
+                                  title='constant odbc::ffi::SQL_MAX_MESSAGE_LENGTH'>SQL_MAX_MESSAGE_LENGTH</a></td>
+                           <td class='docblock-short'>
+                                <p>Maximum message length</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.SQL_NO_TOTAL.html"
+                                  title='constant odbc::ffi::SQL_NO_TOTAL'>SQL_NO_TOTAL</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.SQL_NTS.html"
+                                  title='constant odbc::ffi::SQL_NTS'>SQL_NTS</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.SQL_NTSL.html"
+                                  title='constant odbc::ffi::SQL_NTSL'>SQL_NTSL</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.SQL_NULL_DATA.html"
+                                  title='constant odbc::ffi::SQL_NULL_DATA'>SQL_NULL_DATA</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.SQL_SQLSTATE_SIZE.html"
+                                  title='constant odbc::ffi::SQL_SQLSTATE_SIZE'>SQL_SQLSTATE_SIZE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.SQL_SQLSTATE_SIZEW.html"
+                                  title='constant odbc::ffi::SQL_SQLSTATE_SIZEW'>SQL_SQLSTATE_SIZEW</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.SQL_SS_LENGTH_UNLIMITED.html"
+                                  title='constant odbc::ffi::SQL_SS_LENGTH_UNLIMITED'>SQL_SS_LENGTH_UNLIMITED</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLAllocHandle.html"
+                                  title='fn odbc::ffi::SQLAllocHandle'>SQLAllocHandle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Allocates an environment, connection, statement, or descriptor handle.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLBindCol.html"
+                                  title='fn odbc::ffi::SQLBindCol'>SQLBindCol</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Binds application data bufferst to columns in the result set.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLBindParameter.html"
+                                  title='fn odbc::ffi::SQLBindParameter'>SQLBindParameter</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Binds a buffer to a parameter marker in an SQL statement</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLBrowseConnectW.html"
+                                  title='fn odbc::ffi::SQLBrowseConnectW'>SQLBrowseConnectW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>SQLBrowseConnect supports an iterative method of discovering and enumerating the attributes
+and attribute values required to connect to a data source.
+Each call to SQLBrowseConnect returns successive levels of attributes and attribute values.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLBulkOperations.html"
+                                  title='fn odbc::ffi::SQLBulkOperations'>SQLBulkOperations</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Performs bulk insertions and bulk bookmark operations, including update, delete, and fetch by bookmark.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLCancel.html"
+                                  title='fn odbc::ffi::SQLCancel'>SQLCancel</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Cancels the processing on a statement.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLCancelHandle.html"
+                                  title='fn odbc::ffi::SQLCancelHandle'>SQLCancelHandle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Cancels the processing on a connection or statement.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLCloseCursor.html"
+                                  title='fn odbc::ffi::SQLCloseCursor'>SQLCloseCursor</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Closes a cursor that has been opened on a statement and discards pending results.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLColAttributeW.html"
+                                  title='fn odbc::ffi::SQLColAttributeW'>SQLColAttributeW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns descriptor information for a column in a result set.
+Descriptor information is returned as a character string,
+a descriptor-dependent value, or an integer value.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLColumnPrivilegesW.html"
+                                  title='fn odbc::ffi::SQLColumnPrivilegesW'>SQLColumnPrivilegesW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns a list of columns and associated privileges for the specified table.
+The driver returns the information as a result set on the specified StatementHandle.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLColumnsW.html"
+                                  title='fn odbc::ffi::SQLColumnsW'>SQLColumnsW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the list of column names in specified tables.
+The driver returns this information as a result set on the specified StatementHandle.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLCompleteAsync.html"
+                                  title='fn odbc::ffi::SQLCompleteAsync'>SQLCompleteAsync</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Can be used to determine when an asynchronous function is complete using either notification- or polling-based processing.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLConnect.html"
+                                  title='fn odbc::ffi::SQLConnect'>SQLConnect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>SQLConnect establishes connections to a driver and a data source. The connection handle
+references storage of all information about the connection to the data source, including
+status, transaction state, and error information.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLConnectW.html"
+                                  title='fn odbc::ffi::SQLConnectW'>SQLConnectW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>SQLConnect establishes connections to a driver and a data source. The connection handle
+references storage of all information about the connection to the data source, including
+status, transaction state, and error information.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLCopyDesc.html"
+                                  title='fn odbc::ffi::SQLCopyDesc'>SQLCopyDesc</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Copies descriptor information from one descriptor handle to another.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLDataSources.html"
+                                  title='fn odbc::ffi::SQLDataSources'>SQLDataSources</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns information about a data source. This function is implemented only by the Driver
+Manager.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLDataSourcesW.html"
+                                  title='fn odbc::ffi::SQLDataSourcesW'>SQLDataSourcesW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns information about a data source. This function is implemented only by the Driver
+Manager.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLDescribeCol.html"
+                                  title='fn odbc::ffi::SQLDescribeCol'>SQLDescribeCol</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the result descriptor for one column in the result set — column name, type, column
+size, decimal digits, and nullability.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLDescribeColW.html"
+                                  title='fn odbc::ffi::SQLDescribeColW'>SQLDescribeColW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the result descriptor for one column in the result set — column name, type, column
+size, decimal digits, and nullability.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLDescribeParam.html"
+                                  title='fn odbc::ffi::SQLDescribeParam'>SQLDescribeParam</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the description of a parameter marker associated with a prepared SQL statement.
+This information is also available in the fields of the IPD.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLDisconnect.html"
+                                  title='fn odbc::ffi::SQLDisconnect'>SQLDisconnect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Closes the connection associated with a specific connection handle.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLDriverConnect.html"
+                                  title='fn odbc::ffi::SQLDriverConnect'>SQLDriverConnect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>An alternative to <code>SQLConnect</code>. It supports data sources that require more connection
+information than the three arguments in <code>SQLConnect</code>, dialog boxes to prompt the user for
+all connection information, and data sources that are not defined in the system information</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLDriverConnectW.html"
+                                  title='fn odbc::ffi::SQLDriverConnectW'>SQLDriverConnectW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>An alternative to <code>SQLConnect</code>. It supports data sources that require more connection
+information than the three arguments in <code>SQLConnect</code>, dialog boxes to prompt the user for
+all connection information, and data sources that are not defined in the system information</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLDrivers.html"
+                                  title='fn odbc::ffi::SQLDrivers'>SQLDrivers</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Lists driver descriptions and driver attribute keywords. This function is implemented only
+by the Driver Manager.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLDriversW.html"
+                                  title='fn odbc::ffi::SQLDriversW'>SQLDriversW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Lists driver descriptions and driver attribute keywords. This function is implemented only
+by the Driver Manager.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLEndTran.html"
+                                  title='fn odbc::ffi::SQLEndTran'>SQLEndTran</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Requests a commit or rollback operation for all active operations on all statements associated with a handle.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLExecDirect.html"
+                                  title='fn odbc::ffi::SQLExecDirect'>SQLExecDirect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Executes a preparable statement, using the current values of the parameter marker variables
+if any parameters exist in the statement. This is the fastest way to submit an SQL
+statement for one-time execution</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLExecDirectW.html"
+                                  title='fn odbc::ffi::SQLExecDirectW'>SQLExecDirectW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Executes a preparable statement, using the current values of the parameter marker variables
+if any parameters exist in the statement. This is the fastest way to submit an SQL
+statement for one-time execution</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLExecute.html"
+                                  title='fn odbc::ffi::SQLExecute'>SQLExecute</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Executes a prepared statement, using the current values of the parameter marker variables
+if any paramater markers exis in the statement.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLFetch.html"
+                                  title='fn odbc::ffi::SQLFetch'>SQLFetch</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>SQLFetch fetches the next rowset of data from the result set and returns data for all bound
+columns.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLFetchScroll.html"
+                                  title='fn odbc::ffi::SQLFetchScroll'>SQLFetchScroll</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Fetches the specified rowset of data from the result set and returns data for all bound columns.
+Rowsets can be specified at an absolute or relative position or by bookmark.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLForeignKeysW.html"
+                                  title='fn odbc::ffi::SQLForeignKeysW'>SQLForeignKeysW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Can return:</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLFreeHandle.html"
+                                  title='fn odbc::ffi::SQLFreeHandle'>SQLFreeHandle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Frees resources associated with a specific environment, connection, statement, or
+descriptor handle.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLFreeStmt.html"
+                                  title='fn odbc::ffi::SQLFreeStmt'>SQLFreeStmt</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Stops processing associated with a specific statement, closes any open cursors associated
+with the statement, discards pending results, or, optionally, frees all resources
+associated with the statement handle.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLGetConnectAttrW.html"
+                                  title='fn odbc::ffi::SQLGetConnectAttrW'>SQLGetConnectAttrW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the current setting of a connection attribute.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLGetCursorNameW.html"
+                                  title='fn odbc::ffi::SQLGetCursorNameW'>SQLGetCursorNameW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the cursor name associated with a specified statement.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLGetData.html"
+                                  title='fn odbc::ffi::SQLGetData'>SQLGetData</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLGetDescFieldW.html"
+                                  title='fn odbc::ffi::SQLGetDescFieldW'>SQLGetDescFieldW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the current setting or value of a single field of a descriptor record.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLGetDescRecW.html"
+                                  title='fn odbc::ffi::SQLGetDescRecW'>SQLGetDescRecW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the current settings or values of multiple fields of a descriptor record.
+The fields returned describe the name, data type, and storage of column or parameter data.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLGetDiagFieldW.html"
+                                  title='fn odbc::ffi::SQLGetDiagFieldW'>SQLGetDiagFieldW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the current value of a field of a record of the diagnostic data structure (associated with a specified handle) that contains error, warning, and status information.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLGetDiagRec.html"
+                                  title='fn odbc::ffi::SQLGetDiagRec'>SQLGetDiagRec</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Return the current values of multiple fields of a diagnostic record that contains eror,
+warning, and status information.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLGetDiagRecW.html"
+                                  title='fn odbc::ffi::SQLGetDiagRecW'>SQLGetDiagRecW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Return the current values of multiple fields of a diagnostic record that contains eror,
+warning, and status information.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLGetEnvAttr.html"
+                                  title='fn odbc::ffi::SQLGetEnvAttr'>SQLGetEnvAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Gets attributes that govern aspects of environments</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLGetInfo.html"
+                                  title='fn odbc::ffi::SQLGetInfo'>SQLGetInfo</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns general information about the driver and data source associated with a connection</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLGetInfoW.html"
+                                  title='fn odbc::ffi::SQLGetInfoW'>SQLGetInfoW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns general information about the driver and data source associated with a connection</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLGetStmtAttrW.html"
+                                  title='fn odbc::ffi::SQLGetStmtAttrW'>SQLGetStmtAttrW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the current setting of a statement attribute.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLMoreResults.html"
+                                  title='fn odbc::ffi::SQLMoreResults'>SQLMoreResults</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Determines whether more results are available on a statement
+containing SELECT, UPDATE, INSERT, or DELETE statements and, if so, initializes processing for those results.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLNumResultCols.html"
+                                  title='fn odbc::ffi::SQLNumResultCols'>SQLNumResultCols</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the number of columns in a result set</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLPrepare.html"
+                                  title='fn odbc::ffi::SQLPrepare'>SQLPrepare</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Compiles the statement and generates an access plan.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLPrepareW.html"
+                                  title='fn odbc::ffi::SQLPrepareW'>SQLPrepareW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Compiles the statement and generates an access plan.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLRowCount.html"
+                                  title='fn odbc::ffi::SQLRowCount'>SQLRowCount</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the number of rows affected by an UPDATE, INSERT, or DELETE statement; an <code>SQL_ADD</code>,
+<code>SQL_UPDATE_BY_BOOKMARK</code>, or <code>SQL_DELETE_BY_BOOKMARK</code> operation in SQLBulkOperations; or an
+<code>SQL_UPDATE</code> or <code>SQL_DELETE</code> operation in <code>SQLSetPos</code>.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLSetConnectAttr.html"
+                                  title='fn odbc::ffi::SQLSetConnectAttr'>SQLSetConnectAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Sets attributes that govern aspects of connections.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLSetConnectAttrW.html"
+                                  title='fn odbc::ffi::SQLSetConnectAttrW'>SQLSetConnectAttrW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Sets attributes that govern aspects of connections.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLSetEnvAttr.html"
+                                  title='fn odbc::ffi::SQLSetEnvAttr'>SQLSetEnvAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Sets attributes that govern aspects of environments</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLSetStmtAttr.html"
+                                  title='fn odbc::ffi::SQLSetStmtAttr'>SQLSetStmtAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Sets attributes related to a statement.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLSetStmtAttrW.html"
+                                  title='fn odbc::ffi::SQLSetStmtAttrW'>SQLSetStmtAttrW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Sets attributes related to a statement.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLTables.html"
+                                  title='fn odbc::ffi::SQLTables'>SQLTables</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the list of table, catalog, or schema names, and table types, stored in a specific
+data source. The driver returns the information as a result set</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.SQLTablesW.html"
+                                  title='fn odbc::ffi::SQLTablesW'>SQLTablesW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns the list of table, catalog, or schema names, and table types, stored in a specific
+data source. The driver returns the information as a result set</p>
+
+                           </td>
+                       </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.RETCODE.html"
+                                  title='type odbc::ffi::RETCODE'>RETCODE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLCHAR.html"
+                                  title='type odbc::ffi::SQLCHAR'>SQLCHAR</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLHANDLE.html"
+                                  title='type odbc::ffi::SQLHANDLE'>SQLHANDLE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLHDBC.html"
+                                  title='type odbc::ffi::SQLHDBC'>SQLHDBC</a></td>
+                           <td class='docblock-short'>
+                                <p>The connection handle references storage of all information about the connection to the data
+source, including status, transaction state, and error information.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLHDESC.html"
+                                  title='type odbc::ffi::SQLHDESC'>SQLHDESC</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLHENV.html"
+                                  title='type odbc::ffi::SQLHENV'>SQLHENV</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLHSTMT.html"
+                                  title='type odbc::ffi::SQLHSTMT'>SQLHSTMT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLHWND.html"
+                                  title='type odbc::ffi::SQLHWND'>SQLHWND</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLINTEGER.html"
+                                  title='type odbc::ffi::SQLINTEGER'>SQLINTEGER</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLLEN.html"
+                                  title='type odbc::ffi::SQLLEN'>SQLLEN</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLPOINTER.html"
+                                  title='type odbc::ffi::SQLPOINTER'>SQLPOINTER</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLSMALLINT.html"
+                                  title='type odbc::ffi::SQLSMALLINT'>SQLSMALLINT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLUINTEGER.html"
+                                  title='type odbc::ffi::SQLUINTEGER'>SQLUINTEGER</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLULEN.html"
+                                  title='type odbc::ffi::SQLULEN'>SQLULEN</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLUSMALLINT.html"
+                                  title='type odbc::ffi::SQLUSMALLINT'>SQLUSMALLINT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.SQLWCHAR.html"
+                                  title='type odbc::ffi::SQLWCHAR'>SQLWCHAR</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='unions' class='section-header'><a href="#unions">Unions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="union" href="union.SQL_INTERVAL_UNION.html"
+                                  title='union odbc::ffi::SQL_INTERVAL_UNION'>SQL_INTERVAL_UNION</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "odbc";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>
