@@ -1,7 +1,7 @@
 [package]
 name = "odbc"
 description = "ODBC wrapper for idiomatic Rust"
-version = "0.9.12"
+version = "0.9.13"
 authors = ["Konstantin Salikhov <koka58@yandex.ru>", "Markus Klein <markus-klein@live.de>"]
 repository = "https://github.com/Koka/odbc-rs"
 documentation = "http://koka.github.io/odbc-rs/odbc/"
