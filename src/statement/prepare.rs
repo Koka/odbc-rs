@@ -60,7 +60,12 @@ impl<'a, 'b> Statement<'a, 'b, Prepared, NoResult> {
     /// Executes a prepared statement.
     pub fn execute(mut self) -> Result<ResultSetState<'a, 'b, Prepared>> {
         if self.raii.execute().into_result(&mut self)? {
-            Ok(ResultSetState::Data(Statement::with_raii(self.raii)))
+            let num_cols = self.raii.num_result_cols().into_result(&self)?;
+            if num_cols > 0 {
+                Ok(ResultSetState::Data(Statement::with_raii(self.raii)))
+            } else {
+                Ok(ResultSetState::NoData(Statement::with_raii(self.raii)))
+            }
         } else {
             Ok(ResultSetState::NoData(Statement::with_raii(self.raii)))
         }

@@ -106,7 +106,12 @@ impl<'a, 'b, 'env> Statement<'a, 'b, Allocated, NoResult> {
     /// `SQLExecDirect` is the fastest way to submit an SQL statement for one-time execution.
     pub fn exec_direct(mut self, statement_text: &str) -> Result<ResultSetState<'a, 'b, Executed>> {
         if self.raii.exec_direct(statement_text).into_result(&self)? {
-            Ok(ResultSetState::Data(Statement::with_raii(self.raii)))
+            let num_cols = self.raii.num_result_cols().into_result(&self)?;
+            if num_cols > 0 {
+                Ok(ResultSetState::Data(Statement::with_raii(self.raii)))
+            } else {
+                Ok(ResultSetState::NoData(Statement::with_raii(self.raii)))
+            }
         } else {
             Ok(ResultSetState::NoData(Statement::with_raii(self.raii)))
         }
