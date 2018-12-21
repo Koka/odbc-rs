@@ -9,6 +9,7 @@ use ffi::SQLRETURN::*;
 use ffi::Nullable;
 use std::marker::PhantomData;
 pub use self::types::OdbcType;
+pub use self::types::{SqlDate, SqlTime, SqlSsTime2, SqlTimestamp};
 
 /// `Statement` state used to represent a freshly allocated connection
 pub enum Allocated {}

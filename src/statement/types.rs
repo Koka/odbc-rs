@@ -1,7 +1,7 @@
 use ffi;
 use std::str::from_utf8;
 use std::slice::from_raw_parts;
-use std::mem::size_of;
+use std::mem::{size_of, transmute};
 use std::ffi::CString;
 
 pub unsafe trait OdbcType<'a>: Sized {
@@ -360,6 +360,111 @@ unsafe impl<'a> OdbcType<'a> for f64 {
 
     fn convert(buffer: &'a [u8]) -> Self {
         convert_primitive(buffer)
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
+}
+
+pub type SqlDate = ffi::SQL_DATE_STRUCT;
+
+unsafe impl<'a> OdbcType<'a> for SqlDate {
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_DATE
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_DATE
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        assert_eq!(buffer.len(), size_of::<Self>());
+        unsafe {
+            let ptr = buffer.as_ptr() as *const [u8; size_of::<Self>()];
+            transmute(*ptr)
+        }
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
+}
+
+pub type SqlTime = ffi::SQL_TIME_STRUCT;
+
+unsafe impl<'a> OdbcType<'a> for SqlTime {
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_TIME
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_TIME
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        assert_eq!(buffer.len(), size_of::<Self>());
+        unsafe {
+            let ptr = buffer.as_ptr() as *const [u8; size_of::<Self>()];
+            transmute(*ptr)
+        }
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
+}
+
+pub type SqlTimestamp = ffi::SQL_TIMESTAMP_STRUCT;
+
+unsafe impl<'a> OdbcType<'a> for SqlTimestamp {
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_TIMESTAMP
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_TYPE_TIMESTAMP
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        assert_eq!(buffer.len(), size_of::<Self>());
+        unsafe {
+            let ptr = buffer.as_ptr() as *const [u8; size_of::<Self>()];
+            transmute(*ptr)
+        }
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        size_of::<Self>() as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
+}
+
+pub type SqlSsTime2 = ffi::SQL_SS_TIME2_STRUCT;
+
+unsafe impl<'a> OdbcType<'a> for SqlSsTime2 {
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_EXT_VARBINARY
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        // NOTE: ODBC 3.5 and earlier
+        ffi::SQL_C_BINARY
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        assert_eq!(buffer.len(), size_of::<Self>());
+        unsafe {
+            let ptr = buffer.as_ptr() as *const [u8; size_of::<Self>()];
+            transmute(*ptr)
+        }
     }
 
     fn column_size(&self) -> ffi::SQLULEN {
