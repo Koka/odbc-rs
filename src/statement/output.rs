@@ -66,20 +66,24 @@ impl Raii<ffi::Stmt> {
                 if indicator == ffi::SQL_NULL_DATA {
                     Return::Success(None)
                 } else {
+                    assert!(start_pos + indicator as usize <= buffer.len(), "no more data but indicatior outside of data buffer");
                     let slice = &buffer[..(start_pos + indicator as usize)];
                     Return::Success(Some(T::convert(slice)))
                 }
             }
             ffi::SQL_SUCCESS_WITH_INFO => {
                 let initial_len = buffer.len();
+                // Workaround for drivers that don't include tailing null
+                let null_offset = if *buffer.last().unwrap() == 0 { 1 } else { 0 };
+
                 if indicator == ffi::SQL_NO_TOTAL {
                     buffer.resize(initial_len * 2, 0);
-                    return self.get_partial_data(col_or_param_num, buffer, initial_len - 1);
+                    return self.get_partial_data(col_or_param_num, buffer, initial_len - null_offset);
                 } else {
                     // Check if string has been truncated.
                     if indicator >= initial_len as ffi::SQLLEN {
                         buffer.resize(indicator as usize + 1, 0);
-                        return self.get_partial_data(col_or_param_num, buffer, initial_len - 1);
+                        return self.get_partial_data(col_or_param_num, buffer, initial_len - null_offset);
                     } else {
                         let slice = &buffer[..(start_pos + indicator as usize)];
                         // No truncation. Warning may be due to some other issue.
