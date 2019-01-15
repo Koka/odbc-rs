@@ -474,3 +474,31 @@ unsafe impl<'a> OdbcType<'a> for SqlSsTime2 {
         self as *const Self as ffi::SQLPOINTER
     }
 }
+
+unsafe impl<'a, T> OdbcType<'a> for Option<T> where T: OdbcType<'a> {
+    fn sql_data_type() -> ffi::SqlDataType {
+        T::sql_data_type()
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        T::c_data_type()
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        Some(T::convert(buffer))
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        if let Some(t) = self {
+            t.column_size()
+        } else {
+            0
+        }
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        if let Some(t) = self {
+            t.value_ptr()
+        } else {
+            0 as *const Self as ffi::SQLPOINTER
+        }
+    }
+}
