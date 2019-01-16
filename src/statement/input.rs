@@ -44,7 +44,12 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
             let new_size: usize = max(parameter_index as usize + 1, self.param_ind_buffers.len());
             self.param_ind_buffers.resize(new_size, 0);
         }
-        self.param_ind_buffers[parameter_index as usize] = value.column_size() as ffi::SQLLEN;
+
+        if value.value_ptr() == 0 as *const Self as ffi::SQLPOINTER {
+            self.param_ind_buffers[parameter_index as usize] = ffi::SQL_NULL_DATA;
+        } else {
+            self.param_ind_buffers[parameter_index as usize] = value.column_size() as ffi::SQLLEN;
+        }
 
         self.raii
             .bind_input_parameter(parameter_index, value, &mut self.param_ind_buffers[parameter_index as usize])
