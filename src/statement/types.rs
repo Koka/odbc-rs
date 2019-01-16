@@ -370,6 +370,27 @@ unsafe impl<'a> OdbcType<'a> for f64 {
     }
 }
 
+unsafe impl<'a> OdbcType<'a> for bool {
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_EXT_BIT
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_BIT
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        assert!(buffer.len() == 1);
+        buffer[0] > 0
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        1 as ffi::SQLULEN
+    }
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self as *const Self as ffi::SQLPOINTER
+    }
+}
+
 pub type SqlDate = ffi::SQL_DATE_STRUCT;
 
 unsafe impl<'a> OdbcType<'a> for SqlDate {
