@@ -1,6 +1,5 @@
 use {ffi, Return, Result, Raii, Handle, Statement};
 use super::types::OdbcType;
-use std::cmp::{max};
 
 impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
     /// Binds a parameter to a parameter marker in an SQL statement.
@@ -40,19 +39,16 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
         T: ?Sized,
         'b: 'c,
     {
-        if parameter_index as usize >= self.param_ind_buffers.len() {
-            let new_size: usize = max(parameter_index as usize + 1, self.param_ind_buffers.len());
-            self.param_ind_buffers.resize(new_size, 0);
-        }
-
-        if value.value_ptr() == 0 as *const Self as ffi::SQLPOINTER {
-            self.param_ind_buffers[parameter_index as usize] = ffi::SQL_NULL_DATA;
+        let ind = if value.value_ptr() == 0 as *const Self as ffi::SQLPOINTER {
+            ffi::SQL_NULL_DATA
         } else {
-            self.param_ind_buffers[parameter_index as usize] = value.column_size() as ffi::SQLLEN;
-        }
+            value.column_size() as ffi::SQLLEN
+        };
+
+        let ind_ptr = self.param_ind_buffers.alloc(parameter_index as usize, ind);
 
         self.raii
-            .bind_input_parameter(parameter_index, value, &mut self.param_ind_buffers[parameter_index as usize])
+            .bind_input_parameter(parameter_index, value, ind_ptr)
             .into_result(&self)?;
         Ok(self)
     }
@@ -67,7 +63,7 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
 }
 
 impl Raii<ffi::Stmt> {
-    fn bind_input_parameter<'c, T>(&mut self, parameter_index: u16, value: &'c T, str_len_or_ind_ptr: & mut ffi::SQLLEN) -> Return<()>
+    fn bind_input_parameter<'c, T>(&mut self, parameter_index: u16, value: &'c T, str_len_or_ind_ptr: *mut ffi::SQLLEN) -> Return<()>
     where
         T: OdbcType<'c>,
         T: ?Sized,
@@ -83,7 +79,7 @@ impl Raii<ffi::Stmt> {
                 value.decimal_digits(),
                 value.value_ptr(),
                 0, // buffer length
-                str_len_or_ind_ptr as *mut ffi::SQLLEN, // str len or ind ptr
+                str_len_or_ind_ptr, // Note that this ptr has to be valid until statement is executed
             )
         } {
             ffi::SQL_SUCCESS => Return::Success(()),
