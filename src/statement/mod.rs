@@ -11,6 +11,32 @@ use std::marker::PhantomData;
 pub use self::types::OdbcType;
 pub use self::types::{SqlDate, SqlTime, SqlSsTime2, SqlTimestamp};
 
+// Allocate CHUNK_LEN elements at a time
+const CHUNK_LEN: usize = 64;
+struct Chunks<T>(Vec<Box<[T; CHUNK_LEN]>>);
+
+/// Heap allocator that will keep allocated element pointers valid until the allocator is dropped or cleared
+impl<T: Copy + Default> Chunks<T> {
+    fn new() -> Chunks<T> {
+        Chunks(Vec::new())    
+    }
+    
+    fn alloc(&mut self, i: usize, value: T) -> *mut T {
+        let chunk_no = i / CHUNK_LEN;
+        if self.0.len() <= chunk_no {
+            // Resizing Vec that holds pointers to heap allocated arrays so we don't invalidate the references
+            self.0.resize(chunk_no + 1, Box::new([T::default(); CHUNK_LEN]))
+        }
+        let v = self.0[chunk_no].get_mut(i % CHUNK_LEN).unwrap();
+        *v = value;
+        v as *mut T
+    }
+
+    fn clear(&mut self) {
+        self.0.clear()
+    }
+}
+
 /// `Statement` state used to represent a freshly allocated connection
 pub enum Allocated {}
 /// `Statement` state used to represent a statement with a result set cursor. A statement is most
@@ -47,7 +73,7 @@ pub struct Statement<'con, 'b, S, R> {
     // Indicates wether there is an open result set or not associated with this statement.
     result: PhantomData<R>,
     parameters: PhantomData<&'b [u8]>,
-    param_ind_buffers: Vec<ffi::SQLLEN>,
+    param_ind_buffers: Chunks<ffi::SQLLEN>,
 }
 
 /// Used to retrieve data from the fields of a query result
@@ -80,7 +106,7 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
             state: PhantomData,
             result: PhantomData,
             parameters: PhantomData,
-            param_ind_buffers: vec![]
+            param_ind_buffers: Chunks::new()
         }
     }
 }
