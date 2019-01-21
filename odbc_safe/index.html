@@ -11,235 +11,46 @@ Function Sequence errors. See [ODBC State Transition Tables][1]
 </ul>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
 <table><tr><td><code>pub extern crate <a class="mod" href="../odbc_sys/index.html" title="mod odbc_sys">odbc_sys</a> as sys;</code></td></tr><tr><td><code>pub use return_::<a class="enum" href="../odbc_safe/enum.Return.html" title="enum odbc_safe::Return">Success</a>;</code></td></tr><tr><td><code>pub use return_::<a class="enum" href="../odbc_safe/enum.Return.html" title="enum odbc_safe::Return">Info</a>;</code></td></tr><tr><td><code>pub use return_::<a class="enum" href="../odbc_safe/enum.Return.html" title="enum odbc_safe::Return">Error</a>;</code></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Connected.html"
-                                  title='struct odbc_safe::Connected'>Connected</a></td>
-                           <td class='docblock-short'>
-                                <p>An <code>HDbc</code> with the additional invariant of being 'connected'.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.DataSource.html"
-                                  title='struct odbc_safe::DataSource'>DataSource</a></td>
-                           <td class='docblock-short'>
-                                <p>A <code>DataSource</code> is used to query and manipulate a data source.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.DiagResult.html"
-                                  title='struct odbc_safe::DiagResult'>DiagResult</a></td>
-                           <td class='docblock-short'>
-                                <p>Result of <code>Diagnostics::diagnostics</code></p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Environment.html"
-                                  title='struct odbc_safe::Environment'>Environment</a></td>
-                           <td class='docblock-short'>
-                                <p>An <code>Environment</code> is a global context, in which to access data.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.NoVersion.html"
-                                  title='struct odbc_safe::NoVersion'>NoVersion</a></td>
-                           <td class='docblock-short'>
-                                <p>Used to indicate that the ODBC environments version is not yet declared</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Odbc3.html"
-                                  title='struct odbc_safe::Odbc3'>Odbc3</a></td>
-                           <td class='docblock-short'>
-                                <p>Used to declare ODBC 3 specifications.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Odbc3m8.html"
-                                  title='struct odbc_safe::Odbc3m8'>Odbc3m8</a></td>
-                           <td class='docblock-short'>
-                                <p>Used to declare ODBC 3.8 specifications.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Statement.html"
-                                  title='struct odbc_safe::Statement'>Statement</a></td>
-                           <td class='docblock-short'>
-                                <p>A <code>Statement</code> is most easily thought of as an SQL statement, such as
+<table><tr class='module-item'><td><a class="struct" href="struct.Connected.html" title='odbc_safe::Connected struct'>Connected</a></td><td class='docblock-short'><p>An <code>HDbc</code> with the additional invariant of being 'connected'.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.DataSource.html" title='odbc_safe::DataSource struct'>DataSource</a></td><td class='docblock-short'><p>A <code>DataSource</code> is used to query and manipulate a data source.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.DiagResult.html" title='odbc_safe::DiagResult struct'>DiagResult</a></td><td class='docblock-short'><p>Result of <code>Diagnostics::diagnostics</code></p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Environment.html" title='odbc_safe::Environment struct'>Environment</a></td><td class='docblock-short'><p>An <code>Environment</code> is a global context, in which to access data.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.NoVersion.html" title='odbc_safe::NoVersion struct'>NoVersion</a></td><td class='docblock-short'><p>Used to indicate that the ODBC environments version is not yet declared</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Odbc3.html" title='odbc_safe::Odbc3 struct'>Odbc3</a></td><td class='docblock-short'><p>Used to declare ODBC 3 specifications.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Odbc3m8.html" title='odbc_safe::Odbc3m8 struct'>Odbc3m8</a></td><td class='docblock-short'><p>Used to declare ODBC 3.8 specifications.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Statement.html" title='odbc_safe::Statement struct'>Statement</a></td><td class='docblock-short'><p>A <code>Statement</code> is most easily thought of as an SQL statement, such as
 <code>SELECT * FROM Employee</code>.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Unconnected.html"
-                                  title='struct odbc_safe::Unconnected'>Unconnected</a></td>
-                           <td class='docblock-short'>
-                                <p>An <code>HDbc</code> with the additional invariant of being 'allocated', but not 'connected'.</p>
-
-                           </td>
-                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.DataType.html"
-                                  title='enum odbc_safe::DataType'>DataType</a></td>
-                           <td class='docblock-short'>
-                                <p>Describes a column or parameter type.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Indicator.html"
-                                  title='enum odbc_safe::Indicator'>Indicator</a></td>
-                           <td class='docblock-short'>
-                                <p>Used to indicate the required target buffer length.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.NoCursor.html"
-                                  title='enum odbc_safe::NoCursor'>NoCursor</a></td>
-                           <td class='docblock-short'>
-                                <p>State used by <code>Statement</code>. A statement is likely to enter this state after
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Unconnected.html" title='odbc_safe::Unconnected struct'>Unconnected</a></td><td class='docblock-short'><p>An <code>HDbc</code> with the additional invariant of being 'allocated', but not 'connected'.</p>
+</td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table><tr class='module-item'><td><a class="enum" href="enum.DataType.html" title='odbc_safe::DataType enum'>DataType</a></td><td class='docblock-short'><p>Describes a column or parameter type.</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.Indicator.html" title='odbc_safe::Indicator enum'>Indicator</a></td><td class='docblock-short'><p>Used to indicate the required target buffer length.</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.NoCursor.html" title='odbc_safe::NoCursor enum'>NoCursor</a></td><td class='docblock-short'><p>State used by <code>Statement</code>. A statement is likely to enter this state after
 executing e.g. a
 <code>CREATE TABLE</code> statement.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Open.html"
-                                  title='enum odbc_safe::Open'>Open</a></td>
-                           <td class='docblock-short'>
-                                <p>Cursor state of <code>Statement</code>. A statement is likely to enter this state
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.Open.html" title='odbc_safe::Open enum'>Open</a></td><td class='docblock-short'><p>Cursor state of <code>Statement</code>. A statement is likely to enter this state
 after executing e.g a
 <code>SELECT</code> query.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Positioned.html"
-                                  title='enum odbc_safe::Positioned'>Positioned</a></td>
-                           <td class='docblock-short'>
-                                <p>Cursor state of <code>Statement</code>. A statement will enter this state after a
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.Positioned.html" title='odbc_safe::Positioned enum'>Positioned</a></td><td class='docblock-short'><p>Cursor state of <code>Statement</code>. A statement will enter this state after a
 successful call to
 <code>fetch()</code></p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Prepared.html"
-                                  title='enum odbc_safe::Prepared'>Prepared</a></td>
-                           <td class='docblock-short'>
-                                <p>State used by <code>Statement</code>. A statement will enter this state after a
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.Prepared.html" title='odbc_safe::Prepared enum'>Prepared</a></td><td class='docblock-short'><p>State used by <code>Statement</code>. A statement will enter this state after a
 successful call to
 <code>prepare()</code>.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Return.html"
-                                  title='enum odbc_safe::Return'>Return</a></td>
-                           <td class='docblock-short'>
-                                <p>Holds result and indicates the overall success or failure of a function.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.ReturnOption.html"
-                                  title='enum odbc_safe::ReturnOption'>ReturnOption</a></td>
-                           <td class='docblock-short'>
-                                <p>Holds result and indicates the overall success or failure of a function.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Unprepared.html"
-                                  title='enum odbc_safe::Unprepared'>Unprepared</a></td>
-                           <td class='docblock-short'>
-                                <p>State used by <code>Statement</code>. Indicates that no Access Plan has been created,
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.Return.html" title='odbc_safe::Return enum'>Return</a></td><td class='docblock-short'><p>Holds result and indicates the overall success or failure of a function.</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.ReturnOption.html" title='odbc_safe::ReturnOption enum'>ReturnOption</a></td><td class='docblock-short'><p>Holds result and indicates the overall success or failure of a function.</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.Unprepared.html" title='odbc_safe::Unprepared enum'>Unprepared</a></td><td class='docblock-short'><p>State used by <code>Statement</code>. Indicates that no Access Plan has been created,
 yet.</p>
-
-                           </td>
-                       </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="trait" href="trait.CDataType.html"
-                                  title='trait odbc_safe::CDataType'>CDataType</a></td>
-                           <td class='docblock-short'>
-                                <p>See [C Data Types in ODBC][1]
+</td></tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table><tr class='module-item'><td><a class="trait" href="trait.CDataType.html" title='odbc_safe::CDataType trait'>CDataType</a></td><td class='docblock-short'><p>See [C Data Types in ODBC][1]
 [1]: https://docs.microsoft.com/sql/odbc/reference/develop-app/c-data-types-in-odbc</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="trait" href="trait.CursorState.html"
-                                  title='trait odbc_safe::CursorState'>CursorState</a></td>
-                           <td class='docblock-short'>
-                                <p>Implemented by the <code>Open</code> and <code>Positioned</code> states for <code>Statement</code>.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="trait" href="trait.Diagnostics.html"
-                                  title='trait odbc_safe::Diagnostics'>Diagnostics</a></td>
-                           <td class='docblock-short'>
-                                <p>A type implementing this trait is able to provide diagnostic information regarding the last
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.CursorState.html" title='odbc_safe::CursorState trait'>CursorState</a></td><td class='docblock-short'><p>Implemented by the <code>Open</code> and <code>Positioned</code> states for <code>Statement</code>.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.Diagnostics.html" title='odbc_safe::Diagnostics trait'>Diagnostics</a></td><td class='docblock-short'><p>A type implementing this trait is able to provide diagnostic information regarding the last
 method call.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="trait" href="trait.HDbcWrapper.html"
-                                  title='trait odbc_safe::HDbcWrapper'>HDbcWrapper</a></td>
-                           <td class='docblock-short'>
-                                <p>Implemented by <code>Connected</code> and <code>Unconnected</code>.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="trait" href="trait.Handle.html"
-                                  title='trait odbc_safe::Handle'>Handle</a></td>
-                           <td class='docblock-short'>
-                                <p>Basic functionality for all wrappers around ODBC Handles</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="trait" href="trait.SqlStr.html"
-                                  title='trait odbc_safe::SqlStr'>SqlStr</a></td>
-                           <td class='docblock-short'>
-                                <p>A type implementing this trait can be passed as a string argument in API calls</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="trait" href="trait.Version.html"
-                                  title='trait odbc_safe::Version'>Version</a></td>
-                           <td class='docblock-short'>
-                                <p>Type indicates an ODBC Version</p>
-
-                           </td>
-                       </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.Connection.html"
-                                  title='type odbc_safe::Connection'>Connection</a></td>
-                           <td class='docblock-short'>
-                                <p><code>Connection</code> can be used as a shorthand for a <code>DataSource</code> in <code>Connected</code> state.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.ResultSet.html"
-                                  title='type odbc_safe::ResultSet'>ResultSet</a></td>
-                           <td class='docblock-short'>
-                                <p>Shorthand for <code>Statements</code> in <code>Open</code> state.</p>
-
-                           </td>
-                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "odbc_safe";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.HDbcWrapper.html" title='odbc_safe::HDbcWrapper trait'>HDbcWrapper</a></td><td class='docblock-short'><p>Implemented by <code>Connected</code> and <code>Unconnected</code>.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.Handle.html" title='odbc_safe::Handle trait'>Handle</a></td><td class='docblock-short'><p>Basic functionality for all wrappers around ODBC Handles</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.SqlStr.html" title='odbc_safe::SqlStr trait'>SqlStr</a></td><td class='docblock-short'><p>A type implementing this trait can be passed as a string argument in API calls</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.Version.html" title='odbc_safe::Version trait'>Version</a></td><td class='docblock-short'><p>Type indicates an ODBC Version</p>
+</td></tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table><tr class='module-item'><td><a class="type" href="type.Connection.html" title='odbc_safe::Connection type'>Connection</a></td><td class='docblock-short'><p><code>Connection</code> can be used as a shorthand for a <code>DataSource</code> in <code>Connected</code> state.</p>
+</td></tr><tr class='module-item'><td><a class="type" href="type.ResultSet.html" title='odbc_safe::ResultSet type'>ResultSet</a></td><td class='docblock-short'><p>Shorthand for <code>Statements</code> in <code>Open</code> state.</p>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "odbc_safe";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

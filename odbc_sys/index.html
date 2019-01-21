@@ -8,953 +8,127 @@ ODBC 4.0 is still under development by Microsoft, so these symbols are deactivat
 in the cargo.toml</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
 <table><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.EnvironmentAttribute.html" title="enum odbc_sys::EnvironmentAttribute">EnvironmentAttribute</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.OdbcVersion.html" title="enum odbc_sys::OdbcVersion">OdbcVersion</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlCDataType.html" title="enum odbc_sys::SqlCDataType">SqlCDataType</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.SqlCDataType.html" title="enum odbc_sys::SqlCDataType">SQL_C_ULONG</a> as SQL_C_BOOKMARK;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.FetchOrientation.html" title="enum odbc_sys::FetchOrientation">FetchOrientation</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.InfoType.html" title="enum odbc_sys::InfoType">InfoType</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.InputOutput.html" title="enum odbc_sys::InputOutput">InputOutput</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.Nullable.html" title="enum odbc_sys::Nullable">Nullable</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlBulkOperation.html" title="enum odbc_sys::SqlBulkOperation">SqlBulkOperation</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SQLRETURN.html" title="enum odbc_sys::SQLRETURN">SQLRETURN</a>::*;</code></td></tr><tr><td><code>pub use <a class="enum" href="../odbc_sys/enum.FreeStmtOption.html" title="enum odbc_sys::FreeStmtOption">FreeStmtOption</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlDataType.html" title="enum odbc_sys::SqlDataType">SqlDataType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.HandleType.html" title="enum odbc_sys::HandleType">HandleType</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlDriverConnectOption.html" title="enum odbc_sys::SqlDriverConnectOption">SqlDriverConnectOption</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlStatementAttribute.html" title="enum odbc_sys::SqlStatementAttribute">SqlStatementAttribute</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlAsyncConnectionBehavior.html" title="enum odbc_sys::SqlAsyncConnectionBehavior">SqlAsyncConnectionBehavior</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlConnectionAttribute.html" title="enum odbc_sys::SqlConnectionAttribute">SqlConnectionAttribute</a>::*;</code></td></tr><tr><td><code>pub use self::<a class="enum" href="../odbc_sys/enum.SqlCompletionType.html" title="enum odbc_sys::SqlCompletionType">SqlCompletionType</a>::*;</code></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.SQLGUID.html"
-                                  title='struct odbc_sys::SQLGUID'>SQLGUID</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.SQL_DATE_STRUCT.html"
-                                  title='struct odbc_sys::SQL_DATE_STRUCT'>SQL_DATE_STRUCT</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.SQL_DAY_SECOND_STRUCT.html"
-                                  title='struct odbc_sys::SQL_DAY_SECOND_STRUCT'>SQL_DAY_SECOND_STRUCT</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.SQL_INTERVAL_STRUCT.html"
-                                  title='struct odbc_sys::SQL_INTERVAL_STRUCT'>SQL_INTERVAL_STRUCT</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.SQL_SS_TIME2_STRUCT.html"
-                                  title='struct odbc_sys::SQL_SS_TIME2_STRUCT'>SQL_SS_TIME2_STRUCT</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.SQL_SS_TIMESTAMPOFFSET_STRUCT.html"
-                                  title='struct odbc_sys::SQL_SS_TIMESTAMPOFFSET_STRUCT'>SQL_SS_TIMESTAMPOFFSET_STRUCT</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.SQL_TIMESTAMP_STRUCT.html"
-                                  title='struct odbc_sys::SQL_TIMESTAMP_STRUCT'>SQL_TIMESTAMP_STRUCT</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.SQL_TIME_STRUCT.html"
-                                  title='struct odbc_sys::SQL_TIME_STRUCT'>SQL_TIME_STRUCT</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.SQL_YEAR_MONTH_STRUCT.html"
-                                  title='struct odbc_sys::SQL_YEAR_MONTH_STRUCT'>SQL_YEAR_MONTH_STRUCT</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Dbc.html"
-                                  title='enum odbc_sys::Dbc'>Dbc</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Desc.html"
-                                  title='enum odbc_sys::Desc'>Desc</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Env.html"
-                                  title='enum odbc_sys::Env'>Env</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.EnvironmentAttribute.html"
-                                  title='enum odbc_sys::EnvironmentAttribute'>EnvironmentAttribute</a></td>
-                           <td class='docblock-short'>
-                                <p>Governs behaviour of EnvironmentAttribute</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.FetchOrientation.html"
-                                  title='enum odbc_sys::FetchOrientation'>FetchOrientation</a></td>
-                           <td class='docblock-short'>
-                                <p>Codes used for FetchOrientation in <code>SQLFetchScroll</code>, <code>SQLDataSources</code> and in <code>SQLDrivers</code></p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.FreeStmtOption.html"
-                                  title='enum odbc_sys::FreeStmtOption'>FreeStmtOption</a></td>
-                           <td class='docblock-short'>
-                                <p>SQL Free Statement options</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.HandleType.html"
-                                  title='enum odbc_sys::HandleType'>HandleType</a></td>
-                           <td class='docblock-short'>
-                                <p>Represented in C headers as SQLSMALLINT</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.InfoType.html"
-                                  title='enum odbc_sys::InfoType'>InfoType</a></td>
-                           <td class='docblock-short'>
-                                <p>Information requested by SQLGetInfo</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.InputOutput.html"
-                                  title='enum odbc_sys::InputOutput'>InputOutput</a></td>
-                           <td class='docblock-short'>
-                                <p>Used by <code>SQLBindParameter</code>.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Nullable.html"
-                                  title='enum odbc_sys::Nullable'>Nullable</a></td>
-                           <td class='docblock-short'>
-                                <p>Used by <code>SQLDescribeCol</code>.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Obj.html"
-                                  title='enum odbc_sys::Obj'>Obj</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.OdbcVersion.html"
-                                  title='enum odbc_sys::OdbcVersion'>OdbcVersion</a></td>
-                           <td class='docblock-short'>
-                                <p>ODBC verions</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SQLINTERVAL.html"
-                                  title='enum odbc_sys::SQLINTERVAL'>SQLINTERVAL</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SQLRETURN.html"
-                                  title='enum odbc_sys::SQLRETURN'>SQLRETURN</a></td>
-                           <td class='docblock-short'>
-                                <p>Indicates the overall success or failure of the function</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SqlAsyncConnectionBehavior.html"
-                                  title='enum odbc_sys::SqlAsyncConnectionBehavior'>SqlAsyncConnectionBehavior</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SqlBulkOperation.html"
-                                  title='enum odbc_sys::SqlBulkOperation'>SqlBulkOperation</a></td>
-                           <td class='docblock-short'>
-                                <p>Supported <code>SQLBulkOperations</code> operations</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SqlCDataType.html"
-                                  title='enum odbc_sys::SqlCDataType'>SqlCDataType</a></td>
-                           <td class='docblock-short'>
-                                <p>The C data type is specified in the SQLBindCol and SQLGetData functions with the TargetType
+<table><tr class='module-item'><td><a class="struct" href="struct.SQLGUID.html" title='odbc_sys::SQLGUID struct'>SQLGUID</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.SQL_DATE_STRUCT.html" title='odbc_sys::SQL_DATE_STRUCT struct'>SQL_DATE_STRUCT</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.SQL_DAY_SECOND_STRUCT.html" title='odbc_sys::SQL_DAY_SECOND_STRUCT struct'>SQL_DAY_SECOND_STRUCT</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.SQL_INTERVAL_STRUCT.html" title='odbc_sys::SQL_INTERVAL_STRUCT struct'>SQL_INTERVAL_STRUCT</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.SQL_SS_TIME2_STRUCT.html" title='odbc_sys::SQL_SS_TIME2_STRUCT struct'>SQL_SS_TIME2_STRUCT</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.SQL_SS_TIMESTAMPOFFSET_STRUCT.html" title='odbc_sys::SQL_SS_TIMESTAMPOFFSET_STRUCT struct'>SQL_SS_TIMESTAMPOFFSET_STRUCT</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.SQL_TIMESTAMP_STRUCT.html" title='odbc_sys::SQL_TIMESTAMP_STRUCT struct'>SQL_TIMESTAMP_STRUCT</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.SQL_TIME_STRUCT.html" title='odbc_sys::SQL_TIME_STRUCT struct'>SQL_TIME_STRUCT</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.SQL_YEAR_MONTH_STRUCT.html" title='odbc_sys::SQL_YEAR_MONTH_STRUCT struct'>SQL_YEAR_MONTH_STRUCT</a></td><td class='docblock-short'></td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table><tr class='module-item'><td><a class="enum" href="enum.Dbc.html" title='odbc_sys::Dbc enum'>Dbc</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="enum" href="enum.Desc.html" title='odbc_sys::Desc enum'>Desc</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="enum" href="enum.Env.html" title='odbc_sys::Env enum'>Env</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="enum" href="enum.EnvironmentAttribute.html" title='odbc_sys::EnvironmentAttribute enum'>EnvironmentAttribute</a></td><td class='docblock-short'><p>Governs behaviour of EnvironmentAttribute</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.FetchOrientation.html" title='odbc_sys::FetchOrientation enum'>FetchOrientation</a></td><td class='docblock-short'><p>Codes used for FetchOrientation in <code>SQLFetchScroll</code>, <code>SQLDataSources</code> and in <code>SQLDrivers</code></p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.FreeStmtOption.html" title='odbc_sys::FreeStmtOption enum'>FreeStmtOption</a></td><td class='docblock-short'><p>SQL Free Statement options</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.HandleType.html" title='odbc_sys::HandleType enum'>HandleType</a></td><td class='docblock-short'><p>Represented in C headers as SQLSMALLINT</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.InfoType.html" title='odbc_sys::InfoType enum'>InfoType</a></td><td class='docblock-short'><p>Information requested by SQLGetInfo</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.InputOutput.html" title='odbc_sys::InputOutput enum'>InputOutput</a></td><td class='docblock-short'><p>Used by <code>SQLBindParameter</code>.</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.Nullable.html" title='odbc_sys::Nullable enum'>Nullable</a></td><td class='docblock-short'><p>Used by <code>SQLDescribeCol</code>.</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.Obj.html" title='odbc_sys::Obj enum'>Obj</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="enum" href="enum.OdbcVersion.html" title='odbc_sys::OdbcVersion enum'>OdbcVersion</a></td><td class='docblock-short'><p>ODBC verions</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.SQLINTERVAL.html" title='odbc_sys::SQLINTERVAL enum'>SQLINTERVAL</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="enum" href="enum.SQLRETURN.html" title='odbc_sys::SQLRETURN enum'>SQLRETURN</a></td><td class='docblock-short'><p>Indicates the overall success or failure of the function</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.SqlAsyncConnectionBehavior.html" title='odbc_sys::SqlAsyncConnectionBehavior enum'>SqlAsyncConnectionBehavior</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="enum" href="enum.SqlBulkOperation.html" title='odbc_sys::SqlBulkOperation enum'>SqlBulkOperation</a></td><td class='docblock-short'><p>Supported <code>SQLBulkOperations</code> operations</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.SqlCDataType.html" title='odbc_sys::SqlCDataType enum'>SqlCDataType</a></td><td class='docblock-short'><p>The C data type is specified in the SQLBindCol and SQLGetData functions with the TargetType
 argument and in the SQLBindParameter function with the ValueType argument.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SqlCompletionType.html"
-                                  title='enum odbc_sys::SqlCompletionType'>SqlCompletionType</a></td>
-                           <td class='docblock-short'>
-                                <p>Completion types for <code>SQLEndTrans</code></p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SqlConnectionAttribute.html"
-                                  title='enum odbc_sys::SqlConnectionAttribute'>SqlConnectionAttribute</a></td>
-                           <td class='docblock-short'>
-                                <p>Connection attributes for <code>SQLSetConnectAttr</code></p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SqlDataType.html"
-                                  title='enum odbc_sys::SqlDataType'>SqlDataType</a></td>
-                           <td class='docblock-short'>
-                                <p>SQL Data Types</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SqlDriverConnectOption.html"
-                                  title='enum odbc_sys::SqlDriverConnectOption'>SqlDriverConnectOption</a></td>
-                           <td class='docblock-short'>
-                                <p>Options for <code>SQLDriverConnect</code></p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SqlDynamicDiagnosticIdentifier.html"
-                                  title='enum odbc_sys::SqlDynamicDiagnosticIdentifier'>SqlDynamicDiagnosticIdentifier</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SqlHeaderDiagnosticIdentifier.html"
-                                  title='enum odbc_sys::SqlHeaderDiagnosticIdentifier'>SqlHeaderDiagnosticIdentifier</a></td>
-                           <td class='docblock-short'>
-                                <p><code>DiagIdentifier</code> for <code>SQLGetDiagField</code></p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SqlStatementAttribute.html"
-                                  title='enum odbc_sys::SqlStatementAttribute'>SqlStatementAttribute</a></td>
-                           <td class='docblock-short'>
-                                <p>Statement attributes for <code>SQLSetStmtAttr</code></p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Stmt.html"
-                                  title='enum odbc_sys::Stmt'>Stmt</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="constant" href="constant.SQL_C_TYPES_EXTENDED.html"
-                                  title='constant odbc_sys::SQL_C_TYPES_EXTENDED'>SQL_C_TYPES_EXTENDED</a></td>
-                           <td class='docblock-short'>
-                                <p>Extended C Types range 4000 and above. Range of -100 thru 200 is reserved by Driver Manager.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="constant" href="constant.SQL_MAX_MESSAGE_LENGTH.html"
-                                  title='constant odbc_sys::SQL_MAX_MESSAGE_LENGTH'>SQL_MAX_MESSAGE_LENGTH</a></td>
-                           <td class='docblock-short'>
-                                <p>Maximum message length</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="constant" href="constant.SQL_NO_TOTAL.html"
-                                  title='constant odbc_sys::SQL_NO_TOTAL'>SQL_NO_TOTAL</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="constant" href="constant.SQL_NTS.html"
-                                  title='constant odbc_sys::SQL_NTS'>SQL_NTS</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="constant" href="constant.SQL_NTSL.html"
-                                  title='constant odbc_sys::SQL_NTSL'>SQL_NTSL</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="constant" href="constant.SQL_NULL_DATA.html"
-                                  title='constant odbc_sys::SQL_NULL_DATA'>SQL_NULL_DATA</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="constant" href="constant.SQL_SQLSTATE_SIZE.html"
-                                  title='constant odbc_sys::SQL_SQLSTATE_SIZE'>SQL_SQLSTATE_SIZE</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="constant" href="constant.SQL_SQLSTATE_SIZEW.html"
-                                  title='constant odbc_sys::SQL_SQLSTATE_SIZEW'>SQL_SQLSTATE_SIZEW</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="constant" href="constant.SQL_SS_LENGTH_UNLIMITED.html"
-                                  title='constant odbc_sys::SQL_SS_LENGTH_UNLIMITED'>SQL_SS_LENGTH_UNLIMITED</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLAllocHandle.html"
-                                  title='fn odbc_sys::SQLAllocHandle'>SQLAllocHandle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Allocates an environment, connection, statement, or descriptor handle.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLBindCol.html"
-                                  title='fn odbc_sys::SQLBindCol'>SQLBindCol</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Binds application data bufferst to columns in the result set.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLBindParameter.html"
-                                  title='fn odbc_sys::SQLBindParameter'>SQLBindParameter</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Binds a buffer to a parameter marker in an SQL statement</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLBrowseConnectW.html"
-                                  title='fn odbc_sys::SQLBrowseConnectW'>SQLBrowseConnectW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>SQLBrowseConnect supports an iterative method of discovering and enumerating the attributes
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.SqlCompletionType.html" title='odbc_sys::SqlCompletionType enum'>SqlCompletionType</a></td><td class='docblock-short'><p>Completion types for <code>SQLEndTrans</code></p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.SqlConnectionAttribute.html" title='odbc_sys::SqlConnectionAttribute enum'>SqlConnectionAttribute</a></td><td class='docblock-short'><p>Connection attributes for <code>SQLSetConnectAttr</code></p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.SqlDataType.html" title='odbc_sys::SqlDataType enum'>SqlDataType</a></td><td class='docblock-short'><p>SQL Data Types</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.SqlDriverConnectOption.html" title='odbc_sys::SqlDriverConnectOption enum'>SqlDriverConnectOption</a></td><td class='docblock-short'><p>Options for <code>SQLDriverConnect</code></p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.SqlDynamicDiagnosticIdentifier.html" title='odbc_sys::SqlDynamicDiagnosticIdentifier enum'>SqlDynamicDiagnosticIdentifier</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="enum" href="enum.SqlHeaderDiagnosticIdentifier.html" title='odbc_sys::SqlHeaderDiagnosticIdentifier enum'>SqlHeaderDiagnosticIdentifier</a></td><td class='docblock-short'><p><code>DiagIdentifier</code> for <code>SQLGetDiagField</code></p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.SqlStatementAttribute.html" title='odbc_sys::SqlStatementAttribute enum'>SqlStatementAttribute</a></td><td class='docblock-short'><p>Statement attributes for <code>SQLSetStmtAttr</code></p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.Stmt.html" title='odbc_sys::Stmt enum'>Stmt</a></td><td class='docblock-short'></td></tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
+<table><tr class='module-item'><td><a class="constant" href="constant.SQL_C_TYPES_EXTENDED.html" title='odbc_sys::SQL_C_TYPES_EXTENDED constant'>SQL_C_TYPES_EXTENDED</a></td><td class='docblock-short'><p>Extended C Types range 4000 and above. Range of -100 thru 200 is reserved by Driver Manager.</p>
+</td></tr><tr class='module-item'><td><a class="constant" href="constant.SQL_MAX_MESSAGE_LENGTH.html" title='odbc_sys::SQL_MAX_MESSAGE_LENGTH constant'>SQL_MAX_MESSAGE_LENGTH</a></td><td class='docblock-short'><p>Maximum message length</p>
+</td></tr><tr class='module-item'><td><a class="constant" href="constant.SQL_NO_TOTAL.html" title='odbc_sys::SQL_NO_TOTAL constant'>SQL_NO_TOTAL</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="constant" href="constant.SQL_NTS.html" title='odbc_sys::SQL_NTS constant'>SQL_NTS</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="constant" href="constant.SQL_NTSL.html" title='odbc_sys::SQL_NTSL constant'>SQL_NTSL</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="constant" href="constant.SQL_NULL_DATA.html" title='odbc_sys::SQL_NULL_DATA constant'>SQL_NULL_DATA</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="constant" href="constant.SQL_SQLSTATE_SIZE.html" title='odbc_sys::SQL_SQLSTATE_SIZE constant'>SQL_SQLSTATE_SIZE</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="constant" href="constant.SQL_SQLSTATE_SIZEW.html" title='odbc_sys::SQL_SQLSTATE_SIZEW constant'>SQL_SQLSTATE_SIZEW</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="constant" href="constant.SQL_SS_LENGTH_UNLIMITED.html" title='odbc_sys::SQL_SS_LENGTH_UNLIMITED constant'>SQL_SS_LENGTH_UNLIMITED</a></td><td class='docblock-short'></td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table><tr class='module-item'><td><a class="fn" href="fn.SQLAllocHandle.html" title='odbc_sys::SQLAllocHandle fn'>SQLAllocHandle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Allocates an environment, connection, statement, or descriptor handle.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLBindCol.html" title='odbc_sys::SQLBindCol fn'>SQLBindCol</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Binds application data bufferst to columns in the result set.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLBindParameter.html" title='odbc_sys::SQLBindParameter fn'>SQLBindParameter</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Binds a buffer to a parameter marker in an SQL statement</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLBrowseConnectW.html" title='odbc_sys::SQLBrowseConnectW fn'>SQLBrowseConnectW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>SQLBrowseConnect supports an iterative method of discovering and enumerating the attributes
 and attribute values required to connect to a data source.
 Each call to SQLBrowseConnect returns successive levels of attributes and attribute values.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLBulkOperations.html"
-                                  title='fn odbc_sys::SQLBulkOperations'>SQLBulkOperations</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Performs bulk insertions and bulk bookmark operations, including update, delete, and fetch by bookmark.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLCancel.html"
-                                  title='fn odbc_sys::SQLCancel'>SQLCancel</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Cancels the processing on a statement.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLCancelHandle.html"
-                                  title='fn odbc_sys::SQLCancelHandle'>SQLCancelHandle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Cancels the processing on a connection or statement.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLCloseCursor.html"
-                                  title='fn odbc_sys::SQLCloseCursor'>SQLCloseCursor</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Closes a cursor that has been opened on a statement and discards pending results.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLColAttributeW.html"
-                                  title='fn odbc_sys::SQLColAttributeW'>SQLColAttributeW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns descriptor information for a column in a result set.
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLBulkOperations.html" title='odbc_sys::SQLBulkOperations fn'>SQLBulkOperations</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Performs bulk insertions and bulk bookmark operations, including update, delete, and fetch by bookmark.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLCancel.html" title='odbc_sys::SQLCancel fn'>SQLCancel</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Cancels the processing on a statement.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLCancelHandle.html" title='odbc_sys::SQLCancelHandle fn'>SQLCancelHandle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Cancels the processing on a connection or statement.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLCloseCursor.html" title='odbc_sys::SQLCloseCursor fn'>SQLCloseCursor</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Closes a cursor that has been opened on a statement and discards pending results.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLColAttributeW.html" title='odbc_sys::SQLColAttributeW fn'>SQLColAttributeW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns descriptor information for a column in a result set.
 Descriptor information is returned as a character string,
 a descriptor-dependent value, or an integer value.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLColumnPrivilegesW.html"
-                                  title='fn odbc_sys::SQLColumnPrivilegesW'>SQLColumnPrivilegesW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns a list of columns and associated privileges for the specified table.
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLColumnPrivilegesW.html" title='odbc_sys::SQLColumnPrivilegesW fn'>SQLColumnPrivilegesW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns a list of columns and associated privileges for the specified table.
 The driver returns the information as a result set on the specified StatementHandle.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLColumnsW.html"
-                                  title='fn odbc_sys::SQLColumnsW'>SQLColumnsW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the list of column names in specified tables.
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLColumnsW.html" title='odbc_sys::SQLColumnsW fn'>SQLColumnsW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the list of column names in specified tables.
 The driver returns this information as a result set on the specified StatementHandle.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLCompleteAsync.html"
-                                  title='fn odbc_sys::SQLCompleteAsync'>SQLCompleteAsync</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Can be used to determine when an asynchronous function is complete using either notification- or polling-based processing.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLConnect.html"
-                                  title='fn odbc_sys::SQLConnect'>SQLConnect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>SQLConnect establishes connections to a driver and a data source. The connection handle
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLCompleteAsync.html" title='odbc_sys::SQLCompleteAsync fn'>SQLCompleteAsync</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Can be used to determine when an asynchronous function is complete using either notification- or polling-based processing.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLConnect.html" title='odbc_sys::SQLConnect fn'>SQLConnect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>SQLConnect establishes connections to a driver and a data source. The connection handle
 references storage of all information about the connection to the data source, including
 status, transaction state, and error information.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLConnectW.html"
-                                  title='fn odbc_sys::SQLConnectW'>SQLConnectW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>SQLConnect establishes connections to a driver and a data source. The connection handle
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLConnectW.html" title='odbc_sys::SQLConnectW fn'>SQLConnectW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>SQLConnect establishes connections to a driver and a data source. The connection handle
 references storage of all information about the connection to the data source, including
 status, transaction state, and error information.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLCopyDesc.html"
-                                  title='fn odbc_sys::SQLCopyDesc'>SQLCopyDesc</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Copies descriptor information from one descriptor handle to another.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLDataSources.html"
-                                  title='fn odbc_sys::SQLDataSources'>SQLDataSources</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns information about a data source. This function is implemented only by the Driver
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLCopyDesc.html" title='odbc_sys::SQLCopyDesc fn'>SQLCopyDesc</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Copies descriptor information from one descriptor handle to another.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLDataSources.html" title='odbc_sys::SQLDataSources fn'>SQLDataSources</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns information about a data source. This function is implemented only by the Driver
 Manager.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLDataSourcesW.html"
-                                  title='fn odbc_sys::SQLDataSourcesW'>SQLDataSourcesW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns information about a data source. This function is implemented only by the Driver
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLDataSourcesW.html" title='odbc_sys::SQLDataSourcesW fn'>SQLDataSourcesW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns information about a data source. This function is implemented only by the Driver
 Manager.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLDescribeCol.html"
-                                  title='fn odbc_sys::SQLDescribeCol'>SQLDescribeCol</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the result descriptor for one column in the result set — column name, type, column
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLDescribeCol.html" title='odbc_sys::SQLDescribeCol fn'>SQLDescribeCol</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the result descriptor for one column in the result set — column name, type, column
 size, decimal digits, and nullability.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLDescribeColW.html"
-                                  title='fn odbc_sys::SQLDescribeColW'>SQLDescribeColW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the result descriptor for one column in the result set — column name, type, column
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLDescribeColW.html" title='odbc_sys::SQLDescribeColW fn'>SQLDescribeColW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the result descriptor for one column in the result set — column name, type, column
 size, decimal digits, and nullability.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLDescribeParam.html"
-                                  title='fn odbc_sys::SQLDescribeParam'>SQLDescribeParam</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the description of a parameter marker associated with a prepared SQL statement.
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLDescribeParam.html" title='odbc_sys::SQLDescribeParam fn'>SQLDescribeParam</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the description of a parameter marker associated with a prepared SQL statement.
 This information is also available in the fields of the IPD.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLDisconnect.html"
-                                  title='fn odbc_sys::SQLDisconnect'>SQLDisconnect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Closes the connection associated with a specific connection handle.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLDriverConnect.html"
-                                  title='fn odbc_sys::SQLDriverConnect'>SQLDriverConnect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>An alternative to <code>SQLConnect</code>. It supports data sources that require more connection
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLDisconnect.html" title='odbc_sys::SQLDisconnect fn'>SQLDisconnect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Closes the connection associated with a specific connection handle.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLDriverConnect.html" title='odbc_sys::SQLDriverConnect fn'>SQLDriverConnect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>An alternative to <code>SQLConnect</code>. It supports data sources that require more connection
 information than the three arguments in <code>SQLConnect</code>, dialog boxes to prompt the user for
 all connection information, and data sources that are not defined in the system information</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLDriverConnectW.html"
-                                  title='fn odbc_sys::SQLDriverConnectW'>SQLDriverConnectW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>An alternative to <code>SQLConnect</code>. It supports data sources that require more connection
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLDriverConnectW.html" title='odbc_sys::SQLDriverConnectW fn'>SQLDriverConnectW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>An alternative to <code>SQLConnect</code>. It supports data sources that require more connection
 information than the three arguments in <code>SQLConnect</code>, dialog boxes to prompt the user for
 all connection information, and data sources that are not defined in the system information</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLDrivers.html"
-                                  title='fn odbc_sys::SQLDrivers'>SQLDrivers</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Lists driver descriptions and driver attribute keywords. This function is implemented only
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLDrivers.html" title='odbc_sys::SQLDrivers fn'>SQLDrivers</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Lists driver descriptions and driver attribute keywords. This function is implemented only
 by the Driver Manager.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLDriversW.html"
-                                  title='fn odbc_sys::SQLDriversW'>SQLDriversW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Lists driver descriptions and driver attribute keywords. This function is implemented only
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLDriversW.html" title='odbc_sys::SQLDriversW fn'>SQLDriversW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Lists driver descriptions and driver attribute keywords. This function is implemented only
 by the Driver Manager.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLEndTran.html"
-                                  title='fn odbc_sys::SQLEndTran'>SQLEndTran</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Requests a commit or rollback operation for all active operations on all statements associated with a handle.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLExecDirect.html"
-                                  title='fn odbc_sys::SQLExecDirect'>SQLExecDirect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Executes a preparable statement, using the current values of the parameter marker variables
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLEndTran.html" title='odbc_sys::SQLEndTran fn'>SQLEndTran</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Requests a commit or rollback operation for all active operations on all statements associated with a handle.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLExecDirect.html" title='odbc_sys::SQLExecDirect fn'>SQLExecDirect</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Executes a preparable statement, using the current values of the parameter marker variables
 if any parameters exist in the statement. This is the fastest way to submit an SQL
 statement for one-time execution</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLExecDirectW.html"
-                                  title='fn odbc_sys::SQLExecDirectW'>SQLExecDirectW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Executes a preparable statement, using the current values of the parameter marker variables
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLExecDirectW.html" title='odbc_sys::SQLExecDirectW fn'>SQLExecDirectW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Executes a preparable statement, using the current values of the parameter marker variables
 if any parameters exist in the statement. This is the fastest way to submit an SQL
 statement for one-time execution</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLExecute.html"
-                                  title='fn odbc_sys::SQLExecute'>SQLExecute</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Executes a prepared statement, using the current values of the parameter marker variables
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLExecute.html" title='odbc_sys::SQLExecute fn'>SQLExecute</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Executes a prepared statement, using the current values of the parameter marker variables
 if any paramater markers exis in the statement.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLFetch.html"
-                                  title='fn odbc_sys::SQLFetch'>SQLFetch</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>SQLFetch fetches the next rowset of data from the result set and returns data for all bound
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLFetch.html" title='odbc_sys::SQLFetch fn'>SQLFetch</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>SQLFetch fetches the next rowset of data from the result set and returns data for all bound
 columns.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLFetchScroll.html"
-                                  title='fn odbc_sys::SQLFetchScroll'>SQLFetchScroll</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Fetches the specified rowset of data from the result set and returns data for all bound columns.
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLFetchScroll.html" title='odbc_sys::SQLFetchScroll fn'>SQLFetchScroll</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Fetches the specified rowset of data from the result set and returns data for all bound columns.
 Rowsets can be specified at an absolute or relative position or by bookmark.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLForeignKeysW.html"
-                                  title='fn odbc_sys::SQLForeignKeysW'>SQLForeignKeysW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Can return:</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLFreeHandle.html"
-                                  title='fn odbc_sys::SQLFreeHandle'>SQLFreeHandle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Frees resources associated with a specific environment, connection, statement, or
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLForeignKeysW.html" title='odbc_sys::SQLForeignKeysW fn'>SQLForeignKeysW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Can return:</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLFreeHandle.html" title='odbc_sys::SQLFreeHandle fn'>SQLFreeHandle</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Frees resources associated with a specific environment, connection, statement, or
 descriptor handle.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLFreeStmt.html"
-                                  title='fn odbc_sys::SQLFreeStmt'>SQLFreeStmt</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Stops processing associated with a specific statement, closes any open cursors associated
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLFreeStmt.html" title='odbc_sys::SQLFreeStmt fn'>SQLFreeStmt</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Stops processing associated with a specific statement, closes any open cursors associated
 with the statement, discards pending results, or, optionally, frees all resources
 associated with the statement handle.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLGetConnectAttrW.html"
-                                  title='fn odbc_sys::SQLGetConnectAttrW'>SQLGetConnectAttrW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the current setting of a connection attribute.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLGetCursorNameW.html"
-                                  title='fn odbc_sys::SQLGetCursorNameW'>SQLGetCursorNameW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the cursor name associated with a specified statement.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLGetData.html"
-                                  title='fn odbc_sys::SQLGetData'>SQLGetData</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLGetDescFieldW.html"
-                                  title='fn odbc_sys::SQLGetDescFieldW'>SQLGetDescFieldW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the current setting or value of a single field of a descriptor record.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLGetDescRecW.html"
-                                  title='fn odbc_sys::SQLGetDescRecW'>SQLGetDescRecW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the current settings or values of multiple fields of a descriptor record.
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLGetConnectAttrW.html" title='odbc_sys::SQLGetConnectAttrW fn'>SQLGetConnectAttrW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the current setting of a connection attribute.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLGetCursorNameW.html" title='odbc_sys::SQLGetCursorNameW fn'>SQLGetCursorNameW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the cursor name associated with a specified statement.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLGetData.html" title='odbc_sys::SQLGetData fn'>SQLGetData</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLGetDescFieldW.html" title='odbc_sys::SQLGetDescFieldW fn'>SQLGetDescFieldW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the current setting or value of a single field of a descriptor record.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLGetDescRecW.html" title='odbc_sys::SQLGetDescRecW fn'>SQLGetDescRecW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the current settings or values of multiple fields of a descriptor record.
 The fields returned describe the name, data type, and storage of column or parameter data.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLGetDiagFieldW.html"
-                                  title='fn odbc_sys::SQLGetDiagFieldW'>SQLGetDiagFieldW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the current value of a field of a record of the diagnostic data structure (associated with a specified handle) that contains error, warning, and status information.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLGetDiagRec.html"
-                                  title='fn odbc_sys::SQLGetDiagRec'>SQLGetDiagRec</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Return the current values of multiple fields of a diagnostic record that contains eror,
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLGetDiagFieldW.html" title='odbc_sys::SQLGetDiagFieldW fn'>SQLGetDiagFieldW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the current value of a field of a record of the diagnostic data structure (associated with a specified handle) that contains error, warning, and status information.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLGetDiagRec.html" title='odbc_sys::SQLGetDiagRec fn'>SQLGetDiagRec</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Return the current values of multiple fields of a diagnostic record that contains eror,
 warning, and status information.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLGetDiagRecW.html"
-                                  title='fn odbc_sys::SQLGetDiagRecW'>SQLGetDiagRecW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Return the current values of multiple fields of a diagnostic record that contains eror,
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLGetDiagRecW.html" title='odbc_sys::SQLGetDiagRecW fn'>SQLGetDiagRecW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Return the current values of multiple fields of a diagnostic record that contains eror,
 warning, and status information.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLGetEnvAttr.html"
-                                  title='fn odbc_sys::SQLGetEnvAttr'>SQLGetEnvAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Gets attributes that govern aspects of environments</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLGetInfo.html"
-                                  title='fn odbc_sys::SQLGetInfo'>SQLGetInfo</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns general information about the driver and data source associated with a connection</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLGetInfoW.html"
-                                  title='fn odbc_sys::SQLGetInfoW'>SQLGetInfoW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns general information about the driver and data source associated with a connection</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLGetStmtAttrW.html"
-                                  title='fn odbc_sys::SQLGetStmtAttrW'>SQLGetStmtAttrW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the current setting of a statement attribute.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLMoreResults.html"
-                                  title='fn odbc_sys::SQLMoreResults'>SQLMoreResults</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Determines whether more results are available on a statement
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLGetEnvAttr.html" title='odbc_sys::SQLGetEnvAttr fn'>SQLGetEnvAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Gets attributes that govern aspects of environments</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLGetInfo.html" title='odbc_sys::SQLGetInfo fn'>SQLGetInfo</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns general information about the driver and data source associated with a connection</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLGetInfoW.html" title='odbc_sys::SQLGetInfoW fn'>SQLGetInfoW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns general information about the driver and data source associated with a connection</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLGetStmtAttrW.html" title='odbc_sys::SQLGetStmtAttrW fn'>SQLGetStmtAttrW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the current setting of a statement attribute.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLMoreResults.html" title='odbc_sys::SQLMoreResults fn'>SQLMoreResults</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Determines whether more results are available on a statement
 containing SELECT, UPDATE, INSERT, or DELETE statements and, if so, initializes processing for those results.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLNumResultCols.html"
-                                  title='fn odbc_sys::SQLNumResultCols'>SQLNumResultCols</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the number of columns in a result set</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLPrepare.html"
-                                  title='fn odbc_sys::SQLPrepare'>SQLPrepare</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Compiles the statement and generates an access plan.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLPrepareW.html"
-                                  title='fn odbc_sys::SQLPrepareW'>SQLPrepareW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Compiles the statement and generates an access plan.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLRowCount.html"
-                                  title='fn odbc_sys::SQLRowCount'>SQLRowCount</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the number of rows affected by an UPDATE, INSERT, or DELETE statement; an <code>SQL_ADD</code>,
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLNumResultCols.html" title='odbc_sys::SQLNumResultCols fn'>SQLNumResultCols</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the number of columns in a result set</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLPrepare.html" title='odbc_sys::SQLPrepare fn'>SQLPrepare</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Compiles the statement and generates an access plan.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLPrepareW.html" title='odbc_sys::SQLPrepareW fn'>SQLPrepareW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Compiles the statement and generates an access plan.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLRowCount.html" title='odbc_sys::SQLRowCount fn'>SQLRowCount</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the number of rows affected by an UPDATE, INSERT, or DELETE statement; an <code>SQL_ADD</code>,
 <code>SQL_UPDATE_BY_BOOKMARK</code>, or <code>SQL_DELETE_BY_BOOKMARK</code> operation in SQLBulkOperations; or an
 <code>SQL_UPDATE</code> or <code>SQL_DELETE</code> operation in <code>SQLSetPos</code>.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLSetConnectAttr.html"
-                                  title='fn odbc_sys::SQLSetConnectAttr'>SQLSetConnectAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Sets attributes that govern aspects of connections.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLSetConnectAttrW.html"
-                                  title='fn odbc_sys::SQLSetConnectAttrW'>SQLSetConnectAttrW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Sets attributes that govern aspects of connections.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLSetEnvAttr.html"
-                                  title='fn odbc_sys::SQLSetEnvAttr'>SQLSetEnvAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Sets attributes that govern aspects of environments</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLSetStmtAttr.html"
-                                  title='fn odbc_sys::SQLSetStmtAttr'>SQLSetStmtAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Sets attributes related to a statement.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLSetStmtAttrW.html"
-                                  title='fn odbc_sys::SQLSetStmtAttrW'>SQLSetStmtAttrW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Sets attributes related to a statement.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLTables.html"
-                                  title='fn odbc_sys::SQLTables'>SQLTables</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the list of table, catalog, or schema names, and table types, stored in a specific
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLSetConnectAttr.html" title='odbc_sys::SQLSetConnectAttr fn'>SQLSetConnectAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Sets attributes that govern aspects of connections.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLSetConnectAttrW.html" title='odbc_sys::SQLSetConnectAttrW fn'>SQLSetConnectAttrW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Sets attributes that govern aspects of connections.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLSetEnvAttr.html" title='odbc_sys::SQLSetEnvAttr fn'>SQLSetEnvAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Sets attributes that govern aspects of environments</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLSetStmtAttr.html" title='odbc_sys::SQLSetStmtAttr fn'>SQLSetStmtAttr</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Sets attributes related to a statement.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLSetStmtAttrW.html" title='odbc_sys::SQLSetStmtAttrW fn'>SQLSetStmtAttrW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Sets attributes related to a statement.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLTables.html" title='odbc_sys::SQLTables fn'>SQLTables</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the list of table, catalog, or schema names, and table types, stored in a specific
 data source. The driver returns the information as a result set</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.SQLTablesW.html"
-                                  title='fn odbc_sys::SQLTablesW'>SQLTablesW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
-                           <td class='docblock-short'>
-                                <p>Returns the list of table, catalog, or schema names, and table types, stored in a specific
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.SQLTablesW.html" title='odbc_sys::SQLTablesW fn'>SQLTablesW</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Returns the list of table, catalog, or schema names, and table types, stored in a specific
 data source. The driver returns the information as a result set</p>
-
-                           </td>
-                       </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.RETCODE.html"
-                                  title='type odbc_sys::RETCODE'>RETCODE</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLCHAR.html"
-                                  title='type odbc_sys::SQLCHAR'>SQLCHAR</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLHANDLE.html"
-                                  title='type odbc_sys::SQLHANDLE'>SQLHANDLE</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLHDBC.html"
-                                  title='type odbc_sys::SQLHDBC'>SQLHDBC</a></td>
-                           <td class='docblock-short'>
-                                <p>The connection handle references storage of all information about the connection to the data
+</td></tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table><tr class='module-item'><td><a class="type" href="type.RETCODE.html" title='odbc_sys::RETCODE type'>RETCODE</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLCHAR.html" title='odbc_sys::SQLCHAR type'>SQLCHAR</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLHANDLE.html" title='odbc_sys::SQLHANDLE type'>SQLHANDLE</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLHDBC.html" title='odbc_sys::SQLHDBC type'>SQLHDBC</a></td><td class='docblock-short'><p>The connection handle references storage of all information about the connection to the data
 source, including status, transaction state, and error information.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLHDESC.html"
-                                  title='type odbc_sys::SQLHDESC'>SQLHDESC</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLHENV.html"
-                                  title='type odbc_sys::SQLHENV'>SQLHENV</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLHSTMT.html"
-                                  title='type odbc_sys::SQLHSTMT'>SQLHSTMT</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLHWND.html"
-                                  title='type odbc_sys::SQLHWND'>SQLHWND</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLINTEGER.html"
-                                  title='type odbc_sys::SQLINTEGER'>SQLINTEGER</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLLEN.html"
-                                  title='type odbc_sys::SQLLEN'>SQLLEN</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLPOINTER.html"
-                                  title='type odbc_sys::SQLPOINTER'>SQLPOINTER</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLSMALLINT.html"
-                                  title='type odbc_sys::SQLSMALLINT'>SQLSMALLINT</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLUINTEGER.html"
-                                  title='type odbc_sys::SQLUINTEGER'>SQLUINTEGER</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLULEN.html"
-                                  title='type odbc_sys::SQLULEN'>SQLULEN</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLUSMALLINT.html"
-                                  title='type odbc_sys::SQLUSMALLINT'>SQLUSMALLINT</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="type" href="type.SQLWCHAR.html"
-                                  title='type odbc_sys::SQLWCHAR'>SQLWCHAR</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr></table><h2 id='unions' class='section-header'><a href="#unions">Unions</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="union" href="union.SQL_INTERVAL_UNION.html"
-                                  title='union odbc_sys::SQL_INTERVAL_UNION'>SQL_INTERVAL_UNION</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "odbc_sys";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>
+</td></tr><tr class='module-item'><td><a class="type" href="type.SQLHDESC.html" title='odbc_sys::SQLHDESC type'>SQLHDESC</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLHENV.html" title='odbc_sys::SQLHENV type'>SQLHENV</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLHSTMT.html" title='odbc_sys::SQLHSTMT type'>SQLHSTMT</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLHWND.html" title='odbc_sys::SQLHWND type'>SQLHWND</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLINTEGER.html" title='odbc_sys::SQLINTEGER type'>SQLINTEGER</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLLEN.html" title='odbc_sys::SQLLEN type'>SQLLEN</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLPOINTER.html" title='odbc_sys::SQLPOINTER type'>SQLPOINTER</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLSMALLINT.html" title='odbc_sys::SQLSMALLINT type'>SQLSMALLINT</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLUINTEGER.html" title='odbc_sys::SQLUINTEGER type'>SQLUINTEGER</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLULEN.html" title='odbc_sys::SQLULEN type'>SQLULEN</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLUSMALLINT.html" title='odbc_sys::SQLUSMALLINT type'>SQLUSMALLINT</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="type" href="type.SQLWCHAR.html" title='odbc_sys::SQLWCHAR type'>SQLWCHAR</a></td><td class='docblock-short'></td></tr></table><h2 id='unions' class='section-header'><a href="#unions">Unions</a></h2>
+<table><tr class='module-item'><td><a class="union" href="union.SQL_INTERVAL_UNION.html" title='odbc_sys::SQL_INTERVAL_UNION union'>SQL_INTERVAL_UNION</a></td><td class='docblock-short'></td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "odbc_sys";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>
