@@ -8,7 +8,7 @@ use odbc::*;
 #[test]
 fn exec_direct() {
     let env = create_environment_v3().unwrap();
-    let conn = env.connect("sqlserver", "sa", "123456").unwrap();
+    let conn = env.connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
     // select '你好' as hello
@@ -27,7 +27,7 @@ fn exec_direct() {
 #[test]
 fn prepare_1() {
     let env = create_environment_v3().unwrap();
-    let conn = env.connect("sqlserver", "sa", "123456").unwrap();
+    let conn = env.connect("TestDataSource", "", "").unwrap();
     // select '你好' as hello where 1 = ?
     let stmt = Statement::with_parent(&conn).unwrap().prepare_bytes(vec![115, 101, 108, 101, 99, 116, 32, 39, 196, 227, 186, 195, 39, 32, 97, 115, 32, 104, 101, 108, 108, 111, 32, 119, 104, 101, 114, 101, 32, 32, 49, 32, 61, 32, 63, 32].as_slice()).unwrap();
     let stmt = stmt.bind_parameter(1, &2).unwrap();
@@ -51,7 +51,7 @@ fn prepare_1() {
 #[test]
 fn prepare_2() {
     let env = create_environment_v3().unwrap();
-    let conn = env.connect("sqlserver", "sa", "123456").unwrap();
+    let conn = env.connect("TestDataSource", "", "").unwrap();
     // select '你好' as hello where '你好' = ?
     let stmt = Statement::with_parent(&conn).unwrap().prepare_bytes(vec![115, 101, 108, 101, 99, 116, 32, 39, 196, 227, 186, 195, 39, 32, 97, 115, 32, 104, 101, 108, 108, 111, 32, 119, 104, 101, 114, 101, 32, 32, 39, 196, 227, 186, 195, 39, 32, 61, 32, 63, 32].as_slice()).unwrap();
     // bind  gbk encoded byte
