@@ -9,8 +9,17 @@ fn list_tables() {
     // scope is required (for now) to close statement before disconnecting
     {
         let statement = Statement::with_parent(&ds).unwrap();
-        let statement = statement.tables().unwrap();
+        let mut statement = statement.tables_str("%", "%", "MOV%", "TABLE").unwrap();
         assert_eq!(statement.num_result_cols().unwrap(), 5);
+        let rs = statement.fetch().unwrap();
+        assert!(rs.is_some());
+        let mut cur = rs.unwrap();
+        assert_eq!(cur.get_data::<String>(1).unwrap(), None);
+        assert_eq!(cur.get_data::<String>(2).unwrap(), None);
+        assert_eq!(cur.get_data::<String>(3).unwrap(), Some("MOVIES".to_owned()));
+        assert_eq!(cur.get_data::<String>(4).unwrap(), Some("TABLE".to_owned()));
+        assert_eq!(cur.get_data::<String>(5).unwrap(), None);
+
     }
     ds.disconnect().unwrap();
 }

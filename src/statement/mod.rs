@@ -121,9 +121,13 @@ impl<'a, 'b, 'env> Statement<'a, 'b, Allocated, NoResult> {
         self.raii.affected_row_count().into_result(self)
     }
 
-    pub fn tables(mut self) -> Result<Statement<'a, 'b, Executed, HasResult>> {
-        self.raii.tables().into_result(&self)?;
+    pub fn tables(mut self, catalog_name: &String, schema_name: &String, table_name: &String, table_type: &String) -> Result<Statement<'a, 'b, Executed, HasResult>> {
+        self.raii.tables(catalog_name, schema_name, table_name, table_type).into_result(&self)?;
         Ok(Statement::with_raii(self.raii))
+    }
+
+    pub fn tables_str(self, catalog_name: &str, schema_name: &str, table_name: &str, table_type: &str) -> Result<Statement<'a, 'b, Executed, HasResult>> {
+        self.tables(&catalog_name.to_owned(), &schema_name.to_owned(), &table_name.to_owned(), &table_type.to_owned())
     }
 
     /// Executes a preparable statement, using the current values of the parameter marker variables
@@ -343,11 +347,7 @@ impl Raii<ffi::Stmt> {
         }
     }
 
-    fn tables(&mut self) -> Return<()> {
-        let catalog_name = "";
-        let schema_name = "";
-        let table_name = "";
-        let table_type = "TABLE";
+    fn tables(&mut self, catalog_name: &String, schema_name: &String, table_name: &String, table_type: &String) -> Return<()> {
         unsafe {
             match ffi::SQLTables(
                 self.handle(),
