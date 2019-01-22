@@ -57,7 +57,7 @@ impl<'a, 'b> Statement<'a, 'b, Allocated, NoResult> {
     /// let conn = env.connect("TestDataSource", "", "")?;
     /// let stmt = Statement::with_parent(&conn)?;
     /// // need encode_rs crate
-    /// let mut stmt = stmt.prepare_bytes(&GB2312.encode("select '你好' as hello").0)?;
+    /// // let mut stmt = stmt.prepare_bytes(&GB2312.encode("select '你好' as hello").0)?;
     ///
     /// ```
     pub fn prepare_bytes(mut self, bytes: &[u8]) -> Result<Statement<'a, 'b, Prepared, NoResult>> {
