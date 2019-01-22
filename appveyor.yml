@@ -103,6 +103,7 @@ matrix:
 # default-toolchain and default-host manually here.
 install:
   - ps: |
+      chcp
       Write-Host "Installing SQLite ODBC Driver:" -ForegroundColor Magenta
       $sqliteodbc64Path = "$($env:TEMP)\sqliteodbc_w64.exe"
       $sqliteodbc32Path = "$($env:TEMP)\sqliteodbc.exe"
