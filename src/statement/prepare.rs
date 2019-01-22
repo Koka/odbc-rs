@@ -59,6 +59,8 @@ impl<'a, 'b> Statement<'a, 'b, Allocated, NoResult> {
     /// // need encode_rs crate
     /// // let mut stmt = stmt.prepare_bytes(&GB2312.encode("select '你好' as hello").0)?;
     ///
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn prepare_bytes(mut self, bytes: &[u8]) -> Result<Statement<'a, 'b, Prepared, NoResult>> {
         self.raii.prepare_byte(bytes).into_result(&mut self)?;
