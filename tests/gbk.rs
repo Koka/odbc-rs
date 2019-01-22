@@ -53,23 +53,27 @@ fn _prepare_1() {
 }
 
 #[test]
-#[ignore]
+//#[ignore]
 /// tested in windows中文版 codepage 936
 fn _prepare_2() {
     let env = create_environment_v3().unwrap();
     let conn = env.connect("TestDataSource", "sa", "123456").unwrap();
     // select '你好' as hello where '你好' = ?
-    let stmt = Statement::with_parent(&conn).unwrap().prepare_bytes(vec![115, 101, 108, 101, 99, 116, 32, 39, 196, 227, 186, 195, 39, 32, 97, 115, 32, 104, 101, 108, 108, 111, 32, 119, 104, 101, 114, 101, 32, 32, 39, 196, 227, 186, 195, 39, 32, 61, 32, 63, 32].as_slice()).unwrap();
+    let stmt = Statement::with_parent(&conn).unwrap().prepare_bytes(vec![115, 101, 108, 101, 99, 116, 32, 39, 228, 189, 160, 229, 165, 189, 39, 32, 97, 115, 32, 104, 101, 108, 108, 111, 32, 119, 104, 101, 114, 101, 32, 39, 228, 189, 160, 229, 165, 189, 39, 32, 61, 32, 63].as_slice()).unwrap();
     // bind  gbk encoded byte
-    let param = vec![196u8, 227u8, 186u8, 195u8];
+    let param = CustomOdbcType {
+        data: &[228, 189, 160, 229, 165, 189]
+    };
     let stmt = stmt.bind_parameter(1, &param).unwrap();
 
     if let Ok(Data(mut stmt)) = stmt.execute() {
-        while let Some(mut cursor) = stmt.fetch().unwrap() {
+        if let Some(mut cursor) = stmt.fetch().unwrap() {
             match cursor.get_data::<Vec<u8>>(1).unwrap() {
                 Some(val) => assert_eq!(val, vec![196, 227, 186, 195]),
                 None => panic!(" NULL"),
             }
+        } else {
+            panic!("No data")
         }
     } else {
         panic!("SELECT did not return result set");
@@ -120,6 +124,34 @@ fn prepare_1() {
 
 }
 
+/// CustomOdbcType  for bindParameter
+struct CustomOdbcType<'a> {
+    data: &'a [u8],
+}
+
+unsafe impl<'a> OdbcType<'a> for CustomOdbcType<'a> {
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_VARCHAR
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_CHAR
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        CustomOdbcType {
+            data: buffer
+        }
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        self.data.len() as ffi::SQLULEN
+    }
+
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        self.data.as_ptr() as *const Self as ffi::SQLPOINTER
+    }
+}
+
 #[test]
 fn prepare_2() {
     let env = create_environment_v3().unwrap();
@@ -127,7 +159,10 @@ fn prepare_2() {
     // select 'hello' where 'hello' = ?
     let stmt = Statement::with_parent(&conn).unwrap().prepare_bytes(vec![115, 101, 108, 101, 99, 116, 32, 39, 104, 101, 108, 108, 111, 39, 32, 119, 104, 101, 114, 101, 32, 39, 104, 101, 108, 108, 111, 39, 32, 61, 32, 63, 32].as_slice()).unwrap();
     // bind  utf encoded byte
-    let param: Vec<u8> = vec![104, 101, 108, 108, 111];
+//    let param: Vec<u8> = vec![104, 101, 108, 108, 111];
+    let param = CustomOdbcType {
+        data: &[104, 101, 108, 108, 111]
+    };
     let stmt = stmt.bind_parameter(1, &param).unwrap();
 
     if let Ok(Data(mut stmt)) = stmt.execute() {
