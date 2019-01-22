@@ -16,7 +16,7 @@ default = []
 travis = []
 
 [dependencies]
-odbc-sys = "0.6.3"
+odbc-sys = "0.7.0"
 odbc-safe = "0.4.1"
 log = "0.4.1"
 
