@@ -18,9 +18,9 @@ struct Chunks<T>(Vec<Box<[T; CHUNK_LEN]>>);
 /// Heap allocator that will keep allocated element pointers valid until the allocator is dropped or cleared
 impl<T: Copy + Default> Chunks<T> {
     fn new() -> Chunks<T> {
-        Chunks(Vec::new())    
+        Chunks(Vec::new())
     }
-    
+
     fn alloc(&mut self, i: usize, value: T) -> *mut T {
         let chunk_no = i / CHUNK_LEN;
         if self.0.len() <= chunk_no {
@@ -136,6 +136,23 @@ impl<'a, 'b, 'env> Statement<'a, 'b, Allocated, NoResult> {
     /// `SQLExecDirect` is the fastest way to submit an SQL statement for one-time execution.
     pub fn exec_direct(mut self, statement_text: &str) -> Result<ResultSetState<'a, 'b, Executed>> {
         if self.raii.exec_direct(statement_text).into_result(&self)? {
+            let num_cols = self.raii.num_result_cols().into_result(&self)?;
+            if num_cols > 0 {
+                Ok(ResultSetState::Data(Statement::with_raii(self.raii)))
+            } else {
+                Ok(ResultSetState::NoData(Statement::with_raii(self.raii)))
+            }
+        } else {
+            Ok(ResultSetState::NoData(Statement::with_raii(self.raii)))
+        }
+    }
+
+    /// Executes a preparable statement, using the current values of the parameter marker variables
+    /// if any parameters exist in the statement.
+    ///
+    /// `SQLExecDirect` is the fastest way to submit an SQL statement for one-time execution.
+    pub fn exec_direct_bytes(mut self, bytes: &[u8]) -> Result<ResultSetState<'a, 'b, Executed>> {
+        if self.raii.exec_direct_bytes(bytes).into_result(&self)? {
             let num_cols = self.raii.num_result_cols().into_result(&self)?;
             if num_cols > 0 {
                 Ok(ResultSetState::Data(Statement::with_raii(self.raii)))
@@ -324,6 +341,27 @@ impl Raii<ffi::Stmt> {
             ffi::SQLExecDirect(
                 self.handle(),
                 statement_text.as_ptr(),
+                length as ffi::SQLINTEGER,
+            )
+        } {
+            ffi::SQL_SUCCESS => Return::Success(true),
+            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(true),
+            ffi::SQL_ERROR => Return::Error,
+            ffi::SQL_NEED_DATA => panic!("SQLExecDirec returned SQL_NEED_DATA"),
+            ffi::SQL_NO_DATA => Return::Success(false),
+            r => panic!("SQLExecDirect returned unexpected result: {:?}", r),
+        }
+    }
+
+    fn exec_direct_bytes(&mut self, bytes: &[u8]) -> Return<bool> {
+        let length = bytes.len();
+        if length > ffi::SQLINTEGER::max_value() as usize {
+            panic!("Statement text too long");
+        }
+        match unsafe {
+            ffi::SQLExecDirect(
+                self.handle(),
+                bytes.as_ptr(),
                 length as ffi::SQLINTEGER,
             )
         } {

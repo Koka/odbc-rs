@@ -41,6 +41,31 @@ impl<'a, 'b> Statement<'a, 'b, Allocated, NoResult> {
         self.raii.prepare(sql_text).into_result(&mut self)?;
         Ok(Statement::with_raii(self.raii))
     }
+
+
+    /// Prepares a statement for execution. Executing a prepared statement is faster than directly
+    /// executing an unprepared statement, since it is already compiled into an Access Plan. This
+    /// makes preparing statement a good idea if you want to repeatedly execute a query with a
+    /// different set of parameters and care about performance.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use odbc::*;
+    /// # fn doc() -> Result<()>{
+    /// let env = create_environment_v3().map_err(|e| e.unwrap())?;
+    /// let conn = env.connect("TestDataSource", "", "")?;
+    /// let stmt = Statement::with_parent(&conn)?;
+    /// // need encode_rs crate
+    /// // let mut stmt = stmt.prepare_bytes(&GB2312.encode("select '你好' as hello").0)?;
+    ///
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn prepare_bytes(mut self, bytes: &[u8]) -> Result<Statement<'a, 'b, Prepared, NoResult>> {
+        self.raii.prepare_byte(bytes).into_result(&mut self)?;
+        Ok(Statement::with_raii(self.raii))
+    }
 }
 
 impl<'a, 'b> Statement<'a, 'b, Prepared, NoResult> {
@@ -79,6 +104,21 @@ impl Raii<ffi::Stmt> {
                 self.handle(),
                 sql_text.as_bytes().as_ptr(),
                 sql_text.as_bytes().len() as ffi::SQLINTEGER,
+            )
+        } {
+            ffi::SQL_SUCCESS => Return::Success(()),
+            ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
+            ffi::SQL_ERROR => Return::Error,
+            r => panic!("SQLPrepare returned unexpected result: {:?}", r),
+        }
+    }
+
+    fn prepare_byte(&mut self, bytes: &[u8]) -> Return<()> {
+        match unsafe {
+            ffi::SQLPrepare(
+                self.handle(),
+                bytes.as_ptr(),
+                bytes.len() as ffi::SQLINTEGER,
             )
         } {
             ffi::SQL_SUCCESS => Return::Success(()),
