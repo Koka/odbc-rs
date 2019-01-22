@@ -83,12 +83,14 @@ fn exec_direct() {
     let stmt = Statement::with_parent(&conn).unwrap();
 
     // select '你好' as hello
-    if let Ok(Data(mut stmt)) = stmt.exec_direct_bytes(vec![115, 101, 108, 101, 99, 116, 32, 39, 228, 189, 160, 229, 165, 189, 39, 32, 97, 115, 32, 104, 101, 108, 108, 111].as_slice()) {
-        while let Some(mut cursor) = stmt.fetch().unwrap() {
+    if let Ok(Data(mut stmt)) = stmt.exec_direct_bytes(vec![115, 101, 108, 101, 99, 116, 32, 39, 228, 189, 160, 229, 165, 189, 39, 32, 97, 115, 32, 104, 101, 108, 108, 111, 32, 32].as_slice()) {
+        if let Some(mut cursor) = stmt.fetch().unwrap() {
             match cursor.get_data::<Vec<u8>>(1).unwrap() {
                 Some(val) => assert_eq!(val, vec![228u8, 189u8, 160u8, 229u8, 165u8, 189u8]),  // when  你好 is encoded by utf8, it is [228, 189, 160, 229, 165, 189]
                 None => panic!(" NULL"),
             }
+        } else {
+            panic!("No Data");
         }
     } else {
         panic!("SELECT did not return result set");
@@ -103,18 +105,17 @@ fn prepare_1() {
     let stmt = Statement::with_parent(&conn).unwrap().prepare_bytes(vec![115, 101, 108, 101, 99, 116, 32, 39, 228, 189, 160, 229, 165, 189, 39, 32, 97, 115, 32, 104, 101, 108, 108, 111, 32, 119, 104, 101, 114, 101, 32, 49, 32, 61, 32, 63, 32].as_slice()).unwrap();
     let stmt = stmt.bind_parameter(1, &1).unwrap();
 
-    match stmt.execute().unwrap() {
-        Data(mut stmt) => {
-            while let Some(mut cursor) = stmt.fetch().unwrap() {
-                match cursor.get_data::<Vec<u8>>(1).unwrap() {
-                    Some(val) => assert_eq!(val, vec![228u8, 189u8, 160u8, 229u8, 165u8, 189u8]),
-                    None => panic!(" NULL"),
-                }
+    if let Ok(Data(mut stmt)) = stmt.execute() {
+        if let Some(mut cursor) = stmt.fetch().unwrap() {
+            match cursor.get_data::<Vec<u8>>(1).unwrap() {
+                Some(val) => assert_eq!(val, vec![228u8, 189u8, 160u8, 229u8, 165u8, 189u8]),
+                None => panic!(" NULL"),
             }
+        } else {
+            panic!("No data");
         }
-        NoData(_) => {
-            panic!("SELECT did not return result set");
-        }
+    } else {
+        panic!("SELECT did not return result set");
     }
 
 }
@@ -130,11 +131,13 @@ fn prepare_2() {
     let stmt = stmt.bind_parameter(1, &param).unwrap();
 
     if let Ok(Data(mut stmt)) = stmt.execute() {
-        while let Some(mut cursor) = stmt.fetch().unwrap() {
+        if let Some(mut cursor) = stmt.fetch().unwrap() {
             match cursor.get_data::<Vec<u8>>(1).unwrap() {
                 Some(val) => assert_eq!(val, vec![228u8, 189u8, 160u8, 229u8, 165u8, 189u8]),
                 None => panic!(" NULL"),
             }
+        } else {
+            panic!("No data");
         }
     } else {
         panic!("SELECT did not return result set");
