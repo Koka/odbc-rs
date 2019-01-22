@@ -53,7 +53,7 @@ fn _prepare_1() {
 }
 
 #[test]
-//#[ignore]
+#[ignore]
 /// tested in windows中文版 codepage 936
 fn _prepare_2() {
     let env = create_environment_v3().unwrap();
