@@ -27,6 +27,7 @@
 #[macro_use]
 extern crate log;
 extern crate odbc_safe;
+extern crate encoding_rs;
 
 pub mod ffi;
 

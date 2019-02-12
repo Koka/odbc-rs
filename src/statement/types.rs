@@ -1,5 +1,4 @@
 use ffi;
-use std::str::from_utf8;
 use std::slice::from_raw_parts;
 use std::mem::{size_of, transmute};
 use std::ffi::CString;
@@ -130,7 +129,8 @@ unsafe impl<'a> OdbcType<'a> for String {
     }
 
     fn convert(buffer: &'a [u8]) -> Self {
-        from_utf8(buffer).unwrap().to_owned()
+        unsafe {::environment::ENCODING.decode(buffer).0}
+            .to_string()
     }
 
     fn column_size(&self) -> ffi::SQLULEN {
@@ -142,7 +142,7 @@ unsafe impl<'a> OdbcType<'a> for String {
     }
 }
 
-unsafe impl<'a> OdbcType<'a> for &'a str {
+unsafe impl<'a> OdbcType<'a> for ::std::borrow::Cow<'a, str> {
     fn sql_data_type() -> ffi::SqlDataType {
         ffi::SQL_VARCHAR
     }
@@ -151,7 +151,8 @@ unsafe impl<'a> OdbcType<'a> for &'a str {
     }
 
     fn convert(buffer: &'a [u8]) -> Self {
-        from_utf8(buffer).unwrap()
+        let aa = unsafe {::environment::ENCODING.decode(buffer).0};
+        aa
     }
 
     fn column_size(&self) -> ffi::SQLULEN {

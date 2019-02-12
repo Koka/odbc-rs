@@ -99,11 +99,13 @@ impl<'a, 'b> Statement<'a, 'b, Prepared, NoResult> {
 
 impl Raii<ffi::Stmt> {
     fn prepare(&mut self, sql_text: &str) -> Return<()> {
+
+        let bytes = unsafe { crate::environment::ENCODING }.encode(sql_text).0;
         match unsafe {
             ffi::SQLPrepare(
                 self.handle(),
-                sql_text.as_bytes().as_ptr(),
-                sql_text.as_bytes().len() as ffi::SQLINTEGER,
+                bytes.as_ptr(),
+                bytes.len() as ffi::SQLINTEGER,
             )
         } {
             ffi::SQL_SUCCESS => Return::Success(()),

@@ -1,7 +1,6 @@
 use super::{safe, try_into_option, Environment, DiagnosticRecord, GetDiagRec, Result, Version3};
 use ffi;
 use std::collections::HashMap;
-use std::str::from_utf8;
 use std::cmp::max;
 
 /// Holds name and description of a datasource
@@ -63,18 +62,18 @@ impl Environment<Version3> {
         let mut description_buffer = vec![0; (max_desc + 1) as usize];
         let mut attribute_buffer = vec![0; (max_attr + 1) as usize];
         while let Some((desc, attr)) =
-            self.get_info(
-                safe::Environment::drivers,
-                ffi::SQL_FETCH_NEXT,
-                &mut description_buffer,
-                &mut attribute_buffer,
-            )?
-        {
-            driver_list.push(DriverInfo {
-                description: desc.to_owned(),
-                attributes: Self::parse_attributes(attr),
-            })
-        }
+        self.get_info(
+            safe::Environment::drivers,
+            ffi::SQL_FETCH_NEXT,
+            &mut description_buffer,
+            &mut attribute_buffer,
+        )?
+            {
+                driver_list.push(DriverInfo {
+                    description: desc.into_owned(),
+                    attributes: Self::parse_attributes(&attr),
+                })
+            }
         Ok(driver_list)
     }
 
@@ -112,34 +111,34 @@ impl Environment<Version3> {
         // SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or
         // system data sources
         if let Some((name, desc)) =
-            self.get_info(
-                safe::Environment::data_sources,
-                direction,
-                &mut name_buffer,
-                &mut description_buffer,
-            )?
-        {
-            source_list.push(DataSourceInfo {
-                server_name: name.to_owned(),
-                driver: desc.to_owned(),
-            })
-        } else {
+        self.get_info(
+            safe::Environment::data_sources,
+            direction,
+            &mut name_buffer,
+            &mut description_buffer,
+        )?
+            {
+                source_list.push(DataSourceInfo {
+                    server_name: name.into_owned(),
+                    driver: desc.into_owned(),
+                })
+            } else {
             return Ok(source_list);
         }
 
         while let Some((name, desc)) =
-            self.get_info(
-                safe::Environment::data_sources,
-                ffi::SQL_FETCH_NEXT,
-                &mut name_buffer,
-                &mut description_buffer,
-            )?
-        {
-            source_list.push(DataSourceInfo {
-                server_name: name.to_owned(),
-                driver: desc.to_owned(),
-            })
-        }
+        self.get_info(
+            safe::Environment::data_sources,
+            ffi::SQL_FETCH_NEXT,
+            &mut name_buffer,
+            &mut description_buffer,
+        )?
+            {
+                source_list.push(DataSourceInfo {
+                    server_name: name.into_owned(),
+                    driver: desc.into_owned(),
+                })
+            }
         Ok(source_list)
     }
 
@@ -151,14 +150,15 @@ impl Environment<Version3> {
         direction: ffi::FetchOrientation,
         buf1: &'a mut [u8],
         buf2: &'b mut [u8],
-    ) -> Result<Option<(&'a str, &'b str)>> {
-
+    ) -> Result<Option<(::std::borrow::Cow<'a, str>, ::std::borrow::Cow<'b, str>)>> {
         let result = f(&mut self.safe, direction, buf1, buf2);
         match try_into_option(result, self)? {
-            Some((len1, len2)) => Ok(Some((
-                from_utf8(&buf1[0..(len1 as usize)]).unwrap(),
-                from_utf8(&buf2[0..(len2 as usize)]).unwrap(),
-            ))),
+            Some((len1, len2)) => unsafe {
+                Ok(Some((
+                    ::environment::ENCODING.decode(&buf1[0..(len1 as usize)]).0,
+                    ::environment::ENCODING.decode(&buf2[0..(len2 as usize)]).0,
+                )))
+            }
             None => Ok(None),
         }
     }
@@ -183,7 +183,6 @@ impl Environment<Version3> {
         );
 
         loop {
-
             match result {
                 safe::ReturnOption::Success((buf1_length_out, buf2_length_out)) |
                 safe::ReturnOption::Info((buf1_length_out, buf2_length_out)) => {
@@ -213,7 +212,6 @@ impl Environment<Version3> {
 
 #[cfg(test)]
 mod test {
-
     use super::*;
 
     #[test]
