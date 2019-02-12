@@ -1,7 +1,6 @@
 use super::{safe, try_into_option, Environment, DiagnosticRecord, GetDiagRec, Result, Version3};
 use ffi;
 use std::collections::HashMap;
-use std::str::from_utf8;
 use std::cmp::max;
 
 /// Holds name and description of a datasource
@@ -73,8 +72,8 @@ impl Environment<Version3> {
             )?
                 {
                     driver_list.push(DriverInfo {
-                        description: desc.to_owned(),
-                        attributes: Self::parse_attributes(attr),
+                        description: desc.into_owned(),
+                        attributes: Self::parse_attributes(&attr),
                     })
                 }
         }
@@ -124,10 +123,10 @@ impl Environment<Version3> {
                 &mut name_buffer,
                 &mut description_buffer,
             )?
-            {
-                source_list.push(DataSourceInfo {
-                    server_name: name.to_owned(),
-                    driver: desc.to_owned(),
+                {
+                    source_list.push(DataSourceInfo {
+                        server_name: name.into_owned(),
+                        driver: desc.into_owned(),
                 })
             } else {
                 return Ok(source_list);
@@ -142,8 +141,8 @@ impl Environment<Version3> {
             )?
                 {
                     source_list.push(DataSourceInfo {
-                        server_name: name.to_owned(),
-                        driver: desc.to_owned(),
+                        server_name: name.into_owned(),
+                        driver: desc.into_owned(),
                     })
                 }
         }
@@ -159,13 +158,15 @@ impl Environment<Version3> {
         direction: ffi::FetchOrientation,
         buf1: &'a mut [u8],
         buf2: &'b mut [u8],
-    ) -> Result<Option<(&'a str, &'b str)>> {
+    ) -> Result<Option<(::std::borrow::Cow<'a, str>, ::std::borrow::Cow<'b, str>)>> {
         let result = f(&mut self.safe, direction, buf1, buf2);
         match try_into_option(result, self)? {
-            Some((len1, len2)) => Ok(Some((
-                from_utf8(&buf1[0..(len1 as usize)]).unwrap(),
-                from_utf8(&buf2[0..(len2 as usize)]).unwrap(),
-            ))),
+            Some((len1, len2)) => unsafe {
+                Ok(Some((
+                    ::environment::ENCODING.decode(&buf1[0..(len1 as usize)]).0,
+                    ::environment::ENCODING.decode(&buf2[0..(len2 as usize)]).0,
+                )))
+            }
             None => Ok(None),
         }
     }

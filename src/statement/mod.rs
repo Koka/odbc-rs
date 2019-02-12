@@ -289,9 +289,8 @@ impl Raii<ffi::Stmt> {
                 &mut nullable as *mut ffi::Nullable,
             ) {
                 SQL_SUCCESS => Return::Success(ColumnDescriptor {
-                    name: ::std::str::from_utf8(&name_buffer[..(name_length as usize)])
-                        .unwrap()
-                        .to_owned(),
+                    name: ::environment::ENCODING.decode(&name_buffer[..(name_length as usize)]).0
+                        .to_string(),
                     data_type: data_type,
                     column_size: if column_size == 0 {
                         None
@@ -310,9 +309,8 @@ impl Raii<ffi::Stmt> {
                     },
                 }),
                 SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(ColumnDescriptor {
-                    name: ::std::str::from_utf8(&name_buffer[..(name_length as usize)])
-                        .unwrap()
-                        .to_owned(),
+                    name: ::environment::ENCODING.decode(&name_buffer[..(name_length as usize)]).0
+                        .to_string(),
                     data_type: data_type,
                     column_size: if column_size == 0 {
                         None
@@ -338,14 +336,16 @@ impl Raii<ffi::Stmt> {
     }
 
     fn exec_direct(&mut self, statement_text: &str) -> Return<bool> {
-        let length = statement_text.len();
+        let bytes = unsafe { crate::environment::ENCODING }.encode(statement_text).0;
+
+        let length = bytes.len();
         if length > ffi::SQLINTEGER::max_value() as usize {
             panic!("Statement text too long");
         }
         match unsafe {
             ffi::SQLExecDirect(
                 self.handle(),
-                statement_text.as_ptr(),
+                bytes.as_ptr(),
                 length as ffi::SQLINTEGER,
             )
         } {

@@ -17,6 +17,7 @@ pub struct DiagnosticRecord {
     // The numbers of characters in message not nul
     message_length: ffi::SQLSMALLINT,
     native_error: ffi::SQLINTEGER,
+    message_string: String,
 }
 
 impl DiagnosticRecord {
@@ -41,6 +42,7 @@ impl DiagnosticRecord {
             message: [0u8; MAX_DIAGNOSTIC_MESSAGE_SIZE],
             native_error: -1,
             message_length: message.len() as ffi::SQLSMALLINT,
+            message_string: String::from(""),
         };
         rec.message[..message.len()].copy_from_slice(message);
         rec
@@ -51,16 +53,13 @@ impl fmt::Display for DiagnosticRecord {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // Todo: replace unwrap with `?` in Rust 1.17
         let state = CStr::from_bytes_with_nul(&self.state).unwrap();
-        let message = CStr::from_bytes_with_nul(
-            &self.message[0..(self.message_length as usize + 1)],
-        ).unwrap();
 
         write!(
             f,
             "State: {}, Native error: {}, Message: {}",
             state.to_str().unwrap(),
             self.native_error,
-            message.to_str().unwrap()
+            self.message_string,
         )
     }
 }
@@ -73,10 +72,7 @@ impl fmt::Debug for DiagnosticRecord {
 
 impl Error for DiagnosticRecord {
     fn description(&self) -> &str {
-        CStr::from_bytes_with_nul(&self.message[0..(self.message_length as usize + 1)])
-            .unwrap()
-            .to_str()
-            .unwrap()
+        &self.message_string
     }
     fn cause(&self) -> Option<&Error> {
         None
@@ -113,6 +109,7 @@ where
                     native_error: result.native_error,
                     message_length,
                     message,
+                    message_string: unsafe { ::environment::ENCODING.decode(&message[0..(message_length as usize + 1)]).0.into_owned()},
                 })
             }
             NoData(()) => None,
@@ -133,6 +130,7 @@ mod test {
                 message: [0u8; MAX_DIAGNOSTIC_MESSAGE_SIZE],
                 native_error: 0,
                 message_length: 0,
+                message_string: String::from(""),
             }
         }
     }

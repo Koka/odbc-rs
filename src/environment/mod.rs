@@ -7,6 +7,8 @@ use std;
 /// Environment state used to represent that environment has been set to odbc version 3
 pub type Version3 = safe::Odbc3;
 
+pub static mut ENCODING : &encoding_rs::Encoding = encoding_rs::UTF_8;
+
 /// Handle to an ODBC Environment
 ///
 /// Creating an instance of this type is the first thing you do then using ODBC. The environment
@@ -92,5 +94,15 @@ unsafe impl<V> safe::Handle for Environment<V> {
 pub fn create_environment_v3()
     -> std::result::Result<Environment<Version3>, Option<DiagnosticRecord>>
 {
+    Environment::new()
+}
+
+
+pub fn create_environment_v3_with_os_encoding(encoding: String)
+    -> std::result::Result<Environment<Version3>, Option<DiagnosticRecord>>
+{
+    unsafe {
+        ENCODING = encoding_rs::Encoding::for_label(encoding.as_bytes()).unwrap();
+    }
     Environment::new()
 }
