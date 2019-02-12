@@ -129,16 +129,15 @@ unsafe impl<'a> OdbcType<'a> for String {
     }
 
     fn convert(buffer: &'a [u8]) -> Self {
-        unsafe {::environment::ENCODING.decode(buffer).0}
-            .to_string()
+        unsafe { ::environment::DB_ENCODING }.decode(buffer).0.to_string()
     }
 
     fn column_size(&self) -> ffi::SQLULEN {
-        self.as_bytes().len() as ffi::SQLULEN
+        unsafe { ::environment::DB_ENCODING }.encode(&self).0.len() as ffi::SQLULEN
     }
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
-        self.as_bytes().as_ptr() as *const Self as ffi::SQLPOINTER
+        unsafe { ::environment::DB_ENCODING }.encode(&self).0.as_ptr() as *const Self as ffi::SQLPOINTER
     }
 }
 
@@ -151,16 +150,21 @@ unsafe impl<'a> OdbcType<'a> for ::std::borrow::Cow<'a, str> {
     }
 
     fn convert(buffer: &'a [u8]) -> Self {
-        let aa = unsafe {::environment::ENCODING.decode(buffer).0};
-        aa
+        println!("{:?}", buffer);
+        unsafe {::environment::DB_ENCODING.decode(buffer).0}
     }
 
     fn column_size(&self) -> ffi::SQLULEN {
-        self.as_bytes().len() as ffi::SQLULEN
+//        self.as_bytes().len() as ffi::SQLULEN
+        unsafe { ::environment::DB_ENCODING }.encode(self).0.len() as ffi::SQLULEN
     }
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
-        self.as_bytes().as_ptr() as *const Self as ffi::SQLPOINTER
+//        println!("{:?}", self.as_bytes());
+//        println!("{:?}", unsafe { encoding_rs::UTF_8 }.encode(&self).0);
+//        println!("{:?}", unsafe { ::environment::ENCODING }.encode(&self).0);
+//        self.as_bytes().as_ptr() as *const Self as ffi::SQLPOINTER
+        unsafe { ::environment::DB_ENCODING }.encode(self).0.as_ptr() as *const Self as ffi::SQLPOINTER
     }
 }
 

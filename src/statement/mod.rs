@@ -284,7 +284,7 @@ impl Raii<ffi::Stmt> {
                 &mut nullable as *mut ffi::Nullable,
             ) {
                 SQL_SUCCESS => Return::Success(ColumnDescriptor {
-                    name: ::environment::ENCODING.decode(&name_buffer[..(name_length as usize)]).0
+                    name: ::environment::DB_ENCODING.decode(&name_buffer[..(name_length as usize)]).0
                         .to_string(),
                     data_type: data_type,
                     column_size: if column_size == 0 {
@@ -304,7 +304,7 @@ impl Raii<ffi::Stmt> {
                     },
                 }),
                 SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(ColumnDescriptor {
-                    name: ::environment::ENCODING.decode(&name_buffer[..(name_length as usize)]).0
+                    name: ::environment::DB_ENCODING.decode(&name_buffer[..(name_length as usize)]).0
                         .to_string(),
                     data_type: data_type,
                     column_size: if column_size == 0 {
@@ -331,7 +331,7 @@ impl Raii<ffi::Stmt> {
     }
 
     fn exec_direct(&mut self, statement_text: &str) -> Return<bool> {
-        let bytes = unsafe { crate::environment::ENCODING }.encode(statement_text).0;
+        let bytes = unsafe { crate::environment::DB_ENCODING }.encode(statement_text).0;
 
         let length = bytes.len();
         if length > ffi::SQLINTEGER::max_value() as usize {
