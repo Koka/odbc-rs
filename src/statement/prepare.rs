@@ -99,8 +99,7 @@ impl<'a, 'b> Statement<'a, 'b, Prepared, NoResult> {
 
 impl Raii<ffi::Stmt> {
     fn prepare(&mut self, sql_text: &str) -> Return<()> {
-
-        let bytes = unsafe { crate::environment::ENCODING }.encode(sql_text).0;
+        let bytes = unsafe { crate::environment::DB_ENCODING }.encode(sql_text).0;
         match unsafe {
             ffi::SQLPrepare(
                 self.handle(),

@@ -109,7 +109,7 @@ where
                     native_error: result.native_error,
                     message_length,
                     message,
-                    message_string: unsafe { ::environment::ENCODING.decode(&message[0..(message_length as usize + 1)]).0.into_owned()},
+                    message_string: unsafe { ::environment::OS_ENCODING.decode(&message[0..(message_length as usize + 1)]).0.into_owned()},
                 })
             }
             NoData(()) => None,
