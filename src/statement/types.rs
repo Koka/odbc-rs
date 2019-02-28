@@ -9,6 +9,9 @@ pub unsafe trait OdbcType<'a>: Sized {
     fn c_data_type() -> ffi::SqlCDataType;
     fn convert(_: &'a [u8]) -> Self;
     fn column_size(&self) -> ffi::SQLULEN;
+    fn null_bytes() -> &'static [u8] {
+        &[0]
+    }
     fn value_ptr(&self) -> ffi::SQLPOINTER;
     fn decimal_digits(&self) -> ffi::SQLSMALLINT {
         0
@@ -70,7 +73,11 @@ unsafe impl<'a> OdbcType<'a> for &'a[u16] {
     }
 
     fn column_size(&self) -> ffi::SQLULEN {
-        self.len() as ffi::SQLULEN
+        (self.len() * 2) as ffi::SQLULEN
+    }
+
+    fn null_bytes() -> &'static [u8] {
+        &[0, 0]
     }
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
@@ -92,7 +99,11 @@ unsafe impl<'a> OdbcType<'a> for Vec<u16> {
     }
 
     fn column_size(&self) -> ffi::SQLULEN {
-        self.len() as ffi::SQLULEN
+        (self.len() * 2) as ffi::SQLULEN
+    }
+
+    fn null_bytes() -> &'static [u8] {
+        &[0, 0]
     }
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
