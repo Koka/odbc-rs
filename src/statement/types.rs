@@ -303,7 +303,7 @@ unsafe impl<'a> OdbcType<'a> for u32 {
 
 unsafe impl<'a> OdbcType<'a> for i64 {
     fn sql_data_type() -> ffi::SqlDataType {
-        ffi::SQL_INTEGER
+        ffi::SQL_EXT_BIGINT
     }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_SBIGINT
@@ -323,7 +323,7 @@ unsafe impl<'a> OdbcType<'a> for i64 {
 
 unsafe impl<'a> OdbcType<'a> for u64 {
     fn sql_data_type() -> ffi::SqlDataType {
-        ffi::SQL_INTEGER
+        ffi::SQL_EXT_BIGINT
     }
     fn c_data_type() -> ffi::SqlCDataType {
         ffi::SQL_C_UBIGINT
