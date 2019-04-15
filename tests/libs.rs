@@ -268,3 +268,83 @@ fn list_system_data_sources() {
     let expected: [DataSourceInfo; 0] = [];
     assert!(sources.iter().eq(expected.iter()));
 }
+
+#[test]
+fn read_big_string() {
+    let env = create_environment_v3().unwrap();
+    let conn = env.connect("TestDataSource", "", "").unwrap();
+    let stmt = Statement::with_parent(&conn).unwrap();
+
+    let stmt = match stmt.exec_direct("CREATE TABLE READ_BIG_STRING (DATA TEXT)").unwrap() {
+        Data(stmt) => stmt.close_cursor().unwrap(),
+        NoData(stmt) => stmt,
+    };
+    let data = "Hello, World".repeat(43);
+    assert!(data.len() > 512);
+    stmt
+        .prepare("INSERT INTO READ_BIG_STRING VALUES (?)")
+        .unwrap()
+        .bind_parameter(1, &data)
+        .unwrap()
+        .execute()
+        .unwrap();
+    let stmt = Statement::with_parent(&conn).unwrap();
+    let sel_query = "SELECT DATA FROM READ_BIG_STRING";
+    let stmt = if let Data(mut stmt) = stmt.exec_direct(sel_query).unwrap() {
+        {
+            let mut cursor = stmt.fetch().unwrap().unwrap();
+            // Do read with bytes buffer
+            let data0 = cursor.get_data::<Vec<u8>>(1).unwrap().unwrap();
+            assert_eq!(data0, data.as_bytes());
+        }
+        stmt.close_cursor().unwrap()
+    } else {
+        panic!("SELECT statement returned no result set")
+    };
+    let stmt = if let Data(mut stmt) = stmt.exec_direct(sel_query).unwrap() {
+        {
+            let mut cursor = stmt.fetch().unwrap().unwrap();
+            // Do read with String buffer
+            let data0 = cursor.get_data::<String>(1).unwrap().unwrap();
+            assert_eq!(data0, data);
+        }
+        stmt.close_cursor().unwrap()
+    } else {
+        panic!("SELECT statement returned no result set")
+    };
+    stmt.exec_direct("DROP TABLE READ_BIG_STRING").unwrap();
+}
+
+#[test]
+fn zero_truncation_bug() {
+    let env = create_environment_v3().unwrap();
+    let conn = env.connect("TestDataSource", "", "").unwrap();
+    let stmt = Statement::with_parent(&conn).unwrap();
+
+    let stmt = match stmt.exec_direct("CREATE TABLE ZERO_TRUNCATION_BUG (DATA BLOB);").unwrap() {
+        Data(stmt) => stmt.close_cursor().unwrap(),
+        NoData(stmt) => stmt,
+    };
+    // Reproduction of zeroes truncation bug. Until now there is no chance to query binary data
+    // with zero at 512 byte border. 
+    let data = vec![0;513];
+    stmt
+        .prepare("INSERT INTO ZERO_TRUNCATION_BUG VALUES (?)")
+        .unwrap()
+        .bind_parameter(1, &data)
+        .unwrap()
+        .execute()
+        .unwrap();
+    let stmt = Statement::with_parent(&conn).unwrap();
+    if let Data(mut stmt) = stmt.exec_direct("SELECT DATA FROM ZERO_TRUNCATION_BUG").unwrap() {
+        {
+            let mut cursor = stmt.fetch().unwrap().unwrap();
+            let data0 = cursor.get_data::<Vec<u8>>(1).unwrap().unwrap();
+            assert_eq!(data0, data);
+        }
+        let stmt = stmt.close_cursor().unwrap();
+        stmt.exec_direct("DROP TABLE ZERO_TRUNCATION_BUG").unwrap();
+    } else {
+        panic!("SELECT statement returned no result set")
+    }
+}

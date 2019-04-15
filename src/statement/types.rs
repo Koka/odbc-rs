@@ -9,8 +9,8 @@ pub unsafe trait OdbcType<'a>: Sized {
     fn c_data_type() -> ffi::SqlCDataType;
     fn convert(_: &'a [u8]) -> Self;
     fn column_size(&self) -> ffi::SQLULEN;
-    fn null_bytes() -> &'static [u8] {
-        &[0]
+    fn null_bytes_count() -> usize {
+        0
     }
     fn value_ptr(&self) -> ffi::SQLPOINTER;
     fn decimal_digits(&self) -> ffi::SQLSMALLINT {
@@ -76,8 +76,8 @@ unsafe impl<'a> OdbcType<'a> for &'a[u16] {
         (self.len() * 2) as ffi::SQLULEN
     }
 
-    fn null_bytes() -> &'static [u8] {
-        &[0, 0]
+    fn null_bytes_count() -> usize {
+        2
     }
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
@@ -102,8 +102,8 @@ unsafe impl<'a> OdbcType<'a> for Vec<u16> {
         (self.len() * 2) as ffi::SQLULEN
     }
 
-    fn null_bytes() -> &'static [u8] {
-        &[0, 0]
+    fn null_bytes_count() -> usize {
+        2
     }
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
@@ -130,6 +130,10 @@ unsafe impl<'a> OdbcType<'a> for CString {
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self.as_bytes().as_ptr() as *const Self as ffi::SQLPOINTER
     }
+
+    fn null_bytes_count() -> usize {
+        1
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for String {
@@ -151,6 +155,10 @@ unsafe impl<'a> OdbcType<'a> for String {
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self.as_bytes().as_ptr() as *const Self as ffi::SQLPOINTER
     }
+
+    fn null_bytes_count() -> usize {
+        1
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for &'a str {
@@ -171,6 +179,10 @@ unsafe impl<'a> OdbcType<'a> for &'a str {
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self.as_bytes().as_ptr() as *const Self as ffi::SQLPOINTER
+    }
+
+    fn null_bytes_count() -> usize {
+        1
     }
 }
 
@@ -511,6 +523,7 @@ unsafe impl<'a, T> OdbcType<'a> for Option<T> where T: OdbcType<'a> {
     fn sql_data_type() -> ffi::SqlDataType {
         T::sql_data_type()
     }
+
     fn c_data_type() -> ffi::SqlCDataType {
         T::c_data_type()
     }
@@ -532,5 +545,9 @@ unsafe impl<'a, T> OdbcType<'a> for Option<T> where T: OdbcType<'a> {
         } else {
             0 as *const Self as ffi::SQLPOINTER
         }
+    }
+
+    fn null_bytes_count() -> usize {
+        T::null_bytes_count()
     }
 }
