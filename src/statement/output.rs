@@ -73,16 +73,21 @@ impl Raii<ffi::Stmt> {
             }
             ffi::SQL_SUCCESS_WITH_INFO => {
                 let initial_len = buffer.len();
-                // As a workaround for drivers that don't include tailing null(s) check if last bytes are null
-                let null_offset = if buffer.ends_with(T::null_bytes()) { T::null_bytes().len() } else { 0 };
+                // // As a workaround for drivers that don't include tailing null(s) check if last bytes are null
+                // let null_offset = if buffer.ends_with(T::null_bytes()) { T::null_bytes().len() } else { 0 };
 
+                // (Alexander Yekimov <a.yekimov@gmail.com>) It's a bad idea to do such workarounds
+                // for buggy drivers here. They always can implement OdbcType trait and set any
+                // amount of null-terminators to do the workaround.
+
+                let null_offset = T::null_bytes_count();
                 if indicator == ffi::SQL_NO_TOTAL {
                     buffer.resize(initial_len * 2, 0);
                     return self.get_partial_data(col_or_param_num, buffer, initial_len - null_offset);
                 } else {
                     // Check if string has been truncated.
                     if indicator >= initial_len as ffi::SQLLEN {
-                        buffer.resize(indicator as usize + T::null_bytes().len(), 0);
+                        buffer.resize(indicator as usize + T::null_bytes_count(), 0);
                         return self.get_partial_data(col_or_param_num, buffer, initial_len - null_offset);
                     } else {
                         let slice = &buffer[..(start_pos + indicator as usize)];
