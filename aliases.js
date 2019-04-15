@@ -1,6 +1,6 @@
 var ALIASES = {};
-ALIASES['cfg_if'] = {};
-ALIASES['log'] = {};
-ALIASES['odbc'] = {};
-ALIASES['odbc_safe'] = {};
-ALIASES['odbc_sys'] = {};
+ALIASES["cfg_if"] = {};
+ALIASES["log"] = {};
+ALIASES["odbc"] = {};
+ALIASES["odbc_safe"] = {};
+ALIASES["odbc_sys"] = {};
