@@ -62,6 +62,7 @@ pub enum ResultSetState<'a, 'b, S> {
     NoData(Statement<'a, 'b, S, NoResult>),
 }
 pub use ResultSetState::*;
+use std::ptr::null_mut;
 
 /// A `Statement` can be used to execute queries and retrieves results.
 pub struct Statement<'con, 'b, S, R> {
@@ -121,13 +122,18 @@ impl<'a, 'b, 'env> Statement<'a, 'b, Allocated, NoResult> {
         self.raii.affected_row_count().into_result(self)
     }
 
-    pub fn tables(mut self, catalog_name: &String, schema_name: &String, table_name: &String, table_type: &String) -> Result<Statement<'a, 'b, Executed, HasResult>> {
+    pub fn tables(mut self, catalog_name: Option<&String>, schema_name: Option<&String>, table_name: Option<&String>, table_type: &String) -> Result<Statement<'a, 'b, Executed, HasResult>> {
         self.raii.tables(catalog_name, schema_name, table_name, table_type).into_result(&self)?;
         Ok(Statement::with_raii(self.raii))
     }
 
-    pub fn tables_str(self, catalog_name: &str, schema_name: &str, table_name: &str, table_type: &str) -> Result<Statement<'a, 'b, Executed, HasResult>> {
-        self.tables(&catalog_name.to_owned(), &schema_name.to_owned(), &table_name.to_owned(), &table_type.to_owned())
+    pub fn tables_str(self, catalog_name: Option<&str>, schema_name: Option<&str>, table_name:Option<&str>, table_type: &str) -> Result<Statement<'a, 'b, Executed, HasResult>> {
+        let catalog_name = catalog_name.map(|name| &name.to_owned());
+
+        self.tables(catalog_name.map(|name| &name.to_owned()),
+                    schema_name.map(|name| &name.to_owned()),
+                    table_name.map(|name| &name.to_owned()),
+                    &table_type.to_owned())
     }
 
     /// Executes a preparable statement, using the current values of the parameter marker variables
@@ -385,18 +391,34 @@ impl Raii<ffi::Stmt> {
         }
     }
 
-    fn tables(&mut self, catalog_name: &String, schema_name: &String, table_name: &String, table_type: &String) -> Return<()> {
+    fn tables(&mut self, catalog_name: Option<&String>, schema_name: Option<&String>, table_name: Option<&String>, table_type: &String) -> Return<()> {
         unsafe {
-            match ffi::SQLTables(
-                self.handle(),
-                catalog_name.as_ptr(),
-                catalog_name.as_bytes().len() as ffi::SQLSMALLINT,
-                schema_name.as_ptr(),
-                schema_name.as_bytes().len() as ffi::SQLSMALLINT,
-                table_name.as_ptr(),
-                table_name.as_bytes().len() as ffi::SQLSMALLINT,
+            catalog: *const odbc_sys::SQLCHAR = null_mut();
+            schema: *const odbc_sys::SQLCHAR = null_mut();
+            table: *const odbc_sys::SQLCHAR = null_mut();
+
+            if catalog_name.is_some() {
+                catalog = catalog_name.unwrap().as_ptr()
+            }
+
+            if schema_name.is_some() {
+                schema = schema_name.unwrap().as_ptr()
+            }
+
+            if table_name.is_some() {
+                table = table_name.unwrap().as_ptr()
+            }
+
+            match odbc_sys::SQLTables(
+                handle.handle(),
+                catalog,
+                catalog_name.unwrap_or(&"".to_owned()).as_bytes_mut().len() as odbc_sys::SQLSMALLINT,
+                schema,
+                schema_name.unwrap_or(&"".to_owned()).as_bytes_mut().len() as odbc_sys::SQLSMALLINT,
+                table,
+                table_name.unwrap_or(&"".to_owned()).as_bytes_mut().len() as odbc_sys::SQLSMALLINT,
                 table_type.as_ptr(),
-                table_type.as_bytes().len() as ffi::SQLSMALLINT,
+                table_type.as_bytes().len() as odbc_sys::SQLSMALLINT,
             ) {
                 SQL_SUCCESS => Return::Success(()),
                 SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(()),
