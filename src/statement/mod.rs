@@ -122,18 +122,17 @@ impl<'a, 'b, 'env> Statement<'a, 'b, Allocated, NoResult> {
         self.raii.affected_row_count().into_result(self)
     }
 
-    pub fn tables(mut self, catalog_name: Option<&String>, schema_name: Option<&String>, table_name: Option<&String>, table_type: &String) -> Result<Statement<'a, 'b, Executed, HasResult>> {
-        self.raii.tables(catalog_name, schema_name, table_name, table_type).into_result(&self)?;
-        Ok(Statement::with_raii(self.raii))
+    pub fn tables(self, catalog_name: &String, schema_name: &String, table_name: &String, table_type: &String) -> Result<Statement<'a, 'b, Executed, HasResult>> {
+        self.tables_str(catalog_name.as_str(), schema_name.as_str(), table_name.as_str(), table_type.as_str())
     }
 
-    pub fn tables_str(self, catalog_name: Option<&str>, schema_name: Option<&str>, table_name:Option<&str>, table_type: &str) -> Result<Statement<'a, 'b, Executed, HasResult>> {
-        let catalog_name = catalog_name.map(|name| &name.to_owned());
+    pub fn tables_str(self, catalog_name: &str, schema_name: &str, table_name: &str, table_type: &str) -> Result<Statement<'a, 'b, Executed, HasResult>> {
+        self.tables_opt_str(Option::Some(catalog_name), Option::Some(schema_name), Option::Some(table_name), table_type)
+    }
 
-        self.tables(catalog_name.map(|name| &name.to_owned()),
-                    schema_name.map(|name| &name.to_owned()),
-                    table_name.map(|name| &name.to_owned()),
-                    &table_type.to_owned())
+    pub fn tables_opt_str(mut self, catalog_name: Option<&str>, schema_name: Option<&str>, table_name:Option<&str>, table_type: &str) -> Result<Statement<'a, 'b, Executed, HasResult>> {
+        self.raii.tables(catalog_name, schema_name, table_name, table_type);
+        Ok(Statement::with_raii(self.raii))
     }
 
     /// Executes a preparable statement, using the current values of the parameter marker variables
@@ -391,32 +390,39 @@ impl Raii<ffi::Stmt> {
         }
     }
 
-    fn tables(&mut self, catalog_name: Option<&String>, schema_name: Option<&String>, table_name: Option<&String>, table_type: &String) -> Return<()> {
+    fn tables(&mut self, catalog_name: Option<&str>, schema_name: Option<&str>, table_name: Option<&str>, table_type: &str) -> Return<()> {
         unsafe {
             let mut catalog: *const odbc_sys::SQLCHAR = null_mut();
             let mut schema: *const odbc_sys::SQLCHAR = null_mut();
             let mut table: *const odbc_sys::SQLCHAR = null_mut();
 
+            let mut catalog_size: odbc_sys::SQLSMALLINT = 0;
+            let mut schema_size: odbc_sys::SQLSMALLINT = 0;
+            let mut table_size: odbc_sys::SQLSMALLINT = 0;
+
             if catalog_name.is_some() {
-                catalog = catalog_name.unwrap().as_ptr()
+                catalog = catalog_name.unwrap().as_ptr();
+                catalog_size = catalog_name.unwrap().len() as odbc_sys::SQLSMALLINT;
             }
 
             if schema_name.is_some() {
-                schema = schema_name.unwrap().as_ptr()
+                schema = schema_name.unwrap().as_ptr();
+                schema_size = schema_name.unwrap().len() as odbc_sys::SQLSMALLINT;
             }
 
             if table_name.is_some() {
-                table = table_name.unwrap().as_ptr()
+                table = table_name.unwrap().as_ptr();
+                table_size = table_name.unwrap().len() as odbc_sys::SQLSMALLINT;
             }
 
             match odbc_sys::SQLTables(
-                handle.handle(),
+                self.handle(),
                 catalog,
-                catalog_name.unwrap_or(&"".to_owned()).as_bytes_mut().len() as odbc_sys::SQLSMALLINT,
+                catalog_size,
                 schema,
-                schema_name.unwrap_or(&"".to_owned()).as_bytes_mut().len() as odbc_sys::SQLSMALLINT,
+                schema_size,
                 table,
-                table_name.unwrap_or(&"".to_owned()).as_bytes_mut().len() as odbc_sys::SQLSMALLINT,
+                table_size,
                 table_type.as_ptr(),
                 table_type.as_bytes().len() as odbc_sys::SQLSMALLINT,
             ) {
