@@ -131,7 +131,7 @@ impl<'a, 'b, 'env> Statement<'a, 'b, Allocated, NoResult> {
     }
 
     pub fn tables_opt_str(mut self, catalog_name: Option<&str>, schema_name: Option<&str>, table_name:Option<&str>, table_type: &str) -> Result<Statement<'a, 'b, Executed, HasResult>> {
-        self.raii.tables(catalog_name, schema_name, table_name, table_type);
+        self.raii.tables(catalog_name, schema_name, table_name, table_type).into_result(&self)?;
         Ok(Statement::with_raii(self.raii))
     }
 
