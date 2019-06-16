@@ -393,9 +393,9 @@ impl Raii<ffi::Stmt> {
 
     fn tables(&mut self, catalog_name: Option<&String>, schema_name: Option<&String>, table_name: Option<&String>, table_type: &String) -> Return<()> {
         unsafe {
-            catalog: *const odbc_sys::SQLCHAR = null_mut();
-            schema: *const odbc_sys::SQLCHAR = null_mut();
-            table: *const odbc_sys::SQLCHAR = null_mut();
+            let mut catalog: *const odbc_sys::SQLCHAR = null_mut();
+            let mut schema: *const odbc_sys::SQLCHAR = null_mut();
+            let mut table: *const odbc_sys::SQLCHAR = null_mut();
 
             if catalog_name.is_some() {
                 catalog = catalog_name.unwrap().as_ptr()
