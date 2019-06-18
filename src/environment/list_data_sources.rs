@@ -60,21 +60,25 @@ impl Environment<Version3> {
         )?;
 
         let mut driver_list = Vec::with_capacity(num_drivers);
-        let mut description_buffer = vec![0; (max_desc + 1) as usize];
-        let mut attribute_buffer = vec![0; (max_attr + 1) as usize];
-        while let Some((desc, attr)) =
+
+        if num_drivers > 0 {
+            let mut description_buffer = vec![0; (max_desc + 1) as usize];
+            let mut attribute_buffer = vec![0; (max_attr + 1) as usize];
+            while let Some((desc, attr)) =
             self.get_info(
                 safe::Environment::drivers,
                 ffi::SQL_FETCH_NEXT,
                 &mut description_buffer,
                 &mut attribute_buffer,
             )?
-        {
-            driver_list.push(DriverInfo {
-                description: desc.to_owned(),
-                attributes: Self::parse_attributes(attr),
-            })
+                {
+                    driver_list.push(DriverInfo {
+                        description: desc.to_owned(),
+                        attributes: Self::parse_attributes(attr),
+                    })
+                }
         }
+
         Ok(driver_list)
     }
 
@@ -105,41 +109,45 @@ impl Environment<Version3> {
             self.alloc_info(safe::Environment::data_sources, direction)?;
 
         let mut source_list = Vec::with_capacity(num_sources);
-        let mut name_buffer: Vec<_> = (0..(max_name + 1)).map(|_| 0u8).collect();
-        let mut description_buffer: Vec<_> = (0..(max_desc + 1)).map(|_| 0u8).collect();
 
-        // Before we call SQLDataSources with SQL_FETCH_NEXT, we have to call it with either
-        // SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or
-        // system data sources
-        if let Some((name, desc)) =
+        if num_sources > 0 {
+            let mut name_buffer: Vec<_> = (0..(max_name + 1)).map(|_| 0u8).collect();
+            let mut description_buffer: Vec<_> = (0..(max_desc + 1)).map(|_| 0u8).collect();
+
+            // Before we call SQLDataSources with SQL_FETCH_NEXT, we have to call it with either
+            // SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or
+            // system data sources
+            if let Some((name, desc)) =
             self.get_info(
                 safe::Environment::data_sources,
                 direction,
                 &mut name_buffer,
                 &mut description_buffer,
             )?
-        {
-            source_list.push(DataSourceInfo {
-                server_name: name.to_owned(),
-                driver: desc.to_owned(),
-            })
-        } else {
-            return Ok(source_list);
-        }
+            {
+                source_list.push(DataSourceInfo {
+                    server_name: name.to_owned(),
+                    driver: desc.to_owned(),
+                })
+            } else {
+                return Ok(source_list);
+            }
 
-        while let Some((name, desc)) =
+            while let Some((name, desc)) =
             self.get_info(
                 safe::Environment::data_sources,
                 ffi::SQL_FETCH_NEXT,
                 &mut name_buffer,
                 &mut description_buffer,
             )?
-        {
-            source_list.push(DataSourceInfo {
-                server_name: name.to_owned(),
-                driver: desc.to_owned(),
-            })
+                {
+                    source_list.push(DataSourceInfo {
+                        server_name: name.to_owned(),
+                        driver: desc.to_owned(),
+                    })
+                }
         }
+        
         Ok(source_list)
     }
 
@@ -152,7 +160,6 @@ impl Environment<Version3> {
         buf1: &'a mut [u8],
         buf2: &'b mut [u8],
     ) -> Result<Option<(&'a str, &'b str)>> {
-
         let result = f(&mut self.safe, direction, buf1, buf2);
         match try_into_option(result, self)? {
             Some((len1, len2)) => Ok(Some((
@@ -183,7 +190,6 @@ impl Environment<Version3> {
         );
 
         loop {
-
             match result {
                 safe::ReturnOption::Success((buf1_length_out, buf2_length_out)) |
                 safe::ReturnOption::Info((buf1_length_out, buf2_length_out)) => {
@@ -213,7 +219,6 @@ impl Environment<Version3> {
 
 #[cfg(test)]
 mod test {
-
     use super::*;
 
     #[test]
