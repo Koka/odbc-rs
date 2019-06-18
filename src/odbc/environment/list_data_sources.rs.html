@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `src/environment/list_data_sources.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>list_data_sources.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `src/environment/list_data_sources.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>list_data_sources.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../odbc/index.html'><img src='../../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -230,6 +230,11 @@
 <span id="230">230</span>
 <span id="231">231</span>
 <span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">safe</span>, <span class="ident">try_into_option</span>, <span class="ident">Environment</span>, <span class="ident">DiagnosticRecord</span>, <span class="ident">GetDiagRec</span>, <span class="prelude-ty">Result</span>, <span class="ident">Version3</span>};
 <span class="kw">use</span> <span class="ident">ffi</span>;
@@ -293,21 +298,25 @@
         )<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">driver_list</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">num_drivers</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">description_buffer</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="number">0</span>; (<span class="ident">max_desc</span> <span class="op">+</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">usize</span>];
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">attribute_buffer</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="number">0</span>; (<span class="ident">max_attr</span> <span class="op">+</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">usize</span>];
-        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">desc</span>, <span class="ident">attr</span>)) <span class="op">=</span>
+
+        <span class="kw">if</span> <span class="ident">num_drivers</span> <span class="op">&gt;</span> <span class="number">0</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">description_buffer</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="number">0</span>; (<span class="ident">max_desc</span> <span class="op">+</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">usize</span>];
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">attribute_buffer</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="number">0</span>; (<span class="ident">max_attr</span> <span class="op">+</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">usize</span>];
+            <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">desc</span>, <span class="ident">attr</span>)) <span class="op">=</span>
             <span class="self">self</span>.<span class="ident">get_info</span>(
                 <span class="ident">safe</span>::<span class="ident">Environment</span>::<span class="ident">drivers</span>,
                 <span class="ident">ffi</span>::<span class="ident">SQL_FETCH_NEXT</span>,
                 <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">description_buffer</span>,
                 <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">attribute_buffer</span>,
             )<span class="question-mark">?</span>
-        {
-            <span class="ident">driver_list</span>.<span class="ident">push</span>(<span class="ident">DriverInfo</span> {
-                <span class="ident">description</span>: <span class="ident">desc</span>.<span class="ident">to_owned</span>(),
-                <span class="ident">attributes</span>: <span class="self">Self</span>::<span class="ident">parse_attributes</span>(<span class="ident">attr</span>),
-            })
+                {
+                    <span class="ident">driver_list</span>.<span class="ident">push</span>(<span class="ident">DriverInfo</span> {
+                        <span class="ident">description</span>: <span class="ident">desc</span>.<span class="ident">to_owned</span>(),
+                        <span class="ident">attributes</span>: <span class="self">Self</span>::<span class="ident">parse_attributes</span>(<span class="ident">attr</span>),
+                    })
+                }
         }
+
         <span class="prelude-val">Ok</span>(<span class="ident">driver_list</span>)
     }
 
@@ -338,41 +347,45 @@
             <span class="self">self</span>.<span class="ident">alloc_info</span>(<span class="ident">safe</span>::<span class="ident">Environment</span>::<span class="ident">data_sources</span>, <span class="ident">direction</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">source_list</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">num_sources</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">name_buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..(<span class="ident">max_name</span> <span class="op">+</span> <span class="number">1</span>)).<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="number">0u8</span>).<span class="ident">collect</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">description_buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..(<span class="ident">max_desc</span> <span class="op">+</span> <span class="number">1</span>)).<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="number">0u8</span>).<span class="ident">collect</span>();
 
-        <span class="comment">// Before we call SQLDataSources with SQL_FETCH_NEXT, we have to call it with either</span>
-        <span class="comment">// SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or</span>
-        <span class="comment">// system data sources</span>
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">name</span>, <span class="ident">desc</span>)) <span class="op">=</span>
+        <span class="kw">if</span> <span class="ident">num_sources</span> <span class="op">&gt;</span> <span class="number">0</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">name_buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..(<span class="ident">max_name</span> <span class="op">+</span> <span class="number">1</span>)).<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="number">0u8</span>).<span class="ident">collect</span>();
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">description_buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..(<span class="ident">max_desc</span> <span class="op">+</span> <span class="number">1</span>)).<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="number">0u8</span>).<span class="ident">collect</span>();
+
+            <span class="comment">// Before we call SQLDataSources with SQL_FETCH_NEXT, we have to call it with either</span>
+            <span class="comment">// SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or</span>
+            <span class="comment">// system data sources</span>
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">name</span>, <span class="ident">desc</span>)) <span class="op">=</span>
             <span class="self">self</span>.<span class="ident">get_info</span>(
                 <span class="ident">safe</span>::<span class="ident">Environment</span>::<span class="ident">data_sources</span>,
                 <span class="ident">direction</span>,
                 <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">name_buffer</span>,
                 <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">description_buffer</span>,
             )<span class="question-mark">?</span>
-        {
-            <span class="ident">source_list</span>.<span class="ident">push</span>(<span class="ident">DataSourceInfo</span> {
-                <span class="ident">server_name</span>: <span class="ident">name</span>.<span class="ident">to_owned</span>(),
-                <span class="ident">driver</span>: <span class="ident">desc</span>.<span class="ident">to_owned</span>(),
-            })
-        } <span class="kw">else</span> {
-            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">source_list</span>);
-        }
+            {
+                <span class="ident">source_list</span>.<span class="ident">push</span>(<span class="ident">DataSourceInfo</span> {
+                    <span class="ident">server_name</span>: <span class="ident">name</span>.<span class="ident">to_owned</span>(),
+                    <span class="ident">driver</span>: <span class="ident">desc</span>.<span class="ident">to_owned</span>(),
+                })
+            } <span class="kw">else</span> {
+                <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">source_list</span>);
+            }
 
-        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">name</span>, <span class="ident">desc</span>)) <span class="op">=</span>
+            <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">name</span>, <span class="ident">desc</span>)) <span class="op">=</span>
             <span class="self">self</span>.<span class="ident">get_info</span>(
                 <span class="ident">safe</span>::<span class="ident">Environment</span>::<span class="ident">data_sources</span>,
                 <span class="ident">ffi</span>::<span class="ident">SQL_FETCH_NEXT</span>,
                 <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">name_buffer</span>,
                 <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">description_buffer</span>,
             )<span class="question-mark">?</span>
-        {
-            <span class="ident">source_list</span>.<span class="ident">push</span>(<span class="ident">DataSourceInfo</span> {
-                <span class="ident">server_name</span>: <span class="ident">name</span>.<span class="ident">to_owned</span>(),
-                <span class="ident">driver</span>: <span class="ident">desc</span>.<span class="ident">to_owned</span>(),
-            })
+                {
+                    <span class="ident">source_list</span>.<span class="ident">push</span>(<span class="ident">DataSourceInfo</span> {
+                        <span class="ident">server_name</span>: <span class="ident">name</span>.<span class="ident">to_owned</span>(),
+                        <span class="ident">driver</span>: <span class="ident">desc</span>.<span class="ident">to_owned</span>(),
+                    })
+                }
         }
+
         <span class="prelude-val">Ok</span>(<span class="ident">source_list</span>)
     }
 
@@ -385,7 +398,6 @@
         <span class="ident">buf1</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> [<span class="ident">u8</span>],
         <span class="ident">buf2</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="kw-2">mut</span> [<span class="ident">u8</span>],
     ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>)<span class="op">&gt;&gt;</span> {
-
         <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">f</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">safe</span>, <span class="ident">direction</span>, <span class="ident">buf1</span>, <span class="ident">buf2</span>);
         <span class="kw">match</span> <span class="ident">try_into_option</span>(<span class="ident">result</span>, <span class="self">self</span>)<span class="question-mark">?</span> {
             <span class="prelude-val">Some</span>((<span class="ident">len1</span>, <span class="ident">len2</span>)) <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((
@@ -416,7 +428,6 @@
         );
 
         <span class="kw">loop</span> {
-
             <span class="kw">match</span> <span class="ident">result</span> {
                 <span class="ident">safe</span>::<span class="ident">ReturnOption</span>::<span class="ident">Success</span>((<span class="ident">buf1_length_out</span>, <span class="ident">buf2_length_out</span>)) <span class="op">|</span>
                 <span class="ident">safe</span>::<span class="ident">ReturnOption</span>::<span class="ident">Info</span>((<span class="ident">buf1_length_out</span>, <span class="ident">buf2_length_out</span>)) <span class="op">=&gt;</span> {
@@ -446,7 +457,6 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">test</span> {
-
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
