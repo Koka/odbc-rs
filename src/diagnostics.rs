@@ -142,6 +142,7 @@ mod test {
         let message = b"[Microsoft][ODBC Driver Manager] Function sequence error\0";
         let mut rec = DiagnosticRecord::new();
         rec.state = b"HY010\0".clone();
+        rec.message_string = CStr::from_bytes_with_nul(message).unwrap().to_str().unwrap().to_owned();
         rec.message_length = 56;
         for i in 0..(rec.message_length as usize) {
             rec.message[i] = message[i];
