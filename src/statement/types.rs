@@ -2,6 +2,7 @@ use ffi;
 use std::slice::from_raw_parts;
 use std::mem::{size_of, transmute};
 use std::ffi::CString;
+use std::borrow::Cow::{Borrowed, Owned};
 
 pub unsafe trait OdbcType<'a>: Sized {
     fn sql_data_type() -> ffi::SqlDataType;
@@ -153,6 +154,35 @@ unsafe impl<'a> OdbcType<'a> for String {
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         unsafe { ::environment::DB_ENCODING }.encode(&self).0.as_ptr() as *const Self as ffi::SQLPOINTER
+    }
+
+    fn null_bytes_count() -> usize {
+        1
+    }
+}
+
+unsafe impl<'a> OdbcType<'a> for &'a str {
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_VARCHAR
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_CHAR
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        let cow = unsafe { ::environment::DB_ENCODING }.decode(buffer).0;
+        match cow {
+            Borrowed(strref) => strref,
+            Owned(_string) => unimplemented!(),
+        }
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        unsafe { ::environment::DB_ENCODING }.encode(self).0.len() as ffi::SQLULEN
+    }
+
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        unsafe { ::environment::DB_ENCODING }.encode(self).0.as_ptr() as *const Self as ffi::SQLPOINTER
     }
 
     fn null_bytes_count() -> usize {
