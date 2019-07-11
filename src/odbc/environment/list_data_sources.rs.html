@@ -235,11 +235,13 @@
 <span id="235">235</span>
 <span id="236">236</span>
 <span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">safe</span>, <span class="ident">try_into_option</span>, <span class="ident">Environment</span>, <span class="ident">DiagnosticRecord</span>, <span class="ident">GetDiagRec</span>, <span class="prelude-ty">Result</span>, <span class="ident">Version3</span>};
 <span class="kw">use</span> <span class="ident">ffi</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">from_utf8</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">max</span>;
 
 <span class="doccomment">/// Holds name and description of a datasource</span>
@@ -311,8 +313,8 @@
             )<span class="question-mark">?</span>
                 {
                     <span class="ident">driver_list</span>.<span class="ident">push</span>(<span class="ident">DriverInfo</span> {
-                        <span class="ident">description</span>: <span class="ident">desc</span>.<span class="ident">to_owned</span>(),
-                        <span class="ident">attributes</span>: <span class="self">Self</span>::<span class="ident">parse_attributes</span>(<span class="ident">attr</span>),
+                        <span class="ident">description</span>: <span class="ident">desc</span>.<span class="ident">into_owned</span>(),
+                        <span class="ident">attributes</span>: <span class="self">Self</span>::<span class="ident">parse_attributes</span>(<span class="kw-2">&amp;</span><span class="ident">attr</span>),
                     })
                 }
         }
@@ -362,10 +364,10 @@
                 <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">name_buffer</span>,
                 <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">description_buffer</span>,
             )<span class="question-mark">?</span>
-            {
-                <span class="ident">source_list</span>.<span class="ident">push</span>(<span class="ident">DataSourceInfo</span> {
-                    <span class="ident">server_name</span>: <span class="ident">name</span>.<span class="ident">to_owned</span>(),
-                    <span class="ident">driver</span>: <span class="ident">desc</span>.<span class="ident">to_owned</span>(),
+                {
+                    <span class="ident">source_list</span>.<span class="ident">push</span>(<span class="ident">DataSourceInfo</span> {
+                        <span class="ident">server_name</span>: <span class="ident">name</span>.<span class="ident">into_owned</span>(),
+                        <span class="ident">driver</span>: <span class="ident">desc</span>.<span class="ident">into_owned</span>(),
                 })
             } <span class="kw">else</span> {
                 <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">source_list</span>);
@@ -380,8 +382,8 @@
             )<span class="question-mark">?</span>
                 {
                     <span class="ident">source_list</span>.<span class="ident">push</span>(<span class="ident">DataSourceInfo</span> {
-                        <span class="ident">server_name</span>: <span class="ident">name</span>.<span class="ident">to_owned</span>(),
-                        <span class="ident">driver</span>: <span class="ident">desc</span>.<span class="ident">to_owned</span>(),
+                        <span class="ident">server_name</span>: <span class="ident">name</span>.<span class="ident">into_owned</span>(),
+                        <span class="ident">driver</span>: <span class="ident">desc</span>.<span class="ident">into_owned</span>(),
                     })
                 }
         }
@@ -397,13 +399,15 @@
         <span class="ident">direction</span>: <span class="ident">ffi</span>::<span class="ident">FetchOrientation</span>,
         <span class="ident">buf1</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> [<span class="ident">u8</span>],
         <span class="ident">buf2</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="kw-2">mut</span> [<span class="ident">u8</span>],
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>)<span class="op">&gt;&gt;</span> {
+    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">str</span><span class="op">&gt;</span>, ::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">str</span><span class="op">&gt;</span>)<span class="op">&gt;&gt;</span> {
         <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">f</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">safe</span>, <span class="ident">direction</span>, <span class="ident">buf1</span>, <span class="ident">buf2</span>);
         <span class="kw">match</span> <span class="ident">try_into_option</span>(<span class="ident">result</span>, <span class="self">self</span>)<span class="question-mark">?</span> {
-            <span class="prelude-val">Some</span>((<span class="ident">len1</span>, <span class="ident">len2</span>)) <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((
-                <span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">buf1</span>[<span class="number">0</span>..(<span class="ident">len1</span> <span class="kw">as</span> <span class="ident">usize</span>)]).<span class="ident">unwrap</span>(),
-                <span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">buf2</span>[<span class="number">0</span>..(<span class="ident">len2</span> <span class="kw">as</span> <span class="ident">usize</span>)]).<span class="ident">unwrap</span>(),
-            ))),
+            <span class="prelude-val">Some</span>((<span class="ident">len1</span>, <span class="ident">len2</span>)) <span class="op">=&gt;</span> <span class="kw">unsafe</span> {
+                <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((
+                    ::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="ident">buf1</span>[<span class="number">0</span>..(<span class="ident">len1</span> <span class="kw">as</span> <span class="ident">usize</span>)]).<span class="number">0</span>,
+                    ::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="ident">buf2</span>[<span class="number">0</span>..(<span class="ident">len2</span> <span class="kw">as</span> <span class="ident">usize</span>)]).<span class="number">0</span>,
+                )))
+            }
             <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
         }
     }
@@ -428,6 +432,7 @@
         );
 
         <span class="kw">loop</span> {
+
             <span class="kw">match</span> <span class="ident">result</span> {
                 <span class="ident">safe</span>::<span class="ident">ReturnOption</span>::<span class="ident">Success</span>((<span class="ident">buf1_length_out</span>, <span class="ident">buf2_length_out</span>)) <span class="op">|</span>
                 <span class="ident">safe</span>::<span class="ident">ReturnOption</span>::<span class="ident">Info</span>((<span class="ident">buf1_length_out</span>, <span class="ident">buf2_length_out</span>)) <span class="op">=&gt;</span> {
@@ -457,6 +462,7 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">test</span> {
+
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
