@@ -1,8 +1,8 @@
 use ffi;
-use std::str::from_utf8;
 use std::slice::from_raw_parts;
 use std::mem::{size_of, transmute};
 use std::ffi::CString;
+use std::borrow::Cow::{Borrowed, Owned};
 
 pub unsafe trait OdbcType<'a>: Sized {
     fn sql_data_type() -> ffi::SqlDataType;
@@ -145,15 +145,15 @@ unsafe impl<'a> OdbcType<'a> for String {
     }
 
     fn convert(buffer: &'a [u8]) -> Self {
-        from_utf8(buffer).unwrap().to_owned()
+        unsafe { ::environment::DB_ENCODING }.decode(buffer).0.to_string()
     }
 
     fn column_size(&self) -> ffi::SQLULEN {
-        self.as_bytes().len() as ffi::SQLULEN
+        unsafe { ::environment::DB_ENCODING }.encode(&self).0.len() as ffi::SQLULEN
     }
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
-        self.as_bytes().as_ptr() as *const Self as ffi::SQLPOINTER
+        unsafe { ::environment::DB_ENCODING }.encode(&self).0.as_ptr() as *const Self as ffi::SQLPOINTER
     }
 
     fn null_bytes_count() -> usize {
@@ -170,15 +170,44 @@ unsafe impl<'a> OdbcType<'a> for &'a str {
     }
 
     fn convert(buffer: &'a [u8]) -> Self {
-        from_utf8(buffer).unwrap()
+        let cow = unsafe { ::environment::DB_ENCODING }.decode(buffer).0;
+        match cow {
+            Borrowed(strref) => strref,
+            Owned(_string) => unimplemented!(),
+        }
     }
 
     fn column_size(&self) -> ffi::SQLULEN {
-        self.as_bytes().len() as ffi::SQLULEN
+        unsafe { ::environment::DB_ENCODING }.encode(self).0.len() as ffi::SQLULEN
     }
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
-        self.as_bytes().as_ptr() as *const Self as ffi::SQLPOINTER
+        unsafe { ::environment::DB_ENCODING }.encode(self).0.as_ptr() as *const Self as ffi::SQLPOINTER
+    }
+
+    fn null_bytes_count() -> usize {
+        1
+    }
+}
+
+unsafe impl<'a> OdbcType<'a> for ::std::borrow::Cow<'a, str> {
+    fn sql_data_type() -> ffi::SqlDataType {
+        ffi::SQL_VARCHAR
+    }
+    fn c_data_type() -> ffi::SqlCDataType {
+        ffi::SQL_C_CHAR
+    }
+
+    fn convert(buffer: &'a [u8]) -> Self {
+        unsafe {::environment::DB_ENCODING.decode(buffer).0}
+    }
+
+    fn column_size(&self) -> ffi::SQLULEN {
+        unsafe { ::environment::DB_ENCODING }.encode(self).0.len() as ffi::SQLULEN
+    }
+
+    fn value_ptr(&self) -> ffi::SQLPOINTER {
+        unsafe { ::environment::DB_ENCODING }.encode(self).0.as_ptr() as *const Self as ffi::SQLPOINTER
     }
 
     fn null_bytes_count() -> usize {
