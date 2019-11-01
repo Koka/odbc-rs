@@ -173,7 +173,7 @@ unsafe impl<'a> OdbcType<'a> for &'a str {
         let cow = unsafe { ::environment::DB_ENCODING }.decode(buffer).0;
         match cow {
             Borrowed(strref) => strref,
-            Owned(_string) => unimplemented!(),
+            Owned(_string) => panic!("Couldn't convert data to `&str`. Try `String` or `Cow<str>` instead."),
         }
     }
 

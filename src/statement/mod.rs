@@ -236,6 +236,11 @@ impl<'a, 'b, S> Statement<'a, 'b, S, HasResult> {
 
 impl<'a, 'b, 'c, S> Cursor<'a, 'b, 'c, S> {
     /// Retrieves data for a single column in the result set
+    /// 
+    /// ## Panics
+    /// 
+    /// If you try to convert to `&str` but the data can't be converted
+    /// whithout allocating an intermediate buffer.
     pub fn get_data<'d, T>(&'d mut self, col_or_param_num: u16) -> Result<Option<T>>
     where
         T: Output<'d>,
