@@ -12,13 +12,14 @@ impl<'a, 'b, AC: AutocommitMode> Statement<'a, 'b, Allocated, NoResult, AC> {
     ///
     /// ```rust
     /// # use odbc::*;
+    /// # use odbc_safe::AutocommitOn;
     /// # fn doc() -> Result<()>{
     /// let env = create_environment_v3().map_err(|e| e.unwrap())?;
     /// let conn = env.connect("TestDataSource", "", "")?;
     /// let stmt = Statement::with_parent(&conn)?;
     /// let mut stmt = stmt.prepare("SELECT TITLE FROM MOVIES WHERE YEAR = ?")?;
     ///
-    /// fn print_one_movie_from<'a> (year: u16, stmt: Statement<'a,'a, Prepared, NoResult, AC>) -> Result<Statement<'a, 'a, Prepared, NoResult, AC>>{
+    /// fn print_one_movie_from<'a> (year: u16, stmt: Statement<'a,'a, Prepared, NoResult, AutocommitOn>) -> Result<Statement<'a, 'a, Prepared, NoResult, AutocommitOn>>{
     ///    let stmt = stmt.bind_parameter(1, &year)?;
     ///    let stmt = if let Data(mut stmt) = stmt.execute()?{
     ///        if let Some(mut cursor) = stmt.fetch()?{
