@@ -197,7 +197,7 @@ fn prepared_execution() {
 }
 
 // These tests query the results of catalog functions. These results are only likely to match the
-// expectation on the travis.ci build on linux. Therefore we limit compilation and execution of
+// expectation on the travis ci build on linux. Therefore we limit compilation and execution of
 // these tests to this platform.
 #[cfg_attr(not(feature = "travis"), ignore)]
 #[test]

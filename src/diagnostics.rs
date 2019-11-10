@@ -8,13 +8,13 @@ pub const MAX_DIAGNOSTIC_MESSAGE_SIZE: usize = 1024;
 /// ODBC Diagnostic Record
 ///
 /// The `description` method of the `std::error::Error` trait only returns the message. Use
-/// `std::fmt::Display` to retrive status code and other information.
+/// `std::fmt::Display` to retrieve status code and other information.
 pub struct DiagnosticRecord {
-    // All elements but the last one, may not be nul. The last one must be nul.
+    // All elements but the last one, may not be null. The last one must be null.
     state: [ffi::SQLCHAR; ffi::SQL_SQLSTATE_SIZE + 1],
-    // Must at least contain one nul
+    // Must at least contain one null
     message: [ffi::SQLCHAR; MAX_DIAGNOSTIC_MESSAGE_SIZE],
-    // The numbers of characters in message not nul
+    // The numbers of characters in message not null
     message_length: ffi::SQLSMALLINT,
     native_error: ffi::SQLINTEGER,
     message_string: String,
@@ -79,7 +79,7 @@ impl Error for DiagnosticRecord {
     }
 }
 
-/// Allows retriving a diagnostic record, describing errors (or lack thereof) during the last
+/// Allows retrieving a diagnostic record, describing errors (or lack thereof) during the last
 /// operation.
 pub trait GetDiagRec {
     /// Retrieves a diagnostic record

@@ -60,7 +60,7 @@ fn _prepare_2() {
     let conn = env.connect("TestDataSource", "sa", "123456").unwrap();
     // select '你好' as hello where '你好' = ?
     let stmt = Statement::with_parent(&conn).unwrap().prepare_bytes(vec![115, 101, 108, 101, 99, 116, 32, 39, 228, 189, 160, 229, 165, 189, 39, 32, 97, 115, 32, 104, 101, 108, 108, 111, 32, 119, 104, 101, 114, 101, 32, 39, 228, 189, 160, 229, 165, 189, 39, 32, 61, 32, 63].as_slice()).unwrap();
-    // bind  gbk encoded byte
+    // bind gbk encoded byte
     let param = CustomOdbcType {
         data: &[228, 189, 160, 229, 165, 189]
     };
@@ -158,8 +158,8 @@ fn prepare_2() {
     let conn = env.connect("TestDataSource", "", "").unwrap();
     // select 'hello' where 'hello' = ?
     let stmt = Statement::with_parent(&conn).unwrap().prepare_bytes(vec![115, 101, 108, 101, 99, 116, 32, 39, 104, 101, 108, 108, 111, 39, 32, 119, 104, 101, 114, 101, 32, 39, 104, 101, 108, 108, 111, 39, 32, 61, 32, 63, 32].as_slice()).unwrap();
-    // bind  utf encoded byte
-//    let param: Vec<u8> = vec![104, 101, 108, 108, 111];
+    // bind utf encoded byte
+    // let param: Vec<u8> = vec![104, 101, 108, 108, 111];
     let param = CustomOdbcType {
         data: &[104, 101, 108, 108, 111]
     };
