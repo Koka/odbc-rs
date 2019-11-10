@@ -177,8 +177,13 @@ impl Environment<Version3> {
         f: SqlInfoMethod,
         direction: ffi::FetchOrientation,
     ) -> Result<(ffi::SQLSMALLINT, ffi::SQLSMALLINT, usize)> {
-        let mut string_buf1 = [0; 0];
-        let mut string_buf2 = [0; 0];
+        // In theory, we should use zero-length buffers here
+        // However, if we do SQLDrivers gives us 0-length values for
+        // the attributes length, which is incorrect, so we allocated a
+        // reasonably large array which seems to make it do the right thing
+        let mut string_buf1 = [0; 1024];
+        let mut string_buf2 = [0; 1024];
+
         let mut max1 = 0;
         let mut max2 = 0;
         let mut count = 0;
