@@ -19,7 +19,7 @@ impl<'a, 'b, AC: AutocommitMode> Statement<'a, 'b, Allocated, NoResult, AC> {
     /// let stmt = Statement::with_parent(&conn)?;
     /// let mut stmt = stmt.prepare("SELECT TITLE FROM MOVIES WHERE YEAR = ?")?;
     ///
-    /// fn print_one_movie_from<'a> (year: u16, stmt: Statement<'a,'a, Prepared, NoResult, AutocommitOn>) -> Result<Statement<'a, 'a, Prepared, NoResult, AutocommitOn>>{
+    /// fn print_one_movie_from<'a> (year: u16, stmt: Statement<'a,'a, Prepared, NoResult, safe::AutocommitOn>) -> Result<Statement<'a, 'a, Prepared, NoResult, safe::AutocommitOn>>{
     ///    let stmt = stmt.bind_parameter(1, &year)?;
     ///    let stmt = if let Data(mut stmt) = stmt.execute()?{
     ///        if let Some(mut cursor) = stmt.fetch()?{
