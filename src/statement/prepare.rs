@@ -12,7 +12,6 @@ impl<'a, 'b, AC: AutocommitMode> Statement<'a, 'b, Allocated, NoResult, AC> {
     ///
     /// ```rust
     /// # use odbc::*;
-    /// # use safe::AutocommitOn;
     /// # fn doc() -> Result<()>{
     /// let env = create_environment_v3().map_err(|e| e.unwrap())?;
     /// let conn = env.connect("TestDataSource", "", "")?;
