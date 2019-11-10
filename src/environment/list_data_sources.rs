@@ -34,7 +34,7 @@ type SqlInfoMethod = fn(&mut safe::Environment<safe::Odbc3>,
 impl Environment<Version3> {
     /// Called by drivers to pares list of attributes
     ///
-    /// Key value pairs are seperated by `\0`. Key and value are seperated by `=`
+    /// Key value pairs are separated by `\0`. Key and value are separated by `=`
     fn parse_attributes(attributes: &str) -> HashMap<String, String> {
         attributes
             .split('\0')
@@ -52,7 +52,7 @@ impl Environment<Version3> {
     pub fn drivers(&mut self) -> Result<Vec<DriverInfo>> {
         // Iterate twice, once for reading the maximum required buffer lengths so we can read
         // everything without truncating and a second time for actually storing the values
-        // alloc_info iterates ones over every driver to obtain the requiered buffer sizes
+        // alloc_info iterates once over every driver to obtain the required buffer sizes
         let (max_desc, max_attr, num_drivers) = self.alloc_info(
             safe::Environment::drivers,
             ffi::SQL_FETCH_FIRST,
@@ -86,7 +86,7 @@ impl Environment<Version3> {
         self.data_sources_impl(ffi::SQL_FETCH_FIRST)
     }
 
-    /// Stores all sytem data source server names and descriptions in a Vec
+    /// Stores all system data source server names and descriptions in a Vec
     pub fn system_data_sources(&mut self) -> Result<Vec<DataSourceInfo>> {
         self.data_sources_impl(ffi::SQL_FETCH_FIRST_SYSTEM)
     }
@@ -103,7 +103,7 @@ impl Environment<Version3> {
         direction: ffi::FetchOrientation,
     ) -> Result<Vec<DataSourceInfo>> {
 
-        // alloc_info iterates ones over every datasource to obtain the requiered buffer sizes
+        // alloc_info iterates once over every datasource to obtain the required buffer sizes
         let (max_name, max_desc, num_sources) =
             self.alloc_info(safe::Environment::data_sources, direction)?;
 
@@ -177,8 +177,13 @@ impl Environment<Version3> {
         f: SqlInfoMethod,
         direction: ffi::FetchOrientation,
     ) -> Result<(ffi::SQLSMALLINT, ffi::SQLSMALLINT, usize)> {
-        let mut string_buf1 = [0; 0];
-        let mut string_buf2 = [0; 0];
+        // In theory, we should use zero-length buffers here
+        // However, if we do SQLDrivers gives us 0-length values for
+        // the attributes length, which is incorrect, so we allocated a
+        // reasonably large array which seems to make it do the right thing
+        let mut string_buf1 = [0; 1024];
+        let mut string_buf2 = [0; 1024];
+
         let mut max1 = 0;
         let mut max2 = 0;
         let mut count = 0;

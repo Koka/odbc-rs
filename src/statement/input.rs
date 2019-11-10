@@ -6,7 +6,7 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
     ///
     /// # Result
     /// This method will destroy the statement and create a new one which may not outlive the bound
-    /// parameter. This is to ensure that the statement will not derefernce an invalid pointer
+    /// parameter. This is to ensure that the statement will not dereference an invalid pointer
     /// during execution.
     ///
     /// # Arguments

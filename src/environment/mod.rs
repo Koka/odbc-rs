@@ -26,7 +26,7 @@ impl<V> Handle for Environment<V> {
 }
 
 impl<V: safe::Version> Environment<V> {
-    /// Creates an ODBC Environment and declares specifaciton of `V` are used. You can use the
+    /// Creates an ODBC Environment and declares specification of `V` are used. You can use the
     /// shorthand `create_environment_v3()` instead.
     ///
     /// # Example
@@ -73,7 +73,7 @@ unsafe impl<V> safe::Handle for Environment<V> {
     }
 }
 
-/// Creates an ODBC Environment and declares specifaciton of version 3.0 are used
+/// Creates an ODBC Environment and declares specification of version 3.0 are used
 ///
 /// # Example
 /// ```
