@@ -4,6 +4,7 @@ use std::ptr::null_mut;
 /// Wrapper around handle types which ensures the wrapped value is always valid.
 ///
 /// Resource Acquisition Is Initialization
+#[derive(Debug)]
 pub struct Raii<T: OdbcObject> {
     //Invariant: Should always point to a valid odbc Object
     handle: *mut T,

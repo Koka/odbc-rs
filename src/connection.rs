@@ -1,9 +1,10 @@
 //! Holds implementation of odbc connection
 use super::{ffi, safe, Environment, Handle, Result, Version3};
 use super::result::{into_result, into_result_with};
-use odbc_safe::{AutocommitMode, AutocommitOn};
+use odbc_safe::{AutocommitMode, AutocommitOn, AutocommitOff};
 
 /// Represents a connection to an ODBC data source
+#[derive(Debug)]
 pub struct Connection<'env, AC: AutocommitMode> {
     safe: safe::Connection<'env, AC>,
 }
@@ -42,6 +43,39 @@ impl Environment<Version3> {
         Ok(Connection { safe })
     }
 }
+
+impl <'env> Connection<'env, AutocommitOn> {
+    pub fn disable_autocommit(mut self) -> std::result::Result<Connection<'env, AutocommitOff>, Self> {
+        let ret = self.safe.disable_autocommit();
+        match ret {
+            safe::Return::Success(value) => Ok(Connection { safe: value }),
+            safe::Return::Info(value) => Ok(Connection { safe: value }),
+            safe::Return::Error(value) => Err(Connection { safe: value })
+        }
+    }
+}
+
+impl <'env> Connection<'env, AutocommitOff> {
+    pub fn enable_autocommit(mut self) -> std::result::Result<Connection<'env, AutocommitOn>, Self> {
+        let ret = self.safe.enable_autocommit();
+        match ret {
+            safe::Return::Success(value) => Ok(Connection { safe: value }),
+            safe::Return::Info(value) => Ok(Connection { safe: value }),
+            safe::Return::Error(value) => Err(Connection { safe: value })
+        }
+    }
+
+    pub fn commit(&mut self) -> Result<()> {
+        let ret = self.safe.commit();
+        into_result_with(&self.safe, ret)
+    }
+
+    pub fn rollback(&mut self) -> Result<()> {
+        let ret = self.safe.rollback();
+        into_result_with(&self.safe, ret)
+    }
+}
+
 
 impl<'env, AC: AutocommitMode> Connection<'env, AC> {
     /// `true` if the data source is set to READ ONLY mode, `false` otherwise.

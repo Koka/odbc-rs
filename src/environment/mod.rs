@@ -14,6 +14,7 @@ pub static mut DB_ENCODING: &encoding_rs::Encoding = encoding_rs::UTF_8;
 ///
 /// Creating an instance of this type is the first thing you do then using ODBC. The environment
 /// must outlive all connections created with it.
+#[derive(Debug)]
 pub struct Environment<V> {
     safe: safe::Environment<V>,
 }

@@ -84,7 +84,7 @@ pub struct Cursor<'a, 'b: 'a, 'c: 'a, S: 'a, AC: AutocommitMode> {
     buffer: Vec<u8>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ColumnDescriptor {
     pub name: String,
     pub data_type: ffi::SqlDataType,
