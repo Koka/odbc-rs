@@ -204,7 +204,7 @@ impl<'a, 'b, S> Statement<'a, 'b, S, HasResult> {
     /// Call this method to reuse the statement to execute another query.
     ///
     /// For many drivers allocating new statements is expensive. So reusing a `Statement` is usually
-    /// more efficient than freeing an existing and alloctaing a new one. However to reuse a
+    /// more efficient than freeing an existing and allocating a new one. However to reuse a
     /// statement any open result sets must be closed.
     /// Only call this method if you have already read the result set returned by the previous
     /// query, or if you do no not intend to read it.
@@ -240,7 +240,7 @@ impl<'a, 'b, 'c, S> Cursor<'a, 'b, 'c, S> {
     /// ## Panics
     /// 
     /// If you try to convert to `&str` but the data can't be converted
-    /// whithout allocating an intermediate buffer.
+    /// without allocating an intermediate buffer.
     pub fn get_data<'d, T>(&'d mut self, col_or_param_num: u16) -> Result<Option<T>>
     where
         T: Output<'d>,
