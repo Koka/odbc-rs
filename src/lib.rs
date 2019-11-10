@@ -12,7 +12,7 @@
 //!
 //! While designed as a relatively low level wrapper around ODBC this crate tries to prevent many
 //! errors at compile time. The borrow checker and the RAII (Resource Acquisition Is
-//! Initialization) idiom should prevent any occurence of `SQL_INVALID_HANDLE` in safe code.
+//! Initialization) idiom should prevent any occurrence of `SQL_INVALID_HANDLE` in safe code.
 //!
 //! Using the type system and the borrow checker this crate ensures that each method call happens
 //! in a valid state and state transitions are modeled in the type system. This should eliminate
