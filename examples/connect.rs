@@ -1,8 +1,11 @@
 extern crate odbc;
 // Use this crate and set environmet variable RUST_LOG=odbc to see ODBC warnings
 extern crate env_logger;
+extern crate odbc_safe;
+
 use odbc::*;
 use std::io;
+use odbc_safe::AutocommitOn;
 
 fn main() {
 
@@ -26,7 +29,7 @@ fn connect() -> std::result::Result<(), DiagnosticRecord> {
     execute_statement(&conn)
 }
 
-fn execute_statement<'env>(conn: &Connection<'env>) -> Result<()> {
+fn execute_statement<'env>(conn: &Connection<'env, AutocommitOn>) -> Result<()> {
     let stmt = Statement::with_parent(conn)?;
 
     let mut sql_text = String::new();

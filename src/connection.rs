@@ -1,13 +1,14 @@
 //! Holds implementation of odbc connection
 use super::{ffi, safe, Environment, Handle, Result, Version3};
 use super::result::{into_result, into_result_with};
+use odbc_safe::{AutocommitMode, AutocommitOn};
 
 /// Represents a connection to an ODBC data source
-pub struct Connection<'env> {
-    safe: safe::Connection<'env>,
+pub struct Connection<'env, AC: AutocommitMode> {
+    safe: safe::Connection<'env, AC>,
 }
 
-impl<'env> Handle for Connection<'env> {
+impl<'env, AC: AutocommitMode> Handle for Connection<'env, AC> {
     type To = ffi::Dbc;
     unsafe fn handle(&self) -> ffi::SQLHDBC {
         self.safe.as_raw()
@@ -22,7 +23,7 @@ impl Environment<Version3> {
     /// * `dsn` - Data source name configured in the `odbc.ini` file
     /// * `usr` - User identifier
     /// * `pwd` - Authentication (usually password)
-    pub fn connect<'env>(&'env self, dsn: &str, usr: &str, pwd: &str) -> Result<Connection<'env>> {
+    pub fn connect<'env>(&'env self, dsn: &str, usr: &str, pwd: &str) -> Result<Connection<'env, AutocommitOn>> {
         let safe = into_result_with(self, safe::DataSource::with_parent(self.as_safe()))?;
         let safe = into_result(safe.connect(dsn, usr, pwd))?;
         Ok(Connection { safe })
@@ -35,14 +36,14 @@ impl Environment<Version3> {
     pub fn connect_with_connection_string<'env>(
         &'env self,
         connection_str: &str,
-    ) -> Result<Connection<'env>> {
+    ) -> Result<Connection<'env, AutocommitOn>> {
         let safe = into_result_with(self, safe::DataSource::with_parent(self.as_safe()))?;
         let safe = into_result(safe.connect_with_connection_string(connection_str))?;
         Ok(Connection { safe })
     }
 }
 
-impl<'env> Connection<'env> {
+impl<'env, AC: AutocommitMode> Connection<'env, AC> {
     /// `true` if the data source is set to READ ONLY mode, `false` otherwise.
     ///
     /// This characteristic pertains only to the data source itself; it is not characteristic of
@@ -65,7 +66,7 @@ impl<'env> Connection<'env> {
     }
 }
 
-unsafe impl<'env> safe::Handle for Connection<'env> {
+unsafe impl<'env, AC: AutocommitMode> safe::Handle for Connection<'env, AC> {
     const HANDLE_TYPE: ffi::HandleType = ffi::SQL_HANDLE_DBC;
 
     fn handle(&self) -> ffi::SQLHANDLE {

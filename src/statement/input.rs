@@ -1,7 +1,8 @@
 use {ffi, Return, Result, Raii, Handle, Statement};
 use super::types::OdbcType;
+use odbc_safe::AutocommitMode;
 
-impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
+impl<'a, 'b, S, R, AC: AutocommitMode> Statement<'a, 'b, S, R, AC> {
     /// Binds a parameter to a parameter marker in an SQL statement.
     ///
     /// # Result
@@ -33,7 +34,7 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
         mut self,
         parameter_index: u16,
         value: &'c T,
-    ) -> Result<Statement<'a, 'c, S, R>>
+    ) -> Result<Statement<'a, 'c, S, R, AC>>
     where
         T: OdbcType<'c>,
         T: ?Sized,
@@ -55,7 +56,7 @@ impl<'a, 'b, S, R> Statement<'a, 'b, S, R> {
 
     /// Releasing all parameter buffers set by `bind_parameter`. This method consumes the statement
     /// and returns a new one those lifetime is no longer limited by the buffers bound.
-    pub fn reset_parameters(mut self) -> Result<Statement<'a, 'a, S, R>> {
+    pub fn reset_parameters(mut self) -> Result<Statement<'a, 'a, S, R, AC>> {
         self.param_ind_buffers.clear();
         self.raii.reset_parameters().into_result(&mut self)?;
         Ok(Statement::with_raii(self.raii))

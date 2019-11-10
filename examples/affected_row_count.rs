@@ -1,7 +1,10 @@
 //! Shows affected row count
 
 extern crate odbc;
+extern crate odbc_safe;
+
 use odbc::*;
+use odbc_safe::AutocommitOn;
 
 fn main() {
     let env = create_environment_v3().unwrap();
@@ -10,7 +13,7 @@ fn main() {
     exec(&conn, "DELETE FROM movies WHERE title = 'TEST movie'");
 }
 
-fn exec(conn: &Connection, sql: &str) {
+fn exec(conn: &Connection<AutocommitOn>, sql: &str) {
     let stmt = Statement::with_parent(conn).unwrap();
     let rs = stmt.exec_direct(sql).unwrap();
     match rs {

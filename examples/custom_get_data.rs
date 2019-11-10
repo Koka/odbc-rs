@@ -2,9 +2,11 @@ extern crate odbc;
 // Use this crate and set environment variable RUST_LOG=odbc to see ODBC warnings
 extern crate env_logger;
 extern crate chrono;
+extern crate odbc_safe;
 
 use odbc::*;
 use chrono::prelude::*;
+use odbc_safe::AutocommitMode;
 
 trait Extract {
     fn extract<T>(&mut self, index: u16) -> Option<T>
@@ -12,7 +14,7 @@ trait Extract {
         T: MySupportedType;
 }
 
-impl<'a, S> Extract for Cursor<'a, 'a, 'a, S> {
+impl<'a, S, AC: AutocommitMode> Extract for Cursor<'a, 'a, 'a, S, AC> {
     fn extract<T>(&mut self, index: u16) -> Option<T>
     where
         T: MySupportedType,
@@ -25,15 +27,15 @@ trait MySupportedType
 where
     Self: Sized,
 {
-    fn extract_from<'a, 'con, S>(
-        cursor: &mut odbc::Cursor<'a, 'con, 'con, S>,
+    fn extract_from<'a, 'con, S, AC: AutocommitMode>(
+        cursor: &mut odbc::Cursor<'a, 'con, 'con, S, AC>,
         index: u16,
     ) -> Option<Self>;
 }
 
 impl MySupportedType for DateTime<Local> {
-    fn extract_from<'a, 'con, S>(
-        cursor: &mut odbc::Cursor<'a, 'con, 'con, S>,
+    fn extract_from<'a, 'con, S, AC: AutocommitMode>(
+        cursor: &mut odbc::Cursor<'a, 'con, 'con, S, AC>,
         index: u16,
     ) -> Option<Self> {
         cursor.get_data(index).expect("Can't get column").map(

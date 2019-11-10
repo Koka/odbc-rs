@@ -1,7 +1,8 @@
 use {ffi, ColumnDescriptor, Raii, Return, Handle, Statement, Result, Prepared, Allocated,
      NoResult, ResultSetState};
+use odbc_safe::AutocommitMode;
 
-impl<'a, 'b> Statement<'a, 'b, Allocated, NoResult> {
+impl<'a, 'b, AC: AutocommitMode> Statement<'a, 'b, Allocated, NoResult, AC> {
     /// Prepares a statement for execution. Executing a prepared statement is faster than directly
     /// executing an unprepared statement, since it is already compiled into an Access Plan. This
     /// makes preparing statement a good idea if you want to repeatedly execute a query with a
@@ -17,7 +18,7 @@ impl<'a, 'b> Statement<'a, 'b, Allocated, NoResult> {
     /// let stmt = Statement::with_parent(&conn)?;
     /// let mut stmt = stmt.prepare("SELECT TITLE FROM MOVIES WHERE YEAR = ?")?;
     ///
-    /// fn print_one_movie_from<'a> (year: u16, stmt: Statement<'a,'a, Prepared, NoResult>) -> Result<Statement<'a, 'a, Prepared, NoResult>>{
+    /// fn print_one_movie_from<'a> (year: u16, stmt: Statement<'a,'a, Prepared, NoResult, AC>) -> Result<Statement<'a, 'a, Prepared, NoResult, AC>>{
     ///    let stmt = stmt.bind_parameter(1, &year)?;
     ///    let stmt = if let Data(mut stmt) = stmt.execute()?{
     ///        if let Some(mut cursor) = stmt.fetch()?{
@@ -37,7 +38,7 @@ impl<'a, 'b> Statement<'a, 'b, Allocated, NoResult> {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn prepare(mut self, sql_text: &str) -> Result<Statement<'a, 'b, Prepared, NoResult>> {
+    pub fn prepare(mut self, sql_text: &str) -> Result<Statement<'a, 'b, Prepared, NoResult, AC>> {
         self.raii.prepare(sql_text).into_result(&mut self)?;
         Ok(Statement::with_raii(self.raii))
     }
@@ -62,13 +63,13 @@ impl<'a, 'b> Statement<'a, 'b, Allocated, NoResult> {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn prepare_bytes(mut self, bytes: &[u8]) -> Result<Statement<'a, 'b, Prepared, NoResult>> {
+    pub fn prepare_bytes(mut self, bytes: &[u8]) -> Result<Statement<'a, 'b, Prepared, NoResult, AC>> {
         self.raii.prepare_byte(bytes).into_result(&mut self)?;
         Ok(Statement::with_raii(self.raii))
     }
 }
 
-impl<'a, 'b> Statement<'a, 'b, Prepared, NoResult> {
+impl<'a, 'b, AC: AutocommitMode> Statement<'a, 'b, Prepared, NoResult, AC> {
     /// The number of columns in a result set
     ///
     /// Can be called successfully only when the statement is in the prepared, executed, or
@@ -83,7 +84,7 @@ impl<'a, 'b> Statement<'a, 'b, Prepared, NoResult> {
     }
 
     /// Executes a prepared statement.
-    pub fn execute(mut self) -> Result<ResultSetState<'a, 'b, Prepared>> {
+    pub fn execute(mut self) -> Result<ResultSetState<'a, 'b, Prepared, AC>> {
         if self.raii.execute().into_result(&mut self)? {
             let num_cols = self.raii.num_result_cols().into_result(&self)?;
             if num_cols > 0 {

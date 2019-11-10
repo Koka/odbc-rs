@@ -1,7 +1,10 @@
 extern crate odbc;
 // Use this crate and set environmet variable RUST_LOG=odbc to see ODBC warnings
 extern crate env_logger;
+extern crate odbc_safe;
+
 use odbc::*;
+use odbc_safe::AutocommitOn;
 
 fn main() {
 
@@ -19,7 +22,7 @@ fn connect() -> std::result::Result<(), DiagnosticRecord> {
     list_tables(&conn)
 }
 
-fn list_tables(conn: &Connection) -> Result<()> {
+fn list_tables(conn: &Connection<AutocommitOn>) -> Result<()> {
     let stmt = Statement::with_parent(conn)?;
     let mut rs = stmt.tables_str("%", "%", "%", "TABLE")?;
     let cols = rs.num_result_cols()?;

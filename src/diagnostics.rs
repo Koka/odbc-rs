@@ -74,7 +74,7 @@ impl Error for DiagnosticRecord {
     fn description(&self) -> &str {
         &self.message_string
     }
-    fn cause(&self) -> Option<&Error> {
+    fn cause(&self) -> Option<& dyn Error> {
         None
     }
 }
