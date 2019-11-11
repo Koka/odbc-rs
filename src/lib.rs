@@ -26,7 +26,7 @@
 
 #[macro_use]
 extern crate log;
-extern crate odbc_safe;
+pub extern crate odbc_safe;
 extern crate encoding_rs;
 
 pub mod ffi;
@@ -40,7 +40,7 @@ pub use statement::*;
 use odbc_object::OdbcObject;
 use raii::Raii;
 use result::{Return, into_result, try_into_option};
-use odbc_safe as safe;
+pub use odbc_safe as safe;
 
 mod odbc_object;
 mod raii;
