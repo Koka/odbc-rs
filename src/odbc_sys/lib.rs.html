@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.6.3/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../odbc_sys/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/odbc-sys-0.8.2/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../odbc_sys/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1197,6 +1197,34 @@
 <span id="1197">1197</span>
 <span id="1198">1198</span>
 <span id="1199">1199</span>
+<span id="1200">1200</span>
+<span id="1201">1201</span>
+<span id="1202">1202</span>
+<span id="1203">1203</span>
+<span id="1204">1204</span>
+<span id="1205">1205</span>
+<span id="1206">1206</span>
+<span id="1207">1207</span>
+<span id="1208">1208</span>
+<span id="1209">1209</span>
+<span id="1210">1210</span>
+<span id="1211">1211</span>
+<span id="1212">1212</span>
+<span id="1213">1213</span>
+<span id="1214">1214</span>
+<span id="1215">1215</span>
+<span id="1216">1216</span>
+<span id="1217">1217</span>
+<span id="1218">1218</span>
+<span id="1219">1219</span>
+<span id="1220">1220</span>
+<span id="1221">1221</span>
+<span id="1222">1222</span>
+<span id="1223">1223</span>
+<span id="1224">1224</span>
+<span id="1225">1225</span>
+<span id="1226">1226</span>
+<span id="1227">1227</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! ODBC types those representation is compatible with the ODBC C API.</span>
 <span class="doccomment">//!</span>
@@ -1347,6 +1375,8 @@
     <span class="ident">SQL_TIMESTAMP_WITH_TIMEZONE</span> <span class="op">=</span> <span class="number">95</span>,
 
     <span class="comment">//SQL extended datatypes:</span>
+    <span class="ident">SQL_EXT_TIME_OR_INTERVAL</span> <span class="op">=</span> <span class="number">10</span>,
+    <span class="ident">SQL_EXT_TIMESTAMP</span> <span class="op">=</span> <span class="number">11</span>,
     <span class="ident">SQL_EXT_LONGVARCHAR</span> <span class="op">=</span> <span class="op">-</span><span class="number">1</span>,
     <span class="ident">SQL_EXT_BINARY</span> <span class="op">=</span> <span class="op">-</span><span class="number">2</span>,
     <span class="ident">SQL_EXT_VARBINARY</span> <span class="op">=</span> <span class="op">-</span><span class="number">3</span>,
@@ -1393,6 +1423,19 @@
 }
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">SqlDriverConnectOption</span>::<span class="kw-2">*</span>;
+
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">i32</span>)]</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SqlAttributeStringLength</span> {
+    <span class="ident">SQL_IS_POINTER</span> <span class="op">=</span> <span class="op">-</span><span class="number">4</span>,
+    <span class="ident">SQL_IS_UINTEGER</span> <span class="op">=</span> <span class="op">-</span><span class="number">5</span>,
+    <span class="ident">SQL_IS_INTEGER</span> <span class="op">=</span> <span class="op">-</span><span class="number">6</span>,
+    <span class="ident">SQL_IS_USMALLINT</span> <span class="op">=</span> <span class="op">-</span><span class="number">7</span>,
+    <span class="ident">SQL_IS_SMALLINT</span> <span class="op">=</span> <span class="op">-</span><span class="number">8</span>,
+}
+
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">SqlAttributeStringLength</span>::<span class="kw-2">*</span>;
 
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
@@ -1520,12 +1563,13 @@
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SqlStatementAttribute</span> {
+    <span class="ident">SQL_ATTR_ASYNC_ENABLE</span> <span class="op">=</span> <span class="number">4</span>,
     <span class="ident">SQL_ATTR_PARAM_BIND_TYPE</span> <span class="op">=</span> <span class="number">18</span>,
     <span class="ident">SQL_ATTR_PARAMSET_SIZE</span> <span class="op">=</span> <span class="number">22</span>,
     <span class="ident">SQL_ATTR_ROW_BIND_TYPE</span> <span class="op">=</span> <span class="number">5</span>,
     <span class="ident">SQL_ATTR_ROW_ARRAY_SIZE</span> <span class="op">=</span> <span class="number">27</span>,
     <span class="ident">SQL_ATTR_ROWS_FETCHED_PTR</span> <span class="op">=</span> <span class="number">26</span>,
-    <span class="ident">SQL_ATTR_ASYNC_ENABLE</span> <span class="op">=</span> <span class="number">4</span>,
+    <span class="ident">SQL_ATTR_ASYNC_STMT_EVENT</span> <span class="op">=</span> <span class="number">29</span>,
 }
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">SqlStatementAttribute</span>::<span class="kw-2">*</span>;
@@ -1535,6 +1579,7 @@
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SqlConnectionAttribute</span> {
+    <span class="ident">SQL_ATTR_ASYNC_ENABLE</span> <span class="op">=</span> <span class="number">4</span>,
     <span class="ident">SQL_ATTR_ACCESS_MODE</span> <span class="op">=</span> <span class="number">101</span>,
     <span class="ident">SQL_ATTR_AUTOCOMMIT</span> <span class="op">=</span> <span class="number">102</span>,
     <span class="ident">SQL_ATTR_LOGIN_TIMEOUT</span> <span class="op">=</span> <span class="number">103</span>,
@@ -1550,6 +1595,7 @@
     <span class="ident">SQL_ATTR_CONNECTION_TIMEOUT</span> <span class="op">=</span> <span class="number">113</span>,
     <span class="ident">SQL_ATTR_DISCONNECT_BEHAVIOR</span> <span class="op">=</span> <span class="number">114</span>,
     <span class="ident">SQL_ATTR_ASYNC_DBC_FUNCTIONS_ENABLE</span> <span class="op">=</span> <span class="number">117</span>,
+    <span class="ident">SQL_ATTR_ASYNC_DBC_EVENT</span> <span class="op">=</span> <span class="number">119</span>,
     <span class="ident">SQL_ATTR_ENLIST_IN_DTC</span> <span class="op">=</span> <span class="number">1207</span>,
     <span class="ident">SQL_ATTR_ENLIST_IN_XA</span> <span class="op">=</span> <span class="number">1208</span>,
     <span class="ident">SQL_ATTR_CONNECTION_DEAD</span> <span class="op">=</span> <span class="number">1209</span>,
@@ -1644,8 +1690,10 @@
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">SqlCompletionType</span>::<span class="kw-2">*</span>;
 
+<span class="comment">// static linking is not currently supported here for windows</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">windows</span>, <span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;odbc32&quot;</span>))]</span>
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;odbc&quot;</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">not</span>(<span class="ident">r#static</span>)), <span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;odbc&quot;</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">r#static</span>), <span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;odbc&quot;</span>, <span class="ident">kind</span> <span class="op">=</span> <span class="string">&quot;static&quot;</span>))]</span>
 <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> {
     <span class="doccomment">/// Allocates an environment, connection, statement, or descriptor handle.</span>
     <span class="doccomment">///</span>
@@ -1797,6 +1845,14 @@
         <span class="ident">buffer_length</span>: <span class="ident">SQLLEN</span>,
         <span class="ident">str_len_or_ind_ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">SQLLEN</span>,
     ) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
+
+    <span class="doccomment">/// SQLGetTypeInfo returns information about data types supported by the data source.</span>
+    <span class="doccomment">/// The driver returns the information in the form of an SQL result set.</span>
+    <span class="doccomment">/// The data types are intended for use in Data Definition Language (DDL) statements.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Returns</span>
+    <span class="doccomment">/// `SQL_SUCCESS`, `SQL_SUCCESS_WITH_INFO`, `SQL_STILL_EXECUTING`, `SQL_ERROR`, or `SQL_INVALID_HANDLE`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">SQLGetTypeInfo</span>(<span class="ident">statement_handle</span>: <span class="ident">SQLHSTMT</span>, <span class="ident">data_type</span>: <span class="ident">SqlDataType</span>) <span class="op">-&gt;</span> <span class="ident">SQLRETURN</span>;
 
     <span class="doccomment">/// SQLFetch fetches the next rowset of data from the result set and returns data for all bound</span>
     <span class="doccomment">/// columns.</span>

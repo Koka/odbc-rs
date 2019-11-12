@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `src/diagnostics.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>diagnostics.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../odbc/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `src/diagnostics.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>diagnostics.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../odbc/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -169,13 +169,13 @@
 <span class="doccomment">/// ODBC Diagnostic Record</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The `description` method of the `std::error::Error` trait only returns the message. Use</span>
-<span class="doccomment">/// `std::fmt::Display` to retrive status code and other information.</span>
+<span class="doccomment">/// `std::fmt::Display` to retrieve status code and other information.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DiagnosticRecord</span> {
-    <span class="comment">// All elements but the last one, may not be nul. The last one must be nul.</span>
+    <span class="comment">// All elements but the last one, may not be null. The last one must be null.</span>
     <span class="ident">state</span>: [<span class="ident">ffi</span>::<span class="ident">SQLCHAR</span>; <span class="ident">ffi</span>::<span class="ident">SQL_SQLSTATE_SIZE</span> <span class="op">+</span> <span class="number">1</span>],
-    <span class="comment">// Must at least contain one nul</span>
+    <span class="comment">// Must at least contain one null</span>
     <span class="ident">message</span>: [<span class="ident">ffi</span>::<span class="ident">SQLCHAR</span>; <span class="ident">MAX_DIAGNOSTIC_MESSAGE_SIZE</span>],
-    <span class="comment">// The numbers of characters in message not nul</span>
+    <span class="comment">// The numbers of characters in message not null</span>
     <span class="ident">message_length</span>: <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span>,
     <span class="ident">native_error</span>: <span class="ident">ffi</span>::<span class="ident">SQLINTEGER</span>,
     <span class="ident">message_string</span>: <span class="ident">String</span>,
@@ -235,12 +235,12 @@
     <span class="kw">fn</span> <span class="ident">description</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">str</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">message_string</span>
     }
-    <span class="kw">fn</span> <span class="ident">cause</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">cause</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="op">&amp;</span> <span class="ident">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="prelude-val">None</span>
     }
 }
 
-<span class="doccomment">/// Allows retriving a diagnostic record, describing errors (or lack thereof) during the last</span>
+<span class="doccomment">/// Allows retrieving a diagnostic record, describing errors (or lack thereof) during the last</span>
 <span class="doccomment">/// operation.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">GetDiagRec</span> {
     <span class="doccomment">/// Retrieves a diagnostic record</span>
