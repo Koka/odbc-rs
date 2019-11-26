@@ -150,6 +150,10 @@ unsafe impl<'a> OdbcType<'a> for CustomOdbcType<'a> {
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self.data.as_ptr() as *const Self as ffi::SQLPOINTER
     }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
+    }
 }
 
 #[test]
