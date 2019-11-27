@@ -4,6 +4,36 @@ use std::mem::{size_of, transmute};
 use std::ffi::CString;
 use std::borrow::Cow::{Borrowed, Owned};
 
+pub struct EncodedValue {
+    pub buf: Option<Vec<u8>>,
+}
+
+impl EncodedValue {
+    pub fn new(buf: Option<Vec<u8>>) -> Self {
+        Self { buf }
+    }
+
+    pub fn has_value(&self) -> bool {
+        self.buf.is_some()
+    }
+
+    pub fn column_size(&self) -> ffi::SQLULEN {
+        if let Some(buf) = &self.buf {
+            buf.len() as ffi::SQLULEN
+        } else {
+            0
+        }
+    }
+
+    pub fn value_ptr(&self) -> ffi::SQLPOINTER {
+        if let Some(buf) = &self.buf {
+            buf.as_ptr() as *const Self as ffi::SQLPOINTER
+        } else {
+            0 as *const Self as ffi::SQLPOINTER
+        }
+    }
+}
+
 pub unsafe trait OdbcType<'a>: Sized {
     fn sql_data_type() -> ffi::SqlDataType;
     fn c_data_type() -> ffi::SqlCDataType;
@@ -16,6 +46,7 @@ pub unsafe trait OdbcType<'a>: Sized {
     fn decimal_digits(&self) -> ffi::SQLSMALLINT {
         0
     }
+    fn encoded_value(&self) -> EncodedValue;
 }
 
 unsafe impl<'a> OdbcType<'a> for &'a[u8] {
@@ -37,6 +68,10 @@ unsafe impl<'a> OdbcType<'a> for &'a[u8] {
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self.as_ptr() as *const Self as ffi::SQLPOINTER
     }
+
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for Vec<u8> {
@@ -57,6 +92,10 @@ unsafe impl<'a> OdbcType<'a> for Vec<u8> {
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self.as_ptr() as *const Self as ffi::SQLPOINTER
+    }
+
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
     }
 }
 
@@ -82,6 +121,10 @@ unsafe impl<'a> OdbcType<'a> for &'a[u16] {
 
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self.as_ptr() as *const Self as ffi::SQLPOINTER
+    }
+
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
     }
 }
 
@@ -109,6 +152,10 @@ unsafe impl<'a> OdbcType<'a> for Vec<u16> {
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self.as_ptr() as *const Self as ffi::SQLPOINTER
     }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for CString {
@@ -134,6 +181,10 @@ unsafe impl<'a> OdbcType<'a> for CString {
     fn null_bytes_count() -> usize {
         1
     }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for String {
@@ -158,6 +209,10 @@ unsafe impl<'a> OdbcType<'a> for String {
 
     fn null_bytes_count() -> usize {
         1
+    }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(Some(unsafe { ::environment::DB_ENCODING }.encode(&self).0.to_vec()))
     }
 }
 
@@ -188,6 +243,10 @@ unsafe impl<'a> OdbcType<'a> for &'a str {
     fn null_bytes_count() -> usize {
         1
     }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(Some(unsafe { ::environment::DB_ENCODING }.encode(&self).0.to_vec()))
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for ::std::borrow::Cow<'a, str> {
@@ -212,6 +271,10 @@ unsafe impl<'a> OdbcType<'a> for ::std::borrow::Cow<'a, str> {
 
     fn null_bytes_count() -> usize {
         1
+    }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(Some(unsafe { ::environment::DB_ENCODING }.encode(self).0.to_vec()))
     }
 }
 
@@ -240,6 +303,10 @@ unsafe impl<'a> OdbcType<'a> for u8 {
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
     }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for i8 {
@@ -259,6 +326,10 @@ unsafe impl<'a> OdbcType<'a> for i8 {
     }
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
+    }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
     }
 }
 
@@ -280,6 +351,10 @@ unsafe impl<'a> OdbcType<'a> for i16 {
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
     }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for u16 {
@@ -299,6 +374,10 @@ unsafe impl<'a> OdbcType<'a> for u16 {
     }
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
+    }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
     }
 }
 
@@ -320,6 +399,10 @@ unsafe impl<'a> OdbcType<'a> for i32 {
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
     }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for u32 {
@@ -339,6 +422,10 @@ unsafe impl<'a> OdbcType<'a> for u32 {
     }
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
+    }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
     }
 }
 
@@ -360,6 +447,10 @@ unsafe impl<'a> OdbcType<'a> for i64 {
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
     }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for u64 {
@@ -379,6 +470,10 @@ unsafe impl<'a> OdbcType<'a> for u64 {
     }
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
+    }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
     }
 }
 
@@ -400,6 +495,10 @@ unsafe impl<'a> OdbcType<'a> for f32 {
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
     }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
+    }
 }
 
 unsafe impl<'a> OdbcType<'a> for f64 {
@@ -419,6 +518,10 @@ unsafe impl<'a> OdbcType<'a> for f64 {
     }
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
+    }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
     }
 }
 
@@ -440,6 +543,10 @@ unsafe impl<'a> OdbcType<'a> for bool {
     }
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
+    }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
     }
 }
 
@@ -467,6 +574,10 @@ unsafe impl<'a> OdbcType<'a> for SqlDate {
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
     }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
+    }
 }
 
 pub type SqlTime = ffi::SQL_TIME_STRUCT;
@@ -492,6 +603,10 @@ unsafe impl<'a> OdbcType<'a> for SqlTime {
     }
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
+    }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
     }
 }
 
@@ -519,6 +634,10 @@ unsafe impl<'a> OdbcType<'a> for SqlTimestamp {
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
     }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
+    }
 }
 
 pub type SqlSsTime2 = ffi::SQL_SS_TIME2_STRUCT;
@@ -545,6 +664,10 @@ unsafe impl<'a> OdbcType<'a> for SqlSsTime2 {
     }
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self as *const Self as ffi::SQLPOINTER
+    }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
     }
 }
 
@@ -578,5 +701,81 @@ unsafe impl<'a, T> OdbcType<'a> for Option<T> where T: OdbcType<'a> {
 
     fn null_bytes_count() -> usize {
         T::null_bytes_count()
+    }
+    
+    fn encoded_value(&self) -> EncodedValue {
+        EncodedValue::new(None)
+    }
+}
+
+
+mod test {
+    // use environment::create_environment_v3_with_os_db_encoding;
+    use super::*;
+    use std::collections::HashSet;
+    use std::borrow::Cow;
+
+    #[test]
+    fn encoded_value_test() {
+        let mut checker = HashSet::new();
+        let mut encoded_values = Vec::new();
+
+        // let _ = create_environment_v3_with_os_db_encoding("utf8", "sjis");
+
+        //string test
+        for i in 0..10 {
+            for h in 0..10 {
+                let string_value = format!("{}{}", i, h);
+                // println!("org value => {}    address => {:?}", string_value, string_value.value_ptr());
+
+                let enc = string_value.encoded_value();
+                // println!("{} {:?}", enc.column_size(), enc.buf);
+                if checker.len() == 0 || !checker.contains(&enc.value_ptr()) {
+                    checker.insert(enc.value_ptr());
+                    encoded_values.push(enc);
+                } else {
+                    panic!("same address occur!");
+                }
+            }
+        }
+        checker.clear();
+        encoded_values.clear();
+
+        //&str test
+        for i in 0..10 {
+            for h in 0..10 {
+                let str_value: &str = &format!("{}{}", i, h);
+                // println!("org value => {}    address => {:?}", str_value, str_value.value_ptr());
+
+                let enc = str_value.encoded_value();
+                if checker.len() == 0 || !checker.contains(&enc.value_ptr()) {
+                    checker.insert(enc.value_ptr());
+                    encoded_values.push(enc);
+                } else {
+                    panic!("same address occur!");
+                }
+            }
+        }
+        checker.clear();
+        encoded_values.clear();
+
+        //Cow<str> test
+        for i in 0..10 {
+            for h in 0..10 {
+                let cow_value: Cow<str> = Cow::from(format!("{}{}", i, h));
+                // println!("org value => {}    address => {:?}", cow_value, cow_value.value_ptr());
+
+                let enc = cow_value.encoded_value();
+                if checker.len() == 0 || !checker.contains(&enc.value_ptr()) {
+                    checker.insert(enc.value_ptr());
+                    encoded_values.push(enc);
+                } else {
+                    panic!("same address occur!");
+                }
+            }
+        }
+        checker.clear();
+        encoded_values.clear();
+
     }
 }

@@ -1,6 +1,7 @@
-use {ffi, Return, Result, Raii, Handle, Statement};
 use super::types::OdbcType;
 use odbc_safe::AutocommitMode;
+use statement::types::EncodedValue;
+use {ffi, Handle, Raii, Result, Return, Statement};
 
 impl<'a, 'b, S, R, AC: AutocommitMode> Statement<'a, 'b, S, R, AC> {
     /// Binds a parameter to a parameter marker in an SQL statement.
@@ -48,9 +49,19 @@ impl<'a, 'b, S, R, AC: AutocommitMode> Statement<'a, 'b, S, R, AC> {
 
         let ind_ptr = self.param_ind_buffers.alloc(parameter_index as usize, ind);
 
+        //the result of value_ptr is changed per calling.
+        //binding and saving must have the same value.
+        let enc_value = value.encoded_value();
+
         self.raii
-            .bind_input_parameter(parameter_index, value, ind_ptr)
+            .bind_input_parameter(parameter_index, value, ind_ptr, &enc_value)
             .into_result(&self)?;
+
+        // save encoded value to avoid memory reuse.
+        if enc_value.has_value() {
+            self.encoded_values.push(enc_value);
+        }
+
         Ok(self)
     }
 
@@ -58,17 +69,31 @@ impl<'a, 'b, S, R, AC: AutocommitMode> Statement<'a, 'b, S, R, AC> {
     /// and returns a new one those lifetime is no longer limited by the buffers bound.
     pub fn reset_parameters(mut self) -> Result<Statement<'a, 'a, S, R, AC>> {
         self.param_ind_buffers.clear();
+        self.encoded_values.clear();
         self.raii.reset_parameters().into_result(&mut self)?;
         Ok(Statement::with_raii(self.raii))
     }
 }
 
 impl Raii<ffi::Stmt> {
-    fn bind_input_parameter<'c, T>(&mut self, parameter_index: u16, value: &'c T, str_len_or_ind_ptr: *mut ffi::SQLLEN) -> Return<()>
+    fn bind_input_parameter<'c, T>(
+        &mut self,
+        parameter_index: u16,
+        value: &'c T,
+        str_len_or_ind_ptr: *mut ffi::SQLLEN,
+        enc_value: &EncodedValue,
+    ) -> Return<()>
     where
         T: OdbcType<'c>,
         T: ?Sized,
     {
+        //if encoded value exists, use it.
+        let (column_size, value_ptr) = if enc_value.has_value() {
+            (enc_value.column_size(), enc_value.value_ptr())
+        } else {
+            (value.column_size(), value.value_ptr())
+        };
+
         match unsafe {
             ffi::SQLBindParameter(
                 self.handle(),
@@ -76,10 +101,10 @@ impl Raii<ffi::Stmt> {
                 ffi::SQL_PARAM_INPUT,
                 T::c_data_type(),
                 T::sql_data_type(),
-                value.column_size(),
+                column_size,
                 value.decimal_digits(),
-                value.value_ptr(),
-                0, // buffer length
+                value_ptr,
+                0,                  // buffer length
                 str_len_or_ind_ptr, // Note that this ptr has to be valid until statement is executed
             )
         } {

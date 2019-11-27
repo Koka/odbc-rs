@@ -9,7 +9,7 @@ use ffi::SQLRETURN::*;
 use ffi::Nullable;
 use std::marker::PhantomData;
 pub use self::types::OdbcType;
-pub use self::types::{SqlDate, SqlTime, SqlSsTime2, SqlTimestamp};
+pub use self::types::{SqlDate, SqlTime, SqlSsTime2, SqlTimestamp, EncodedValue};
 
 // Allocate CHUNK_LEN elements at a time
 const CHUNK_LEN: usize = 64;
@@ -76,6 +76,8 @@ pub struct Statement<'con, 'b, S, R, AC: AutocommitMode> {
     result: PhantomData<R>,
     parameters: PhantomData<&'b [u8]>,
     param_ind_buffers: Chunks<ffi::SQLLEN>,
+    // encoded values are saved to use its pointer.
+    encoded_values: Vec<EncodedValue>,
 }
 
 /// Used to retrieve data from the fields of a query result
@@ -108,7 +110,8 @@ impl<'a, 'b, S, R, AC: AutocommitMode> Statement<'a, 'b, S, R, AC> {
             state: PhantomData,
             result: PhantomData,
             parameters: PhantomData,
-            param_ind_buffers: Chunks::new()
+            param_ind_buffers: Chunks::new(),
+            encoded_values: Vec::new(),
         }
     }
 }
