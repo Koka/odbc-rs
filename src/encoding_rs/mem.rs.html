@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/encoding_rs-0.8.17/src/mem.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mem.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../encoding_rs/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/Users/salikhov/.cargo/registry/src/github.com-1ecc6299db9ec823/encoding_rs-0.8.20/src/mem.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mem.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../encoding_rs/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -3235,6 +3235,104 @@
 <span id="3235">3235</span>
 <span id="3236">3236</span>
 <span id="3237">3237</span>
+<span id="3238">3238</span>
+<span id="3239">3239</span>
+<span id="3240">3240</span>
+<span id="3241">3241</span>
+<span id="3242">3242</span>
+<span id="3243">3243</span>
+<span id="3244">3244</span>
+<span id="3245">3245</span>
+<span id="3246">3246</span>
+<span id="3247">3247</span>
+<span id="3248">3248</span>
+<span id="3249">3249</span>
+<span id="3250">3250</span>
+<span id="3251">3251</span>
+<span id="3252">3252</span>
+<span id="3253">3253</span>
+<span id="3254">3254</span>
+<span id="3255">3255</span>
+<span id="3256">3256</span>
+<span id="3257">3257</span>
+<span id="3258">3258</span>
+<span id="3259">3259</span>
+<span id="3260">3260</span>
+<span id="3261">3261</span>
+<span id="3262">3262</span>
+<span id="3263">3263</span>
+<span id="3264">3264</span>
+<span id="3265">3265</span>
+<span id="3266">3266</span>
+<span id="3267">3267</span>
+<span id="3268">3268</span>
+<span id="3269">3269</span>
+<span id="3270">3270</span>
+<span id="3271">3271</span>
+<span id="3272">3272</span>
+<span id="3273">3273</span>
+<span id="3274">3274</span>
+<span id="3275">3275</span>
+<span id="3276">3276</span>
+<span id="3277">3277</span>
+<span id="3278">3278</span>
+<span id="3279">3279</span>
+<span id="3280">3280</span>
+<span id="3281">3281</span>
+<span id="3282">3282</span>
+<span id="3283">3283</span>
+<span id="3284">3284</span>
+<span id="3285">3285</span>
+<span id="3286">3286</span>
+<span id="3287">3287</span>
+<span id="3288">3288</span>
+<span id="3289">3289</span>
+<span id="3290">3290</span>
+<span id="3291">3291</span>
+<span id="3292">3292</span>
+<span id="3293">3293</span>
+<span id="3294">3294</span>
+<span id="3295">3295</span>
+<span id="3296">3296</span>
+<span id="3297">3297</span>
+<span id="3298">3298</span>
+<span id="3299">3299</span>
+<span id="3300">3300</span>
+<span id="3301">3301</span>
+<span id="3302">3302</span>
+<span id="3303">3303</span>
+<span id="3304">3304</span>
+<span id="3305">3305</span>
+<span id="3306">3306</span>
+<span id="3307">3307</span>
+<span id="3308">3308</span>
+<span id="3309">3309</span>
+<span id="3310">3310</span>
+<span id="3311">3311</span>
+<span id="3312">3312</span>
+<span id="3313">3313</span>
+<span id="3314">3314</span>
+<span id="3315">3315</span>
+<span id="3316">3316</span>
+<span id="3317">3317</span>
+<span id="3318">3318</span>
+<span id="3319">3319</span>
+<span id="3320">3320</span>
+<span id="3321">3321</span>
+<span id="3322">3322</span>
+<span id="3323">3323</span>
+<span id="3324">3324</span>
+<span id="3325">3325</span>
+<span id="3326">3326</span>
+<span id="3327">3327</span>
+<span id="3328">3328</span>
+<span id="3329">3329</span>
+<span id="3330">3330</span>
+<span id="3331">3331</span>
+<span id="3332">3332</span>
+<span id="3333">3333</span>
+<span id="3334">3334</span>
+<span id="3335">3335</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2015-2016 Mozilla Foundation. See the COPYRIGHT</span>
 <span class="comment">// file at the top-level directory of this distribution.</span>
@@ -3258,6 +3356,9 @@
 <span class="doccomment">//! U+00FF, inclusive, and does not refer to the windows-1252 range. This</span>
 <span class="doccomment">//! in-memory encoding is sometimes used as a storage optimization of text</span>
 <span class="doccomment">//! when UTF-16 indexing and length semantics are exposed.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! The FFI binding for this module are in the</span>
+<span class="doccomment">//! [encoding_c_mem crate](https://github.com/hsivonen/encoding_c_mem).</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span>;
 
@@ -3891,7 +3992,7 @@
     <span class="ident">is_utf8_latin1_impl</span>(<span class="ident">buffer</span>).<span class="ident">is_none</span>()
 }
 
-<span class="doccomment">/// Checks whether the buffer represents only code point less than or equal</span>
+<span class="doccomment">/// Checks whether the buffer represents only code points less than or equal</span>
 <span class="doccomment">/// to U+00FF.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Fails fast. (I.e. returns before having read the whole buffer if code</span>
@@ -4520,7 +4621,7 @@
     <span class="ident">is_utf16_bidi_impl</span>(<span class="ident">buffer</span>)
 }
 
-<span class="doccomment">/// Checks whether a code point triggers right-to-left processing.</span>
+<span class="doccomment">/// Checks whether a scalar value triggers right-to-left processing.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The check is done on a Unicode block basis without regard to assigned</span>
 <span class="doccomment">/// vs. unassigned code points in the block. Hebrew presentation forms in</span>
@@ -4776,14 +4877,14 @@
             <span class="kw">if</span> <span class="ident">byte</span> <span class="op">&lt;</span> <span class="number">0xE0</span> {
                 <span class="kw">if</span> <span class="ident">byte</span> <span class="op">&gt;=</span> <span class="number">0x80</span> {
                     <span class="comment">// Two-byte</span>
-                    <span class="kw">let</span> <span class="ident">second</span> <span class="op">=</span> <span class="ident">bytes</span>[<span class="ident">read</span> <span class="op">+</span> <span class="number">1</span>];
+                    <span class="kw">let</span> <span class="ident">second</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">bytes</span>.<span class="ident">get_unchecked</span>(<span class="ident">read</span> <span class="op">+</span> <span class="number">1</span>)) };
                     <span class="kw">let</span> <span class="ident">point</span> <span class="op">=</span> ((<span class="ident">u16</span>::<span class="ident">from</span>(<span class="ident">byte</span>) <span class="op">&amp;</span> <span class="number">0x1F</span>) <span class="op">&lt;&lt;</span> <span class="number">6</span>) <span class="op">|</span> (<span class="ident">u16</span>::<span class="ident">from</span>(<span class="ident">second</span>) <span class="op">&amp;</span> <span class="number">0x3F</span>);
-                    <span class="ident">dst</span>[<span class="ident">written</span>] <span class="op">=</span> <span class="ident">point</span>;
+                    <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">dst</span>.<span class="ident">get_unchecked_mut</span>(<span class="ident">written</span>)) <span class="op">=</span> <span class="ident">point</span> };
                     <span class="ident">read</span> <span class="op">+=</span> <span class="number">2</span>;
                     <span class="ident">written</span> <span class="op">+=</span> <span class="number">1</span>;
                 } <span class="kw">else</span> {
                     <span class="comment">// ASCII: write and go back to SIMD.</span>
-                    <span class="ident">dst</span>[<span class="ident">written</span>] <span class="op">=</span> <span class="ident">u16</span>::<span class="ident">from</span>(<span class="ident">byte</span>);
+                    <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">dst</span>.<span class="ident">get_unchecked_mut</span>(<span class="ident">written</span>)) <span class="op">=</span> <span class="ident">u16</span>::<span class="ident">from</span>(<span class="ident">byte</span>) };
                     <span class="ident">read</span> <span class="op">+=</span> <span class="number">1</span>;
                     <span class="ident">written</span> <span class="op">+=</span> <span class="number">1</span>;
                     <span class="comment">// Intuitively, we should go back to the outer loop only</span>
@@ -4795,25 +4896,27 @@
                 }
             } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">byte</span> <span class="op">&lt;</span> <span class="number">0xF0</span> {
                 <span class="comment">// Three-byte</span>
-                <span class="kw">let</span> <span class="ident">second</span> <span class="op">=</span> <span class="ident">bytes</span>[<span class="ident">read</span> <span class="op">+</span> <span class="number">1</span>];
-                <span class="kw">let</span> <span class="ident">third</span> <span class="op">=</span> <span class="ident">bytes</span>[<span class="ident">read</span> <span class="op">+</span> <span class="number">2</span>];
+                <span class="kw">let</span> <span class="ident">second</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">bytes</span>.<span class="ident">get_unchecked</span>(<span class="ident">read</span> <span class="op">+</span> <span class="number">1</span>)) };
+                <span class="kw">let</span> <span class="ident">third</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">bytes</span>.<span class="ident">get_unchecked</span>(<span class="ident">read</span> <span class="op">+</span> <span class="number">2</span>)) };
                 <span class="kw">let</span> <span class="ident">point</span> <span class="op">=</span> ((<span class="ident">u16</span>::<span class="ident">from</span>(<span class="ident">byte</span>) <span class="op">&amp;</span> <span class="number">0xF</span>) <span class="op">&lt;&lt;</span> <span class="number">12</span>)
                     <span class="op">|</span> ((<span class="ident">u16</span>::<span class="ident">from</span>(<span class="ident">second</span>) <span class="op">&amp;</span> <span class="number">0x3F</span>) <span class="op">&lt;&lt;</span> <span class="number">6</span>)
                     <span class="op">|</span> (<span class="ident">u16</span>::<span class="ident">from</span>(<span class="ident">third</span>) <span class="op">&amp;</span> <span class="number">0x3F</span>);
-                <span class="ident">dst</span>[<span class="ident">written</span>] <span class="op">=</span> <span class="ident">point</span>;
+                <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">dst</span>.<span class="ident">get_unchecked_mut</span>(<span class="ident">written</span>)) <span class="op">=</span> <span class="ident">point</span> };
                 <span class="ident">read</span> <span class="op">+=</span> <span class="number">3</span>;
                 <span class="ident">written</span> <span class="op">+=</span> <span class="number">1</span>;
             } <span class="kw">else</span> {
                 <span class="comment">// Four-byte</span>
-                <span class="kw">let</span> <span class="ident">second</span> <span class="op">=</span> <span class="ident">bytes</span>[<span class="ident">read</span> <span class="op">+</span> <span class="number">1</span>];
-                <span class="kw">let</span> <span class="ident">third</span> <span class="op">=</span> <span class="ident">bytes</span>[<span class="ident">read</span> <span class="op">+</span> <span class="number">2</span>];
-                <span class="kw">let</span> <span class="ident">fourth</span> <span class="op">=</span> <span class="ident">bytes</span>[<span class="ident">read</span> <span class="op">+</span> <span class="number">3</span>];
+                <span class="kw">let</span> <span class="ident">second</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">bytes</span>.<span class="ident">get_unchecked</span>(<span class="ident">read</span> <span class="op">+</span> <span class="number">1</span>)) };
+                <span class="kw">let</span> <span class="ident">third</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">bytes</span>.<span class="ident">get_unchecked</span>(<span class="ident">read</span> <span class="op">+</span> <span class="number">2</span>)) };
+                <span class="kw">let</span> <span class="ident">fourth</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">bytes</span>.<span class="ident">get_unchecked</span>(<span class="ident">read</span> <span class="op">+</span> <span class="number">3</span>)) };
                 <span class="kw">let</span> <span class="ident">point</span> <span class="op">=</span> ((<span class="ident">u32</span>::<span class="ident">from</span>(<span class="ident">byte</span>) <span class="op">&amp;</span> <span class="number">0x7</span>) <span class="op">&lt;&lt;</span> <span class="number">18</span>)
                     <span class="op">|</span> ((<span class="ident">u32</span>::<span class="ident">from</span>(<span class="ident">second</span>) <span class="op">&amp;</span> <span class="number">0x3F</span>) <span class="op">&lt;&lt;</span> <span class="number">12</span>)
                     <span class="op">|</span> ((<span class="ident">u32</span>::<span class="ident">from</span>(<span class="ident">third</span>) <span class="op">&amp;</span> <span class="number">0x3F</span>) <span class="op">&lt;&lt;</span> <span class="number">6</span>)
                     <span class="op">|</span> (<span class="ident">u32</span>::<span class="ident">from</span>(<span class="ident">fourth</span>) <span class="op">&amp;</span> <span class="number">0x3F</span>);
-                <span class="ident">dst</span>[<span class="ident">written</span>] <span class="op">=</span> (<span class="number">0xD7C0</span> <span class="op">+</span> (<span class="ident">point</span> <span class="op">&gt;&gt;</span> <span class="number">10</span>)) <span class="kw">as</span> <span class="ident">u16</span>;
-                <span class="ident">dst</span>[<span class="ident">written</span> <span class="op">+</span> <span class="number">1</span>] <span class="op">=</span> (<span class="number">0xDC00</span> <span class="op">+</span> (<span class="ident">point</span> <span class="op">&amp;</span> <span class="number">0x3FF</span>)) <span class="kw">as</span> <span class="ident">u16</span>;
+                <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">dst</span>.<span class="ident">get_unchecked_mut</span>(<span class="ident">written</span>)) <span class="op">=</span> (<span class="number">0xD7C0</span> <span class="op">+</span> (<span class="ident">point</span> <span class="op">&gt;&gt;</span> <span class="number">10</span>)) <span class="kw">as</span> <span class="ident">u16</span> };
+                <span class="kw">unsafe</span> {
+                    <span class="kw-2">*</span>(<span class="ident">dst</span>.<span class="ident">get_unchecked_mut</span>(<span class="ident">written</span> <span class="op">+</span> <span class="number">1</span>)) <span class="op">=</span> (<span class="number">0xDC00</span> <span class="op">+</span> (<span class="ident">point</span> <span class="op">&amp;</span> <span class="number">0x3FF</span>)) <span class="kw">as</span> <span class="ident">u16</span>
+                };
                 <span class="ident">read</span> <span class="op">+=</span> <span class="number">4</span>;
                 <span class="ident">written</span> <span class="op">+=</span> <span class="number">2</span>;
             }
@@ -4827,6 +4930,30 @@
             <span class="kw">continue</span> <span class="lifetime">&#39;inner</span>;
         }
     }
+}
+
+<span class="doccomment">/// Converts potentially-invalid UTF-8 to valid UTF-16 signaling on error.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The length of the destination buffer must be at least the length of the</span>
+<span class="doccomment">/// source buffer.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Returns the number of `u16`s written or `None` if the input was invalid.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// When the input was invalid, some output may have been written.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Panics</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Panics if the destination buffer is shorter than stated above.</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">convert_utf8_to_utf16_without_replacement</span>(<span class="ident">src</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">dst</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u16</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="macro">assert</span><span class="macro">!</span>(
+        <span class="ident">dst</span>.<span class="ident">len</span>() <span class="op">&gt;=</span> <span class="ident">src</span>.<span class="ident">len</span>(),
+        <span class="string">&quot;Destination must not be shorter than the source.&quot;</span>
+    );
+    <span class="kw">let</span> (<span class="ident">read</span>, <span class="ident">written</span>) <span class="op">=</span> <span class="ident">convert_utf8_to_utf16_up_to_invalid</span>(<span class="ident">src</span>, <span class="ident">dst</span>);
+    <span class="kw">if</span> <span class="ident">read</span> <span class="op">==</span> <span class="ident">src</span>.<span class="ident">len</span>() {
+        <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">written</span>);
+    }
+    <span class="prelude-val">None</span>
 }
 
 <span class="doccomment">/// Converts potentially-invalid UTF-16 to valid UTF-8 with errors replaced</span>
@@ -4863,12 +4990,12 @@
     <span class="comment">// Letting the transitions be mere intra-function jumps, even to</span>
     <span class="comment">// basic blocks out-of-lined to the end of the function would wipe</span>
     <span class="comment">// away a quarter of Arabic encode performance on Haswell!</span>
-    <span class="kw">let</span> (<span class="ident">read</span>, <span class="ident">written</span>) <span class="op">=</span> <span class="ident">convert_utf16_to_utf16_partial_inner</span>(<span class="ident">src</span>, <span class="ident">dst</span>);
+    <span class="kw">let</span> (<span class="ident">read</span>, <span class="ident">written</span>) <span class="op">=</span> <span class="ident">convert_utf16_to_utf8_partial_inner</span>(<span class="ident">src</span>, <span class="ident">dst</span>);
     <span class="kw">if</span> <span class="kw">unsafe</span> { <span class="ident">likely</span>(<span class="ident">read</span> <span class="op">==</span> <span class="ident">src</span>.<span class="ident">len</span>()) } {
         <span class="kw">return</span> (<span class="ident">read</span>, <span class="ident">written</span>);
     }
     <span class="kw">let</span> (<span class="ident">tail_read</span>, <span class="ident">tail_written</span>) <span class="op">=</span>
-        <span class="ident">convert_utf16_to_utf16_partial_tail</span>(<span class="kw-2">&amp;</span><span class="ident">src</span>[<span class="ident">read</span>..], <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">dst</span>[<span class="ident">written</span>..]);
+        <span class="ident">convert_utf16_to_utf8_partial_tail</span>(<span class="kw-2">&amp;</span><span class="ident">src</span>[<span class="ident">read</span>..], <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">dst</span>[<span class="ident">written</span>..]);
     (<span class="ident">read</span> <span class="op">+</span> <span class="ident">tail_read</span>, <span class="ident">written</span> <span class="op">+</span> <span class="ident">tail_written</span>)
 }
 
@@ -4976,10 +5103,9 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Safety</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// Note that this function may write garbage beyond the number of bytes</span>
-<span class="doccomment">/// indicated by the return value, so using a `&amp;mut str` interpreted as</span>
-<span class="doccomment">/// `&amp;mut [u8]` as the destination is not safe. If you want to convert into</span>
-<span class="doccomment">/// a `&amp;mut str`, use `convert_utf16_to_str()` instead of this function.</span>
+<span class="doccomment">/// If you want to convert into a `&amp;mut str`, use</span>
+<span class="doccomment">/// `convert_utf16_to_str_partial()` instead of using this function</span>
+<span class="doccomment">/// together with the `unsafe` method `as_bytes_mut()` on `&amp;mut str`.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">convert_latin1_to_utf8_partial</span>(<span class="ident">src</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">dst</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> (<span class="ident">usize</span>, <span class="ident">usize</span>) {
     <span class="kw">let</span> <span class="ident">src_len</span> <span class="op">=</span> <span class="ident">src</span>.<span class="ident">len</span>();
     <span class="kw">let</span> <span class="ident">src_ptr</span> <span class="op">=</span> <span class="ident">src</span>.<span class="ident">as_ptr</span>();
@@ -5254,6 +5380,19 @@
 <span class="doccomment">/// valid UTF-16 in its entirety, the length of the input.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">utf16_valid_up_to</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span>[<span class="ident">u16</span>]) <span class="op">-&gt;</span> <span class="ident">usize</span> {
     <span class="ident">utf16_valid_up_to_impl</span>(<span class="ident">buffer</span>)
+}
+
+<span class="doccomment">/// Returns the index of first byte that starts an invalid byte</span>
+<span class="doccomment">/// sequence or a non-Latin1 byte sequence, or the length of the</span>
+<span class="doccomment">/// string if there are neither.</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">utf8_latin1_up_to</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="ident">is_utf8_latin1_impl</span>(<span class="ident">buffer</span>).<span class="ident">unwrap_or</span>(<span class="ident">buffer</span>.<span class="ident">len</span>())
+}
+
+<span class="doccomment">/// Returns the index of first byte that starts a non-Latin1 byte</span>
+<span class="doccomment">/// sequence, or the length of the string if there are none.</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">str_latin1_up_to</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="ident">is_str_latin1_impl</span>(<span class="ident">buffer</span>).<span class="ident">unwrap_or</span>(<span class="ident">buffer</span>.<span class="ident">len</span>())
 }
 
 <span class="doccomment">/// Replaces unpaired surrogates in the input with the REPLACEMENT CHARACTER.</span>
@@ -5665,22 +5804,22 @@
             <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0x2603u16</span>,
             <span class="number">0xD83Du16</span>, <span class="number">0xDCA9u16</span>, <span class="number">0x00B6u16</span>,
         ];
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">utf16_valid_up_to</span>(<span class="kw-2">&amp;</span><span class="ident">valid</span>[..]), <span class="number">16</span>);;
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">utf16_valid_up_to</span>(<span class="kw-2">&amp;</span><span class="ident">valid</span>[..]), <span class="number">16</span>);
         <span class="kw">let</span> <span class="ident">lone_high</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
             <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>,
             <span class="number">0x2603u16</span>, <span class="number">0xD83Du16</span>, <span class="number">0x00B6u16</span>,
         ];
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">utf16_valid_up_to</span>(<span class="kw-2">&amp;</span><span class="ident">lone_high</span>[..]), <span class="number">14</span>);;
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">utf16_valid_up_to</span>(<span class="kw-2">&amp;</span><span class="ident">lone_high</span>[..]), <span class="number">14</span>);
         <span class="kw">let</span> <span class="ident">lone_low</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
             <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>,
             <span class="number">0x2603u16</span>, <span class="number">0xDCA9u16</span>, <span class="number">0x00B6u16</span>,
         ];
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">utf16_valid_up_to</span>(<span class="kw-2">&amp;</span><span class="ident">lone_low</span>[..]), <span class="number">14</span>);;
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">utf16_valid_up_to</span>(<span class="kw-2">&amp;</span><span class="ident">lone_low</span>[..]), <span class="number">14</span>);
         <span class="kw">let</span> <span class="ident">lone_high_at_end</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
             <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>, <span class="number">0u16</span>,
             <span class="number">0x2603u16</span>, <span class="number">0x00B6u16</span>, <span class="number">0xD83Du16</span>,
         ];
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">utf16_valid_up_to</span>(<span class="kw-2">&amp;</span><span class="ident">lone_high_at_end</span>[..]), <span class="number">15</span>);;
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">utf16_valid_up_to</span>(<span class="kw-2">&amp;</span><span class="ident">lone_high_at_end</span>[..]), <span class="number">15</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -6472,6 +6611,63 @@
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">encode_latin1_lossy</span>(<span class="string">&quot;a\u{E4}&quot;</span>), <span class="kw-2">&amp;</span>(<span class="string">b&quot;a\xE4&quot;</span>)[..]);
     }
 
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_convert_utf8_to_utf16_without_replacement</span>() {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0u16</span>; <span class="number">5</span>];
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">convert_utf8_to_utf16_without_replacement</span>(<span class="string">b&quot;ab&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..<span class="number">2</span>]),
+            <span class="prelude-val">Some</span>(<span class="number">2</span>)
+        );
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">0</span>], <span class="ident">u16</span>::<span class="ident">from</span>(<span class="string">b&#39;a&#39;</span>));
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">1</span>], <span class="ident">u16</span>::<span class="ident">from</span>(<span class="string">b&#39;b&#39;</span>));
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">2</span>], <span class="number">0</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">convert_utf8_to_utf16_without_replacement</span>(<span class="string">b&quot;\xC3\xA4c&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..<span class="number">3</span>]),
+            <span class="prelude-val">Some</span>(<span class="number">2</span>)
+        );
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">0</span>], <span class="number">0xE4</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">1</span>], <span class="ident">u16</span>::<span class="ident">from</span>(<span class="string">b&#39;c&#39;</span>));
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">2</span>], <span class="number">0</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">convert_utf8_to_utf16_without_replacement</span>(<span class="string">b&quot;\xE2\x98\x83&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..<span class="number">3</span>]),
+            <span class="prelude-val">Some</span>(<span class="number">1</span>)
+        );
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">0</span>], <span class="number">0x2603</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">1</span>], <span class="ident">u16</span>::<span class="ident">from</span>(<span class="string">b&#39;c&#39;</span>));
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">2</span>], <span class="number">0</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">convert_utf8_to_utf16_without_replacement</span>(<span class="string">b&quot;\xE2\x98\x83d&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..<span class="number">4</span>]),
+            <span class="prelude-val">Some</span>(<span class="number">2</span>)
+        );
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">0</span>], <span class="number">0x2603</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">1</span>], <span class="ident">u16</span>::<span class="ident">from</span>(<span class="string">b&#39;d&#39;</span>));
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">2</span>], <span class="number">0</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">convert_utf8_to_utf16_without_replacement</span>(<span class="string">b&quot;\xE2\x98\x83\xC3\xA4&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..<span class="number">5</span>]),
+            <span class="prelude-val">Some</span>(<span class="number">2</span>)
+        );
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">0</span>], <span class="number">0x2603</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">1</span>], <span class="number">0xE4</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">2</span>], <span class="number">0</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">convert_utf8_to_utf16_without_replacement</span>(<span class="string">b&quot;\xF0\x9F\x93\x8E&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..<span class="number">4</span>]),
+            <span class="prelude-val">Some</span>(<span class="number">2</span>)
+        );
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">0</span>], <span class="number">0xD83D</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">1</span>], <span class="number">0xDCCE</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">2</span>], <span class="number">0</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">convert_utf8_to_utf16_without_replacement</span>(<span class="string">b&quot;\xF0\x9F\x93\x8Ee&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..<span class="number">5</span>]),
+            <span class="prelude-val">Some</span>(<span class="number">3</span>)
+        );
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">0</span>], <span class="number">0xD83D</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">1</span>], <span class="number">0xDCCE</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="number">2</span>], <span class="ident">u16</span>::<span class="ident">from</span>(<span class="string">b&#39;e&#39;</span>));
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">convert_utf8_to_utf16_without_replacement</span>(<span class="string">b&quot;\xF0\x9F\x93&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..<span class="number">5</span>]),
+            <span class="prelude-val">None</span>
+        );
+    }
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "encoding_rs";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
