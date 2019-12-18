@@ -173,7 +173,7 @@ collectively.</p>
 </div><h4 id='method.latin1_byte_compatible_up_to' class="method"><code id='latin1_byte_compatible_up_to.v'>pub fn <a href='#method.latin1_byte_compatible_up_to' class='fnname'>latin1_byte_compatible_up_to</a>(&amp;self, bytes: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>&gt;</code><a class='srclink' href='../src/encoding_rs/lib.rs.html#4229-4237' title='goto source code'>[src]</a></h4><div class='docblock'><p>Checks for compatibility with storing Unicode scalar values as unsigned
 bytes taking into account the state of the decoder.</p>
 <p>Returns <code>None</code> if the decoder is not in a neutral state, including waiting
-for the BOM or if the encoding is never Latin-byte-compatible.</p>
+for the BOM, or if the encoding is never Latin1-byte-compatible.</p>
 <p>Otherwise returns the index of the first byte whose unsigned value doesn't
 directly correspond to the decoded Unicode scalar value, or the length
 of the input if all bytes in the input decode directly to scalar values
