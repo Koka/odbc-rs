@@ -57,3 +57,7 @@ pub trait Handle {
     /// Returns a valid handle to the odbc type.
     unsafe fn handle(&self) -> *mut Self::To;
 }
+
+#[macro_use]
+extern crate doc_comment;
+doctest!("../README.md");
