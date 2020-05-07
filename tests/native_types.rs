@@ -24,7 +24,7 @@ macro_rules! test_type {
             }
         } else {
             panic!("SELECT did not return result set");
-        }
+        };
     })
 }
 
