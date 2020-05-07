@@ -75,7 +75,7 @@ impl<'a, 'b, S, R, AC: AutocommitMode> Statement<'a, 'b, S, R, AC> {
     }
 }
 
-impl Raii<ffi::Stmt> {
+impl<'p> Raii<'p, ffi::Stmt> {
     fn bind_input_parameter<'c, T>(
         &mut self,
         parameter_index: u16,
