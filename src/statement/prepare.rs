@@ -98,7 +98,7 @@ impl<'a, 'b, AC: AutocommitMode> Statement<'a, 'b, Prepared, NoResult, AC> {
     }
 }
 
-impl Raii<ffi::Stmt> {
+impl<'p> Raii<'p, ffi::Stmt> {
     fn prepare(&mut self, sql_text: &str) -> Return<()> {
         let bytes = unsafe { crate::environment::DB_ENCODING }.encode(sql_text).0;
         match unsafe {

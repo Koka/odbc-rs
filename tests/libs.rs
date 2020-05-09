@@ -329,7 +329,7 @@ fn zero_truncation_bug() {
         NoData(stmt) => stmt,
     };
     // Reproduction of zeroes truncation bug. Until now there is no chance to query binary data
-    // with zero at 512 byte border. 
+    // with zero at 512 byte border.
     let data = vec![0;513];
     stmt
         .prepare("INSERT INTO ZERO_TRUNCATION_BUG VALUES (?)")
@@ -349,5 +349,5 @@ fn zero_truncation_bug() {
         stmt.exec_direct("DROP TABLE ZERO_TRUNCATION_BUG").unwrap();
     } else {
         panic!("SELECT statement returned no result set")
-    }
+    };
 }

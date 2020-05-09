@@ -14,7 +14,7 @@ trait Extract {
         T: MySupportedType;
 }
 
-impl<'a, S, AC: AutocommitMode> Extract for Cursor<'a, 'a, 'a, S, AC> {
+impl<'s, 'a: 's, S: 's, AC: AutocommitMode> Extract for Cursor<'s, 'a, 'a, S, AC> {
     fn extract<T>(&mut self, index: u16) -> Option<T>
     where
         T: MySupportedType,

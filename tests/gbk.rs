@@ -23,7 +23,7 @@ fn _exec_direct() {
         }
     } else {
         panic!("SELECT did not return result set");
-    }
+    };
 }
 
 #[test]
@@ -48,8 +48,7 @@ fn _prepare_1() {
         NoData(_) => {
             panic!("SELECT did not return result set");
         }
-    }
-
+    };
 }
 
 #[test]
@@ -77,7 +76,7 @@ fn _prepare_2() {
         }
     } else {
         panic!("SELECT did not return result set");
-    }
+    };
 }
 
 #[test]
@@ -98,7 +97,7 @@ fn exec_direct() {
         }
     } else {
         panic!("SELECT did not return result set");
-    }
+    };
 }
 
 #[test]
@@ -120,8 +119,7 @@ fn prepare_1() {
         }
     } else {
         panic!("SELECT did not return result set");
-    }
-
+    };
 }
 
 /// CustomOdbcType  for bindParameter
@@ -150,7 +148,7 @@ unsafe impl<'a> OdbcType<'a> for CustomOdbcType<'a> {
     fn value_ptr(&self) -> ffi::SQLPOINTER {
         self.data.as_ptr() as *const Self as ffi::SQLPOINTER
     }
-    
+
     fn encoded_value(&self) -> EncodedValue {
         EncodedValue::new(None)
     }
@@ -180,5 +178,5 @@ fn prepare_2() {
         }
     } else {
         panic!("SELECT did not return result set");
-    }
+    };
 }

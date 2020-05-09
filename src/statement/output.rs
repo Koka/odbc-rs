@@ -24,7 +24,7 @@ where
     }
 }
 
-impl Raii<ffi::Stmt> {
+impl<'p> Raii<'p, ffi::Stmt> {
     fn get_data<'a, T>(
         &mut self,
         col_or_param_num: u16,

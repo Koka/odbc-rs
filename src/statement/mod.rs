@@ -66,12 +66,10 @@ use std::ptr::null_mut;
 use odbc_safe::AutocommitMode;
 
 /// A `Statement` can be used to execute queries and retrieves results.
-pub struct Statement<'con, 'b, S, R, AC: AutocommitMode> {
-    raii: Raii<ffi::Stmt>,
-    // we use phantom data to tell the borrow checker that we need to keep the data source alive
-    // for the lifetime of the statement
-    parent: PhantomData<&'con Connection<'con, AC>>,
+pub struct Statement<'a, 'b, S, R, AC: AutocommitMode> {
+    raii: Raii<'a, ffi::Stmt>,
     state: PhantomData<S>,
+    autocommit_mode: PhantomData<AC>,
     // Indicates wether there is an open result set or not associated with this statement.
     result: PhantomData<R>,
     parameters: PhantomData<&'b [u8]>,
@@ -81,8 +79,8 @@ pub struct Statement<'con, 'b, S, R, AC: AutocommitMode> {
 }
 
 /// Used to retrieve data from the fields of a query result
-pub struct Cursor<'a, 'b: 'a, 'c: 'a, S: 'a, AC: AutocommitMode> {
-    stmt: &'a mut Statement<'b, 'c, S, HasResult, AC>,
+pub struct Cursor<'s, 'a: 's, 'b: 's, S: 's, AC: AutocommitMode> {
+    stmt: &'s mut Statement<'a, 'b, S, HasResult, AC>,
     buffer: Vec<u8>,
 }
 
@@ -103,10 +101,10 @@ impl<'a, 'b, S, R, AC: AutocommitMode> Handle for Statement<'a, 'b, S, R, AC> {
 }
 
 impl<'a, 'b, S, R, AC: AutocommitMode> Statement<'a, 'b, S, R, AC> {
-    fn with_raii(raii: Raii<ffi::Stmt>) -> Self {
+    fn with_raii(raii: Raii<'a, ffi::Stmt>) -> Self {
         Statement {
             raii: raii,
-            parent: PhantomData,
+            autocommit_mode: PhantomData,
             state: PhantomData,
             result: PhantomData,
             parameters: PhantomData,
@@ -194,7 +192,7 @@ impl<'a, 'b, S, AC: AutocommitMode> Statement<'a, 'b, S, HasResult, AC> {
     }
 
     /// Fetches the next rowset of data from the result set and returns data for all bound columns.
-    pub fn fetch<'c>(&'c mut self) -> Result<Option<Cursor<'c, 'a, 'b, S, AC>>> {
+    pub fn fetch<'s>(&'s mut self) -> Result<Option<Cursor<'s, 'a, 'b, S, AC>>> {
         if self.raii.fetch().into_result(self)? {
             Ok(Some(Cursor {
                 stmt: self,
@@ -240,9 +238,9 @@ impl<'a, 'b, S, AC: AutocommitMode> Statement<'a, 'b, S, HasResult, AC> {
 
 impl<'a, 'b, 'c, S, AC: AutocommitMode> Cursor<'a, 'b, 'c, S, AC> {
     /// Retrieves data for a single column in the result set
-    /// 
+    ///
     /// ## Panics
-    /// 
+    ///
     /// If you try to convert to `&str` but the data can't be converted
     /// without allocating an intermediate buffer.
     pub fn get_data<'d, T>(&'d mut self, col_or_param_num: u16) -> Result<Option<T>>
@@ -253,7 +251,7 @@ impl<'a, 'b, 'c, S, AC: AutocommitMode> Cursor<'a, 'b, 'c, S, AC> {
     }
 }
 
-impl Raii<ffi::Stmt> {
+impl<'p> Raii<'p, ffi::Stmt> {
     fn affected_row_count(&self) -> Return<ffi::SQLLEN> {
         let mut count: ffi::SQLLEN = 0;
         unsafe {
