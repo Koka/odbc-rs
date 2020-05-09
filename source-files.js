@@ -1,5 +1,6 @@
 var N = null;var sourcesIndex = {};
 sourcesIndex["cfg_if"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["doc_comment"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["encoding_rs"] = {"name":"","files":["ascii.rs","big5.rs","data.rs","euc_jp.rs","euc_kr.rs","gb18030.rs","handles.rs","iso_2022_jp.rs","lib.rs","macros.rs","mem.rs","replacement.rs","shift_jis.rs","single_byte.rs","utf_16.rs","utf_8.rs","variant.rs","x_user_defined.rs"]};
 sourcesIndex["log"] = {"name":"","files":["lib.rs","macros.rs"]};
 sourcesIndex["odbc"] = {"name":"","dirs":[{"name":"environment","files":["list_data_sources.rs","mod.rs"]},{"name":"statement","files":["input.rs","mod.rs","output.rs","prepare.rs","types.rs"]}],"files":["connection.rs","diagnostics.rs","ffi.rs","lib.rs","odbc_object.rs","raii.rs","result.rs"]};

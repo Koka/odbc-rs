@@ -787,19 +787,19 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span>::{<span class="ident">Borrowed</span>, <span class="ident">Owned</span>};
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EncodedValue</span> {
-    <span class="kw">pub</span> <span class="ident">buf</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">buf</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">EncodedValue</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">buf</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">buf</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> { <span class="ident">buf</span> }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">has_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">has_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">is_some</span>()
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">buf</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">buf</span> {
             <span class="ident">buf</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
         } <span class="kw">else</span> {
@@ -807,7 +807,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">buf</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">buf</span> {
             <span class="ident">buf</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
         } <span class="kw">else</span> {
@@ -817,250 +817,250 @@
 }
 
 <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">trait</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>: <span class="ident">Sized</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span>;
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span>;
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span>;
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>;
-    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span>;
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span>;
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>;
+    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="number">0</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>;
-    <span class="kw">fn</span> <span class="ident">decimal_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>;
+    <span class="kw">fn</span> <span class="ident">decimal_digits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLSMALLINT</span> {
         <span class="number">0</span>
     }
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span>;
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span>;
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span>[<span class="ident">u8</span>] {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_EXT_VARBINARY</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_BINARY</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">buffer</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="self">self</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_EXT_VARBINARY</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_BINARY</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">buffer</span>.<span class="ident">to_vec</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="self">self</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span>[<span class="ident">u16</span>] {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_EXT_WVARCHAR</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_WCHAR</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">unsafe</span> { <span class="ident">from_raw_parts</span>(<span class="ident">buffer</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">u16</span>, <span class="ident">buffer</span>.<span class="ident">len</span>() <span class="op">/</span> <span class="number">2</span>) }
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         (<span class="self">self</span>.<span class="ident">len</span>() <span class="op">*</span> <span class="number">2</span>) <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="number">2</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_EXT_WVARCHAR</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_WCHAR</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">buffer</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">from_raw_parts</span>(<span class="ident">buffer</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">u16</span>, <span class="ident">buffer</span>.<span class="ident">len</span>() <span class="op">/</span> <span class="number">2</span>) };
         <span class="ident">buffer</span>.<span class="ident">to_vec</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         (<span class="self">self</span>.<span class="ident">len</span>() <span class="op">*</span> <span class="number">2</span>) <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="number">2</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CString</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_VARCHAR</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_CHAR</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">CString</span>::<span class="ident">new</span>(<span class="ident">buffer</span>).<span class="ident">unwrap</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="self">self</span>.<span class="ident">as_bytes</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span>.<span class="ident">as_bytes</span>().<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="number">1</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">String</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_VARCHAR</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_CHAR</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">unsafe</span> { ::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span> }.<span class="ident">decode</span>(<span class="ident">buffer</span>).<span class="number">0</span>.<span class="ident">to_string</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="kw">unsafe</span> { ::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span> }.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="self">self</span>).<span class="number">0</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="kw">unsafe</span> { ::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span> }.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="self">self</span>).<span class="number">0</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="number">1</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">Some</span>(<span class="kw">unsafe</span> { ::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span> }.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="self">self</span>).<span class="number">0</span>.<span class="ident">to_vec</span>()))
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_VARCHAR</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_CHAR</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">cow</span> <span class="op">=</span> <span class="kw">unsafe</span> { ::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span> }.<span class="ident">decode</span>(<span class="ident">buffer</span>).<span class="number">0</span>;
         <span class="kw">match</span> <span class="ident">cow</span> {
-            <span class="ident">Borrowed</span>(<span class="ident">strref</span>) <span class="op">=&gt;</span> <span class="ident">strref</span>,
-            <span class="ident">Owned</span>(<span class="ident">_string</span>) <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Couldn&#39;t convert data to `&amp;str`. Try `String` or `Cow&lt;str&gt;` instead.&quot;</span>),
+            <span class="ident">Borrowed</span>(<span class="ident">strref</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">strref</span>,
+            <span class="ident">Owned</span>(<span class="ident">_string</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Couldn&#39;t convert data to `&amp;str`. Try `String` or `Cow&lt;str&gt;` instead.&quot;</span>),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="kw">unsafe</span> { ::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span> }.<span class="ident">encode</span>(<span class="self">self</span>).<span class="number">0</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="kw">unsafe</span> { ::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span> }.<span class="ident">encode</span>(<span class="self">self</span>).<span class="number">0</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="number">1</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">Some</span>(<span class="kw">unsafe</span> { ::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span> }.<span class="ident">encode</span>(<span class="kw-2">&amp;</span><span class="self">self</span>).<span class="number">0</span>.<span class="ident">to_vec</span>()))
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> ::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">str</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_VARCHAR</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_CHAR</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">unsafe</span> {::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span>.<span class="ident">decode</span>(<span class="ident">buffer</span>).<span class="number">0</span>}
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="kw">unsafe</span> { ::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span> }.<span class="ident">encode</span>(<span class="self">self</span>).<span class="number">0</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="kw">unsafe</span> { ::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span> }.<span class="ident">encode</span>(<span class="self">self</span>).<span class="number">0</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="number">1</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">Some</span>(<span class="kw">unsafe</span> { ::<span class="ident">environment</span>::<span class="ident">DB_ENCODING</span> }.<span class="ident">encode</span>(<span class="self">self</span>).<span class="number">0</span>.<span class="ident">to_vec</span>()))
     }
 }
 
-<span class="kw">fn</span> <span class="ident">convert_primitive</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">buf</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">T</span>
+<span class="kw">fn</span> <span class="ident">convert_primitive</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">buf</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Copy</span>,
 {
@@ -1068,266 +1068,266 @@
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u8</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_SMALLINT</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_UTINYINT</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">convert_primitive</span>(<span class="ident">buffer</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">i8</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_SMALLINT</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_STINYINT</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">convert_primitive</span>(<span class="ident">buffer</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">i16</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_SMALLINT</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_SSHORT</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">convert_primitive</span>(<span class="ident">buffer</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u16</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_SMALLINT</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_USHORT</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">convert_primitive</span>(<span class="ident">buffer</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">i32</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_INTEGER</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_SLONG</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">convert_primitive</span>(<span class="ident">buffer</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u32</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_INTEGER</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_ULONG</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">convert_primitive</span>(<span class="ident">buffer</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">i64</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_EXT_BIGINT</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_SBIGINT</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">convert_primitive</span>(<span class="ident">buffer</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u64</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_EXT_BIGINT</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_UBIGINT</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">convert_primitive</span>(<span class="ident">buffer</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">f32</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_FLOAT</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_FLOAT</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">convert_primitive</span>(<span class="ident">buffer</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">f64</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_DOUBLE</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_DOUBLE</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">convert_primitive</span>(<span class="ident">buffer</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">bool</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_EXT_BIT</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_BIT</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">buffer</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">1</span>);
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">buffer</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="number">1</span>);
         <span class="ident">buffer</span>[<span class="number">0</span>] <span class="op">&gt;</span> <span class="number">0</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="number">1</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
@@ -1335,14 +1335,14 @@
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">SqlDate</span> <span class="op">=</span> <span class="ident">ffi</span>::<span class="ident">SQL_DATE_STRUCT</span>;
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SqlDate</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_DATE</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_DATE</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buffer</span>.<span class="ident">len</span>(), <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>());
         <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">buffer</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> [<span class="ident">u8</span>; <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>()];
@@ -1350,14 +1350,14 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
@@ -1365,14 +1365,14 @@
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">SqlTime</span> <span class="op">=</span> <span class="ident">ffi</span>::<span class="ident">SQL_TIME_STRUCT</span>;
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SqlTime</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_TIME</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_TIME</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buffer</span>.<span class="ident">len</span>(), <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>());
         <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">buffer</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> [<span class="ident">u8</span>; <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>()];
@@ -1380,14 +1380,14 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
@@ -1395,14 +1395,14 @@
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">SqlTimestamp</span> <span class="op">=</span> <span class="ident">ffi</span>::<span class="ident">SQL_TIMESTAMP_STRUCT</span>;
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SqlTimestamp</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_TIMESTAMP</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_C_TYPE_TIMESTAMP</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buffer</span>.<span class="ident">len</span>(), <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>());
         <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">buffer</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> [<span class="ident">u8</span>; <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>()];
@@ -1410,14 +1410,14 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
@@ -1425,15 +1425,15 @@
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">SqlSsTime2</span> <span class="op">=</span> <span class="ident">ffi</span>::<span class="ident">SQL_SS_TIME2_STRUCT</span>;
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SqlSsTime2</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">ffi</span>::<span class="ident">SQL_EXT_VARBINARY</span>
     }
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="comment">// NOTE: ODBC 3.5 and earlier</span>
         <span class="ident">ffi</span>::<span class="ident">SQL_C_BINARY</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buffer</span>.<span class="ident">len</span>(), <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>());
         <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">buffer</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> [<span class="ident">u8</span>; <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>()];
@@ -1441,39 +1441,39 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span>
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="self">self</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span>
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
+    <span class="kw">fn</span> <span class="ident">sql_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlDataType</span> {
         <span class="ident">T</span>::<span class="ident">sql_data_type</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
+    <span class="kw">fn</span> <span class="ident">c_data_type</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SqlCDataType</span> {
         <span class="ident">T</span>::<span class="ident">c_data_type</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="prelude-val">Some</span>(<span class="ident">T</span>::<span class="ident">convert</span>(<span class="ident">buffer</span>))
     }
 
-    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
+    <span class="kw">fn</span> <span class="ident">column_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLULEN</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">t</span>) <span class="op">=</span> <span class="self">self</span> {
             <span class="ident">t</span>.<span class="ident">column_size</span>()
         } <span class="kw">else</span> {
             <span class="number">0</span>
         }
     }
-    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
+    <span class="kw">fn</span> <span class="ident">value_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLPOINTER</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">t</span>) <span class="op">=</span> <span class="self">self</span> {
             <span class="ident">t</span>.<span class="ident">value_ptr</span>()
         } <span class="kw">else</span> {
@@ -1481,11 +1481,11 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">null_bytes_count</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="ident">T</span>::<span class="ident">null_bytes_count</span>()
     }
     
-    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EncodedValue</span> {
+    <span class="kw">fn</span> <span class="ident">encoded_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EncodedValue</span> {
         <span class="ident">EncodedValue</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
     }
 }
@@ -1512,7 +1512,7 @@
 
                 <span class="kw">let</span> <span class="ident">enc</span> <span class="op">=</span> <span class="ident">string_value</span>.<span class="ident">encoded_value</span>();
                 <span class="comment">// println!(&quot;{} {:?}&quot;, enc.column_size(), enc.buf);</span>
-                <span class="kw">if</span> <span class="ident">checker</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span> <span class="op">||</span> <span class="op">!</span><span class="ident">checker</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">enc</span>.<span class="ident">value_ptr</span>()) {
+                <span class="kw">if</span> <span class="ident">checker</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="op">!</span><span class="ident">checker</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">enc</span>.<span class="ident">value_ptr</span>()) {
                     <span class="ident">checker</span>.<span class="ident">insert</span>(<span class="ident">enc</span>.<span class="ident">value_ptr</span>());
                     <span class="ident">encoded_values</span>.<span class="ident">push</span>(<span class="ident">enc</span>);
                 } <span class="kw">else</span> {
@@ -1530,7 +1530,7 @@
                 <span class="comment">// println!(&quot;org value =&gt; {}    address =&gt; {:?}&quot;, str_value, str_value.value_ptr());</span>
 
                 <span class="kw">let</span> <span class="ident">enc</span> <span class="op">=</span> <span class="ident">str_value</span>.<span class="ident">encoded_value</span>();
-                <span class="kw">if</span> <span class="ident">checker</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span> <span class="op">||</span> <span class="op">!</span><span class="ident">checker</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">enc</span>.<span class="ident">value_ptr</span>()) {
+                <span class="kw">if</span> <span class="ident">checker</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="op">!</span><span class="ident">checker</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">enc</span>.<span class="ident">value_ptr</span>()) {
                     <span class="ident">checker</span>.<span class="ident">insert</span>(<span class="ident">enc</span>.<span class="ident">value_ptr</span>());
                     <span class="ident">encoded_values</span>.<span class="ident">push</span>(<span class="ident">enc</span>);
                 } <span class="kw">else</span> {
@@ -1548,7 +1548,7 @@
                 <span class="comment">// println!(&quot;org value =&gt; {}    address =&gt; {:?}&quot;, cow_value, cow_value.value_ptr());</span>
 
                 <span class="kw">let</span> <span class="ident">enc</span> <span class="op">=</span> <span class="ident">cow_value</span>.<span class="ident">encoded_value</span>();
-                <span class="kw">if</span> <span class="ident">checker</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span> <span class="op">||</span> <span class="op">!</span><span class="ident">checker</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">enc</span>.<span class="ident">value_ptr</span>()) {
+                <span class="kw">if</span> <span class="ident">checker</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="op">!</span><span class="ident">checker</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">enc</span>.<span class="ident">value_ptr</span>()) {
                     <span class="ident">checker</span>.<span class="ident">insert</span>(<span class="ident">enc</span>.<span class="ident">value_ptr</span>());
                     <span class="ident">encoded_values</span>.<span class="ident">push</span>(<span class="ident">enc</span>);
                 } <span class="kw">else</span> {
@@ -1561,4 +1561,4 @@
 
     }
 }</pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "odbc";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "odbc";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

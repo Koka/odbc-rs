@@ -6,5 +6,4 @@ implementors["odbc"] = [{text:"impl&lt;V&gt; <a class=\"trait\" href=\"odbc_safe
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

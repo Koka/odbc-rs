@@ -6,5 +6,4 @@ implementors["odbc_safe"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

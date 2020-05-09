@@ -6,5 +6,4 @@ implementors["odbc_safe"] = [{text:"impl&lt;'env, AC:&nbsp;<a class=\"trait\" hr
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

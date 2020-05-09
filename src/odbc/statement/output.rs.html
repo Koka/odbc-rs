@@ -113,7 +113,7 @@
         <span class="ident">stmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Raii</span><span class="op">&lt;</span><span class="ident">ffi</span>::<span class="ident">Stmt</span><span class="op">&gt;</span>,
         <span class="ident">col_or_param_num</span>: <span class="ident">u16</span>,
         <span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
-    ) <span class="op">-&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;&gt;</span>;
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span><span class="op">&gt;</span>;
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Output</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">T</span>
@@ -124,17 +124,17 @@
         <span class="ident">stmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Raii</span><span class="op">&lt;</span><span class="ident">ffi</span>::<span class="ident">Stmt</span><span class="op">&gt;</span>,
         <span class="ident">col_or_param_num</span>: <span class="ident">u16</span>,
         <span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
-    ) <span class="op">-&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="ident">stmt</span>.<span class="ident">get_data</span>(<span class="ident">col_or_param_num</span>, <span class="ident">buffer</span>)
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Raii</span><span class="op">&lt;</span><span class="ident">ffi</span>::<span class="ident">Stmt</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span> <span class="ident">Raii</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span>, <span class="ident">ffi</span>::<span class="ident">Stmt</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">get_data</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">col_or_param_num</span>: <span class="ident">u16</span>,
         <span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>
-    ) <span class="op">-&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">T</span>: <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
     {
@@ -146,11 +146,11 @@
         <span class="ident">col_or_param_num</span>: <span class="ident">u16</span>,
         <span class="ident">buffer</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
         <span class="ident">start_pos</span>: <span class="ident">usize</span>
-    ) <span class="op">-&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Return</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">T</span>: <span class="ident">OdbcType</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
     {
-        <span class="kw">if</span> <span class="ident">buffer</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">start_pos</span> <span class="op">==</span> <span class="number">0</span> {
+        <span class="kw">if</span> <span class="ident">buffer</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">start_pos</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;buffer length may not be zero&quot;</span>);
         }
         <span class="kw">if</span> <span class="ident">buffer</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">start_pos</span> <span class="op">&gt;</span> <span class="ident">ffi</span>::<span class="ident">SQLLEN</span>::<span class="ident">max_value</span>() <span class="kw">as</span> <span class="ident">usize</span> {
@@ -167,16 +167,16 @@
                 <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">indicator</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">SQLLEN</span>,
             ) };
         <span class="kw">match</span> <span class="ident">result</span> {
-            <span class="ident">ffi</span>::<span class="ident">SQL_SUCCESS</span> <span class="op">=&gt;</span> {
-                <span class="kw">if</span> <span class="ident">indicator</span> <span class="op">==</span> <span class="ident">ffi</span>::<span class="ident">SQL_NULL_DATA</span> {
+            <span class="ident">ffi</span>::<span class="ident">SQL_SUCCESS</span> <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="kw">if</span> <span class="ident">indicator</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ffi</span>::<span class="ident">SQL_NULL_DATA</span> {
                     <span class="ident">Return</span>::<span class="ident">Success</span>(<span class="prelude-val">None</span>)
                 } <span class="kw">else</span> {
-                    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">start_pos</span> <span class="op">+</span> <span class="ident">indicator</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">&lt;=</span> <span class="ident">buffer</span>.<span class="ident">len</span>(), <span class="string">&quot;no more data but indicatior outside of data buffer&quot;</span>);
+                    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">start_pos</span> <span class="op">+</span> <span class="ident">indicator</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">buffer</span>.<span class="ident">len</span>(), <span class="string">&quot;no more data but indicatior outside of data buffer&quot;</span>);
                     <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">buffer</span>[..(<span class="ident">start_pos</span> <span class="op">+</span> <span class="ident">indicator</span> <span class="kw">as</span> <span class="ident">usize</span>)];
                     <span class="ident">Return</span>::<span class="ident">Success</span>(<span class="prelude-val">Some</span>(<span class="ident">T</span>::<span class="ident">convert</span>(<span class="ident">slice</span>)))
                 }
             }
-            <span class="ident">ffi</span>::<span class="ident">SQL_SUCCESS_WITH_INFO</span> <span class="op">=&gt;</span> {
+            <span class="ident">ffi</span>::<span class="ident">SQL_SUCCESS_WITH_INFO</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">initial_len</span> <span class="op">=</span> <span class="ident">buffer</span>.<span class="ident">len</span>();
                 <span class="comment">// // As a workaround for drivers that don&#39;t include tailing null(s) check if last bytes are null</span>
                 <span class="comment">// let null_offset = if buffer.ends_with(T::null_bytes()) { T::null_bytes().len() } else { 0 };</span>
@@ -186,12 +186,12 @@
                 <span class="comment">// amount of null-terminators to do the workaround.</span>
 
                 <span class="kw">let</span> <span class="ident">null_offset</span> <span class="op">=</span> <span class="ident">T</span>::<span class="ident">null_bytes_count</span>();
-                <span class="kw">if</span> <span class="ident">indicator</span> <span class="op">==</span> <span class="ident">ffi</span>::<span class="ident">SQL_NO_TOTAL</span> {
+                <span class="kw">if</span> <span class="ident">indicator</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ffi</span>::<span class="ident">SQL_NO_TOTAL</span> {
                     <span class="ident">buffer</span>.<span class="ident">resize</span>(<span class="ident">initial_len</span> <span class="op">*</span> <span class="number">2</span>, <span class="number">0</span>);
                     <span class="kw">return</span> <span class="self">self</span>.<span class="ident">get_partial_data</span>(<span class="ident">col_or_param_num</span>, <span class="ident">buffer</span>, <span class="ident">initial_len</span> <span class="op">-</span> <span class="ident">null_offset</span>);
                 } <span class="kw">else</span> {
                     <span class="comment">// Check if string has been truncated.</span>
-                    <span class="kw">if</span> <span class="ident">indicator</span> <span class="op">&gt;=</span> <span class="ident">initial_len</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLLEN</span> {
+                    <span class="kw">if</span> <span class="ident">indicator</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">initial_len</span> <span class="kw">as</span> <span class="ident">ffi</span>::<span class="ident">SQLLEN</span> {
                         <span class="ident">buffer</span>.<span class="ident">resize</span>(<span class="ident">indicator</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">+</span> <span class="ident">T</span>::<span class="ident">null_bytes_count</span>(), <span class="number">0</span>);
                         <span class="kw">return</span> <span class="self">self</span>.<span class="ident">get_partial_data</span>(<span class="ident">col_or_param_num</span>, <span class="ident">buffer</span>, <span class="ident">initial_len</span> <span class="op">-</span> <span class="ident">null_offset</span>);
                     } <span class="kw">else</span> {
@@ -201,11 +201,11 @@
                     }
                 }
             }
-            <span class="ident">ffi</span>::<span class="ident">SQL_ERROR</span> <span class="op">=&gt;</span> <span class="ident">Return</span>::<span class="ident">Error</span>,
-            <span class="ident">ffi</span>::<span class="ident">SQL_NO_DATA</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;SQLGetData has already returned the colmun data&quot;</span>),
-            <span class="ident">r</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unexpected return value from SQLGetData: {:?}&quot;</span>, <span class="ident">r</span>),
+            <span class="ident">ffi</span>::<span class="ident">SQL_ERROR</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Return</span>::<span class="ident">Error</span>,
+            <span class="ident">ffi</span>::<span class="ident">SQL_NO_DATA</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;SQLGetData has already returned the colmun data&quot;</span>),
+            <span class="ident">r</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unexpected return value from SQLGetData: {:?}&quot;</span>, <span class="ident">r</span>),
         }
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "odbc";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "odbc";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

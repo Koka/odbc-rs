@@ -9,5 +9,4 @@ implementors["odbc_sys"] = [{text:"impl <a class=\"trait\" href=\"https://doc.ru
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()
