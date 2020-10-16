@@ -24,7 +24,7 @@ doc-comment = "0.3.1"
 
 [dev-dependencies]
 chrono = "0.4"
-env_logger = "0.7"
+env_logger = "0.8"
 
 [badges]
 travis-ci = { repository = "Koka/odbc-rs", branch = "master" }
