@@ -15,11 +15,17 @@ pub static mut DB_ENCODING: &encoding_rs::Encoding = encoding_rs::UTF_8;
 /// Creating an instance of this type is the first thing you do then using ODBC. The environment
 /// must outlive all connections created with it.
 #[derive(Debug)]
-pub struct Environment<V> {
+pub struct Environment<V>
+where
+    V: safe::Version,
+{
     safe: safe::Environment<V>,
 }
 
-impl<V> Handle for Environment<V> {
+impl<V> Handle for Environment<V>
+where
+    V: safe::Version,
+{
     type To = ffi::Env;
     unsafe fn handle(&self) -> ffi::SQLHENV {
         self.safe.as_raw()
@@ -66,7 +72,10 @@ impl<V: safe::Version> Environment<V> {
     }
 }
 
-unsafe impl<V> safe::Handle for Environment<V> {
+unsafe impl<V> safe::Handle for Environment<V>
+where
+    V: safe::Version,
+{
     const HANDLE_TYPE : ffi::HandleType = ffi::SQL_HANDLE_ENV;
 
     fn handle(&self) -> ffi::SQLHANDLE {
