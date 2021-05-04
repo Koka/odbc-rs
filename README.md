@@ -4,6 +4,8 @@ Library for writing [ODBC](https://msdn.microsoft.com/en-us/library/ms710154.asp
 
 If you're looking for raw ODBC FFI bindings check [odbc-safe](https://github.com/pacman82/odbc-safe) and [odbc-sys](https://github.com/pacman82/odbc-sys) crate.
 
+[![Project Status: Unsupported – The project has reached a stable, usable state but the author(s) have ceased all work on it. A new maintainer may be desired.](https://www.repostatus.org/badges/latest/unsupported.svg)](https://www.repostatus.org/#unsupported)
+
 [![https://travis-ci.org/Koka/odbc-rs](https://travis-ci.org/Koka/odbc-rs.svg?branch=master)](https://travis-ci.org/Koka/odbc-rs)
 [![Build status](https://ci.appveyor.com/api/projects/status/45ovhoic0wg7mnv5/branch/master?svg=true)](https://ci.appveyor.com/project/Koka/odbc-rs/branch/master)
 [![https://crates.io/crates/odbc](https://meritbadge.herokuapp.com/odbc#nocache8)](https://crates.io/crates/odbc)
