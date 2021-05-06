@@ -17,7 +17,7 @@ Docs are also available [here](http://koka.github.io/odbc-rs/odbc/)
 
 ```rust
 extern crate odbc;
-// Use this crate and set environmet variable RUST_LOG=odbc to see ODBC warnings
+// Use this crate and set environment variable RUST_LOG=odbc to see ODBC warnings
 extern crate env_logger;
 use odbc::*;
 use std::io;
@@ -45,7 +45,7 @@ fn connect() -> std::result::Result<(), DiagnosticRecord> {
     execute_statement(&conn)
 }
 
-fn execute_statement<'env>(conn: &Connection<'env, AutocommitOn>) -> Result<()> {
+fn execute_statement(conn: &Connection<AutocommitOn>) -> Result<()> {
     let stmt = Statement::with_parent(conn)?;
 
     let mut sql_text = String::new();
@@ -53,7 +53,7 @@ fn execute_statement<'env>(conn: &Connection<'env, AutocommitOn>) -> Result<()> 
     io::stdin().read_line(&mut sql_text).unwrap();
 
     match stmt.exec_direct(&sql_text)? {
-        Data(mut stmt) => {
+        odbc::ResultSetState::Data(mut stmt) => {
             let cols = stmt.num_result_cols()?;
             while let Some(mut cursor) = stmt.fetch()? {
                 for i in 1..(cols + 1) {
@@ -65,10 +65,9 @@ fn execute_statement<'env>(conn: &Connection<'env, AutocommitOn>) -> Result<()> 
                 println!("");
             }
         }
-        NoData(_) => println!("Query executed, no data returned"),
+        odbc::ResultSetState::NoData(_) => println!("Query executed, no data returned"),
     }
 
     Ok(())
 }
-
 ```
