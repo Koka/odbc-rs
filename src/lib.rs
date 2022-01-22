@@ -5,8 +5,7 @@
 //!
 //! [What is ODBC?](https://docs.microsoft.com/en-us/sql/odbc/reference/what-is-odbc)
 //!
-//! [ODBC Programmer's Reference]
-//! (https://docs.microsoft.com/en-us/sql/odbc/reference/odbc-programmer-s-reference)
+//! [ODBC Programmer's Reference](https://docs.microsoft.com/en-us/sql/odbc/reference/odbc-programmer-s-reference)
 //!
 //! # Internal Design
 //!
@@ -18,11 +17,9 @@
 //! in a valid state and state transitions are modeled in the type system. This should eliminate
 //! the possibility of function sequence errors in safe code.
 //!
-//! [Basic ODBC Application Steps]
-//! (https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/basic-odbc-application-steps)
+//! [Basic ODBC Application Steps](https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/basic-odbc-application-steps)
 //!
-//! [ODBC State Transitions]
-//! (https://docs.microsoft.com/en-us/sql/odbc/reference/appendixes/appendix-b-odbc-state-transition-tables)
+//! [ODBC State Transitions](https://docs.microsoft.com/en-us/sql/odbc/reference/appendixes/appendix-b-odbc-state-transition-tables)
 
 #[macro_use]
 extern crate log;
