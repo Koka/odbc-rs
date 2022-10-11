@@ -5,8 +5,7 @@
 //!
 //! [What is ODBC?](https://docs.microsoft.com/en-us/sql/odbc/reference/what-is-odbc)
 //!
-//! [ODBC Programmer's Reference]
-//! (https://docs.microsoft.com/en-us/sql/odbc/reference/odbc-programmer-s-reference)
+//! [ODBC Programmer's Reference](https://docs.microsoft.com/en-us/sql/odbc/reference/odbc-programmer-s-reference)
 //!
 //! # Internal Design
 //!
@@ -18,38 +17,35 @@
 //! in a valid state and state transitions are modeled in the type system. This should eliminate
 //! the possibility of function sequence errors in safe code.
 //!
-//! [Basic ODBC Application Steps]
-//! (https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/basic-odbc-application-steps)
+//! [Basic ODBC Application Steps](https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/basic-odbc-application-steps)
 //!
-//! [ODBC State Transitions]
-//! (https://docs.microsoft.com/en-us/sql/odbc/reference/appendixes/appendix-b-odbc-state-transition-tables)
+//! [ODBC State Transitions](https://docs.microsoft.com/en-us/sql/odbc/reference/appendixes/appendix-b-odbc-state-transition-tables)
 
 #[macro_use]
 extern crate log;
-pub extern crate odbc_safe;
 extern crate encoding_rs;
+pub extern crate odbc_safe;
 
 pub mod ffi;
 
-pub use diagnostics::{DiagnosticRecord, GetDiagRec};
-pub use result::Result;
-pub use environment::*;
 pub use connection::Connection;
+pub use diagnostics::{DiagnosticRecord, GetDiagRec};
+pub use environment::*;
+pub use result::Result;
 pub use statement::*;
 
 use odbc_object::OdbcObject;
-use raii::Raii;
-use result::{Return, into_result, try_into_option};
 pub use odbc_safe as safe;
+use raii::Raii;
+use result::{into_result, try_into_option, Return};
 
+mod connection;
+mod diagnostics;
+mod environment;
 mod odbc_object;
 mod raii;
-mod diagnostics;
 mod result;
-mod environment;
-mod connection;
 mod statement;
-
 
 /// Reflects the ability of a type to expose a valid handle
 pub trait Handle {
