@@ -32,8 +32,8 @@ impl Environment<Version3> {
 
     /// Connects to an ODBC data source using a connection string
     ///
-    /// See [SQLDriverConnect][1] for the syntax.
-    /// [1]: https://docs.microsoft.com/en-us/sql/odbc/reference/syntax/sqldriverconnect-function
+    /// See [SQLDriverConnect](https://docs.microsoft.com/en-us/sql/odbc/reference/syntax/sqldriverconnect-function)
+    /// for the syntax.
     pub fn connect_with_connection_string<'env>(
         &'env self,
         connection_str: &str,
@@ -75,7 +75,6 @@ impl <'env> Connection<'env, AutocommitOff> {
         into_result_with(&self.safe, ret)
     }
 }
-
 
 impl<'env, AC: AutocommitMode> Connection<'env, AC> {
     /// `true` if the data source is set to READ ONLY mode, `false` otherwise.
