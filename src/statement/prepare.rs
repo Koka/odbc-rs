@@ -1,6 +1,8 @@
-use {ffi, ColumnDescriptor, Raii, Return, Handle, Statement, Result, Prepared, Allocated,
-     NoResult, ResultSetState};
 use odbc_safe::AutocommitMode;
+use {
+    ffi, Allocated, ColumnDescriptor, Handle, NoResult, Prepared, Raii, Result, ResultSetState,
+    Return, Statement,
+};
 
 impl<'a, 'b, AC: AutocommitMode> Statement<'a, 'b, Allocated, NoResult, AC> {
     /// Prepares a statement for execution. Executing a prepared statement is faster than directly
@@ -43,7 +45,6 @@ impl<'a, 'b, AC: AutocommitMode> Statement<'a, 'b, Allocated, NoResult, AC> {
         Ok(Statement::with_raii(self.raii))
     }
 
-
     /// Prepares a statement for execution. Executing a prepared statement is faster than directly
     /// executing an unprepared statement, since it is already compiled into an Access Plan. This
     /// makes preparing statement a good idea if you want to repeatedly execute a query with a
@@ -63,7 +64,10 @@ impl<'a, 'b, AC: AutocommitMode> Statement<'a, 'b, Allocated, NoResult, AC> {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn prepare_bytes(mut self, bytes: &[u8]) -> Result<Statement<'a, 'b, Prepared, NoResult, AC>> {
+    pub fn prepare_bytes(
+        mut self,
+        bytes: &[u8],
+    ) -> Result<Statement<'a, 'b, Prepared, NoResult, AC>> {
         self.raii.prepare_byte(bytes).into_result(&mut self)?;
         Ok(Statement::with_raii(self.raii))
     }
@@ -100,7 +104,9 @@ impl<'a, 'b, AC: AutocommitMode> Statement<'a, 'b, Prepared, NoResult, AC> {
 
 impl<'p> Raii<'p, ffi::Stmt> {
     fn prepare(&mut self, sql_text: &str) -> Return<()> {
-        let bytes = unsafe { crate::environment::DB_ENCODING }.encode(sql_text).0;
+        let bytes = unsafe { crate::environment::DB_ENCODING }
+            .encode(sql_text)
+            .0;
         match unsafe {
             ffi::SQLPrepare(
                 self.handle(),

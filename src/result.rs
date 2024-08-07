@@ -27,7 +27,9 @@ impl<T> Return<T> {
             }
             Return::Error => {
                 // Return the first record
-                let diag = odbc_object.get_diag_rec(1).unwrap_or_else(DiagnosticRecord::empty);
+                let diag = odbc_object
+                    .get_diag_rec(1)
+                    .unwrap_or_else(DiagnosticRecord::empty);
                 error!("{}", diag);
                 let mut i = 2;
                 // log the rest
@@ -40,7 +42,6 @@ impl<T> Return<T> {
         }
     }
 }
-
 
 // temporary glue code to odbc-safe
 pub fn try_into_option<T, E, D>(ret: safe::ReturnOption<T, E>, handle: &D) -> Result<Option<T>>
@@ -60,7 +61,9 @@ where
         safe::ReturnOption::NoData(_) => Ok(None),
         safe::ReturnOption::Error(_) => {
             // Return the first record
-            let diag = handle.get_diag_rec(1).unwrap_or_else(DiagnosticRecord::empty);
+            let diag = handle
+                .get_diag_rec(1)
+                .unwrap_or_else(DiagnosticRecord::empty);
             error!("{}", diag);
             let mut i = 2;
             // log the rest
@@ -91,7 +94,9 @@ where
         }
         safe::Return::Error(value) => {
             // Return the first record
-            let diag = value.get_diag_rec(1).unwrap_or_else(DiagnosticRecord::empty);
+            let diag = value
+                .get_diag_rec(1)
+                .unwrap_or_else(DiagnosticRecord::empty);
             error!("{}", diag);
             let mut i = 2;
             // log the rest

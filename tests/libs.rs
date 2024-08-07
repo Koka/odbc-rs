@@ -6,7 +6,6 @@ use odbc_safe::AutocommitOn;
 
 #[test]
 fn list_tables() {
-
     let env = create_environment_v3().unwrap();
     let ds = env.connect("TestDataSource", "", "").unwrap();
     // scope is required (for now) to close statement before disconnecting
@@ -19,17 +18,18 @@ fn list_tables() {
         let mut cur = rs.unwrap();
         assert_eq!(cur.get_data::<String>(1).unwrap(), None);
         assert_eq!(cur.get_data::<String>(2).unwrap(), None);
-        assert_eq!(cur.get_data::<String>(3).unwrap(), Some("MOVIES".to_owned()));
+        assert_eq!(
+            cur.get_data::<String>(3).unwrap(),
+            Some("MOVIES".to_owned())
+        );
         assert_eq!(cur.get_data::<String>(4).unwrap(), Some("TABLE".to_owned()));
         assert_eq!(cur.get_data::<String>(5).unwrap(), None);
-
     }
     ds.disconnect().unwrap();
 }
 
 #[test]
 fn not_read_only() {
-
     let env = create_environment_v3().unwrap();
     let mut conn = env.connect("TestDataSource", "", "").unwrap();
 
@@ -39,7 +39,6 @@ fn not_read_only() {
 
 #[test]
 fn implicit_disconnect() {
-
     let env = create_environment_v3().unwrap();
     env.connect("TestDataSource", "", "").unwrap();
 
@@ -49,7 +48,6 @@ fn implicit_disconnect() {
 
 #[test]
 fn invalid_connection_string() {
-
     let expected = if cfg!(target_os = "windows") {
         "State: IM002, Native error: 0, Message: [Microsoft][ODBC Driver Manager] Data source \
             name not found and no default driver specified"
@@ -66,7 +64,6 @@ fn invalid_connection_string() {
 
 #[test]
 fn test_connection_string() {
-
     let environment = create_environment_v3().unwrap();
     let conn = environment
         .connect_with_connection_string("dsn=TestDataSource;Uid=;Pwd=;")
@@ -80,8 +77,10 @@ fn test_direct_select() {
     let conn = env.connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
-    let mut stmt = match stmt.exec_direct("SELECT TITLE, YEAR FROM MOVIES ORDER BY YEAR")
-        .unwrap() {
+    let mut stmt = match stmt
+        .exec_direct("SELECT TITLE, YEAR FROM MOVIES ORDER BY YEAR")
+        .unwrap()
+    {
         Data(stmt) => stmt,
         NoData(_) => panic!("SELECT statement did not return result set!"),
     };
@@ -102,8 +101,8 @@ fn test_direct_select() {
         })
     }
 
-    let check = actual ==
-        vec![
+    let check = actual
+        == vec![
             Movie {
                 title: "2001: A Space Odyssey".to_owned(),
                 year: 1968,
@@ -125,13 +124,17 @@ fn reuse_statement() {
     let conn = env.connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
-    let stmt = match stmt.exec_direct("CREATE TABLE STAGE (A VARCHAR, B VARCHAR);")
-        .unwrap() {
+    let stmt = match stmt
+        .exec_direct("CREATE TABLE STAGE (A VARCHAR, B VARCHAR);")
+        .unwrap()
+    {
         Data(stmt) => stmt.close_cursor().unwrap(), //A result set has been returned, we need to close it.
         NoData(stmt) => stmt,
     };
-    let stmt = match stmt.exec_direct("INSERT INTO STAGE (A, B) VALUES ('Hello', 'World');")
-        .unwrap() {
+    let stmt = match stmt
+        .exec_direct("INSERT INTO STAGE (A, B) VALUES ('Hello', 'World');")
+        .unwrap()
+    {
         Data(stmt) => stmt.close_cursor().unwrap(),
         NoData(stmt) => stmt,
     };
@@ -156,7 +159,8 @@ fn execution_with_parameter() {
     let param = 1968;
     let stmt = stmt.bind_parameter(1, &param).unwrap();
 
-    if let Data(mut stmt) = stmt.exec_direct("SELECT TITLE FROM MOVIES WHERE YEAR = ?")
+    if let Data(mut stmt) = stmt
+        .exec_direct("SELECT TITLE FROM MOVIES WHERE YEAR = ?")
         .unwrap()
     {
         let mut cursor = stmt.fetch().unwrap().unwrap();
@@ -174,7 +178,8 @@ fn prepared_execution() {
     let env = create_environment_v3().unwrap();
     let conn = env.connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
-    let stmt = stmt.prepare("SELECT TITLE FROM MOVIES WHERE YEAR = ?")
+    let stmt = stmt
+        .prepare("SELECT TITLE FROM MOVIES WHERE YEAR = ?")
         .unwrap();
 
     fn execute_query<'a>(
@@ -193,7 +198,7 @@ fn prepared_execution() {
             panic!("SELECT statement returned no result set");
         };
         stmt.reset_parameters()
-    };
+    }
 
     let stmt = execute_query(1968, "2001: A Space Odyssey", stmt).unwrap();
     execute_query(1993, "Jurassic Park", stmt).unwrap();
@@ -219,9 +224,9 @@ fn list_drivers() {
 #[test]
 fn list_data_sources() {
     let mut environment = create_environment_v3().unwrap();
-    let sources = environment.data_sources().expect(
-        "Data sources can be iterated over",
-    );
+    let sources = environment
+        .data_sources()
+        .expect("Data sources can be iterated over");
     println!("{:?}", sources);
 
     let expected = [
@@ -241,9 +246,9 @@ fn list_data_sources() {
 #[test]
 fn list_user_data_sources() {
     let mut environment = create_environment_v3().unwrap();
-    let sources = environment.user_data_sources().expect(
-        "Data sources can be iterated over",
-    );
+    let sources = environment
+        .user_data_sources()
+        .expect("Data sources can be iterated over");
     println!("{:?}", sources);
 
     let expected = [
@@ -263,9 +268,9 @@ fn list_user_data_sources() {
 #[test]
 fn list_system_data_sources() {
     let mut environment = create_environment_v3().unwrap();
-    let sources = environment.system_data_sources().expect(
-        "Data sources can be iterated over",
-    );
+    let sources = environment
+        .system_data_sources()
+        .expect("Data sources can be iterated over");
     println!("{:?}", sources);
 
     let expected: [DataSourceInfo; 0] = [];
@@ -278,14 +283,16 @@ fn read_big_string() {
     let conn = env.connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
-    let stmt = match stmt.exec_direct("CREATE TABLE READ_BIG_STRING (DATA TEXT)").unwrap() {
+    let stmt = match stmt
+        .exec_direct("CREATE TABLE READ_BIG_STRING (DATA TEXT)")
+        .unwrap()
+    {
         Data(stmt) => stmt.close_cursor().unwrap(),
         NoData(stmt) => stmt,
     };
     let data = "Hello, World".repeat(43);
     assert!(data.len() > 512);
-    stmt
-        .prepare("INSERT INTO READ_BIG_STRING VALUES (?)")
+    stmt.prepare("INSERT INTO READ_BIG_STRING VALUES (?)")
         .unwrap()
         .bind_parameter(1, &data)
         .unwrap()
@@ -324,22 +331,27 @@ fn zero_truncation_bug() {
     let conn = env.connect("TestDataSource", "", "").unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
 
-    let stmt = match stmt.exec_direct("CREATE TABLE ZERO_TRUNCATION_BUG (DATA BLOB);").unwrap() {
+    let stmt = match stmt
+        .exec_direct("CREATE TABLE ZERO_TRUNCATION_BUG (DATA BLOB);")
+        .unwrap()
+    {
         Data(stmt) => stmt.close_cursor().unwrap(),
         NoData(stmt) => stmt,
     };
     // Reproduction of zeroes truncation bug. Until now there is no chance to query binary data
     // with zero at 512 byte border.
-    let data = vec![0;513];
-    stmt
-        .prepare("INSERT INTO ZERO_TRUNCATION_BUG VALUES (?)")
+    let data = vec![0; 513];
+    stmt.prepare("INSERT INTO ZERO_TRUNCATION_BUG VALUES (?)")
         .unwrap()
         .bind_parameter(1, &data)
         .unwrap()
         .execute()
         .unwrap();
     let stmt = Statement::with_parent(&conn).unwrap();
-    if let Data(mut stmt) = stmt.exec_direct("SELECT DATA FROM ZERO_TRUNCATION_BUG").unwrap() {
+    if let Data(mut stmt) = stmt
+        .exec_direct("SELECT DATA FROM ZERO_TRUNCATION_BUG")
+        .unwrap()
+    {
         {
             let mut cursor = stmt.fetch().unwrap().unwrap();
             let data0 = cursor.get_data::<Vec<u8>>(1).unwrap().unwrap();

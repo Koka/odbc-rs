@@ -1,7 +1,7 @@
 //! Holds implementation of odbc connection
-use super::{ffi, safe, Environment, Handle, Result, Version3};
 use super::result::{into_result, into_result_with};
-use odbc_safe::{AutocommitMode, AutocommitOn, AutocommitOff};
+use super::{ffi, safe, Environment, Handle, Result, Version3};
+use odbc_safe::{AutocommitMode, AutocommitOff, AutocommitOn};
 
 /// Represents a connection to an ODBC data source
 #[derive(Debug)]
@@ -24,7 +24,12 @@ impl Environment<Version3> {
     /// * `dsn` - Data source name configured in the `odbc.ini` file
     /// * `usr` - User identifier
     /// * `pwd` - Authentication (usually password)
-    pub fn connect<'env>(&'env self, dsn: &str, usr: &str, pwd: &str) -> Result<Connection<'env, AutocommitOn>> {
+    pub fn connect<'env>(
+        &'env self,
+        dsn: &str,
+        usr: &str,
+        pwd: &str,
+    ) -> Result<Connection<'env, AutocommitOn>> {
         let safe = into_result_with(self, safe::DataSource::with_parent(self.as_safe()))?;
         let safe = into_result(safe.connect(dsn, usr, pwd))?;
         Ok(Connection { safe })
@@ -44,24 +49,24 @@ impl Environment<Version3> {
     }
 }
 
-impl <'env> Connection<'env, AutocommitOn> {
-    pub fn disable_autocommit(mut self) -> std::result::Result<Connection<'env, AutocommitOff>, Self> {
+impl<'env> Connection<'env, AutocommitOn> {
+    pub fn disable_autocommit(self) -> std::result::Result<Connection<'env, AutocommitOff>, Self> {
         let ret = self.safe.disable_autocommit();
         match ret {
             safe::Return::Success(value) => Ok(Connection { safe: value }),
             safe::Return::Info(value) => Ok(Connection { safe: value }),
-            safe::Return::Error(value) => Err(Connection { safe: value })
+            safe::Return::Error(value) => Err(Connection { safe: value }),
         }
     }
 }
 
-impl <'env> Connection<'env, AutocommitOff> {
-    pub fn enable_autocommit(mut self) -> std::result::Result<Connection<'env, AutocommitOn>, Self> {
+impl<'env> Connection<'env, AutocommitOff> {
+    pub fn enable_autocommit(self) -> std::result::Result<Connection<'env, AutocommitOn>, Self> {
         let ret = self.safe.enable_autocommit();
         match ret {
             safe::Return::Success(value) => Ok(Connection { safe: value }),
             safe::Return::Info(value) => Ok(Connection { safe: value }),
-            safe::Return::Error(value) => Err(Connection { safe: value })
+            safe::Return::Error(value) => Err(Connection { safe: value }),
         }
     }
 
@@ -75,7 +80,6 @@ impl <'env> Connection<'env, AutocommitOff> {
         into_result_with(&self.safe, ret)
     }
 }
-
 
 impl<'env, AC: AutocommitMode> Connection<'env, AC> {
     /// `true` if the data source is set to READ ONLY mode, `false` otherwise.

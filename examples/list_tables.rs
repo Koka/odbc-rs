@@ -7,7 +7,6 @@ use odbc::*;
 use odbc_safe::AutocommitOn;
 
 fn main() {
-
     env_logger::init();
 
     match connect() {

@@ -1,7 +1,7 @@
 use super::{ffi, safe};
-use std::{fmt, cmp};
-use std::ffi::CStr;
 use std::error::Error;
+use std::ffi::CStr;
+use std::{cmp, fmt};
 
 pub const MAX_DIAGNOSTIC_MESSAGE_SIZE: usize = 1024;
 
@@ -74,7 +74,7 @@ impl Error for DiagnosticRecord {
     fn description(&self) -> &str {
         &self.message_string
     }
-    fn cause(&self) -> Option<& dyn Error> {
+    fn cause(&self) -> Option<&dyn Error> {
         None
     }
 }
@@ -93,7 +93,7 @@ impl<D> GetDiagRec for D
 where
     D: safe::Diagnostics,
 {
-    fn get_diag_rec(&self, record_number: i16) -> Option<(DiagnosticRecord)> {
+    fn get_diag_rec(&self, record_number: i16) -> Option<DiagnosticRecord> {
         use safe::ReturnOption::*;
         let mut message = [0; MAX_DIAGNOSTIC_MESSAGE_SIZE];
         match self.diagnostics(record_number, &mut message) {
@@ -139,12 +139,15 @@ mod test {
 
     #[test]
     fn formatting() {
-
         // build diagnostic record
         let message = b"[Microsoft][ODBC Driver Manager] Function sequence error\0";
         let mut rec = DiagnosticRecord::new();
         rec.state = b"HY010\0".clone();
-        rec.message_string = CStr::from_bytes_with_nul(message).unwrap().to_str().unwrap().to_owned();
+        rec.message_string = CStr::from_bytes_with_nul(message)
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_owned();
         rec.message_length = 56;
         for i in 0..(rec.message_length as usize) {
             rec.message[i] = message[i];

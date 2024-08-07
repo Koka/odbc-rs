@@ -1,15 +1,14 @@
-
-mod types;
 mod input;
 mod output;
 mod prepare;
+mod types;
 pub use self::output::Output;
-use {ffi, safe, Connection, Return, Result, Raii, Handle};
-use ffi::SQLRETURN::*;
-use ffi::Nullable;
-use std::marker::PhantomData;
 pub use self::types::OdbcType;
-pub use self::types::{SqlDate, SqlTime, SqlSsTime2, SqlTimestamp, EncodedValue};
+pub use self::types::{EncodedValue, SqlDate, SqlSsTime2, SqlTime, SqlTimestamp};
+use ffi::Nullable;
+use ffi::SQLRETURN::*;
+use std::marker::PhantomData;
+use {ffi, safe, Connection, Handle, Raii, Result, Return};
 
 // Allocate CHUNK_LEN elements at a time
 const CHUNK_LEN: usize = 64;
@@ -25,7 +24,8 @@ impl<T: Copy + Default> Chunks<T> {
         let chunk_no = i / CHUNK_LEN;
         if self.0.len() <= chunk_no {
             // Resizing Vec that holds pointers to heap allocated arrays so we don't invalidate the references
-            self.0.resize(chunk_no + 1, Box::new([T::default(); CHUNK_LEN]))
+            self.0
+                .resize(chunk_no + 1, Box::new([T::default(); CHUNK_LEN]))
         }
         let v = self.0[chunk_no].get_mut(i % CHUNK_LEN).unwrap();
         *v = value;
@@ -61,9 +61,9 @@ pub enum ResultSetState<'a, 'b, S, AC: AutocommitMode> {
     Data(Statement<'a, 'b, S, HasResult, AC>),
     NoData(Statement<'a, 'b, S, NoResult, AC>),
 }
-pub use ResultSetState::*;
-use std::ptr::null_mut;
 use odbc_safe::AutocommitMode;
+use std::ptr::null_mut;
+pub use ResultSetState::*;
 
 /// A `Statement` can be used to execute queries and retrieves results.
 pub struct Statement<'a, 'b, S, R, AC: AutocommitMode> {
@@ -124,16 +124,46 @@ impl<'a, 'b, 'env, AC: AutocommitMode> Statement<'a, 'b, Allocated, NoResult, AC
         self.raii.affected_row_count().into_result(self)
     }
 
-    pub fn tables(self, catalog_name: &String, schema_name: &String, table_name: &String, table_type: &String) -> Result<Statement<'a, 'b, Executed, HasResult, AC>> {
-        self.tables_str(catalog_name.as_str(), schema_name.as_str(), table_name.as_str(), table_type.as_str())
+    pub fn tables(
+        self,
+        catalog_name: &String,
+        schema_name: &String,
+        table_name: &String,
+        table_type: &String,
+    ) -> Result<Statement<'a, 'b, Executed, HasResult, AC>> {
+        self.tables_str(
+            catalog_name.as_str(),
+            schema_name.as_str(),
+            table_name.as_str(),
+            table_type.as_str(),
+        )
     }
 
-    pub fn tables_str(self, catalog_name: &str, schema_name: &str, table_name: &str, table_type: &str) -> Result<Statement<'a, 'b, Executed, HasResult, AC>> {
-        self.tables_opt_str(Option::Some(catalog_name), Option::Some(schema_name), Option::Some(table_name), table_type)
+    pub fn tables_str(
+        self,
+        catalog_name: &str,
+        schema_name: &str,
+        table_name: &str,
+        table_type: &str,
+    ) -> Result<Statement<'a, 'b, Executed, HasResult, AC>> {
+        self.tables_opt_str(
+            Option::Some(catalog_name),
+            Option::Some(schema_name),
+            Option::Some(table_name),
+            table_type,
+        )
     }
 
-    pub fn tables_opt_str(mut self, catalog_name: Option<&str>, schema_name: Option<&str>, table_name:Option<&str>, table_type: &str) -> Result<Statement<'a, 'b, Executed, HasResult, AC>> {
-        self.raii.tables(catalog_name, schema_name, table_name, table_type).into_result(&self)?;
+    pub fn tables_opt_str(
+        mut self,
+        catalog_name: Option<&str>,
+        schema_name: Option<&str>,
+        table_name: Option<&str>,
+        table_type: &str,
+    ) -> Result<Statement<'a, 'b, Executed, HasResult, AC>> {
+        self.raii
+            .tables(catalog_name, schema_name, table_name, table_type)
+            .into_result(&self)?;
         Ok(Statement::with_raii(self.raii))
     }
 
@@ -141,7 +171,10 @@ impl<'a, 'b, 'env, AC: AutocommitMode> Statement<'a, 'b, Allocated, NoResult, AC
     /// if any parameters exist in the statement.
     ///
     /// `SQLExecDirect` is the fastest way to submit an SQL statement for one-time execution.
-    pub fn exec_direct(mut self, statement_text: &str) -> Result<ResultSetState<'a, 'b, Executed, AC>> {
+    pub fn exec_direct(
+        mut self,
+        statement_text: &str,
+    ) -> Result<ResultSetState<'a, 'b, Executed, AC>> {
         if self.raii.exec_direct(statement_text).into_result(&self)? {
             let num_cols = self.raii.num_result_cols().into_result(&self)?;
             if num_cols > 0 {
@@ -158,7 +191,10 @@ impl<'a, 'b, 'env, AC: AutocommitMode> Statement<'a, 'b, Allocated, NoResult, AC
     /// if any parameters exist in the statement.
     ///
     /// `SQLExecDirect` is the fastest way to submit an SQL statement for one-time execution.
-    pub fn exec_direct_bytes(mut self, bytes: &[u8]) -> Result<ResultSetState<'a, 'b, Executed, AC>> {
+    pub fn exec_direct_bytes(
+        mut self,
+        bytes: &[u8],
+    ) -> Result<ResultSetState<'a, 'b, Executed, AC>> {
         if self.raii.exec_direct_bytes(bytes).into_result(&self)? {
             let num_cols = self.raii.num_result_cols().into_result(&self)?;
             if num_cols > 0 {
@@ -173,7 +209,6 @@ impl<'a, 'b, 'env, AC: AutocommitMode> Statement<'a, 'b, Allocated, NoResult, AC
 }
 
 impl<'a, 'b, S, AC: AutocommitMode> Statement<'a, 'b, S, HasResult, AC> {
-
     pub fn affected_row_count(&self) -> Result<ffi::SQLLEN> {
         self.raii.affected_row_count().into_result(self)
     }
@@ -296,7 +331,9 @@ impl<'p> Raii<'p, ffi::Stmt> {
                 &mut nullable as *mut ffi::Nullable,
             ) {
                 SQL_SUCCESS => Return::Success(ColumnDescriptor {
-                    name: ::environment::DB_ENCODING.decode(&name_buffer[..(name_length as usize)]).0
+                    name: ::environment::DB_ENCODING
+                        .decode(&name_buffer[..(name_length as usize)])
+                        .0
                         .to_string(),
                     data_type: data_type,
                     column_size: if column_size == 0 {
@@ -316,7 +353,9 @@ impl<'p> Raii<'p, ffi::Stmt> {
                     },
                 }),
                 SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(ColumnDescriptor {
-                    name: ::environment::DB_ENCODING.decode(&name_buffer[..(name_length as usize)]).0
+                    name: ::environment::DB_ENCODING
+                        .decode(&name_buffer[..(name_length as usize)])
+                        .0
                         .to_string(),
                     data_type: data_type,
                     column_size: if column_size == 0 {
@@ -339,22 +378,19 @@ impl<'p> Raii<'p, ffi::Stmt> {
                 r => panic!("SQLDescribeCol returned unexpected result: {:?}", r),
             }
         }
-
     }
 
     fn exec_direct(&mut self, statement_text: &str) -> Return<bool> {
-        let bytes = unsafe { crate::environment::DB_ENCODING }.encode(statement_text).0;
+        let bytes = unsafe { crate::environment::DB_ENCODING }
+            .encode(statement_text)
+            .0;
 
         let length = bytes.len();
         if length > ffi::SQLINTEGER::max_value() as usize {
             panic!("Statement text too long");
         }
         match unsafe {
-            ffi::SQLExecDirect(
-                self.handle(),
-                bytes.as_ptr(),
-                length as ffi::SQLINTEGER,
-            )
+            ffi::SQLExecDirect(self.handle(), bytes.as_ptr(), length as ffi::SQLINTEGER)
         } {
             ffi::SQL_SUCCESS => Return::Success(true),
             ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(true),
@@ -371,11 +407,7 @@ impl<'p> Raii<'p, ffi::Stmt> {
             panic!("Statement text too long");
         }
         match unsafe {
-            ffi::SQLExecDirect(
-                self.handle(),
-                bytes.as_ptr(),
-                length as ffi::SQLINTEGER,
-            )
+            ffi::SQLExecDirect(self.handle(), bytes.as_ptr(), length as ffi::SQLINTEGER)
         } {
             ffi::SQL_SUCCESS => Return::Success(true),
             ffi::SQL_SUCCESS_WITH_INFO => Return::SuccessWithInfo(true),
@@ -397,7 +429,13 @@ impl<'p> Raii<'p, ffi::Stmt> {
         }
     }
 
-    fn tables(&mut self, catalog_name: Option<&str>, schema_name: Option<&str>, table_name: Option<&str>, table_type: &str) -> Return<()> {
+    fn tables(
+        &mut self,
+        catalog_name: Option<&str>,
+        schema_name: Option<&str>,
+        table_name: Option<&str>,
+        table_type: &str,
+    ) -> Return<()> {
         unsafe {
             let mut catalog: *const odbc_sys::SQLCHAR = null_mut();
             let mut schema: *const odbc_sys::SQLCHAR = null_mut();
@@ -453,9 +491,10 @@ impl<'p> Raii<'p, ffi::Stmt> {
     }
 }
 
-unsafe impl<'con, 'param, C, P, AC: AutocommitMode> safe::Handle for Statement<'con, 'param, C, P, AC> {
-
-    const HANDLE_TYPE : ffi::HandleType = ffi::SQL_HANDLE_STMT;
+unsafe impl<'con, 'param, C, P, AC: AutocommitMode> safe::Handle
+    for Statement<'con, 'param, C, P, AC>
+{
+    const HANDLE_TYPE: ffi::HandleType = ffi::SQL_HANDLE_STMT;
 
     fn handle(&self) -> ffi::SQLHANDLE {
         <Raii<ffi::Stmt> as safe::Handle>::handle(&self.raii)

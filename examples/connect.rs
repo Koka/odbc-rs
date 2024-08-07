@@ -4,11 +4,10 @@ extern crate env_logger;
 extern crate odbc_safe;
 
 use odbc::*;
-use std::io;
 use odbc_safe::AutocommitOn;
+use std::io;
 
 fn main() {
-
     env_logger::init();
 
     match connect() {
@@ -18,7 +17,6 @@ fn main() {
 }
 
 fn connect() -> std::result::Result<(), DiagnosticRecord> {
-
     let env = create_environment_v3().map_err(|e| e.unwrap())?;
 
     let mut buffer = String::new();

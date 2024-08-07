@@ -1,6 +1,6 @@
 use super::{ffi, safe, DiagnosticRecord, GetDiagRec, Handle, OdbcObject, Return};
-use std::ptr::null_mut;
 use std::marker::PhantomData;
+use std::ptr::null_mut;
 
 /// Wrapper around handle types which ensures the wrapped value is always valid.
 ///
@@ -36,7 +36,7 @@ impl<'p, T: OdbcObject> Drop for Raii<'p, T> {
             ffi::SQL_ERROR => {
                 let rec = self.get_diag_rec(1).unwrap_or_else(DiagnosticRecord::empty);
                 error!("Error freeing handle: {}", rec)
-            },
+            }
             _ => panic!("Unexepected return value of SQLFreeHandle"),
         }
     }

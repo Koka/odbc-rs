@@ -11,13 +11,13 @@ const B: &'static str = "SELECT B FROM TEST_TYPES;";
 const C: &'static str = "SELECT C FROM TEST_TYPES;";
 
 macro_rules! test_type {
-    ($t:ty, $c:expr, $e:expr) => ({
+    ($t:ty, $c:expr, $e:expr) => {{
         let env = create_environment_v3().unwrap();
         let conn = env.connect("TestDataSource", "", "").unwrap();
         let stmt = Statement::with_parent(&conn).unwrap();
-        if let Ok(Data(mut cursor)) = stmt.exec_direct($c){
-            if let Ok(Some(mut row)) = cursor.fetch(){
-                let value : $t = row.get_data(1).unwrap().unwrap();
+        if let Ok(Data(mut cursor)) = stmt.exec_direct($c) {
+            if let Ok(Some(mut row)) = cursor.fetch() {
+                let value: $t = row.get_data(1).unwrap().unwrap();
                 assert_eq!(value, $e);
             } else {
                 panic!("Result set has been empty");
@@ -25,7 +25,7 @@ macro_rules! test_type {
         } else {
             panic!("SELECT did not return result set");
         };
-    })
+    }};
 }
 
 #[test]

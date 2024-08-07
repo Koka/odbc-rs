@@ -4,7 +4,6 @@ extern crate odbc;
 use odbc::*;
 
 fn main() {
-
     match print_drivers_and_datasources() {
         Ok(()) => (),
         Err(err) => println!("{}", err),
@@ -12,7 +11,6 @@ fn main() {
 }
 
 fn print_drivers_and_datasources() -> odbc::Result<()> {
-
     env_logger::init();
 
     let mut env = create_environment_v3().map_err(|e| e.unwrap())?;

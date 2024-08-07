@@ -11,22 +11,21 @@ const B: &'static str = "SELECT B FROM TEST_TYPES WHERE B = ?;";
 const C: &'static str = "SELECT C FROM TEST_TYPES WHERE C = ?;";
 
 macro_rules! test_type {
-    ($c:expr, $e:expr) => ({
-
+    ($c:expr, $e:expr) => {{
         let env = create_environment_v3().unwrap();
         let conn = env.connect("TestDataSource", "", "").unwrap();
         let stmt = Statement::with_parent(&conn).unwrap();
         let stmt = stmt.bind_parameter(1, $e).unwrap();
-        if let Ok(Data(mut stmt)) = stmt.exec_direct($c){
-            if let Some(_) = stmt.fetch().unwrap(){
+        if let Ok(Data(mut stmt)) = stmt.exec_direct($c) {
+            if let Some(_) = stmt.fetch().unwrap() {
                 //DO NOTHING
-            } else{
+            } else {
                 panic!("Result set has been empty");
             }
-        }else{
+        } else {
             panic!("SELECT did not return result set");
         };
-    })
+    }};
 }
 
 #[test]

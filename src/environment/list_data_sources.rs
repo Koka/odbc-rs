@@ -1,7 +1,7 @@
-use super::{safe, try_into_option, Environment, DiagnosticRecord, GetDiagRec, Result, Version3};
+use super::{safe, try_into_option, DiagnosticRecord, Environment, GetDiagRec, Result, Version3};
 use ffi;
-use std::collections::HashMap;
 use std::cmp::max;
+use std::collections::HashMap;
 
 /// Holds name and description of a datasource
 ///
@@ -25,11 +25,12 @@ pub struct DriverInfo {
     pub attributes: HashMap<String, String>,
 }
 
-type SqlInfoMethod = fn(&mut safe::Environment<safe::Odbc3>,
-                        ffi::FetchOrientation,
-                        &mut [u8],
-                        &mut [u8])
-                        -> safe::ReturnOption<(i16, i16)>;
+type SqlInfoMethod = fn(
+    &mut safe::Environment<safe::Odbc3>,
+    ffi::FetchOrientation,
+    &mut [u8],
+    &mut [u8],
+) -> safe::ReturnOption<(i16, i16)>;
 
 impl Environment<Version3> {
     /// Called by drivers to pares list of attributes
@@ -53,29 +54,25 @@ impl Environment<Version3> {
         // Iterate twice, once for reading the maximum required buffer lengths so we can read
         // everything without truncating and a second time for actually storing the values
         // alloc_info iterates once over every driver to obtain the required buffer sizes
-        let (max_desc, max_attr, num_drivers) = self.alloc_info(
-            safe::Environment::drivers,
-            ffi::SQL_FETCH_FIRST,
-        )?;
+        let (max_desc, max_attr, num_drivers) =
+            self.alloc_info(safe::Environment::drivers, ffi::SQL_FETCH_FIRST)?;
 
         let mut driver_list = Vec::with_capacity(num_drivers);
 
         if num_drivers > 0 {
             let mut description_buffer = vec![0; (max_desc + 1) as usize];
             let mut attribute_buffer = vec![0; (max_attr + 1) as usize];
-            while let Some((desc, attr)) =
-            self.get_info(
+            while let Some((desc, attr)) = self.get_info(
                 safe::Environment::drivers,
                 ffi::SQL_FETCH_NEXT,
                 &mut description_buffer,
                 &mut attribute_buffer,
-            )?
-                {
-                    driver_list.push(DriverInfo {
-                        description: desc.into_owned(),
-                        attributes: Self::parse_attributes(&attr),
-                    })
-                }
+            )? {
+                driver_list.push(DriverInfo {
+                    description: desc.into_owned(),
+                    attributes: Self::parse_attributes(&attr),
+                })
+            }
         }
 
         Ok(driver_list)
@@ -102,7 +99,6 @@ impl Environment<Version3> {
         &mut self,
         direction: ffi::FetchOrientation,
     ) -> Result<Vec<DataSourceInfo>> {
-
         // alloc_info iterates once over every datasource to obtain the required buffer sizes
         let (max_name, max_desc, num_sources) =
             self.alloc_info(safe::Environment::data_sources, direction)?;
@@ -116,35 +112,31 @@ impl Environment<Version3> {
             // Before we call SQLDataSources with SQL_FETCH_NEXT, we have to call it with either
             // SQL_FETCH_FIRST, SQL_FETCH_FIRST_USER or SQL_FETCH_FIRST_SYSTEM, to get all, user or
             // system data sources
-            if let Some((name, desc)) =
-            self.get_info(
+            if let Some((name, desc)) = self.get_info(
                 safe::Environment::data_sources,
                 direction,
                 &mut name_buffer,
                 &mut description_buffer,
-            )?
-                {
-                    source_list.push(DataSourceInfo {
-                        server_name: name.into_owned(),
-                        driver: desc.into_owned(),
+            )? {
+                source_list.push(DataSourceInfo {
+                    server_name: name.into_owned(),
+                    driver: desc.into_owned(),
                 })
             } else {
                 return Ok(source_list);
             }
 
-            while let Some((name, desc)) =
-            self.get_info(
+            while let Some((name, desc)) = self.get_info(
                 safe::Environment::data_sources,
                 ffi::SQL_FETCH_NEXT,
                 &mut name_buffer,
                 &mut description_buffer,
-            )?
-                {
-                    source_list.push(DataSourceInfo {
-                        server_name: name.into_owned(),
-                        driver: desc.into_owned(),
-                    })
-                }
+            )? {
+                source_list.push(DataSourceInfo {
+                    server_name: name.into_owned(),
+                    driver: desc.into_owned(),
+                })
+            }
         }
 
         Ok(source_list)
@@ -163,10 +155,14 @@ impl Environment<Version3> {
         match try_into_option(result, self)? {
             Some((len1, len2)) => unsafe {
                 Ok(Some((
-                    ::environment::DB_ENCODING.decode(&buf1[0..(len1 as usize)]).0,
-                    ::environment::DB_ENCODING.decode(&buf2[0..(len2 as usize)]).0,
+                    ::environment::DB_ENCODING
+                        .decode(&buf1[0..(len1 as usize)])
+                        .0,
+                    ::environment::DB_ENCODING
+                        .decode(&buf2[0..(len2 as usize)])
+                        .0,
                 )))
-            }
+            },
             None => Ok(None),
         }
     }
@@ -196,10 +192,9 @@ impl Environment<Version3> {
         );
 
         loop {
-
             match result {
-                safe::ReturnOption::Success((buf1_length_out, buf2_length_out)) |
-                safe::ReturnOption::Info((buf1_length_out, buf2_length_out)) => {
+                safe::ReturnOption::Success((buf1_length_out, buf2_length_out))
+                | safe::ReturnOption::Info((buf1_length_out, buf2_length_out)) => {
                     count += 1;
                     max1 = max(max1, buf1_length_out);
                     max2 = max(max2, buf2_length_out);

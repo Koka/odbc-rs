@@ -26,30 +26,29 @@
 
 #[macro_use]
 extern crate log;
-pub extern crate odbc_safe;
 extern crate encoding_rs;
+pub extern crate odbc_safe;
 
 pub mod ffi;
 
-pub use diagnostics::{DiagnosticRecord, GetDiagRec};
-pub use result::Result;
-pub use environment::*;
 pub use connection::Connection;
+pub use diagnostics::{DiagnosticRecord, GetDiagRec};
+pub use environment::*;
+pub use result::Result;
 pub use statement::*;
 
 use odbc_object::OdbcObject;
-use raii::Raii;
-use result::{Return, into_result, try_into_option};
 pub use odbc_safe as safe;
+use raii::Raii;
+use result::{into_result, try_into_option, Return};
 
+mod connection;
+mod diagnostics;
+mod environment;
 mod odbc_object;
 mod raii;
-mod diagnostics;
 mod result;
-mod environment;
-mod connection;
 mod statement;
-
 
 /// Reflects the ability of a type to expose a valid handle
 pub trait Handle {

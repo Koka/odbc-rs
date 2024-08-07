@@ -4,10 +4,9 @@ extern crate env_logger;
 extern crate odbc_safe;
 
 use odbc::*;
-use odbc_safe::{AutocommitOff};
+use odbc_safe::AutocommitOff;
 
 fn main() {
-
     env_logger::init();
 
     match connect() {
